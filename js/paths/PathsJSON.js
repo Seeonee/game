@@ -13,57 +13,32 @@ PathsWriter.json = function(paths) {
 
 // Push out a JSON version of our points and paths.
 PathsWriter.prototype._json = function() {
-    return '{' + this._walk(this.paths.points[0]) + '\n}';
-};
-
-// Write a node out as JSON, then recurse along all its paths.
-PathsWriter.prototype._walk = function(point) {
-    var key = point.asKey();
-    if (key in this.pointsVisited) {
-        return;
+    var result = '';
+    var points = {};
+    for (var i = 0; i < this.paths.points.length; i++) {
+        var point = this.paths.points[i];
+        points[point.asKey()] = 'p' + i;
     }
-    this.pointsVisited[key] = true;
-    var index = this._index(key);
-    var result = '\n"p' + index + '": {\n';
-    result += '"x": ' + point.x + ',\n';
-    result += '"y": ' + point.y + ',\n';
-    result += '"pathsTo": [\n';
-    var len = point.paths.length;
-    for (var i = 0; i < len; i++) {
-        var other = this._connection(point, i);
-        result += '"p' + this._index(other.asKey()) + '"';
-        if (i < len - 1) {
-            result += ',\n'
+    for (var i = 0; i < this.paths.points.length; i++) {
+        var point = this.paths.points[i];
+        result += '\n"p' + i + '": {\n';
+        result += '"x": ' + point.x + ',\n';
+        result += '"y": ' + point.y + ',\n';
+        result += '"pathsTo": [\n';
+        for (var j = 0; j < point.paths.length; j++) {
+            var path = point.paths[j];
+            var other = path.getCounterpoint(point);
+            result += '"' + points[other.asKey()] + '"';
+            if (j < point.paths.length - 1) {
+                result += ',\n';
+            }
+        }
+        result += ']\n}';
+        if (i < this.paths.points.length - 1) {
+            result += ',\n';
         }
     }
-    result += ']\n}';
-    for (var i = 0; i < len; i++) {
-        var other = this._connection(point, i);
-        var more = this._walk(other);
-        if (more) {
-            result += ',' + more;
-        }
-    }
-    return result;
-};
-
-
-// Figure out the index for a node.
-PathsWriter.prototype._index = function(key) {
-    if (key in this.pointMap) {
-        return this.pointMap[key];
-    } else {
-        var index = this.index++;
-        this.pointMap[key] = index;
-        return index;
-    }
-};
-
-// Return a point's Nth connected point.
-PathsWriter.prototype._connection = function(point, i) {
-    var path = point.paths[i];
-    var other = path.getCounterpoint(point);
-    return other;
+    return '{' + result + '\n}';
 };
 
 

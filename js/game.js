@@ -6,7 +6,6 @@ var GameState = function(game) {};
 
 // Load images and sounds
 GameState.prototype.preload = function() {
-    // game.load.audio('finale', 'assets/finale.wav');
     Power.preload(game);
     AVATAR_GRAPHICS.preload(game);
     game.load.json('level1', 'assets/levels/level1.json');
@@ -15,11 +14,8 @@ GameState.prototype.preload = function() {
 
 // Setup the example
 GameState.prototype.create = function() {
-    // General constants and setup.
     this.game.stage.backgroundColor = 0xffffff;
-    // Initialize objects.
     this.createPaths();
-    // this.game.add.audio('finale').play();
 
     game.time.advancedTiming = true; // For FPS tracking.
 };
