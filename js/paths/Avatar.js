@@ -31,11 +31,6 @@ Avatar.prototype.constructor = Avatar;
 // Figure out what we look like.
 Avatar.prototype.createGraphics = function(x, y) {
     // Initialize our graphics.
-    // We used to just paint a circle, hence the RADIUS here.
-    var bitmap = game.add.bitmapData(2 * this.RADIUS, 2 * this.RADIUS);
-    // bitmap.context.fillStyle = this.COLOR;
-    // bitmap.context.arc(this.RADIUS, this.RADIUS, this.RADIUS, 0, 2 * Math.PI, false);
-    // bitmap.context.fill();
     Phaser.Sprite.call(this, game, x, y);
     this.anchor.setTo(0.5, 0.5);
 
@@ -103,8 +98,9 @@ Avatar.prototype.move = function(angle, ratio) {
     }
 };
 
+// Optional physics debug view.
 Avatar.prototype.update = function() {
-    this.game.debug.body(this);
+    // this.game.debug.body(this);
 };
 
 
