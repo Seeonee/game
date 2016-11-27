@@ -1,6 +1,6 @@
 var FPS_DISPLAY = true;
-// var AVATAR_GRAPHICS = AvatarGraphicsKey;
-var AVATAR_GRAPHICS = AvatarGraphicsBall;
+var AVATAR_GRAPHICS = AvatarGraphicsKey;
+// var AVATAR_GRAPHICS = AvatarGraphicsBall;
 
 var GameState = function(game) {};
 
@@ -36,7 +36,7 @@ GameState.prototype.createPaths = function() {
     var p5 = this.paths.point(300, 200, p2);
     var p6 = this.paths.point(450, 200, p5);
 
-    var p7 = this.paths.point(500, 150, p4);
+    var p7 = this.paths.point(550, 150, p4);
     var p8 = this.paths.point(700, 150, p7);
 
     var p9 = this.paths.point(500, 250, p6);

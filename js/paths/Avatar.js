@@ -5,6 +5,7 @@ var Avatar = function(game, graphics) {
     this.TILT_THRESHOLD = 0.15;
     this.POINT_TILT_THRESHOLD_MODIFIER = 3.2;
     this.POINT_SNAP_RADIUS = 3;
+    this.MIN_VELOCITY = 0.1;
 
     this.game = game;
     this.graphics = graphics;
@@ -48,11 +49,43 @@ Avatar.prototype.move = function(angle, ratio) {
             if (path) {
                 this.path = path;
                 this.destination = this.path.getCounterpoint(this.point);
+                if (this.x != this.point.x || this.y != this.point.y) {
+                    // We've overshot our current point,
+                    // but we're still headed towards another point.
+                    // Find how far we overshot, then "orbit" around 
+                    // our current point so that we've now overshot 
+                    // in the direction of our next point.
+                    var xP0 = this.point.x;
+                    var yP0 = this.point.y;
+                    var xMe = this.x;
+                    var yMe = this.y;
+                    // How far we overshot.
+                    var dMe = distanceBetweenPoints(xP0, yP0, xMe, yMe);
+                    var xP2 = this.destination.x;
+                    var yP2 = this.destination.y;
+                    // The direction we *want* to overshoot towards.
+                    var aP2 = angleBetweenPoints(xP0, yP0, xP2, yP2);
+                    var dx2 = dMe * Math.sin(aP2);
+                    var dy2 = dMe * Math.cos(aP2);
+                    this.x = xP0 + dx2;
+                    this.y = yP0 + dy2;
+                }
                 this.point = undefined;
+            } else {
+                // We may have overshot and be tilting the joystick, 
+                // but not tilting towards any valid paths.
+                // In that case, snap back to our point.
+                this.x = this.point.x;
+                this.y = this.point.y;
             }
         } else if (this.path) {
             this.destination = this.path.getPoint(angle);
         }
+    } else if (this.point) {
+        // We may have overshot and then released the joystick.
+        // Go ahead and make sure we've snapped back.
+        this.x = this.point.x;
+        this.y = this.point.y;
     }
 
     // Start going there.
@@ -70,14 +103,20 @@ Avatar.prototype.move = function(angle, ratio) {
             this.point = this.destination;
             this.path = undefined;
         } else {
-            this.body.velocity.x = ratio * this.MAX_SPEED * Math.sin(a2);
-            this.body.velocity.y = ratio * this.MAX_SPEED * Math.cos(a2);
+            this.body.velocity.x = this.roundVelocity(ratio * this.MAX_SPEED * Math.sin(a2));
+            this.body.velocity.y = this.roundVelocity(ratio * this.MAX_SPEED * Math.cos(a2));
         }
     } else {
         this.body.velocity.x = 0;
         this.body.velocity.y = 0;
     }
     this.graphics.move(this);
+};
+
+// Eliminate microscopic velocities.
+Avatar.prototype.roundVelocity = function(velocity) {
+    // return velocity;
+    return (Math.abs(velocity) >= this.MIN_VELOCITY) ? velocity : 0;
 };
 
 // Optional physics debug view.

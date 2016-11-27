@@ -9,7 +9,7 @@ var Paths = function(game, points) {
     this.HIGHLIGHT_AVATAR_PATHS = false;
     this.PATH_COLOR = '#2CABD9';
     this.DEBUG_COLOR = '#D92C57';
-    this.PATH_WIDTH = 1;
+    this.PATH_WIDTH = 7;
     this.LINE_CAP_STYLE = 'round';
     this.LINE_JOIN_STYLE = 'round';
 
