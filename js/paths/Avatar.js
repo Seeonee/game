@@ -11,14 +11,9 @@ var Avatar = function(game, point) {
     this.RADIUS = 10;
 
     this.game = game;
-
-    // Don't call superclass constructor just yet;
-    // let createGraphics() do it for us.
+    // Set up graphics and physics.
+    Phaser.Sprite.call(this, game, point.x, point.y);
     this.createGraphics(point.x, point.y);
-
-    // Enable physics.
-    this.game.physics.enable(this, Phaser.Physics.ARCADE);
-
     // Track which point we're starting on.
     this.destination = undefined;
     this.path = undefined;
@@ -28,21 +23,30 @@ var Avatar = function(game, point) {
 Avatar.prototype = Object.create(Phaser.Sprite.prototype);
 Avatar.prototype.constructor = Avatar;
 
-// Figure out what we look like.
-Avatar.prototype.createGraphics = function(x, y) {
-    // Initialize our graphics.
-    Phaser.Sprite.call(this, game, x, y);
+// Figure out what we look like. Also enables physics.
+Avatar.prototype.createGraphics = function() {
     this.anchor.setTo(0.5, 0.5);
-
+    // Initialize our graphics.
     this.keyplate = this.addChild(game.make.sprite(0, 0, 'keyplate'));
     var yOffset = -this.keyplate.height / 1.65;
     this.keyplate.y = yOffset;
     this.keyplate.anchor.setTo(0.5, 0.5);
-
     // Initialize our keyhole.
     this.keyhole = this.addChild(game.make.sprite(0, 0, 'keyhole'));
     this.keyhole.y = (-this.keyhole.height / 4.5) + yOffset;
     this.keyhole.anchor.setTo(0.5, 0.5);
+    // Enable physics.
+    this.game.physics.enable(this, Phaser.Physics.ARCADE);
+    // For fun, adjust bounding box to match keyplate,
+    // with a little slack on the bottom.
+    var w = this.body.width;
+    var h = this.body.height;
+    var w2 = this.keyplate.width;
+    var h2 = this.keyplate.height;
+    var x = (w - w2) / 2;
+    var y = this.keyplate.y + (h - h2) / 2;
+    var dh = (w2 / 2) - ((h2 + y) / 2);
+    this.body.setSize(w2, h2 + dh, x, y);
 };
 
 // Move at a given angle and ratio of speed (0 to 1).
