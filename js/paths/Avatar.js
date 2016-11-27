@@ -1,5 +1,3 @@
-
-
 // Simple player avatar placeholder.
 var Avatar = function(game, point) {
     // Constants, for now.
@@ -116,7 +114,7 @@ Avatar.prototype.createSmokeEmitter = function() {
     this.smokeEmitter.setRotation(-50, 50);
     // this.smokeEmitter.setAlpha(1, 0, this.SMOKE_LIFETIME, 
     //     Phaser.Easing.Quintic.In);
-    this.smokeEmitter.setScale(1, 0.2, 1, 0.2, this.SMOKE_LIFETIME, 
+    this.smokeEmitter.setScale(1, 0.2, 1, 0.2, this.SMOKE_LIFETIME,
         Phaser.Easing.Cubic.Out);
     this.smokeEmitter.makeParticles('smoke');
 };
@@ -164,4 +162,3 @@ Avatar.preload = function(game) {
 // this.keyhole.rotation = Math.PI / 4 + this.game.math.angleBetween(
 //     this.x + this.keyhole.x, this.y + (this.keyhole.y * this.scale.y), 
 //     this.game.input.activePointer.x, this.game.input.activePointer.y);
-

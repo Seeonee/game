@@ -1,8 +1,6 @@
-
 var RATE = 1;
 
-var GameState = function(game) {
-};
+var GameState = function(game) {};
 
 // Load images and sounds
 GameState.prototype.preload = function() {
@@ -36,7 +34,7 @@ GameState.prototype.createPaths = function() {
 
     var p7 = this.paths.point(550, 150, p4);
     var p8 = this.paths.point(700, 150, p7);
-    
+
     var p9 = this.paths.point(500, 250, p6);
     var p10 = this.paths.point(450, 300, p9);
     var p11 = this.paths.point(350, 300, p10);
@@ -71,4 +69,3 @@ GameState.prototype.update = function() {
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
 game.state.add('game', GameState, true);
-

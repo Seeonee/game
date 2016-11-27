@@ -1,5 +1,3 @@
-
-
 // A path is just two Point objects, connected.
 var Path = function(p1, p2) {
     // Constants, for now.
@@ -48,5 +46,3 @@ Path.prototype.getPoint = function(angle) {
     }
     return undefined;
 };
-
-

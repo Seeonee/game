@@ -1,6 +1,3 @@
-
-
-
 // This handles pulling "joystick" input from either 
 // a real gamepad, or an in-browser debug equivalent.
 var Joystick = function(game, x, y) {
@@ -29,8 +26,8 @@ Joystick.prototype.constructor = Joystick;
 // Find out if we've got access to a gamepad.
 // We don't actually use this yet.
 Joystick.prototype.gamepadReady = function() {
-    return this.game.input.gamepad.supported && 
-        this.game.input.gamepad.active && 
+    return this.game.input.gamepad.supported &&
+        this.game.input.gamepad.active &&
         this.pad1.connected;
 };
 
@@ -87,4 +84,3 @@ Joystick.prototype.updateDebugJoystick = function() {
     this.bitmap.context.stroke();
     this.bitmap.dirty = true;
 };
-

@@ -1,5 +1,3 @@
-
-
 // A point is a juncture among one or more paths.
 var Point = function(x, y) {
     // Constants, for now.
@@ -50,5 +48,3 @@ Point.prototype.getPath = function(angle) {
     }
     return choice;
 };
-
-

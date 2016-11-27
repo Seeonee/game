@@ -1,5 +1,3 @@
-
-
 // Set up the bare bones.
 // Optionally accepts a starting set of points.
 // This will not finish creating the object, since 
@@ -68,7 +66,7 @@ Paths.prototype.drawPaths = function() {
     var pointsVisited = {};
     this.bitmap.context.beginPath();
     this.bitmap.context.moveTo(point.x, point.y);
-    this.drawPaths_walk(point, undefined, 
+    this.drawPaths_walk(point, undefined,
         this.bitmap, pointsVisited);
     this.bitmap.dirty = true;
 };
@@ -77,7 +75,7 @@ Paths.prototype.drawPaths = function() {
 // This will trace out along all paths leading away from this node,
 // then trace back to the node it came from as it returns.
 Paths.prototype.drawPaths_walk = function(
-        point, from, bitmap, pointsVisited) {
+    point, from, bitmap, pointsVisited) {
     var key = point.asKey();
     if (!(key in pointsVisited)) {
         // Walk each of our points, except the one we came from.
@@ -118,5 +116,3 @@ Paths.prototype.update = function() {
     // Move that avatar!
     this.avatar.move(this.joystick.angle, this.joystick.tilt);
 };
-
-

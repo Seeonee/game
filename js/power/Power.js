@@ -1,4 +1,3 @@
-
 // First, a few constants.
 
 // var h = 78; // Height of the basic diamond.
@@ -10,8 +9,8 @@ var DIAMOND_FADE_IN = 1000; // ms
 var DIAMOND_FADE_OUT = 1000; // ms
 var ICON_POWER_UP = 1000; // ms
 var ICON_POWER_DOWN = 1000; // ms
-var ICON_UNPOWERED_RGB = {r: 0xA4, g: 0xA4, b: 0xA4};
-var ICON_POWERED_RGB = {r: 0xFF, g: 0xFF, b: 0xFF};
+var ICON_UNPOWERED_RGB = { r: 0xA4, g: 0xA4, b: 0xA4 };
+var ICON_POWERED_RGB = { r: 0xFF, g: 0xFF, b: 0xFF };
 var ICON_SPIN_UP = 600; // ms
 var ICON_SPIN_DOWN = 600; // ms
 var ICON_BUMP = 400; // ms
@@ -30,7 +29,7 @@ var Power = function(game, x, y, name) {
 
     this.icon = this.addChild(game.make.sprite(0, Y_OFFSET, 'power_icon_' + name));
     this.icon.anchor.setTo(0.5, 0.5);
-    this.rgb = {r: ICON_UNPOWERED_RGB.r, g: ICON_UNPOWERED_RGB.g, b: ICON_UNPOWERED_RGB.b};
+    this.rgb = { r: ICON_UNPOWERED_RGB.r, g: ICON_UNPOWERED_RGB.g, b: ICON_UNPOWERED_RGB.b };
 
     // Finish initializing ourself.
     this.texture.frame.width = this.diamond_fg.width;
@@ -71,13 +70,11 @@ Power.prototype.clicked = function(e) {
 };
 
 Power.prototype.diamond_fade_in = function() {
-    this.game.add.tween(this.diamond_bg).to(
-        {alpha: 1}, DIAMOND_FADE_IN, Phaser.Easing.Cubic.Out, true);
+    this.game.add.tween(this.diamond_bg).to({ alpha: 1 }, DIAMOND_FADE_IN, Phaser.Easing.Cubic.Out, true);
 };
 
 Power.prototype.diamond_fade_out = function() {
-    this.game.add.tween(this.diamond_bg).to(
-        {alpha: 0}, DIAMOND_FADE_OUT, Phaser.Easing.Cubic.Out, true);
+    this.game.add.tween(this.diamond_bg).to({ alpha: 0 }, DIAMOND_FADE_OUT, Phaser.Easing.Cubic.Out, true);
 };
 
 Power.prototype.icon_power_up = function() {
@@ -91,8 +88,7 @@ Power.prototype.icon_power_down = function() {
 };
 
 Power.prototype.icon_spin_up = function() {
-    var tween = this.game.add.tween(this.icon).to(
-        {rotation: 2 * Math.PI}, ICON_SPIN_UP, Phaser.Easing.Cubic.InOut, true);
+    var tween = this.game.add.tween(this.icon).to({ rotation: 2 * Math.PI }, ICON_SPIN_UP, Phaser.Easing.Cubic.InOut, true);
     tween.onComplete.add(function(icon, tween) {
         icon.rotation = 0;
     });
@@ -104,17 +100,16 @@ Power.prototype.icon_spin_down = function() {
 };
 
 Power.prototype.icon_bump = function() {
-    if (this.bumping) {return;}
+    if (this.bumping) {
+        return;
+    }
     this.bumping = true;
-    this.game.add.tween(this.icon.scale).to(
-        {x: 2, y: 2}, ICON_BUMP, Phaser.Easing.Back.In, true);
-    var tween = this.game.add.tween(this.icon).to(
-        {alpha: 0}, ICON_BUMP - 200, Phaser.Easing.Cubic.Out, true, 350);
+    this.game.add.tween(this.icon.scale).to({ x: 2, y: 2 }, ICON_BUMP, Phaser.Easing.Back.In, true);
+    var tween = this.game.add.tween(this.icon).to({ alpha: 0 }, ICON_BUMP - 200, Phaser.Easing.Cubic.Out, true, 350);
     tween.onComplete.add(function(icon, tween) {
-        icon.scale = {x: 1, y: 1};
+        icon.scale = { x: 1, y: 1 };
         icon.rotation = 0;
-        var tween2 = icon.parent.game.add.tween(icon).to(
-            {alpha: 1}, 150, Phaser.Easing.Cubic.Out, true, 200);
+        var tween2 = icon.parent.game.add.tween(icon).to({ alpha: 1 }, 150, Phaser.Easing.Cubic.Out, true, 200);
         tween2.onComplete.add(function(icon, tween) {
             icon.parent.bumping = false;
         });
@@ -136,4 +131,3 @@ Power.preload = function(game) {
     game.load.image('power_icon_axe', 'assets/power_axe.png');
     game.load.image('power_icon_shield', 'assets/power_shield.png');
 };
-
