@@ -8,11 +8,12 @@ var Joystick = function(game, x, y) {
     this.RADIUS = 75;
     this.DEBUG = false;
 
-    // This is only needed for the debug setup.    
+    // This is only needed for the debug setup.
     this.bitmap = game.add.bitmapData(2 * this.RADIUS, 2 * this.RADIUS);
     this.bitmap.context.strokeStyle = 'rgb(0, 0, 0);'
-    Phaser.Sprite.call(this, game, x, y, this.bitmap); // Superclass constructor.
+    Phaser.Sprite.call(this, game, x, y, this.bitmap);
     this.anchor.setTo(0.5, 0.5);
+    this.debugNeeded = 0;
 
     // Set up the actual gamepad.
     this.game.input.gamepad.start();
@@ -33,9 +34,12 @@ Joystick.prototype.gamepadReady = function() {
         this.pad1.connected;
 };
 
+// Update. If we can't find a gamepad after several tries,
+// we give up and use the debug version.
 Joystick.prototype.update = function() {
-    if (!this.DEBUG && this.gamepadReady()) {
-        this.visible = false; // TODO: Will this kill our update calls?
+    this.debugNeeded = (!this.gamepadReady()) ? this.debugNeeded + 1 : 0;
+    if (this.debugNeeded < 3) {
+        this.visible = false;
         this.updateGamepadJoystick();
     } else {
         this.visible = true;

@@ -9,6 +9,8 @@ var Avatar = function(game, point) {
     this.POINT_SNAP_RADIUS = 3;
     this.COLOR = '#2CABD9';
     this.RADIUS = 10;
+    this.SMOKE_LIFETIME = 900; // ms
+    this.SMOKE_RATIO_THRESHOLD = 0.75;
 
     this.game = game;
     // Set up graphics and physics.
@@ -47,10 +49,12 @@ Avatar.prototype.createGraphics = function() {
     var y = this.keyplate.y + (h - h2) / 2;
     var dh = (w2 / 2) - ((h2 + y) / 2);
     this.body.setSize(w2, h2 + dh, x, y);
+    this.createSmokeEmitter();
 };
 
 // Move at a given angle and ratio of speed (0 to 1).
 Avatar.prototype.move = function(angle, ratio) {
+    this.updateSmokeEmitter();
     // Make sure there's enough tilt to justify movement.
     var threshold = this.TILT_THRESHOLD;
     if (this.point) {
@@ -102,9 +106,62 @@ Avatar.prototype.move = function(angle, ratio) {
     }
 };
 
+// Create our smoke emitter. Hooray!
+Avatar.prototype.createSmokeEmitter = function() {
+    // Let's get really fancy and add a smoke trail while moving.
+    this.smokeEmitter = this.game.add.emitter(0, 0, 100);
+    this.smokeEmitter.gravity = 150;
+    this.smokeEmitter.setXSpeed(-50, 50);
+    this.smokeEmitter.setYSpeed(-30, -70);
+    this.smokeEmitter.setRotation(-50, 50);
+    // this.smokeEmitter.setAlpha(1, 0, this.SMOKE_LIFETIME, 
+    //     Phaser.Easing.Quintic.In);
+    this.smokeEmitter.setScale(1, 0.2, 1, 0.2, this.SMOKE_LIFETIME, 
+        Phaser.Easing.Cubic.Out);
+    this.smokeEmitter.makeParticles('smoke');
+};
+
+// Update our smoke emitter. Hooray!
+Avatar.prototype.updateSmokeEmitter = function() {
+    var ratio = distanceBetweenPoints(0, 0, this.body.velocity.x, this.body.velocity.y);
+    ratio /= this.MAX_SPEED;
+    if (ratio >= this.SMOKE_RATIO_THRESHOLD) {
+        this.smokeEmitter.x = this.x;
+        this.smokeEmitter.y = this.y - 10;
+        if (!this.smokeEmitter.on) {
+            this.smokeEmitter.start(false, this.SMOKE_LIFETIME, 50); // every 50ms
+        }
+    }
+    if (ratio < this.SMOKE_RATIO_THRESHOLD) {
+        this.smokeEmitter.on = false;
+    }
+};
+
 // Optional physics debug view.
 Avatar.prototype.update = function() {
     // this.game.debug.body(this);
 };
 
+
+// Called by the main game's preload()
+Avatar.preload = function(game) {
+    game.load.image('keyplate', 'assets/keyplate.png');
+    game.load.image('keyhole', 'assets/keyhole.png');
+    game.load.image('smoke', 'assets/smoke.png');
+};
+
+
+
+// Some fancy tweens that might be fun later.
+// var delay = 1000;
+// this.game.add.tween(this.keyhole).to(
+//     {rotation: 3*Math.PI/4}, 1000, Phaser.Easing.Back.InOut, true, delay + 0);
+// this.game.add.tween(this.keyplate).to(
+//     {height: 0, width: 0}, 500, Phaser.Easing.Back.In, true, delay + 475);
+// this.game.add.tween(this.scale).to(
+//     {x: 2, y: 2}, 2000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+
+// this.keyhole.rotation = Math.PI / 4 + this.game.math.angleBetween(
+//     this.x + this.keyhole.x, this.y + (this.keyhole.y * this.scale.y), 
+//     this.game.input.activePointer.x, this.game.input.activePointer.y);
 
