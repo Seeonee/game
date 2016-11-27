@@ -9,7 +9,7 @@ GameState.prototype.preload = function() {
     // game.load.audio('finale', 'assets/finale.wav');
     Power.preload(game);
     AVATAR_GRAPHICS.preload(game);
-    game.load.json('version', 'assets/test.json');
+    game.load.json('level1', 'assets/levels/level1.json');
 };
 
 
@@ -27,25 +27,8 @@ GameState.prototype.create = function() {
 
 // Create a player sprite.
 GameState.prototype.createPaths = function() {
-    this.paths = new Paths(this.game);
-    var p1 = this.paths.point(100, 150);
-    var p2 = this.paths.point(250, 150, p1);
-    var p3 = this.paths.point(300, 100, p2);
-    var p4 = this.paths.point(500, 100, p3);
-
-    var p5 = this.paths.point(300, 200, p2);
-    var p6 = this.paths.point(450, 200, p5);
-
-    var p7 = this.paths.point(550, 150, p4);
-    var p8 = this.paths.point(700, 150, p7);
-
-    var p9 = this.paths.point(500, 250, p6);
-    var p10 = this.paths.point(450, 300, p9);
-    var p11 = this.paths.point(350, 300, p10);
-    var p12 = this.paths.point(200, 300, p11);
-    var p13 = this.paths.point(300, 350, p11);
-    var p14 = this.paths.point(350, 400, p13);
-    var p15 = this.paths.point(450, 400, p14);
+    var json = this.game.cache.getJSON('level1');
+    this.paths = PathsLoader.load(this.game, json);
 
     var gfx = new AVATAR_GRAPHICS();
     var avatar = new Avatar(this.game, gfx);
@@ -56,12 +39,6 @@ GameState.prototype.createPaths = function() {
     this.paths.joystick = joystick;
     this.paths.create();
 };
-
-// Create a power sprite.
-GameState.prototype.createPower = function(name, x, y) {
-    this.game.add.existing(new Power(this.game, x, y, name));
-};
-
 
 // Create a player sprite.
 GameState.prototype.render = function() {

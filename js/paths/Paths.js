@@ -94,7 +94,7 @@ Paths.prototype.drawPaths_walk = function(
         }
     }
     // Mark as visited.
-    pointsVisited[key] = 1;
+    pointsVisited[key] = true;
     // Draw a path back to where we came from.
     if (from) {
         bitmap.context.lineTo(from.x, from.y);
