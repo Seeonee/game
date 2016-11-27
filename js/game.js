@@ -1,4 +1,6 @@
-var RATE = 1;
+var FPS_DISPLAY = true;
+// var AVATAR_GRAPHICS = AvatarGraphicsKey;
+var AVATAR_GRAPHICS = AvatarGraphicsBall;
 
 var GameState = function(game) {};
 
@@ -6,7 +8,7 @@ var GameState = function(game) {};
 GameState.prototype.preload = function() {
     // game.load.audio('finale', 'assets/finale.wav');
     Power.preload(game);
-    Avatar.preload(game);
+    AVATAR_GRAPHICS.preload(game);
     game.load.json('version', 'assets/test.json');
 };
 
@@ -18,6 +20,8 @@ GameState.prototype.create = function() {
     // Initialize objects.
     this.createPaths();
     // this.game.add.audio('finale').play();
+
+    game.time.advancedTiming = true; // For FPS tracking.
 };
 
 
@@ -32,7 +36,7 @@ GameState.prototype.createPaths = function() {
     var p5 = this.paths.point(300, 200, p2);
     var p6 = this.paths.point(450, 200, p5);
 
-    var p7 = this.paths.point(550, 150, p4);
+    var p7 = this.paths.point(500, 150, p4);
     var p8 = this.paths.point(700, 150, p7);
 
     var p9 = this.paths.point(500, 250, p6);
@@ -42,6 +46,10 @@ GameState.prototype.createPaths = function() {
     var p13 = this.paths.point(300, 350, p11);
     var p14 = this.paths.point(350, 400, p13);
     var p15 = this.paths.point(450, 400, p14);
+
+    var gfx = new AVATAR_GRAPHICS();
+    var avatar = new Avatar(this.game, gfx);
+    this.paths.addAvatar(avatar);
 
     var joystick = new Joystick(this.game, 650, 450);
     this.game.add.existing(joystick);
@@ -57,7 +65,9 @@ GameState.prototype.createPower = function(name, x, y) {
 
 // Create a player sprite.
 GameState.prototype.render = function() {
-    // this.game.debug.body(this.player);
+    if (FPS_DISPLAY) {
+        game.debug.text(game.time.fps, 2, 14, "#D92C57"); // FPS tracking.
+    };
 };
 
 // Create a player sprite.

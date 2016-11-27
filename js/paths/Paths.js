@@ -9,7 +9,7 @@ var Paths = function(game, points) {
     this.HIGHLIGHT_AVATAR_PATHS = false;
     this.PATH_COLOR = '#2CABD9';
     this.DEBUG_COLOR = '#D92C57';
-    this.PATH_WIDTH = 7;
+    this.PATH_WIDTH = 1;
     this.LINE_CAP_STYLE = 'round';
     this.LINE_JOIN_STYLE = 'round';
 
@@ -38,7 +38,7 @@ Paths.prototype.point = function(x, y, point) {
     }
     this.points.push(point2);
     return point2;
-}
+};
 
 // Call this once you're done adding points.
 Paths.prototype.create = function() {
@@ -48,10 +48,14 @@ Paths.prototype.create = function() {
     this.created = true;
     // Perform the first draw.
     this.drawPaths();
-    // Set up our avatar.
-    this.avatar = new Avatar(this.game, this.points[0]);
+};
+
+// Add the player avatar to our starting point.
+Paths.prototype.addAvatar = function(avatar) {
+    this.avatar = avatar;
+    this.avatar.setStartingPoint(this.points[0]);
     this.game.add.existing(this.avatar);
-}
+};
 
 // Draw all paths onto the bitmap.
 Paths.prototype.drawPaths = function() {

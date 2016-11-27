@@ -23,14 +23,6 @@ Path.prototype.asKey = function() {
     return 'x' + this.p1.x + 'y' + this.p1.y + 'x' + this.p2.x + 'y' + this.p2.y;
 };
 
-// Draw our line onto someone else's bitmap.
-// We rely on them to have already configured the stroke settings.
-Path.prototype.draw = function(bitmap) {
-    bitmap.context.moveTo(this.p1.x, this.p1.y);
-    bitmap.context.lineTo(this.p2.x, this.p2.y);
-    bitmap.context.stroke();
-};
-
 // Given one of our endpoints, return the other.
 Path.prototype.getCounterpoint = function(point) {
     return (this.p1.x == point.x && this.p1.y == point.y) ? this.p2 : this.p1;
