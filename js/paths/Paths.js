@@ -14,13 +14,14 @@ var Paths = function(game, points) {
     this.LINE_JOIN_STYLE = 'round';
 
     this.game = game;
-    this.dirty = true;
+    this.dirty = false;
     // Set up our starting points.
     this.points = [];
     if (points) {
         for (var i = 0; i < points.length; i++) {
             this.points.push(points[i]);
         }
+        this.dirty = true;
     }
     // Set up our bitmap.
     this.bitmap = this.game.add.bitmapData(this.game.width, this.game.height);
@@ -29,23 +30,51 @@ var Paths = function(game, points) {
     this.joystick = undefined;
 };
 
-// Create a new point from an (optional) existing one.
-// Track it, then return it.
-Paths.prototype.point = function(x, y, point) {
+// Create a new point, optionally connected to an existing one.
+// Returns the newly created point.
+Paths.prototype.addPoint = function(x, y, point) {
     var point2 = new Point(x, y);
-    if (point != undefined) {
-        point.connectTo(point2);
-    }
     this.points.push(point2);
+    this.dirty = true;
+    if (point != undefined) {
+        this.connectPoints(point, point2);
+    }
     return point2;
 };
 
-// Call this once you're done adding points.
-Paths.prototype.refresh = function() {
-    // Perform the first draw.
-    this.dirty = false;
-    this.drawPaths();
+// Connect two points.
+Paths.prototype.connectPoints = function(point, point2) {
+    point.connectTo(point2);
+    this.dirty = true;
 };
+
+// Add a point at a distance partially along a path's length.
+// Return the newly created point.
+Paths.prototype.addPointToPath = function(path, ratio) {
+    var point = path.addPoint(ratio);
+    this.points.push(point);
+    this.dirty = true;
+    return point;
+}
+
+// Delete an existing point.
+// Return the deleted point, or undefined if it wasn't deleted.
+Paths.prototype.deletePoint = function(point) {
+    var i = this.points.indexOf(point);
+    if (i >= 0) {
+        point.delete();
+        this.points.splice(i, 1);
+        this.dirty = true;
+        return point;
+    }
+    return undefined;
+}
+
+// Delete path between two points.
+Paths.prototype.deletePath = function(path) {
+    path.delete();
+    this.dirty = true;
+}
 
 // Add the player avatar to our starting point.
 Paths.prototype.addAvatar = function(avatar) {
@@ -85,6 +114,8 @@ Paths.prototype.drawPaths_walk = function(
     point, from, bitmap, pointsVisited) {
     var key = point.asKey();
     if (!(key in pointsVisited)) {
+        // Mark as visited.
+        pointsVisited[key] = true;
         // Walk each of our points, except the one we came from.
         for (var i = 0; i < point.paths.length; i++) {
             var path = point.paths[i];
@@ -96,8 +127,6 @@ Paths.prototype.drawPaths_walk = function(
             this.drawPaths_walk(to, point, bitmap, pointsVisited);
         }
     }
-    // Mark as visited.
-    pointsVisited[key] = true;
     // Draw a path back to where we came from.
     if (from) {
         bitmap.context.lineTo(from.x, from.y);
@@ -108,11 +137,9 @@ Paths.prototype.drawPaths_walk = function(
 // Tick the avatar towards the joystick.
 // Also (optionally) highlight debug info.
 Paths.prototype.update = function() {
-    // Make sure we've finished initializing.
-    if (this.dirty) {
-        this.refresh();
-    } else if (this.joystick && this.HIGHLIGHT_AVATAR_PATHS) {
-        // Debug draw mode.
+    // Figure it if we need to render (again).
+    if (this.dirty || (this.joystick && this.HIGHLIGHT_AVATAR_PATHS)) {
+        this.dirty = false;
         this.drawPaths();
     }
     // Move that avatar!

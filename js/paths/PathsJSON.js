@@ -62,7 +62,7 @@ PathsLoader.prototype._load = function() {
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
         var pointObj = this.json[key];
-        var point = this.paths.point(pointObj.x, pointObj.y);
+        var point = this.paths.addPoint(pointObj.x, pointObj.y);
         points[key] = point;
     }
     for (var i = 0; i < keys.length; i++) {

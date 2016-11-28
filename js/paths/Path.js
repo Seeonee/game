@@ -40,7 +40,22 @@ Path.prototype.getPoint = function(angle) {
 };
 
 // Delete this path from each of its endpoints.
+// Returns nothing.
 Path.prototype.delete = function() {
     this.p1.deletePath(this);
     this.p2.deletePath(this);
+};
+
+// Add a new point partway along our length.
+// Returns the newly added point.
+Path.prototype.addPoint = function(ratio) {
+    var dx = ratio * (this.p2.x - this.p1.x);
+    var dy = ratio * (this.p2.y - this.p1.y);
+    var point = new Point(this.p1.x + dx, this.p1.y + dy);
+    var p2 = this.p2;
+    point.paths.push(this);
+    p2.deletePath(this);
+    this.p2 = point;
+    point.connectTo(p2);
+    return point;
 };

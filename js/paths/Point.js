@@ -15,11 +15,25 @@ Point.prototype.asKey = function() {
 
 // Connect ourself to another point, 
 // instantiating a path object to do so.
+// If already connected, does nothing.
+// Either way, ultimately returns the point.
 Point.prototype.connectTo = function(point) {
-    var path = new Path(this, point);
-    this.paths.push(path);
-    point.paths.push(path);
+    if (!this.isConnectedTo(point)) {
+        var path = new Path(this, point);
+        this.paths.push(path);
+        point.paths.push(path);
+    }
     return point;
+};
+
+// Check if we're directly connected to another point.
+Point.prototype.isConnectedTo = function(point) {
+    for (var i = 0; i < this.paths.length; i++) {
+        if (this.paths[i].getCounterpoint(this) === point) {
+            return true; // Already connected.
+        }
+    }
+    return false;
 };
 
 // Convenience method for creating a connected point.
@@ -47,6 +61,15 @@ Point.prototype.getPath = function(angle) {
         }
     }
     return choice;
+};
+
+// Delete ourself and all paths leading away from us.
+// Returns the deleted point (i.e. ourself).
+Point.prototype.delete = function(path) {
+    while (this.paths.length) {
+        this.paths[0].delete();
+    }
+    return this;
 };
 
 // Delete one of our paths.
