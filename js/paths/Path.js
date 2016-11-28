@@ -38,3 +38,9 @@ Path.prototype.getPoint = function(angle) {
     }
     return undefined;
 };
+
+// Delete this path from each of its endpoints.
+Path.prototype.delete = function() {
+    this.p1.deletePath(this);
+    this.p2.deletePath(this);
+};

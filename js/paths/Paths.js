@@ -14,7 +14,7 @@ var Paths = function(game, points) {
     this.LINE_JOIN_STYLE = 'round';
 
     this.game = game;
-    this.created = false;
+    this.dirty = true;
     // Set up our starting points.
     this.points = [];
     if (points) {
@@ -41,12 +41,9 @@ Paths.prototype.point = function(x, y, point) {
 };
 
 // Call this once you're done adding points.
-Paths.prototype.create = function() {
-    if (this.created) {
-        return;
-    }
-    this.created = true;
+Paths.prototype.refresh = function() {
     // Perform the first draw.
+    this.dirty = false;
     this.drawPaths();
 };
 
@@ -66,12 +63,18 @@ Paths.prototype.drawPaths = function() {
     this.bitmap.context.lineCap = this.LINE_CAP_STYLE;
     this.bitmap.context.lineJoin = this.LINE_JOIN_STYLE;
 
-    var point = this.points[0];
     var pointsVisited = {};
-    this.bitmap.context.beginPath();
-    this.bitmap.context.moveTo(point.x, point.y);
-    this.drawPaths_walk(point, undefined,
-        this.bitmap, pointsVisited);
+    for (var i = 0; i < this.points.length; i++) {
+        var point = this.points[i];
+        var key = point.asKey();
+        if (key in pointsVisited) {
+            continue;
+        }
+        this.bitmap.context.beginPath();
+        this.bitmap.context.moveTo(point.x, point.y);
+        this.drawPaths_walk(point, undefined,
+            this.bitmap, pointsVisited);
+    }
     this.bitmap.dirty = true;
 };
 
@@ -106,17 +109,14 @@ Paths.prototype.drawPaths_walk = function(
 // Also (optionally) highlight debug info.
 Paths.prototype.update = function() {
     // Make sure we've finished initializing.
-    if (!this.created) {
-        this.create();
-    }
-    // Can't update the avatar without input.
-    if (!this.joystick) return;
-
-    // Debug draw mode.
-    if (this.HIGHLIGHT_AVATAR_PATHS) {
+    if (this.dirty) {
+        this.refresh();
+    } else if (this.joystick && this.HIGHLIGHT_AVATAR_PATHS) {
+        // Debug draw mode.
         this.drawPaths();
     }
-
     // Move that avatar!
-    this.avatar.move(this.joystick.angle, this.joystick.tilt);
+    if (this.joystick) {
+        this.avatar.move(this.joystick.angle, this.joystick.tilt);
+    }
 };

@@ -33,7 +33,7 @@ GameState.prototype.createPaths = function() {
     var joystick = new Joystick(this.game, 650, 450);
     this.game.add.existing(joystick);
     this.paths.joystick = joystick;
-    this.paths.create();
+    this.paths.refresh();
 };
 
 // Create a player sprite.

@@ -48,3 +48,11 @@ Point.prototype.getPath = function(angle) {
     }
     return choice;
 };
+
+// Delete one of our paths.
+Point.prototype.deletePath = function(path) {
+    var i = this.paths.indexOf(path);
+    if (i >= 0) {
+        this.paths.splice(i, 1);
+    }
+};
