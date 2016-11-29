@@ -70,6 +70,20 @@ Paths.prototype.deletePoint = function(point) {
     return undefined;
 }
 
+// Delete an existing point, merging each of its
+// connected points to the others.
+// Return the deleted point, or undefined if it wasn't deleted.
+Paths.prototype.deletePointAndMerge = function(point) {
+    var i = this.points.indexOf(point);
+    if (i >= 0) {
+        point.deleteAndMerge();
+        this.points.splice(i, 1);
+        this.dirty = true;
+        return point;
+    }
+    return undefined;
+}
+
 // Delete path between two points.
 Paths.prototype.deletePath = function(path) {
     path.delete();

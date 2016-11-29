@@ -1,14 +1,13 @@
 var FPS_DISPLAY = true;
-var AVATAR_GRAPHICS = AvatarGraphicsKey;
-// var AVATAR_GRAPHICS = AvatarGraphicsBall;
+// var AVATAR_GRAPHICS = AvatarGraphicsKey;
+var AVATAR_GRAPHICS = AvatarGraphicsBall;
 
 var GameState = function(game) {};
 
 // Load images and sounds
 GameState.prototype.preload = function() {
-    Power.preload(game);
     AVATAR_GRAPHICS.preload(game);
-    game.load.json('level1', 'assets/levels/level1.json');
+    game.load.json('level2', 'assets/levels/level2.json');
 };
 
 
@@ -23,11 +22,12 @@ GameState.prototype.create = function() {
 
 // Create a player sprite.
 GameState.prototype.createPaths = function() {
-    var json = this.game.cache.getJSON('level1');
+    var json = this.game.cache.getJSON('level2');
     this.paths = PathsLoader.load(this.game, json);
 
     var gfx = new AVATAR_GRAPHICS();
-    var avatar = new Avatar(this.game, gfx);
+    // var avatar = new Avatar(this.game, gfx);
+    var avatar = new EditorAvatar(this.game, gfx, this.paths);
     this.paths.addAvatar(avatar);
 
     var joystick = new Joystick(this.game, 650, 450);

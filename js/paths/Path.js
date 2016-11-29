@@ -5,13 +5,9 @@ var Path = function(p1, p2) {
 
     this.p1 = p1;
     this.p2 = p2;
-
     // Store our angles.
-    var dx = this.p2.x - this.p1.x;
-    var dy = this.p2.y - this.p1.y;
-    this.angleForward = Math.atan2(dx, dy);
+    this.angleForward = angleBetweenPoints(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
     this.angleBackward = (this.angleForward + Math.PI) % (2 * Math.PI);
-
     // Store our length.
     this.length = distanceBetweenPoints(
         this.p1.x, this.p1.y,

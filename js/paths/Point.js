@@ -65,11 +65,27 @@ Point.prototype.getPath = function(angle) {
 
 // Delete ourself and all paths leading away from us.
 // Returns the deleted point (i.e. ourself).
-Point.prototype.delete = function(path) {
+Point.prototype.delete = function() {
     while (this.paths.length) {
         this.paths[0].delete();
     }
     return this;
+};
+
+// Delete ourself and all paths leading away from us.
+// Create new paths between all our connected points.
+// Returns the deleted point (i.e. ourself).
+Point.prototype.deleteAndMerge = function() {
+    var linked = [];
+    for (var i = 0; i < this.paths.length; i++) {
+        linked.push(this.paths[i].getCounterpoint(this));
+    }
+    for (var i = 0; i < linked.length; i++) {
+        for (var j = 0; j < linked.length; j++) {
+            linked[i].connectTo(linked[j]);
+        }
+    }
+    return this.delete();
 };
 
 // Delete one of our paths.

@@ -21,7 +21,7 @@ var Avatar = function(game, graphics) {
 Avatar.prototype = Object.create(Phaser.Sprite.prototype);
 Avatar.prototype.constructor = Avatar;
 
-// Move at a given angle and ratio of speed (0 to 1).
+// Figure out where we're starting.
 Avatar.prototype.setStartingPoint = function(point) {
     this.point = point;
     this.x = point.x;

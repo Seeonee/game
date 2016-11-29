@@ -1,7 +1,7 @@
 // Handles rendering for avatar objects.
 var AvatarGraphicsBall = function() {
     // Constants.
-    this.COLOR = '#2CABD9';
+    this.COLOR = 0x2CABD9;
     this.RADIUS = 16;
 };
 
@@ -11,11 +11,12 @@ AvatarGraphicsBall.prototype.createGraphics = function(avatar) {
     // Initialize our graphics.
     // We used to just paint a circle, hence the RADIUS here.
     var bitmap = game.add.bitmapData(2 * this.RADIUS, 2 * this.RADIUS);
-    bitmap.context.fillStyle = this.COLOR;
+    bitmap.context.fillStyle = '#ffffff';
     bitmap.context.arc(this.RADIUS, this.RADIUS, this.RADIUS, 0, 2 * Math.PI, false);
     bitmap.context.fill();
     avatar.ball = avatar.addChild(game.make.sprite(0, 0, bitmap));
     avatar.ball.anchor.setTo(0.5, 0.5);
+    avatar.ball.tint = this.COLOR;
     // Enable physics.
     avatar.game.physics.enable(avatar, Phaser.Physics.ARCADE);
     // Adjust bounding box.
