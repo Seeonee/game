@@ -176,11 +176,9 @@ AddFromPointAction.prototype.update = function() {
         // New point, coming atcha!
         if (this.near && this.valid) {
             // Find out if a point already exists at these coordinates.
-            console.log('near: x' + this.near.x + ',y:' + this.near.y);
             var existing = undefined;
             for (var i = 0; i < this.editor.paths.points.length; i++) {
                 var point = this.editor.paths.points[i];
-                console.log('pnt: x' + point.x + ',y:' + point.y);
                 if (point.x == this.near.x && point.y == this.near.y) {
                     existing = point;
                     break;

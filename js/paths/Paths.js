@@ -111,6 +111,7 @@ Paths.prototype.drawPaths = function() {
     this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
 
     this.bitmap.context.strokeStyle = this.PATH_COLOR;
+    this.bitmap.context.fillStyle = this.PATH_COLOR;
     this.bitmap.context.lineWidth = this.PATH_WIDTH;
     this.bitmap.context.lineCap = this.LINE_CAP_STYLE;
     this.bitmap.context.lineJoin = this.LINE_JOIN_STYLE;
@@ -140,14 +141,20 @@ Paths.prototype.drawPaths_walk = function(
         // Mark as visited.
         pointsVisited[key] = true;
         // Walk each of our points, except the one we came from.
-        for (var i = 0; i < point.paths.length; i++) {
-            var path = point.paths[i];
-            var to = path.getCounterpoint(point);
-            if (to == from) {
-                continue;
+        if (point.paths.length) {
+            for (var i = 0; i < point.paths.length; i++) {
+                var path = point.paths[i];
+                var to = path.getCounterpoint(point);
+                if (to == from) {
+                    continue;
+                }
+                bitmap.context.lineTo(to.x, to.y);
+                this.drawPaths_walk(to, point, bitmap, pointsVisited);
             }
-            bitmap.context.lineTo(to.x, to.y);
-            this.drawPaths_walk(to, point, bitmap, pointsVisited);
+        } else {
+            this.bitmap.context.arc(point.x, point.y,
+                this.PATH_WIDTH / 2, 0, 2 * Math.PI, false);
+            this.bitmap.context.fill();
         }
     }
     // Draw a path back to where we came from.
