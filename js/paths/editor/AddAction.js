@@ -103,12 +103,11 @@ var AddFromPointAction = function(editor) {
     this.editor = editor;
     this.point = this.editor.point;
     this.near = undefined;
+    this.valid = false; // Only allow 45 degree angles.
     this.editor.consumeButtonEvent(EditorAvatar.ADD_BUTTON);
     // Initialize bitmap for rendering.
     this.bitmap = this.editor.game.add.bitmapData(
         this.editor.game.width, this.editor.game.height);
-    this.bitmap.context.fillStyle = '#D92C57';
-    this.bitmap.context.strokeStyle = '#D92C57';
     this.bitmap.context.lineWidth = this.editor.paths.PATH_WIDTH;
     this.bitmap.context.lineCap = this.editor.paths.LINE_CAP_STYLE;
     this.image = this.editor.game.add.image(0, 0, this.bitmap);
@@ -119,6 +118,13 @@ AddFromPointAction.prototype.renderMarks = function() {
     this.bitmap.context.clearRect(0, 0,
         this.editor.game.width, this.editor.game.height);
     if (this.near) {
+        if (this.valid) {
+            this.bitmap.context.fillStyle = '#D92C57';
+            this.bitmap.context.strokeStyle = '#D92C57';
+        } else {
+            this.bitmap.context.fillStyle = '#A4A4A4';
+            this.bitmap.context.strokeStyle = '#A4A4A4';
+        }
         this.bitmap.context.beginPath();
         this.bitmap.context.moveTo(this.point.x, this.point.y);
         this.bitmap.context.lineTo(this.near.x, this.near.y);
@@ -138,20 +144,25 @@ AddFromPointAction.prototype.move = function(angle, ratio) {
     this.editor.body.velocity.x = speed * Math.sin(angle);
     this.editor.body.velocity.y = speed * Math.cos(angle);
     // Next, find and render the candidate.
-    this.near = this.getSelectedMark();
+    this.cacheSelectedMark();
     this.renderMarks();
 };
 
 // Figure out if a mark is near the "cursor".
-AddFromPointAction.prototype.getSelectedMark = function() {
+AddFromPointAction.prototype.cacheSelectedMark = function() {
     var x = Math.floor(this.editor.x + 25);
     var y = Math.floor(this.editor.y + 25);
     x -= x % 50;
     y -= y % 50;
     if (x == this.point.x && y == this.point.y) {
-        return undefined;
+        this.near = undefined;
+        this.valid = false;
+    } else {
+        this.near = { x: x, y: y };
+        var dx = Math.abs(this.point.x - x);
+        var dy = Math.abs(this.point.y - y);
+        this.valid = dx == dy || dx == 0 || dy == 0;
     }
-    return { x: x, y: y };
 };
 
 // Handle an update while holding the button.
@@ -163,7 +174,7 @@ AddFromPointAction.prototype.update = function() {
         this.editor.consumeButtonEvent(EditorAvatar.ADD_CANCEL_BUTTON);
     } else if (this.editor.justReleased(EditorAvatar.ADD_BUTTON)) {
         // New point, coming atcha!
-        if (this.near) {
+        if (this.near && this.valid) {
             // Find out if a point already exists at these coordinates.
             console.log('near: x' + this.near.x + ',y:' + this.near.y);
             var existing = undefined;
