@@ -44,10 +44,16 @@ Path.prototype.delete = function() {
 
 // Add a new point partway along our length.
 // Returns the newly added point.
-Path.prototype.addPoint = function(ratio) {
+Path.prototype.addPointAtRatio = function(ratio) {
     var dx = ratio * (this.p2.x - this.p1.x);
     var dy = ratio * (this.p2.y - this.p1.y);
-    var point = new Point(this.p1.x + dx, this.p1.y + dy);
+    return this.addPoint(this.p1.x + dx, this.p1.y + dy);
+};
+
+// Add a new point at coordinates that *should* lie along our path.
+// Returns the newly added point.
+Path.prototype.addPointAtCoords = function(x, y) {
+    var point = new Point(x, y);
     var p2 = this.p2;
     point.paths.push(this);
     p2.deletePath(this);

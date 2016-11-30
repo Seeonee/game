@@ -49,7 +49,7 @@ FloatAction.prototype.update = function() {
         this.editor.scale.setTo(EditorAvatar.FLOAT_ICON_SCALE);
     }
 
-    if (this.editor.pad().justReleased(EditorAvatar.FLOAT_BUTTON)) {
+    if (this.editor.justReleased(EditorAvatar.FLOAT_BUTTON)) {
         if (point) {
             this.snapToPoint(point);
         } else if (path) {

@@ -50,8 +50,17 @@ Paths.prototype.connectPoints = function(point, point2) {
 
 // Add a point at a distance partially along a path's length.
 // Return the newly created point.
-Paths.prototype.addPointToPath = function(path, ratio) {
-    var point = path.addPoint(ratio);
+Paths.prototype.addPointToPathAtRatio = function(path, ratio) {
+    var point = path.addPointAtRatio(ratio);
+    this.points.push(point);
+    this.dirty = true;
+    return point;
+}
+
+// Add a point to a path at coordinates that *should* lie along its length.
+// Return the newly created point.
+Paths.prototype.addPointToPathAtCoords = function(path, x, y) {
+    var point = path.addPointAtCoords(x, y);
     this.points.push(point);
     this.dirty = true;
     return point;

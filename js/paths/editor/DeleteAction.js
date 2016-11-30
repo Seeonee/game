@@ -1,7 +1,7 @@
 // Action for deleting nodes and paths.
 var DeleteAction = function(editor) {
     this.editor = editor;
-    this.start = game.time.now;
+    this.start = this.editor.game.time.now;
     this.threshold = 1000;
     this.editor.ball.tint = EditorAvatar.DELETE_COLOR;
 }
@@ -11,12 +11,12 @@ DeleteAction.prototype.move = function(angle, ratio) {};
 
 // Handle an update while holding the button.
 DeleteAction.prototype.update = function() {
-    var elapsed = Math.min(game.time.now - this.start, this.threshold);
+    var elapsed = Math.min(this.editor.game.time.now - this.start, this.threshold);
     var ratio = elapsed / this.threshold;
     if (ratio == 1) {
         this.editor.ball.tint = EditorAvatar.DELETE_MERGE_COLOR;
     }
-    if (this.editor.pad().justReleased(EditorAvatar.DELETE_BUTTON)) {
+    if (this.editor.justReleased(EditorAvatar.DELETE_BUTTON)) {
         if (this.editor.point) {
             if (ratio < 1) {
                 // Delete the point and its paths.
