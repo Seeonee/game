@@ -6,6 +6,9 @@ var Avatar = function(game, graphics) {
     this.POINT_TILT_THRESHOLD_MODIFIER = 3.2;
     this.POINT_SNAP_RADIUS = 3;
     this.MIN_VELOCITY = 0.1;
+    this.TILT_TOTAL_ANGLE = Math.PI / 2;
+    this.TILT_FULLSPEED_ANGLE = this.TILT_TOTAL_ANGLE - Math.PI / 4;
+    this.TILT_PARTIAL_ANGLE = this.TILT_TOTAL_ANGLE - this.TILT_FULLSPEED_ANGLE;
 
     this.game = game;
     this.graphics = graphics;
@@ -103,6 +106,12 @@ Avatar.prototype.move = function(angle, ratio) {
             this.point = this.destination;
             this.path = undefined;
         } else {
+            // If we're not lined up well with our target angle,
+            // reduce tilt accordingly.
+            var a3 = getBoundedAngleDifference(angle, a2) - this.TILT_FULLSPEED_ANGLE;
+            if (a3 > 0) {
+                ratio *= 1 - (a3 / this.TILT_PARTIAL_ANGLE);
+            }
             this.body.velocity.x = this.roundVelocity(ratio * this.MAX_SPEED * Math.sin(a2));
             this.body.velocity.y = this.roundVelocity(ratio * this.MAX_SPEED * Math.cos(a2));
         }
