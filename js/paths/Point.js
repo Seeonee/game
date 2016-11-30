@@ -2,6 +2,7 @@
 var Point = function(x, y) {
     // Constants, for now.
     this.ANGLE_CATCH = Math.PI / 2.1;
+    this.MIN_ANGLE_RATIO = 2;
 
     this.x = x;
     this.y = y;
@@ -46,21 +47,32 @@ Point.prototype.add = function(x, y) {
 // for a particular input angle.
 // For now, we'll just pick the path closest to 
 // the angle, up to a cutoff.
+// Also, if we're reasonably close to two or more paths, 
+// choose none of them.
 // If we don't find one, return undefined.
 Point.prototype.getPath = function(angle) {
-    var min = this.ANGLE_CATCH; // Biggest angle we want to consider.
-    var choice = undefined;
+    var pathAngles = [{ path: undefined, angle: Number.POSITIVE_INFINITY }];
     for (var i = 0; i < this.paths.length; i++) {
         var path = this.paths[i];
         var point = path.getCounterpoint(this);
         var a2 = angleBetweenPoints(this.x, this.y, point.x, point.y);
         var difference = getBoundedAngleDifference(angle, a2);
-        if (difference < min) {
-            min = difference;
-            choice = path;
+        if (difference < this.ANGLE_CATCH) {
+            pathAngles.push({ path: path, angle: difference });
         }
     }
-    return choice;
+    if (pathAngles.length == 1) {
+        return pathAngles[0].path;
+    }
+    pathAngles.sort(function(a, b) {
+        return a.angle - b.angle;
+    });
+    var closest = pathAngles[0];
+    var next = pathAngles[1];
+    if (this.MIN_ANGLE_RATIO * closest.angle >= next.angle) {
+        return undefined;
+    }
+    return closest.path;
 };
 
 // Delete ourself and all paths leading away from us.
