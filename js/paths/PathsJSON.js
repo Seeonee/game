@@ -12,7 +12,11 @@ PathsWriter.json = function(paths) {
 };
 
 // Push out a JSON version of our points and paths.
+// We translate all our points so that 
+// p1 is at (0, 0).
 PathsWriter.prototype._json = function() {
+    var minx = this.paths.points[0].x;
+    var miny = this.paths.points[0].y;
     var result = '';
     var points = {};
     for (var i = 0; i < this.paths.points.length; i++) {
@@ -22,8 +26,8 @@ PathsWriter.prototype._json = function() {
     for (var i = 0; i < this.paths.points.length; i++) {
         var point = this.paths.points[i];
         result += '\n"p' + i + '": {\n';
-        result += '"x": ' + point.x + ',\n';
-        result += '"y": ' + point.y + ',\n';
+        result += '"x": ' + (point.x - minx) + ',\n';
+        result += '"y": ' + (point.y - miny) + ',\n';
         result += '"pathsTo": [\n';
         for (var j = 0; j < point.paths.length; j++) {
             var path = point.paths[j];
@@ -55,7 +59,11 @@ PathsLoader.load = function(game, json) {
 };
 
 // Load a JSON representation of points and paths.
+// We also translate all loaded points so that 
+// all points have sufficiently positive x and y.
 PathsLoader.prototype._load = function() {
+    var minx = Number.POSITIVE_INFINITY;
+    var miny = Number.POSITIVE_INFINITY;
     this.paths = new Paths(this.game);
     var points = {};
     var keys = Object.keys(this.json);
@@ -63,6 +71,8 @@ PathsLoader.prototype._load = function() {
         var key = keys[i];
         var pointObj = this.json[key];
         var point = this.paths.addPoint(pointObj.x, pointObj.y);
+        minx = (point.x < minx) ? point.x : minx;
+        miny = (point.y < miny) ? point.y : miny;
         points[key] = point;
     }
     for (var i = 0; i < keys.length; i++) {
@@ -74,6 +84,11 @@ PathsLoader.prototype._load = function() {
                 points[key].connectTo(points[otherKey]);
             }
         }
+    }
+    for (var i = 0; i < this.paths.points.length; i++) {
+        var point = this.paths.points[i];
+        point.x += (50 - minx);
+        point.y += (50 - miny);
     }
     return this.paths;
 };
