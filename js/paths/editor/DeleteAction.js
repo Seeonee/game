@@ -3,7 +3,7 @@ var DeleteAction = function(editor) {
     this.editor = editor;
     this.start = this.editor.game.time.now;
     this.threshold = 1000;
-    this.editor.ball.tint = EditorAvatar.DELETE_COLOR;
+    this.editor.children[0].tint = EditorAvatar.DELETE_COLOR;
 }
 
 // No movement allowed while charging up a delete.
@@ -14,7 +14,7 @@ DeleteAction.prototype.update = function() {
     var elapsed = Math.min(this.editor.game.time.now - this.start, this.threshold);
     var ratio = elapsed / this.threshold;
     if (ratio == 1) {
-        this.editor.ball.tint = EditorAvatar.DELETE_MERGE_COLOR;
+        this.editor.children[0].tint = EditorAvatar.DELETE_MERGE_COLOR;
     }
     if (this.editor.justReleased(EditorAvatar.DELETE_BUTTON)) {
         if (this.editor.point) {
@@ -30,7 +30,7 @@ DeleteAction.prototype.update = function() {
             this.editor.paths.deletePath(this.editor.path);
             this.editor.path = undefined;
         }
-        this.editor.ball.tint = this.editor.graphics.COLOR;
+        this.editor.children[0].tint = this.editor.graphics.COLOR;
         this.editor.action = undefined; // We're done.
     }
 };

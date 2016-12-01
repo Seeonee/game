@@ -53,6 +53,8 @@ var PathsLoader = function(game, json) {
     this.json = json;
 };
 
+PathsLoader.OFFSET = 100;
+
 // Convenience method that handles instantiating the loader.
 PathsLoader.load = function(game, json) {
     return new PathsLoader(game, json)._load();
@@ -87,8 +89,8 @@ PathsLoader.prototype._load = function() {
     }
     for (var i = 0; i < this.paths.points.length; i++) {
         var point = this.paths.points[i];
-        point.x += (50 - minx);
-        point.y += (50 - miny);
+        point.x += (PathsLoader.OFFSET - minx);
+        point.y += (PathsLoader.OFFSET - miny);
     }
     return this.paths;
 };
