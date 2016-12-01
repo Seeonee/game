@@ -5,6 +5,8 @@ var FloatAction = function(editor) {
     this.cacheAllPaths();
     this.x = this.editor.x;
     this.y = this.editor.y;
+    this.point = undefined;
+    this.path = undefined;
 }
 
 // Pre-walk the list of available paths.
@@ -29,31 +31,25 @@ FloatAction.prototype.move = function(angle, ratio) {
     var speed = ratio * EditorAvatar.FLOAT_MAX_SPEED;
     this.editor.body.velocity.x = speed * Math.sin(angle);
     this.editor.body.velocity.y = speed * Math.cos(angle);
+    this.point = this.findNearbyPoint();
+    this.path = (this.point) ? undefined : this.findNearbyPath();
+    if (this.point) {
+        this.editor.scale.setTo(EditorAvatar.FLOAT_POINT_ICON_SCALE);
+    } else if (this.path) {
+        this.editor.scale.setTo(EditorAvatar.FLOAT_PATH_ICON_SCALE);
+    } else {
+        this.editor.scale.setTo(EditorAvatar.FLOAT_ICON_SCALE);
+    }
 };
 
 // Handle an update while holding the button.
 FloatAction.prototype.update = function() {
     Avatar.prototype.update.call(this.editor);
-
-    var point = this.findNearbyPoint();
-    var path = undefined;
-    if (!point) {
-        path = this.findNearbyPath();
-    }
-
-    if (point) {
-        this.editor.scale.setTo(EditorAvatar.FLOAT_POINT_ICON_SCALE);
-    } else if (path) {
-        this.editor.scale.setTo(EditorAvatar.FLOAT_PATH_ICON_SCALE);
-    } else {
-        this.editor.scale.setTo(EditorAvatar.FLOAT_ICON_SCALE);
-    }
-
     if (this.editor.justReleased(EditorAvatar.FLOAT_BUTTON)) {
-        if (point) {
-            this.snapToPoint(point);
-        } else if (path) {
-            this.snapToPath(path);
+        if (this.point) {
+            this.snapToPoint(this.point);
+        } else if (this.path) {
+            this.snapToPath(this.path);
         } else {
             this.snapToStartingValues();
         }
