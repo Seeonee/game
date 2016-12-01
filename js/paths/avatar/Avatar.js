@@ -7,7 +7,7 @@ var Avatar = function(game, graphics) {
     this.POINT_SNAP_RADIUS = 3;
     this.MIN_VELOCITY = 0.1;
     this.TILT_TOTAL_ANGLE = Math.PI / 2;
-    this.TILT_FULLSPEED_ANGLE = this.TILT_TOTAL_ANGLE - Math.PI / 4;
+    this.TILT_FULLSPEED_ANGLE = this.TILT_TOTAL_ANGLE * 0.75;
     this.TILT_PARTIAL_ANGLE = this.TILT_TOTAL_ANGLE - this.TILT_FULLSPEED_ANGLE;
 
     this.game = game;
@@ -46,6 +46,7 @@ Avatar.prototype.move = function(angle, ratio) {
 
     // Figure out where we are, and where we're headed.
     this.destination = undefined;
+    fakeAngle = undefined;
     if (ratio > 0) {
         if (this.point) {
             var path = this.point.getPath(angle);
@@ -82,7 +83,11 @@ Avatar.prototype.move = function(angle, ratio) {
                 this.y = this.point.y;
             }
         } else if (this.path) {
-            this.destination = this.path.getPoint(angle);
+            var target = this.path.getPoint(angle, this.x, this.y);
+            if (target) {
+                this.destination = target.point;
+                fakeAngle = target.fakeAngle;
+            }
         }
     } else if (this.point) {
         // We may have overshot and then released the joystick.
@@ -108,7 +113,8 @@ Avatar.prototype.move = function(angle, ratio) {
         } else {
             // If we're not lined up well with our target angle,
             // reduce tilt accordingly.
-            var a3 = getBoundedAngleDifference(angle, a2) - this.TILT_FULLSPEED_ANGLE;
+            var a4 = (fakeAngle) ? fakeAngle : a2;
+            var a3 = getBoundedAngleDifference(angle, a4) - this.TILT_FULLSPEED_ANGLE;
             if (a3 > 0) {
                 ratio *= 1 - (a3 / this.TILT_PARTIAL_ANGLE);
             }

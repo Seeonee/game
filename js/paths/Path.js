@@ -25,12 +25,53 @@ Path.prototype.getCounterpoint = function(point) {
 };
 
 // Figure out which endpoint is in the direction 
-// of a particular angle, as judged from the midpoint.
-Path.prototype.getPoint = function(angle) {
+// of a particular angle, as judged from an (x, y) 
+// along our length.
+// If we're near an endpoint, we also increasingly 
+// weigh the other paths we might be pointing towards 
+// besides ourself.
+// Note that we actually return an object with two 
+// key'd values:
+// .point: the point to head towards
+// .angle: the delta between our tilt angle and the angle towards our fake point
+// .fakePoint: the fake point that's allowing the input to be valid
+// .fakeAngle: the angle towards our fake point
+Path.prototype.getPoint = function(angle, x, y) {
+    var targets = [];
     var df = getBoundedAngleDifference(angle, this.angleForward);
     var db = getBoundedAngleDifference(angle, this.angleBackward);
-    if (Math.min(df, db) < this.ANGLE_CATCH) {
-        return (df < db) ? this.p2 : this.p1;
+    targets.push({ angle: df, point: this.p2, fake: this.p2 });
+    targets.push({ angle: db, point: this.p1, fake: this.p1 });
+
+    var points = [this.p1, this.p2];
+    for (var i = 0; i < points.length; i++) {
+        var endpoint = points[i];
+        var ratio = 1 - (distanceBetweenPoints(x, y, endpoint.x, endpoint.y) / this.length);
+        for (var j = 0; j < endpoint.paths.length; j++) {
+            var path = endpoint.paths[j];
+            if (path === this) {
+                continue;
+            }
+            var a = (path.p1 === endpoint) ? path.angleForward : path.angleBackward;
+            var d = ratio * path.length;
+            var x2 = endpoint.x + d * Math.sin(a);
+            var y2 = endpoint.y + d * Math.cos(a);
+            var a2 = angleBetweenPoints(x, y, x2, y2);
+            var a3 = getBoundedAngleDifference(angle, a2);
+            targets.push({
+                point: endpoint,
+                angle: a3,
+                fakePoint: { x: x2, y: y2 },
+                fakeAngle: a2
+            });
+        }
+    }
+    targets.sort(function(a, b) {
+        return a.angle - b.angle;
+    });
+    var closest = targets[0];
+    if (closest.angle <= this.ANGLE_CATCH) {
+        return closest;
     }
     return undefined;
 };
