@@ -37,6 +37,15 @@ Point.prototype.isConnectedTo = function(point) {
     return false;
 };
 
+// Called during the draw walk by our Paths object.
+// This gives us a chance to render ourself to the bitmap.
+Point.prototype.draw = function(paths) {
+    paths.bitmap.context.beginPath();
+    paths.bitmap.context.arc(this.x, this.y,
+        Math.floor(paths.PATH_WIDTH / 2), 0, 2 * Math.PI, false);
+    paths.bitmap.context.fill();
+}
+
 // Convenience method for creating a connected point.
 Point.prototype.add = function(x, y) {
     var point = new Point(x, y);

@@ -10,8 +10,10 @@ var Paths = function(game, points) {
     this.PATH_COLOR = '#2CABD9';
     this.DEBUG_COLOR = '#D92C57';
     this.PATH_WIDTH = 7;
-    this.LINE_CAP_STYLE = 'round';
+    this.LINE_CAP_STYLE = 'butt';
     this.LINE_JOIN_STYLE = 'round';
+    this.LINE_DASH = [18, 7];
+    this.LINE_DASH_OFFSET = 11;
 
     this.game = game;
     this.dirty = false;
@@ -115,6 +117,7 @@ Paths.prototype.drawPaths = function() {
     this.bitmap.context.lineWidth = this.PATH_WIDTH;
     this.bitmap.context.lineCap = this.LINE_CAP_STYLE;
     this.bitmap.context.lineJoin = this.LINE_JOIN_STYLE;
+    this.bitmap.context.lineDashOffset = this.LINE_DASH_OFFSET;
 
     var pointsVisited = {};
     for (var i = 0; i < this.points.length; i++) {
@@ -123,10 +126,7 @@ Paths.prototype.drawPaths = function() {
         if (key in pointsVisited) {
             continue;
         }
-        this.bitmap.context.beginPath();
-        this.bitmap.context.moveTo(point.x, point.y);
-        this.drawPaths_walk(point, undefined,
-            this.bitmap, pointsVisited);
+        this.drawPaths_walk(point, undefined, pointsVisited);
     }
     this.bitmap.dirty = true;
 };
@@ -134,8 +134,7 @@ Paths.prototype.drawPaths = function() {
 // Walk to a point during our recursive draw strategy.
 // This will trace out along all paths leading away from this node,
 // then trace back to the node it came from as it returns.
-Paths.prototype.drawPaths_walk = function(
-    point, from, bitmap, pointsVisited) {
+Paths.prototype.drawPaths_walk = function(point, from, pointsVisited) {
     var key = point.asKey();
     if (!(key in pointsVisited)) {
         // Mark as visited.
@@ -148,19 +147,11 @@ Paths.prototype.drawPaths_walk = function(
                 if (to == from) {
                     continue;
                 }
-                bitmap.context.lineTo(to.x, to.y);
-                this.drawPaths_walk(to, point, bitmap, pointsVisited);
+                path.draw(this);
+                this.drawPaths_walk(to, point, pointsVisited);
             }
-        } else {
-            this.bitmap.context.arc(point.x, point.y,
-                this.PATH_WIDTH / 2, 0, 2 * Math.PI, false);
-            this.bitmap.context.fill();
         }
-    }
-    // Draw a path back to where we came from.
-    if (from) {
-        bitmap.context.lineTo(from.x, from.y);
-        bitmap.context.stroke();
+        point.draw(this);
     }
 };
 
