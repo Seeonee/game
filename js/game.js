@@ -7,7 +7,7 @@ var GameState = function(game) {};
 // Load images and sounds
 GameState.prototype.preload = function() {
     AVATAR_GRAPHICS.preload(game);
-    game.load.json('level2', 'assets/levels/level2.json');
+    this.game.load.json('level', 'assets/levels/level2.json');
 };
 
 
@@ -16,13 +16,13 @@ GameState.prototype.create = function() {
     this.game.stage.backgroundColor = 0xffffff;
     this.createPaths();
 
-    game.time.advancedTiming = true; // For FPS tracking.
+    this.game.time.advancedTiming = true; // For FPS tracking.
 };
 
 
 // Create a player sprite.
 GameState.prototype.createPaths = function() {
-    var json = this.game.cache.getJSON('level2');
+    var json = this.game.cache.getJSON('level');
     this.paths = PathsLoader.load(this.game, json);
 
     var gfx = new AVATAR_GRAPHICS();
@@ -38,7 +38,7 @@ GameState.prototype.createPaths = function() {
 // Create a player sprite.
 GameState.prototype.render = function() {
     if (FPS_DISPLAY) {
-        game.debug.text(game.time.fps, 2, 14, "#D92C57"); // FPS tracking.
+        this.game.debug.text(this.game.time.fps, 2, 14, "#D92C57"); // FPS tracking.
     };
 };
 
