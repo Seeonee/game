@@ -15,6 +15,7 @@ var Avatar = function(game, graphics) {
     // Set up graphics and physics.
     Phaser.Sprite.call(this, game, 0, 0);
     this.graphics.createGraphics(this);
+    this.body.collideWorldBounds = true;
     // Track which point we're starting on.
     this.destination = undefined;
     this.path = undefined;
@@ -137,6 +138,7 @@ Avatar.prototype.roundVelocity = function(velocity) {
 // Optional physics debug view.
 Avatar.prototype.update = function() {
     // this.game.debug.body(this);
+    // this.game.debug.spriteCoords(this);
 };
 
 

@@ -82,7 +82,7 @@ FloatAction.prototype.findNearbyPath = function() {
         var d = distanceBetweenPoints(path.p1.x, path.p1.y, this.editor.x, this.editor.y);
         var a1 = angleBetweenPoints(path.p1.x, path.p1.y, this.editor.x, this.editor.y);
         var a2 = path.angleForward;
-        var a3 = Math.abs(a2 - a1); // getBoundedAngleDifference(a1, a2);
+        var a3 = getBoundedAngleDifference(a1, a2);
         var offset = d * Math.sin(a3);
         var length = d * Math.cos(a3);
         if (length < -EditorAvatar.FLOAT_SNAP_DISTANCE ||

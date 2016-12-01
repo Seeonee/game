@@ -13,7 +13,7 @@ GameState.prototype.preload = function() {
 
 // Setup the example
 GameState.prototype.create = function() {
-    this.game.stage.backgroundColor = 0xffffff;
+    this.game.stage.backgroundColor = 0x272822;
     this.createPaths();
 
     this.game.time.advancedTiming = true; // For FPS tracking.

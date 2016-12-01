@@ -25,7 +25,7 @@ var Paths = function(game, points) {
     }
     // Set up our bitmap.
     this.bitmap = this.game.add.bitmapData(this.game.width, this.game.height);
-    this.game.add.image(0, 0, this.bitmap);
+    this.image = this.game.add.image(0, 0, this.bitmap);
     // We support a joystick for input.
     this.joystick = undefined;
 };
