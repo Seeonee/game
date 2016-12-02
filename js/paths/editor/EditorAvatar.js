@@ -25,8 +25,8 @@ EditorAvatar.FLOAT_POINT_ICON_SCALE = 0.9;
 EditorAvatar.FLOAT_PATH_ICON_SCALE = 0.7;
 EditorAvatar.FLOAT_ICON_SCALE = 0.5;
 
-EditorAvatar.DELETE_COLOR = 0xD92C57;
-EditorAvatar.DELETE_MERGE_COLOR = 0xE75D75;
+EditorAvatar.DELETE_COLOR = COLOR.RED.i;
+EditorAvatar.DELETE_MERGE_COLOR = COLOR.GREY.i;
 
 
 // Quick access to the gamepad.

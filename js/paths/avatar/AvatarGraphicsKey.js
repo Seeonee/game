@@ -1,6 +1,5 @@
 // Handles rendering for avatar objects.
-var AvatarGraphicsKey
- = function() {
+var AvatarGraphicsKey = function() {
     // Constants, for now.
     this.SMOKE_LIFETIME = 900; // ms
     this.SMOKE_RATIO_THRESHOLD = 0.75;
@@ -15,9 +14,7 @@ AvatarGraphicsKey.prototype.createGraphics = function(avatar) {
     avatar.keyplate.y = yOffset;
     avatar.keyplate.anchor.setTo(0.5, 0.5);
     // Initialize our keyhole.
-    avatar.keyhole = avatar.addChild(game.make.sprite(0, 0, 'keyhole'));
-    avatar.keyhole.y = (-avatar.keyhole.height / 4.5) + yOffset;
-    avatar.keyhole.anchor.setTo(0.5, 0.5);
+    this.setMasq(avatar, AvatarMasq.KEYHOLE);
     // Enable physics.
     avatar.game.physics.enable(avatar, Phaser.Physics.ARCADE);
     // For fun, adjust bounding box to match keyplate,
@@ -31,6 +28,17 @@ AvatarGraphicsKey.prototype.createGraphics = function(avatar) {
     var dh = (w2 / 2) - ((h2 + y) / 2);
     avatar.body.setSize(w2, h2 + dh, x, y);
     this.createSmokeEmitter(avatar);
+};
+
+// Put on a mask!
+AvatarGraphicsKey.prototype.setMasq = function(avatar, masq) {
+    if (avatar.masq) {
+        avatar.removeChild(avatar.masq);
+    }
+    avatar.masq = avatar.addChild(masq.sprite);
+    avatar.masq.y = masq.yOffset;
+    avatar.masq.scale.setTo(masq.scale);
+    avatar.masq.anchor.setTo(0.5, 0.5);
 };
 
 // Create a smoke emitter. Hooray!
@@ -67,4 +75,30 @@ AvatarGraphicsKey.preload = function(game) {
     game.load.image('keyplate', 'assets/keyplate.png');
     game.load.image('keyhole', 'assets/keyhole.png');
     game.load.image('smoke', 'assets/smoke.png');
+    game.load.image('herne', 'assets/mask_herne.png');
+    game.load.image('norwife', 'assets/mask_norwife.png');
+    game.load.image('ragna', 'assets/mask_ragna.png');
+    game.load.image('dunlevy', 'assets/mask_dunlevy.png');
+};
+
+// Called by the main game's create().
+AvatarGraphicsKey.create = function(game) {
+    AvatarMasq.KEYHOLE = new AvatarMasq(game, 'keyhole', -55);
+    AvatarMasq.HERNE = new AvatarMasq(game, 'herne', -61);
+    AvatarMasq.NORWIFE = new AvatarMasq(game, 'norwife', -55);
+    AvatarMasq.RAGNA = new AvatarMasq(game, 'ragna', -62);
+    AvatarMasq.DUNLEVY = new AvatarMasq(game, 'dunlevy', -55);
+};
+
+
+// A mask that can be attached to the avatar.
+// Named to avoid clashing with sprite.mask.
+var AvatarMasq = function(game, name, yOffset, scale) {
+    this.name = name;
+    this.sprite = game.make.sprite(0, 0, name);
+    console.log(name, this.sprite.height);
+    this.yOffset = yOffset;
+    this.scale = (scale) ? scale : 1;
+};
+
 };

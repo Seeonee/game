@@ -1,7 +1,7 @@
 // Handles rendering for avatar objects.
 var AvatarGraphicsBall = function() {
     // Constants.
-    this.COLOR = 0x2CABD9;
+    this.COLOR = COLOR.BLUE.i;
     this.RADIUS = 16;
 };
 
@@ -36,5 +36,10 @@ AvatarGraphicsBall.prototype.move = function(avatar) {
 
 // Called by the main game's preload().
 AvatarGraphicsBall.preload = function(game) {
+    // Nothing.
+};
+
+// Called by the main game's create().
+AvatarGraphicsBall.create = function(game) {
     // Nothing.
 };

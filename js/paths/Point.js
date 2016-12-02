@@ -41,6 +41,7 @@ Point.prototype.isConnectedTo = function(point) {
 // This gives us a chance to render ourself to the bitmap.
 Point.prototype.draw = function(paths) {
     paths.bitmap.context.beginPath();
+    paths.bitmap.context.fillStyle = paths.PATH_COLOR;
     paths.bitmap.context.arc(this.x, this.y,
         Math.floor(paths.PATH_WIDTH / 2), 0, 2 * Math.PI, false);
     paths.bitmap.context.fill();

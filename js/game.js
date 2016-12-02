@@ -1,6 +1,6 @@
 var FPS_DISPLAY = true;
-// var AVATAR_GRAPHICS = AvatarGraphicsKey;
-var AVATAR_GRAPHICS = AvatarGraphicsBall;
+var AVATAR_GRAPHICS = AvatarGraphicsKey;
+// var AVATAR_GRAPHICS = AvatarGraphicsBall;
 
 var GameState = function(game) {};
 
@@ -13,6 +13,7 @@ GameState.prototype.preload = function() {
 
 // Setup the example
 GameState.prototype.create = function() {
+    AVATAR_GRAPHICS.create(game);
     this.game.stage.backgroundColor = 0x272822;
     this.createPaths();
 

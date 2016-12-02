@@ -8,7 +8,7 @@ var AddFromPathAction = function(editor) {
     // Initialize bitmap for rendering.
     this.bitmap = this.editor.game.add.bitmapData(
         this.editor.game.width, this.editor.game.height);
-    this.bitmap.context.fillStyle = '#D92C57';
+    this.bitmap.context.fillStyle = COLOR.RED.s;
     this.image = this.editor.game.add.image(0, 0, this.bitmap);
     this.cacheMarks();
     this.renderMarks();
@@ -119,11 +119,11 @@ AddFromPointAction.prototype.renderMarks = function() {
         this.editor.game.width, this.editor.game.height);
     if (this.near) {
         if (this.valid) {
-            this.bitmap.context.fillStyle = '#D92C57';
-            this.bitmap.context.strokeStyle = '#D92C57';
+            this.bitmap.context.fillStyle = COLOR.RED.s;
+            this.bitmap.context.strokeStyle = COLOR.RED.s;
         } else {
-            this.bitmap.context.fillStyle = '#A4A4A4';
-            this.bitmap.context.strokeStyle = '#A4A4A4';
+            this.bitmap.context.fillStyle = COLOR.GREY.s;
+            this.bitmap.context.strokeStyle = COLOR.GREY.s;
         }
         this.bitmap.context.beginPath();
         this.bitmap.context.moveTo(this.point.x, this.point.y);

@@ -7,8 +7,8 @@
 var Paths = function(game, points) {
     // Constants, for now.
     this.HIGHLIGHT_AVATAR_PATHS = false;
-    this.PATH_COLOR = '#2CABD9';
-    this.DEBUG_COLOR = '#D92C57';
+    this.PATH_COLOR = COLOR.BLUE.s;
+    this.DEBUG_COLOR = COLOR.RED.s;
     this.PATH_WIDTH = 7;
     this.LINE_CAP_STYLE = 'butt';
     this.LINE_JOIN_STYLE = 'round';
