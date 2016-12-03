@@ -35,10 +35,13 @@ AvatarGraphicsKey.prototype.setMasq = function(avatar, masq) {
     if (avatar.masq) {
         avatar.removeChild(avatar.masq);
     }
+    var slide = 5;
     avatar.masq = avatar.addChild(masq.sprite);
-    avatar.masq.y = masq.yOffset;
+    avatar.masq.y = masq.yOffset + slide;
     avatar.masq.scale.setTo(masq.scale);
     avatar.masq.anchor.setTo(0.5, 0.5);
+    avatar.game.add.tween(avatar.masq).to({ y: masq.yOffset },
+        300, Phaser.Easing.Cubic.Out, true);
 };
 
 // Create a smoke emitter. Hooray!
