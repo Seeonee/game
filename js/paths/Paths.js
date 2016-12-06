@@ -28,8 +28,8 @@ var Paths = function(game, points) {
     // Set up our bitmap.
     this.bitmap = this.game.add.bitmapData(this.game.width, this.game.height);
     this.image = this.game.add.image(0, 0, this.bitmap);
-    // We support a joystick for input.
-    this.joystick = undefined;
+    // We support a gamepad joystick for input.
+    this.gpad = undefined;
 };
 
 // Create a new point, optionally connected to an existing one.
@@ -159,12 +159,8 @@ Paths.prototype.drawPaths_walk = function(point, from, pointsVisited) {
 // Also (optionally) highlight debug info.
 Paths.prototype.update = function() {
     // Figure it if we need to render (again).
-    if (this.dirty || (this.joystick && this.HIGHLIGHT_AVATAR_PATHS)) {
+    if (this.dirty || (this.gpad && this.HIGHLIGHT_AVATAR_PATHS)) {
         this.dirty = false;
         this.drawPaths();
-    }
-    // Move that avatar!
-    if (this.joystick) {
-        this.avatar.move(this.joystick.angle, this.joystick.tilt);
     }
 };

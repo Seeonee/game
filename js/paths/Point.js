@@ -65,8 +65,8 @@ Point.prototype.getPath = function(angle) {
     for (var i = 0; i < this.paths.length; i++) {
         var path = this.paths[i];
         var point = path.getCounterpoint(this);
-        var a2 = angleBetweenPoints(this.x, this.y, point.x, point.y);
-        var difference = getBoundedAngleDifference(angle, a2);
+        var a2 = Utils.angleBetweenPoints(this.x, this.y, point.x, point.y);
+        var difference = Utils.getBoundedAngleDifference(angle, a2);
         if (difference < this.ANGLE_CATCH) {
             pathAngles.push({ path: path, angle: difference });
         }

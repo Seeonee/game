@@ -18,10 +18,6 @@ GameState.prototype.create = function() {
     this.game.stage.backgroundColor = 0x272822;
 
     this.createPaths();
-    this.p = new Power(this.game, 375, 200, 'crown');
-    this.game.add.existing(this.p);
-    this.paths.points[6].paths[1].power = this.p;
-
     this.createAvatar();
 
     this.game.time.advancedTiming = true; // For FPS tracking.
@@ -34,9 +30,9 @@ GameState.prototype.create = function() {
 GameState.prototype.createPaths = function() {
     var json = this.game.cache.getJSON('level');
     this.paths = PathsLoader.load(this.game, json);
-    var joystick = new Joystick(this.game, 650, 450);
-    this.game.add.existing(joystick);
-    this.paths.joystick = joystick;
+
+    this.game.input.gamepad.start();
+    this.paths.gpad = new GPad(this.game, this.game.input.gamepad.pad1);
 };
 
 // Create a player sprite.

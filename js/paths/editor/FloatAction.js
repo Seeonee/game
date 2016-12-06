@@ -64,7 +64,7 @@ FloatAction.prototype.findNearbyPoint = function() {
     var found = undefined;
     for (var i = 0; i < this.points.length; i++) {
         var point = this.points[i];
-        var d = distanceBetweenPoints(this.editor.x, this.editor.y, point.x, point.y);
+        var d = Utils.distanceBetweenPoints(this.editor.x, this.editor.y, point.x, point.y);
         if (d <= min) {
             found = point;
             min = d;
@@ -79,10 +79,10 @@ FloatAction.prototype.findNearbyPath = function() {
     var found = undefined;
     for (var i = 0; i < this.paths.length; i++) {
         var path = this.paths[i];
-        var d = distanceBetweenPoints(path.p1.x, path.p1.y, this.editor.x, this.editor.y);
-        var a1 = angleBetweenPoints(path.p1.x, path.p1.y, this.editor.x, this.editor.y);
+        var d = Utils.distanceBetweenPoints(path.p1.x, path.p1.y, this.editor.x, this.editor.y);
+        var a1 = Utils.angleBetweenPoints(path.p1.x, path.p1.y, this.editor.x, this.editor.y);
         var a2 = path.angleForward;
-        var a3 = getBoundedAngleDifference(a1, a2);
+        var a3 = Utils.getBoundedAngleDifference(a1, a2);
         var offset = d * Math.sin(a3);
         var length = d * Math.cos(a3);
         if (length < -EditorAvatar.FLOAT_SNAP_DISTANCE ||
@@ -109,7 +109,7 @@ FloatAction.prototype.snapToPoint = function(point) {
 
 // Snap onto a path.
 FloatAction.prototype.snapToPath = function(path) {
-    var d = distanceBetweenPoints(path.p1.x, path.p1.y, this.editor.x, this.editor.y);
+    var d = Utils.distanceBetweenPoints(path.p1.x, path.p1.y, this.editor.x, this.editor.y);
     var dx = d * Math.sin(path.angleForward);
     var dy = d * Math.cos(path.angleForward);
     var x = path.p1.x + dx;

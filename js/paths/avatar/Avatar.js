@@ -65,11 +65,11 @@ Avatar.prototype.move = function(angle, ratio) {
                     var xMe = this.x;
                     var yMe = this.y;
                     // How far we overshot.
-                    var dMe = distanceBetweenPoints(xP0, yP0, xMe, yMe);
+                    var dMe = Utils.distanceBetweenPoints(xP0, yP0, xMe, yMe);
                     var xP2 = this.destination.x;
                     var yP2 = this.destination.y;
                     // The direction we *want* to overshoot towards.
-                    var aP2 = angleBetweenPoints(xP0, yP0, xP2, yP2);
+                    var aP2 = Utils.angleBetweenPoints(xP0, yP0, xP2, yP2);
                     var dx2 = dMe * Math.sin(aP2);
                     var dy2 = dMe * Math.cos(aP2);
                     this.x = xP0 + dx2;
@@ -99,9 +99,9 @@ Avatar.prototype.move = function(angle, ratio) {
 
     // Start going there.
     if (this.destination) {
-        var a2 = angleBetweenPoints(
+        var a2 = Utils.angleBetweenPoints(
             this.x, this.y, this.destination.x, this.destination.y);
-        var distance = distanceBetweenPoints(
+        var distance = Utils.distanceBetweenPoints(
             this.x, this.y, this.destination.x, this.destination.y);
         if (distance <= this.POINT_SNAP_RADIUS) {
             // Snap to a point.
@@ -115,7 +115,7 @@ Avatar.prototype.move = function(angle, ratio) {
             // If we're not lined up well with our target angle,
             // reduce tilt accordingly.
             var a4 = (fakeAngle) ? fakeAngle : a2;
-            var a3 = getBoundedAngleDifference(angle, a4) - this.TILT_FULLSPEED_ANGLE;
+            var a3 = Utils.getBoundedAngleDifference(angle, a4) - this.TILT_FULLSPEED_ANGLE;
             if (a3 > 0) {
                 ratio *= 1 - (a3 / this.TILT_PARTIAL_ANGLE);
             }
@@ -137,20 +137,11 @@ Avatar.prototype.roundVelocity = function(velocity) {
 
 // Optional physics debug view.
 Avatar.prototype.update = function() {
+    // Move that avatar!
+    if (this.paths.gpad) {
+        var joystick = this.paths.gpad.getAngleAndTilt();
+        this.move(joystick.angle, joystick.tilt);
+    }
     // this.game.debug.body(this);
     // this.game.debug.spriteCoords(this);
 };
-
-
-// Some fancy tweens that might be fun later.
-// var delay = 1000;
-// this.game.add.tween(this.keyhole).to(
-//     {rotation: 3*Math.PI/4}, 1000, Phaser.Easing.Back.InOut, true, delay + 0);
-// this.game.add.tween(this.keyplate).to(
-//     {height: 0, width: 0}, 500, Phaser.Easing.Back.In, true, delay + 475);
-// this.game.add.tween(this.scale).to(
-//     {x: 2, y: 2}, 2000, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
-
-// this.keyhole.rotation = Math.PI / 4 + this.game.math.angleBetween(
-//     this.x + this.keyhole.x, this.y + (this.keyhole.y * this.scale.y), 
-//     this.game.input.activePointer.x, this.game.input.activePointer.y);

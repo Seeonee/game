@@ -6,10 +6,10 @@ var Path = function(p1, p2) {
     this.p1 = p1;
     this.p2 = p2;
     // Store our angles.
-    this.angleForward = angleBetweenPoints(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
+    this.angleForward = Utils.angleBetweenPoints(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
     this.angleBackward = (this.angleForward + Math.PI) % (2 * Math.PI);
     // Store our length.
-    this.length = distanceBetweenPoints(
+    this.length = Utils.distanceBetweenPoints(
         this.p1.x, this.p1.y,
         this.p2.x, this.p2.y);
 };
@@ -50,15 +50,15 @@ Path.prototype.draw = function(paths) {
 // .fakeAngle: the angle towards our fake point
 Path.prototype.getPoint = function(angle, x, y) {
     var targets = [];
-    var df = getBoundedAngleDifference(angle, this.angleForward);
-    var db = getBoundedAngleDifference(angle, this.angleBackward);
+    var df = Utils.getBoundedAngleDifference(angle, this.angleForward);
+    var db = Utils.getBoundedAngleDifference(angle, this.angleBackward);
     targets.push({ angle: df, point: this.p2, fake: this.p2 });
     targets.push({ angle: db, point: this.p1, fake: this.p1 });
 
     var points = [this.p1, this.p2];
     for (var i = 0; i < points.length; i++) {
         var endpoint = points[i];
-        var ratio = 1 - (distanceBetweenPoints(x, y, endpoint.x, endpoint.y) / this.length);
+        var ratio = 1 - (Utils.distanceBetweenPoints(x, y, endpoint.x, endpoint.y) / this.length);
         for (var j = 0; j < endpoint.paths.length; j++) {
             var path = endpoint.paths[j];
             if (path === this) {
@@ -68,8 +68,8 @@ Path.prototype.getPoint = function(angle, x, y) {
             var d = ratio * path.length;
             var x2 = endpoint.x + d * Math.sin(a);
             var y2 = endpoint.y + d * Math.cos(a);
-            var a2 = angleBetweenPoints(x, y, x2, y2);
-            var a3 = getBoundedAngleDifference(angle, a2);
+            var a2 = Utils.angleBetweenPoints(x, y, x2, y2);
+            var a3 = Utils.getBoundedAngleDifference(angle, a2);
             targets.push({
                 point: endpoint,
                 angle: a3,

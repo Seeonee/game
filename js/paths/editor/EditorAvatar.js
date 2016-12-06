@@ -31,7 +31,7 @@ EditorAvatar.DELETE_MERGE_COLOR = COLOR.GREY.i;
 
 // Quick access to the gamepad.
 EditorAvatar.prototype.pad = function() {
-    return this.paths.joystick.pad1;
+    return this.paths.gpad.pad;
 };
 
 // Move at a given angle and ratio of speed (0 to 1).
