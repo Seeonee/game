@@ -99,9 +99,6 @@ AvatarGraphicsKey.create = function(game) {
 var AvatarMasq = function(game, name, yOffset, scale) {
     this.name = name;
     this.sprite = game.make.sprite(0, 0, name);
-    console.log(name, this.sprite.height);
     this.yOffset = yOffset;
     this.scale = (scale) ? scale : 1;
-};
-
 };

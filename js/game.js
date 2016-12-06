@@ -7,6 +7,7 @@ var GameState = function(game) {};
 // Load images and sounds
 GameState.prototype.preload = function() {
     AVATAR_GRAPHICS.preload(game);
+    Power.preload(game);
     this.game.load.json('level', 'assets/levels/level2.json');
 };
 
@@ -15,7 +16,13 @@ GameState.prototype.preload = function() {
 GameState.prototype.create = function() {
     AVATAR_GRAPHICS.create(game);
     this.game.stage.backgroundColor = 0x272822;
+
     this.createPaths();
+    this.p = new Power(this.game, 375, 200, 'crown');
+    this.game.add.existing(this.p);
+    this.paths.points[6].paths[1].power = this.p;
+
+    this.createAvatar();
 
     this.game.time.advancedTiming = true; // For FPS tracking.
     // this.game.world.setBounds(0, 0, 1920, 1920);
@@ -23,19 +30,21 @@ GameState.prototype.create = function() {
 };
 
 
-// Create a player sprite.
+// Create a path network.
 GameState.prototype.createPaths = function() {
     var json = this.game.cache.getJSON('level');
     this.paths = PathsLoader.load(this.game, json);
+    var joystick = new Joystick(this.game, 650, 450);
+    this.game.add.existing(joystick);
+    this.paths.joystick = joystick;
+};
 
+// Create a player sprite.
+GameState.prototype.createAvatar = function() {
     var gfx = new AVATAR_GRAPHICS();
     // var avatar = new Avatar(this.game, gfx);
     var avatar = new EditorAvatar(this.game, gfx, this.paths);
     this.paths.addAvatar(avatar);
-
-    var joystick = new Joystick(this.game, 650, 450);
-    this.game.add.existing(joystick);
-    this.paths.joystick = joystick;
 };
 
 // Create a player sprite.

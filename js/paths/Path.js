@@ -27,13 +27,9 @@ Path.prototype.getCounterpoint = function(point) {
 // Called during the draw walk by our Paths object.
 // This gives us a chance to render ourself to the bitmap.
 Path.prototype.draw = function(paths) {
-    paths.bitmap.context.setLineDash(
-        (Math.random() > 0.75) ? paths.LINE_DASH : []);
-    if (Math.random() > 0.75) {
-        paths.bitmap.context.strokeStyle = paths.DEBUG_COLOR;
-    } else {
-        paths.bitmap.context.strokeStyle = paths.PATH_COLOR;
-    }
+    // paths.bitmap.context.setLineDash(
+    //     (Math.random() > 0.75) ? paths.LINE_DASH : []);
+    paths.bitmap.context.strokeStyle = paths.PATH_COLOR;
     paths.bitmap.context.beginPath();
     paths.bitmap.context.moveTo(this.p1.x, this.p1.y);
     paths.bitmap.context.lineTo(this.p2.x, this.p2.y);
