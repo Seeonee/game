@@ -1,5 +1,5 @@
 // Base utils class.
-var Utils = new function() {
+var Utils = function() {
     // Initialize constants here.
 };
 
