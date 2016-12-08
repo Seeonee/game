@@ -3,7 +3,7 @@ var DeleteAction = function(editor) {
     this.editor = editor;
     this.start = this.editor.game.time.now;
     this.threshold = 1000;
-    this.editor.children[0].tint = EditorAvatar.DELETE_COLOR;
+    this.editor.children[0].tint = this.editor.game.settings.colors.RED.i;
 }
 
 // No movement allowed while charging up a delete.
@@ -14,9 +14,9 @@ DeleteAction.prototype.update = function() {
     var elapsed = Math.min(this.editor.game.time.now - this.start, this.threshold);
     var ratio = elapsed / this.threshold;
     if (ratio == 1) {
-        this.editor.children[0].tint = EditorAvatar.DELETE_MERGE_COLOR;
+        this.editor.children[0].tint = this.editor.game.settings.colors.GREY.i;
     }
-    if (this.editor.justReleased(EditorAvatar.DELETE_BUTTON)) {
+    if (this.editor.justReleased(this.editor.game.settings.buttonMap.DELETE_BUTTON)) {
         if (this.editor.point) {
             if (ratio < 1) {
                 // Delete the point and its paths.

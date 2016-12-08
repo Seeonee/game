@@ -1,5 +1,5 @@
 // Handles rendering for avatar objects.
-var AvatarGraphicsKey = function() {
+var AvatarGraphicsKey = function(game) {
     // Constants, for now.
     this.SMOKE_LIFETIME = 900; // ms
     this.SMOKE_RATIO_THRESHOLD = 0.75;

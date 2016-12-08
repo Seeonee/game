@@ -5,17 +5,17 @@
 // To finish initializing, create() on it (or wait 
 // for the first update()).
 var Paths = function(game, points) {
+    this.game = game;
     // Constants, for now.
     this.HIGHLIGHT_AVATAR_PATHS = false;
-    this.PATH_COLOR = COLOR.BLUE.s;
-    this.DEBUG_COLOR = COLOR.RED.s;
+    this.PATH_COLOR = this.game.settings.colors.BLUE.s;
+    this.DEBUG_COLOR = this.game.settings.colors.RED.s;
     this.PATH_WIDTH = 7;
     this.LINE_CAP_STYLE = 'butt';
     this.LINE_JOIN_STYLE = 'round';
     this.LINE_DASH = [18, 7];
     this.LINE_DASH_OFFSET = 11;
 
-    this.game = game;
     this.dirty = false;
     // Set up our starting points.
     this.points = [];

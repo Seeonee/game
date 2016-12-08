@@ -45,7 +45,7 @@ FloatAction.prototype.move = function(angle, ratio) {
 // Handle an update while holding the button.
 FloatAction.prototype.update = function() {
     Avatar.prototype.update.call(this.editor);
-    if (this.editor.justReleased(EditorAvatar.FLOAT_BUTTON)) {
+    if (this.editor.justReleased(this.editor.game.settings.buttonMap.FLOAT_BUTTON)) {
         if (this.point) {
             this.snapToPoint(this.point);
         } else if (this.path) {

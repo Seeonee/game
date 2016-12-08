@@ -4,11 +4,11 @@ var AddFromPathAction = function(editor) {
     this.path = this.editor.path;
     this.marks = [];
     this.near = undefined;
-    this.editor.consumeButtonEvent(EditorAvatar.ADD_BUTTON);
+    this.editor.consumeButtonEvent(this.editor.game.settings.buttonMap.ADD_BUTTON);
     // Initialize bitmap for rendering.
     this.bitmap = this.editor.game.add.bitmapData(
         this.editor.game.width, this.editor.game.height);
-    this.bitmap.context.fillStyle = COLOR.RED.s;
+    this.bitmap.context.fillStyle = this.editor.game.settings.colors.RED.s;
     this.image = this.editor.game.add.image(0, 0, this.bitmap);
     this.cacheMarks();
     this.renderMarks();
@@ -75,11 +75,12 @@ AddFromPathAction.prototype.getSelectedMark = function() {
 // Handle an update while holding the button.
 AddFromPathAction.prototype.update = function() {
     var done = false;
-    if (this.editor.justReleased(EditorAvatar.ADD_CANCEL_BUTTON)) {
+    var buttonMap = this.editor.game.settings.buttonMap;
+    if (this.editor.justReleased(buttonMap.ADD_CANCEL_BUTTON)) {
         // Just finish; don't add any paths.
         done = true;
-        this.editor.consumeButtonEvent(EditorAvatar.ADD_CANCEL_BUTTON);
-    } else if (this.editor.justReleased(EditorAvatar.ADD_BUTTON)) {
+        this.editor.consumeButtonEvent(buttonMap.ADD_CANCEL_BUTTON);
+    } else if (this.editor.justReleased(buttonMap.ADD_BUTTON)) {
         // New point, coming atcha!
         if (this.near) {
             var point = this.editor.paths.addPointToPathAtCoords(this.path,
@@ -88,7 +89,7 @@ AddFromPathAction.prototype.update = function() {
             this.editor.point = point;
         }
         done = true;
-        this.editor.consumeButtonEvent(EditorAvatar.ADD_BUTTON);
+        this.editor.consumeButtonEvent(buttonMap.ADD_BUTTON);
     }
     if (done) {
         this.image.destroy();
@@ -104,7 +105,7 @@ var AddFromPointAction = function(editor) {
     this.point = this.editor.point;
     this.near = undefined;
     this.valid = false; // Only allow 45 degree angles.
-    this.editor.consumeButtonEvent(EditorAvatar.ADD_BUTTON);
+    this.editor.consumeButtonEvent(this.editor.game.settings.buttonMap.ADD_BUTTON);
     // Initialize bitmap for rendering.
     this.bitmap = this.editor.game.add.bitmapData(
         this.editor.game.width, this.editor.game.height);
@@ -119,11 +120,11 @@ AddFromPointAction.prototype.renderMarks = function() {
         this.editor.game.width, this.editor.game.height);
     if (this.near) {
         if (this.valid) {
-            this.bitmap.context.fillStyle = COLOR.RED.s;
-            this.bitmap.context.strokeStyle = COLOR.RED.s;
+            this.bitmap.context.fillStyle = this.editor.game.settings.colors.RED.s;
+            this.bitmap.context.strokeStyle = this.editor.game.settings.colors.RED.s;
         } else {
-            this.bitmap.context.fillStyle = COLOR.GREY.s;
-            this.bitmap.context.strokeStyle = COLOR.GREY.s;
+            this.bitmap.context.fillStyle = this.editor.game.settings.colors.GREY.s;
+            this.bitmap.context.strokeStyle = this.editor.game.settings.colors.GREY.s;
         }
         this.bitmap.context.beginPath();
         this.bitmap.context.moveTo(this.point.x, this.point.y);
@@ -168,11 +169,12 @@ AddFromPointAction.prototype.cacheSelectedMark = function() {
 // Handle an update while holding the button.
 AddFromPointAction.prototype.update = function() {
     var done = false;
-    if (this.editor.justReleased(EditorAvatar.ADD_CANCEL_BUTTON)) {
+    var buttonMap = this.editor.game.settings.buttonMap;
+    if (this.editor.justReleased(buttonMap.ADD_CANCEL_BUTTON)) {
         // Just finish; don't add any paths.
         done = true;
-        this.editor.consumeButtonEvent(EditorAvatar.ADD_CANCEL_BUTTON);
-    } else if (this.editor.justReleased(EditorAvatar.ADD_BUTTON)) {
+        this.editor.consumeButtonEvent(buttonMap.ADD_CANCEL_BUTTON);
+    } else if (this.editor.justReleased(buttonMap.ADD_BUTTON)) {
         // New point, coming atcha!
         if (this.near && this.valid) {
             // Find out if a point already exists at these coordinates.
@@ -194,7 +196,7 @@ AddFromPointAction.prototype.update = function() {
             }
         }
         done = true;
-        this.editor.consumeButtonEvent(EditorAvatar.ADD_BUTTON);
+        this.editor.consumeButtonEvent(buttonMap.ADD_BUTTON);
     }
     if (done) {
         this.image.destroy();

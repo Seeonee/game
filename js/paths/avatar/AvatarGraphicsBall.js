@@ -1,7 +1,7 @@
 // Handles rendering for avatar objects.
-var AvatarGraphicsBall = function() {
+var AvatarGraphicsBall = function(game) {
     // Constants.
-    this.COLOR = COLOR.BLUE.i;
+    this.COLOR = game.settings.colors.BLUE.i;
     this.RADIUS = 16;
 };
 

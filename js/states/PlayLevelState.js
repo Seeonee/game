@@ -45,7 +45,7 @@ PlayLevelState.prototype.createPaths = function() {
 
 // Create a player sprite.
 PlayLevelState.prototype.createAvatar = function() {
-    var gfx = new AVATAR_GRAPHICS();
+    var gfx = new AVATAR_GRAPHICS(this.game);
     // var avatar = new Avatar(this.game, gfx);
     var avatar = new EditorAvatar(this.game, gfx, this.paths);
     this.paths.addAvatar(avatar);

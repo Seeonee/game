@@ -10,11 +10,6 @@ EditorAvatar.prototype = Object.create(Avatar.prototype);
 EditorAvatar.prototype.constructor = EditorAvatar;
 
 // Constants.
-EditorAvatar.ADD_BUTTON = Phaser.Gamepad.PS3XC_X;
-EditorAvatar.ADD_CANCEL_BUTTON = Phaser.Gamepad.PS3XC_CIRCLE;
-EditorAvatar.FLOAT_BUTTON = Phaser.Gamepad.PS3XC_R2;
-EditorAvatar.DELETE_BUTTON = Phaser.Gamepad.PS3XC_CIRCLE;
-
 EditorAvatar.ADD_PATH_MARK_RADIUS = 5;
 EditorAvatar.ADD_PATH_SELECTED_MARK_RADIUS = 8;
 EditorAvatar.ADD_SNAP_DISTANCE = 15;
@@ -24,9 +19,6 @@ EditorAvatar.FLOAT_SNAP_DISTANCE = 15;
 EditorAvatar.FLOAT_POINT_ICON_SCALE = 0.9;
 EditorAvatar.FLOAT_PATH_ICON_SCALE = 0.7;
 EditorAvatar.FLOAT_ICON_SCALE = 0.5;
-
-EditorAvatar.DELETE_COLOR = COLOR.RED.i;
-EditorAvatar.DELETE_MERGE_COLOR = COLOR.GREY.i;
 
 
 // Quick access to the gamepad.
@@ -86,16 +78,17 @@ EditorAvatar.prototype.update = function() {
     if (this.action) {
         this.action.update(this);
     } else {
+        var buttonMap = this.game.settings.buttonMap;
         // Starting an action?
-        if (this.justReleased(EditorAvatar.ADD_BUTTON)) {
+        if (this.justReleased(buttonMap.ADD_BUTTON)) {
             if (this.path) {
                 this.action = new AddFromPathAction(this);
             } else if (this.point) {
                 this.action = new AddFromPointAction(this);
             }
-        } else if (this.justPressed(EditorAvatar.DELETE_BUTTON)) {
+        } else if (this.justPressed(buttonMap.DELETE_BUTTON)) {
             this.action = new DeleteAction(this);
-        } else if (this.justPressed(EditorAvatar.FLOAT_BUTTON)) {
+        } else if (this.justPressed(buttonMap.FLOAT_BUTTON)) {
             this.action = new FloatAction(this);
         }
 
