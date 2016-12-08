@@ -4,6 +4,8 @@ var DeleteAction = function(editor) {
     this.start = this.editor.game.time.now;
     this.threshold = 1000;
     this.editor.children[0].tint = this.editor.game.settings.colors.RED.i;
+    this.editor.body.velocity.x = 0;
+    this.editor.body.velocity.y = 0;
 }
 
 // Handle an update while holding the button.

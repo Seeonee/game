@@ -94,8 +94,6 @@ AddFromPathAction.prototype.update = function() {
     if (done) {
         this.image.destroy();
         this.editor.action = undefined;
-    } else {
-        Avatar.prototype.update.call(this.editor);
     }
 };
 
@@ -201,7 +199,5 @@ AddFromPointAction.prototype.update = function() {
     if (done) {
         this.image.destroy();
         this.editor.action = undefined;
-    } else {
-        Avatar.prototype.update.call(this.editor);
     }
 };
