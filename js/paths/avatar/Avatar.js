@@ -1,5 +1,5 @@
 // Simple player avatar placeholder.
-var Avatar = function(game, graphics) {
+var Avatar = function(game, graphics, paths) {
     // Constants, for now.
     this.MAX_SPEED = 300;
     this.TILT_THRESHOLD = 0.15;
@@ -11,6 +11,7 @@ var Avatar = function(game, graphics) {
     this.TILT_PARTIAL_ANGLE = this.TILT_TOTAL_ANGLE - this.TILT_FULLSPEED_ANGLE;
 
     this.game = game;
+    this.paths = paths;
     this.graphics = graphics;
     // Set up graphics and physics.
     Phaser.Sprite.call(this, game, 0, 0);
@@ -137,11 +138,6 @@ Avatar.prototype.roundVelocity = function(velocity) {
 
 // Optional physics debug view.
 Avatar.prototype.update = function() {
-    // Move that avatar!
-    if (this.paths.gpad) {
-        var joystick = this.paths.gpad.getAngleAndTilt();
-        this.move(joystick.angle, joystick.tilt);
-    }
     // this.game.debug.body(this);
     // this.game.debug.spriteCoords(this);
 };

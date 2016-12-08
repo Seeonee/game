@@ -47,16 +47,6 @@ AddFromPathAction.prototype.renderMarks = function() {
     this.bitmap.dirty = true;
 };
 
-// Move along rails.
-AddFromPathAction.prototype.move = function(angle, ratio) {
-    Avatar.prototype.move.call(this.editor, angle, ratio);
-    var mark = this.getSelectedMark();
-    if (mark !== this.near) {
-        this.near = mark;
-        this.renderMarks();
-    }
-};
-
 // Figure out if a mark is near the "cursor".
 AddFromPathAction.prototype.getSelectedMark = function() {
     var near = undefined;
@@ -76,6 +66,16 @@ AddFromPathAction.prototype.getSelectedMark = function() {
 AddFromPathAction.prototype.update = function() {
     var done = false;
     var buttonMap = this.editor.game.settings.buttonMap;
+
+    // Move along rails.
+    var joystick = this.editor.paths.gpad.getAngleAndTilt();
+    this.editor.move(joystick.angle, joystick.tilt);
+    var mark = this.getSelectedMark();
+    if (mark !== this.near) {
+        this.near = mark;
+        this.renderMarks();
+    }
+
     if (this.editor.justReleased(buttonMap.ADD_CANCEL_BUTTON)) {
         // Just finish; don't add any paths.
         done = true;
@@ -138,17 +138,6 @@ AddFromPointAction.prototype.renderMarks = function() {
     this.bitmap.dirty = true;
 };
 
-// Move freely, drawing where our potential point will go.
-AddFromPointAction.prototype.move = function(angle, ratio) {
-    // First, movement.
-    var speed = ratio * EditorAvatar.FLOAT_MAX_SPEED;
-    this.editor.body.velocity.x = speed * Math.sin(angle);
-    this.editor.body.velocity.y = speed * Math.cos(angle);
-    // Next, find and render the candidate.
-    this.cacheSelectedMark();
-    this.renderMarks();
-};
-
 // Figure out if a mark is near the "cursor".
 AddFromPointAction.prototype.cacheSelectedMark = function() {
     var x = Math.floor(this.editor.x + 25);
@@ -168,6 +157,17 @@ AddFromPointAction.prototype.cacheSelectedMark = function() {
 
 // Handle an update while holding the button.
 AddFromPointAction.prototype.update = function() {
+    // First, movement.
+    var joystick = this.editor.paths.gpad.getAngleAndTilt();
+    var angle = joystick.angle;
+    var ratio = joystick.tilt;
+    var speed = ratio * EditorAvatar.FLOAT_MAX_SPEED;
+    this.editor.body.velocity.x = speed * Math.sin(angle);
+    this.editor.body.velocity.y = speed * Math.cos(angle);
+    // Next, find and render the candidate.
+    this.cacheSelectedMark();
+    this.renderMarks();
+
     var done = false;
     var buttonMap = this.editor.game.settings.buttonMap;
     if (this.editor.justReleased(buttonMap.ADD_CANCEL_BUTTON)) {

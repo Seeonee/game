@@ -1,7 +1,6 @@
 // Avatar used to walk around editing the Paths object.
 var EditorAvatar = function(game, graphics, paths) {
-    Avatar.call(this, game, graphics);
-    this.paths = paths;
+    Avatar.call(this, game, graphics, paths);
     this.action = undefined;
     this.buttonTimes = {};
 };
@@ -26,13 +25,9 @@ EditorAvatar.prototype.pad = function() {
     return this.paths.gpad.pad;
 };
 
-// Move at a given angle and ratio of speed (0 to 1).
-EditorAvatar.prototype.move = function(angle, ratio) {
-    if (this.action) {
-        this.action.move(angle, ratio);
-    } else {
-        Avatar.prototype.move.call(this, angle, ratio);
-    }
+// Is the joystick tilted?
+EditorAvatar.prototype.isTilted = function() {
+    return this.paths.gpad.isTilted();
 };
 
 // Figure out if a button was just pressed, taking into account 
@@ -90,14 +85,13 @@ EditorAvatar.prototype.update = function() {
             this.action = new DeleteAction(this);
         } else if (this.justPressed(buttonMap.FLOAT_BUTTON)) {
             this.action = new FloatAction(this);
+        } else {
+            this.action = new MoveAction(this);
         }
 
         if (this.action) {
             // If we are now performing an action, let's do it!
             this.action.update();
-        } else {
-            // Guess it's plain old nothing!
-            Avatar.prototype.update.call(this);
         }
     }
 };

@@ -6,9 +6,6 @@ var DeleteAction = function(editor) {
     this.editor.children[0].tint = this.editor.game.settings.colors.RED.i;
 }
 
-// No movement allowed while charging up a delete.
-DeleteAction.prototype.move = function(angle, ratio) {};
-
 // Handle an update while holding the button.
 DeleteAction.prototype.update = function() {
     var elapsed = Math.min(this.editor.game.time.now - this.start, this.threshold);

@@ -20,11 +20,18 @@ GPad.prototype.gamepadReady = function() {
 // Updates based on the actual gamepad joystick.
 // Returns an object with .angle and .tilt keys.
 GPad.prototype.getAngleAndTilt = function() {
-    var lx = this.pad.axis(Phaser.Gamepad.PS3XC_STICK_LEFT_X) || 0;
-    var ly = this.pad.axis(Phaser.Gamepad.PS3XC_STICK_LEFT_Y) || 0;
+    var lx = this.pad.axis(this.game.settings.buttonMap.MOVE_X) || 0;
+    var ly = this.pad.axis(this.game.settings.buttonMap.MOVE_Y) || 0;
     this.angle = Utils.angleBetweenPoints(0, 0, lx, ly);
     this.tilt = Utils.distanceBetweenPoints(0, 0, lx, ly);
     return { angle: this.angle, tilt: this.tilt };
+};
+
+// Returns true if any tilt (+angle) is being applied.
+GPad.prototype.isTilted = function() {
+    var lx = this.pad.axis(this.game.settings.buttonMap.MOVE_X) || 0;
+    var ly = this.pad.axis(this.game.settings.buttonMap.MOVE_Y) || 0;
+    return lx != 0 || ly != 0;
 };
 
 // Figure out if a button was just pressed, taking into account 

@@ -26,8 +26,12 @@ FloatAction.prototype.cacheAllPaths = function() {
     }
 };
 
-// Move freely.
-FloatAction.prototype.move = function(angle, ratio) {
+// Handle an update while holding the button.
+FloatAction.prototype.update = function() {
+    // Move freely.
+    var joystick = this.editor.paths.gpad.getAngleAndTilt();
+    var angle = joystick.angle;
+    var ratio = joystick.tilt;
     var speed = ratio * EditorAvatar.FLOAT_MAX_SPEED;
     this.editor.body.velocity.x = speed * Math.sin(angle);
     this.editor.body.velocity.y = speed * Math.cos(angle);
@@ -40,11 +44,7 @@ FloatAction.prototype.move = function(angle, ratio) {
     } else {
         this.editor.scale.setTo(EditorAvatar.FLOAT_ICON_SCALE);
     }
-};
 
-// Handle an update while holding the button.
-FloatAction.prototype.update = function() {
-    Avatar.prototype.update.call(this.editor);
     if (this.editor.justReleased(this.editor.game.settings.buttonMap.FLOAT_BUTTON)) {
         if (this.point) {
             this.snapToPoint(this.point);
