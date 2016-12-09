@@ -17,6 +17,8 @@ var Paths = function(game, points) {
     this.LINE_DASH_OFFSET = 11;
 
     this.dirty = false;
+    this.pointMap = {};
+    this.allPaths = [];
     // Set up our starting points.
     this.points = [];
     if (points) {
@@ -25,17 +27,25 @@ var Paths = function(game, points) {
         }
         this.dirty = true;
     }
+
     // Set up our bitmap.
     this.bitmap = this.game.add.bitmapData(this.game.width, this.game.height);
     this.image = this.game.add.image(100, 100, this.bitmap);
-    // We support a gamepad joystick for input.
-    this.gpad = undefined;
+};
+
+// Return a string that can be used to name a new point.
+Paths.prototype.getNewPointName = function() {
+    var i = 0;
+    while (!(this.pointMap['p' + i])) {
+        i += 1;
+    }
+    return 'p' + i;
 };
 
 // Create a new point, optionally connected to an existing one.
 // Returns the newly created point.
-Paths.prototype.addPoint = function(x, y, point) {
-    var point2 = new Point(x, y);
+Paths.prototype.addPoint = function(name, x, y, point) {
+    var point2 = new Point(name, x, y);
     this.points.push(point2);
     this.dirty = true;
     if (point != undefined) {
@@ -53,7 +63,8 @@ Paths.prototype.connectPoints = function(point, point2) {
 // Add a point at a distance partially along a path's length.
 // Return the newly created point.
 Paths.prototype.addPointToPathAtRatio = function(path, ratio) {
-    var point = path.addPointAtRatio(ratio);
+    var name = this.getNewPointName();
+    var point = path.addPointAtRatio(name, ratio);
     this.points.push(point);
     this.dirty = true;
     return point;
@@ -62,7 +73,8 @@ Paths.prototype.addPointToPathAtRatio = function(path, ratio) {
 // Add a point to a path at coordinates that *should* lie along its length.
 // Return the newly created point.
 Paths.prototype.addPointToPathAtCoords = function(path, x, y) {
-    var point = path.addPointAtCoords(x, y);
+    var name = this.getNewPointName();
+    var point = path.addPointAtCoords(name, x, y);
     this.points.push(point);
     this.dirty = true;
     return point;
@@ -115,6 +127,25 @@ Paths.prototype.translateInternalPointToGamePoint = function(x, y) {
 // object's internal points.
 Paths.prototype.translateGamePointToInternalPoint = function(x, y) {
     return { x: x - this.image.x, y: y - this.image.y };
+};
+
+// Update our cache maps of points and paths.
+Paths.prototype.updateCaches = function() {
+    this.pointMap = {};
+    this.allPaths = [];
+    var visited = {};
+    for (var i = 0; i < this.points.length; i++) {
+        var point = this.points[i];
+        this.pointMap[point.name] = point;
+        for (var j = 0; j < point.paths.length; j++) {
+            var path = point.paths[j];
+            var key = path.asKey();
+            if (!(key in visited)) {
+                visited[key] = 1;
+                this.allPaths.push(path);
+            }
+        }
+    }
 };
 
 // Add the player avatar to our starting point.
@@ -177,6 +208,7 @@ Paths.prototype.update = function() {
     // Figure it if we need to render (again).
     if (this.dirty || (this.gpad && this.HIGHLIGHT_AVATAR_PATHS)) {
         this.dirty = false;
+        this.updateCaches();
         this.drawPaths();
     }
 };

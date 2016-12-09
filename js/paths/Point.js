@@ -1,9 +1,10 @@
 // A point is a juncture among one or more paths.
-var Point = function(x, y) {
+var Point = function(name, x, y) {
     // Constants, for now.
     this.ANGLE_CATCH = Math.PI / 2.1;
     this.MIN_ANGLE_RATIO = 2;
 
+    this.name = name;
     this.x = x;
     this.y = y;
     this.paths = [];

@@ -16,7 +16,7 @@ AddFromPathIState.ADD_SNAP_DISTANCE = 15;
 
 // Action for adding new points along paths.
 AddFromPathIState.prototype.activated = function(prev) {
-    this.paths = this.level.path;
+    this.paths = this.level.currentPathsObj;
     this.path = this.avatar.path;
     this.marks = [];
     this.near = undefined;
@@ -102,8 +102,8 @@ AddFromPathIState.prototype.update = function() {
         if (this.near) {
             var ip = this.paths.translateGamePointToInternalPoint(
                 this.near.x, this.near.y);
-            var point = this.paths.addPointToPathAtCoords(this.path,
-                ip.x, ip.y);
+            var point = this.paths.addPointToPathAtCoords(
+                this.path, ip.x, ip.y);
             this.avatar.path = undefined;
             this.avatar.point = point;
         }
@@ -132,7 +132,7 @@ AddFromPointIState.prototype.constructor = AddFromPointIState;
 
 // Action for adding new points (and paths to them) from existing ones.
 AddFromPointIState.prototype.activated = function(prev) {
-    this.paths = this.level.path;
+    this.paths = this.level.currentPathsObj;
     this.point = this.avatar.point;
     this.near = undefined;
     this.valid = false; // Only allow 45 degree angles.
@@ -235,7 +235,9 @@ AddFromPointIState.prototype.update = function() {
                 this.paths.connectPoints(this.point, existing);
                 this.avatar.point = existing;
             } else {
+
                 var point = this.paths.addPoint(
+                    this.paths.getNewPointName(),
                     ip.x, ip.y, this.point);
                 this.avatar.point = point;
             }

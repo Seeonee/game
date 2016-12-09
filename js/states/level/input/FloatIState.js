@@ -18,38 +18,14 @@ FloatIState.FLOAT_ICON_SCALE = 0.5;
 
 // Called when we become the active state.
 FloatIState.prototype.activated = function(prev) {
-    this.paths = this.level.path;
-    this.points = this.level.path.points;
-    this.allPaths = this.cacheAllPaths(); // this.level.path.paths;
+    this.paths = this.level.currentPathsObj;
+    this.points = this.paths.points;
+    this.allPaths = this.paths.allPaths;
     this.x = this.avatar.x;
     this.y = this.avatar.y;
     this.point = undefined;
     this.path = undefined;
 };
-
-// TODO: Delete me once the Paths object caches its own paths!!!!
-// TODO: Delete me once the Paths object caches its own paths!!!!
-// TODO: Delete me once the Paths object caches its own paths!!!!
-// Pre-walk the list of available paths.
-FloatIState.prototype.cacheAllPaths = function() {
-    var visited = {};
-    var paths = [];
-    for (var i = 0; i < this.points.length; i++) {
-        var point = this.points[i];
-        for (var j = 0; j < point.paths.length; j++) {
-            var path = point.paths[j];
-            var key = path.asKey();
-            if (!(key in visited)) {
-                visited[key] = 1;
-                paths.push(path);
-            }
-        }
-    }
-    return paths;
-};
-// TODO: Delete me once the Paths object caches its own paths!!!!
-// TODO: Delete me once the Paths object caches its own paths!!!!
-// TODO: Delete me once the Paths object caches its own paths!!!!
 
 // Called on update.
 FloatIState.prototype.update = function() {

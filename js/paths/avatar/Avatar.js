@@ -21,6 +21,8 @@ var Avatar = function(game, graphics, paths) {
     this.destination = undefined;
     this.path = undefined;
     this.point = undefined;
+
+    this.paths.addAvatar(this);
 };
 
 Avatar.prototype = Object.create(Phaser.Sprite.prototype);

@@ -97,16 +97,17 @@ Path.prototype.delete = function() {
 
 // Add a new point partway along our length.
 // Returns the newly added point.
-Path.prototype.addPointAtRatio = function(ratio) {
+Path.prototype.addPointAtRatio = function(name, ratio) {
     var dx = ratio * (this.p2.x - this.p1.x);
     var dy = ratio * (this.p2.y - this.p1.y);
-    return this.addPoint(this.p1.x + dx, this.p1.y + dy);
+    return this.addPointAtCoords(
+        name, this.p1.x + dx, this.p1.y + dy);
 };
 
 // Add a new point at coordinates that *should* lie along our path.
 // Returns the newly added point.
-Path.prototype.addPointAtCoords = function(x, y) {
-    var point = new Point(x, y);
+Path.prototype.addPointAtCoords = function(name, x, y) {
+    var point = new Point(name, x, y);
     var p2 = this.p2;
     point.paths.push(this);
     p2.deletePath(this);

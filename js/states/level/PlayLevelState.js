@@ -25,32 +25,33 @@ PlayLevelState.prototype.preload = function() {
 PlayLevelState.prototype.create = function() {
     AVATAR_GRAPHICS.create(game);
 
-    this.createPaths();
+    this.createLevel();
 
     this.game.input.gamepad.start();
     var gpad = new GPad(this.game, this.game.input.gamepad.pad1);
-    this.paths.gpad = gpad;
-    this.createAvatar();
-    this.level = { path: this.paths, avatar: this.paths.avatar };
     this.ihandler = new PlayLevelIHandler(this.game, gpad, this.level);
 
     this.game.time.advancedTiming = true; // For FPS tracking.
     // this.game.world.setBounds(0, 0, 1920, 1920);
-    this.game.camera.follow(this.paths.avatar);
+    this.game.camera.follow(this.level.avatar);
 };
 
 
-// Create a path network.
-PlayLevelState.prototype.createPaths = function() {
+// Create a level of paths, with an avatar attached.
+PlayLevelState.prototype.createLevel = function() {
     var json = this.game.cache.getJSON(this.levelName);
-    this.paths = PathsLoader.load(this.game, json);
-};
+    var paths = PathsLoader.load(this.game, json);
 
-// Create a player sprite.
-PlayLevelState.prototype.createAvatar = function() {
     var gfx = new AVATAR_GRAPHICS(this.game);
-    var avatar = new Avatar(this.game, gfx, this.paths);
-    this.paths.addAvatar(avatar);
+    var avatar = new Avatar(this.game, gfx, paths);
+
+    this.level = {
+        currentPathsObj: paths,
+        avatar: avatar,
+        update: function() {
+            paths.update();
+        }
+    };
 };
 
 // Create a player sprite.
@@ -62,6 +63,6 @@ PlayLevelState.prototype.render = function() {
 
 // Create a player sprite.
 PlayLevelState.prototype.update = function() {
+    this.level.update();
     this.ihandler.update();
-    this.paths.update();
 };

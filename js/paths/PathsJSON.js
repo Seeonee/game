@@ -18,21 +18,16 @@ PathsWriter.prototype._json = function() {
     var minx = this.paths.points[0].x;
     var miny = this.paths.points[0].y;
     var result = '';
-    var points = {};
     for (var i = 0; i < this.paths.points.length; i++) {
         var point = this.paths.points[i];
-        points[point.asKey()] = 'p' + i;
-    }
-    for (var i = 0; i < this.paths.points.length; i++) {
-        var point = this.paths.points[i];
-        result += '\n"p' + i + '": {\n';
+        result += '\n"' + point.name + '": {\n';
         result += '"x": ' + (point.x - minx) + ',\n';
         result += '"y": ' + (point.y - miny) + ',\n';
         result += '"pathsTo": [\n';
         for (var j = 0; j < point.paths.length; j++) {
             var path = point.paths[j];
             var other = path.getCounterpoint(point);
-            result += '"' + points[other.asKey()] + '"';
+            result += '"' + other.name + '"';
             if (j < point.paths.length - 1) {
                 result += ',\n';
             }
@@ -72,7 +67,7 @@ PathsLoader.prototype._load = function() {
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
         var pointObj = this.json[key];
-        var point = this.paths.addPoint(pointObj.x, pointObj.y);
+        var point = this.paths.addPoint(key, pointObj.x, pointObj.y);
         minx = (point.x < minx) ? point.x : minx;
         miny = (point.y < miny) ? point.y : miny;
         points[key] = point;
