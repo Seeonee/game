@@ -1,5 +1,5 @@
 // Simple player avatar placeholder.
-var Avatar = function(game, graphics, tier) {
+var Avatar = function(game, graphics, level) {
     // Constants, for now.
     this.MAX_SPEED = 300;
     this.TILT_THRESHOLD = 0.15;
@@ -11,7 +11,7 @@ var Avatar = function(game, graphics, tier) {
     this.TILT_PARTIAL_ANGLE = this.TILT_TOTAL_ANGLE - this.TILT_FULLSPEED_ANGLE;
 
     this.game = game;
-    this.tier = tier;
+    this.tier = level.tier;
     this.graphics = graphics;
     // Set up graphics and physics.
     Phaser.Sprite.call(this, game, 0, 0);
@@ -23,6 +23,7 @@ var Avatar = function(game, graphics, tier) {
     this.point = undefined;
 
     this.tier.addAvatar(this);
+    level.avatar = this;
 };
 
 Avatar.prototype = Object.create(Phaser.Sprite.prototype);

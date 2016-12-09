@@ -1,25 +1,25 @@
 // Class that handles writing a tier out to JSON.
-var TierWriter = function(paths) {
-    this.paths = paths;
+var TierWriter = function(tier) {
+    this.tier = tier;
     this.pointsVisited = {};
     this.pointMap = {};
     this.index = 0;
 };
 
 // Convenience method that handles instantiating the writer.
-TierWriter.json = function(paths) {
-    return new TierWriter(paths)._json();
+TierWriter.json = function(tier) {
+    return new TierWriter(tier)._json();
 };
 
 // Push out a JSON version of our points and paths.
 // We translate all our points so that 
 // p1 is at (0, 0).
 TierWriter.prototype._json = function() {
-    var minx = this.paths.points[0].x;
-    var miny = this.paths.points[0].y;
+    var minx = this.tier.points[0].x;
+    var miny = this.tier.points[0].y;
     var result = '';
-    for (var i = 0; i < this.paths.points.length; i++) {
-        var point = this.paths.points[i];
+    for (var i = 0; i < this.tier.points.length; i++) {
+        var point = this.tier.points[i];
         result += '\n"' + point.name + '": {\n';
         result += '"x": ' + (point.x - minx) + ',\n';
         result += '"y": ' + (point.y - miny) + ',\n';
@@ -33,7 +33,7 @@ TierWriter.prototype._json = function() {
             }
         }
         result += ']\n}';
-        if (i < this.paths.points.length - 1) {
+        if (i < this.tier.points.length - 1) {
             result += ',\n';
         }
     }
@@ -61,13 +61,13 @@ TierLoader.load = function(game, json) {
 TierLoader.prototype._load = function() {
     var minx = Number.POSITIVE_INFINITY;
     var miny = Number.POSITIVE_INFINITY;
-    this.paths = new Tier(this.game);
+    this.tier = new Tier(this.game);
     var points = {};
     var keys = Object.keys(this.json);
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
         var pointObj = this.json[key];
-        var point = this.paths.addPoint(key, pointObj.x, pointObj.y);
+        var point = this.tier.addPoint(key, pointObj.x, pointObj.y);
         minx = (point.x < minx) ? point.x : minx;
         miny = (point.y < miny) ? point.y : miny;
         points[key] = point;
@@ -82,12 +82,12 @@ TierLoader.prototype._load = function() {
             }
         }
     }
-    for (var i = 0; i < this.paths.points.length; i++) {
-        var point = this.paths.points[i];
+    for (var i = 0; i < this.tier.points.length; i++) {
+        var point = this.tier.points[i];
         point.x += (TierLoader.OFFSET - minx);
         point.y += (TierLoader.OFFSET - miny);
     }
-    return this.paths;
+    return this.tier;
 };
 
 // Given a JSON name for a point ("p1"), return its index (1).
