@@ -26,7 +26,13 @@ PlayLevelState.prototype.create = function() {
     AVATAR_GRAPHICS.create(game);
 
     this.createPaths();
+
+    this.game.input.gamepad.start();
+    var gpad = new GPad(this.game, this.game.input.gamepad.pad1);
+    this.paths.gpad = gpad;
     this.createAvatar();
+    this.level = { path: this.paths, avatar: this.paths.avatar };
+    this.ihandler = new PlayLevelIHandler(this.game, gpad, this.level);
 
     this.game.time.advancedTiming = true; // For FPS tracking.
     // this.game.world.setBounds(0, 0, 1920, 1920);
@@ -38,15 +44,12 @@ PlayLevelState.prototype.create = function() {
 PlayLevelState.prototype.createPaths = function() {
     var json = this.game.cache.getJSON(this.levelName);
     this.paths = PathsLoader.load(this.game, json);
-
-    this.game.input.gamepad.start();
-    this.paths.gpad = new GPad(this.game, this.game.input.gamepad.pad1);
 };
 
 // Create a player sprite.
 PlayLevelState.prototype.createAvatar = function() {
     var gfx = new AVATAR_GRAPHICS(this.game);
-    var avatar = new EditorAvatar(this.game, gfx, this.paths);
+    var avatar = new Avatar(this.game, gfx, this.paths);
     this.paths.addAvatar(avatar);
 };
 
@@ -59,5 +62,6 @@ PlayLevelState.prototype.render = function() {
 
 // Create a player sprite.
 PlayLevelState.prototype.update = function() {
+    this.ihandler.update();
     this.paths.update();
 };
