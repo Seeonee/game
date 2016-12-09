@@ -140,8 +140,8 @@ AddFromPointIState.prototype.activated = function(prev) {
     // Initialize bitmap for rendering.
     this.bitmap = this.game.add.bitmapData(
         this.game.width, this.game.height);
-    this.bitmap.context.lineWidth = this.tier.PATH_WIDTH;
-    this.bitmap.context.lineCap = this.tier.LINE_CAP_STYLE;
+    this.bitmap.context.lineWidth = Tier.PATH_WIDTH;
+    this.bitmap.context.lineCap = Tier.LINE_CAP_STYLE;
     this.image = this.game.add.image(0, 0, this.bitmap);
     // Side effect of the JSON load. We need to shift slightly.
     this.offset = this.tier.points[0].x % 50;

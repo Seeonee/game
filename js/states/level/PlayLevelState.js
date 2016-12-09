@@ -25,7 +25,7 @@ PlayLevelState.prototype.preload = function() {
 PlayLevelState.prototype.create = function() {
     AVATAR_GRAPHICS.create(game);
 
-    this.level = LevelLoader.load(this.game, this.levelName);
+    this.level = Level.load(this.game, this.levelName);
     new Avatar(this.game, new AVATAR_GRAPHICS(this.game), this.level);
 
     this.game.input.gamepad.start();
