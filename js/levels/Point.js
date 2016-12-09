@@ -40,12 +40,12 @@ Point.prototype.isConnectedTo = function(point) {
 
 // Called during the draw walk by our Paths object.
 // This gives us a chance to render ourself to the bitmap.
-Point.prototype.draw = function(paths) {
-    paths.bitmap.context.beginPath();
-    paths.bitmap.context.fillStyle = paths.PATH_COLOR;
-    paths.bitmap.context.arc(this.x, this.y,
-        Math.floor(paths.PATH_WIDTH / 2), 0, 2 * Math.PI, false);
-    paths.bitmap.context.fill();
+Point.prototype.draw = function(tier) {
+    tier.bitmap.context.beginPath();
+    tier.bitmap.context.fillStyle = Tier.PATH_COLOR;
+    tier.bitmap.context.arc(this.x, this.y,
+        Math.floor(Tier.PATH_WIDTH / 2), 0, 2 * Math.PI, false);
+    tier.bitmap.context.fill();
 }
 
 // Convenience method for creating a connected point.

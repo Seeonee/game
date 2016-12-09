@@ -7,15 +7,6 @@
 var Tier = function(game, name, points) {
     this.name = name;
     this.game = game;
-    // Constants, for now.
-    this.HIGHLIGHT_AVATAR_PATHS = false;
-    this.PATH_COLOR = this.game.settings.colors.BLUE.s;
-    this.DEBUG_COLOR = this.game.settings.colors.RED.s;
-    this.PATH_WIDTH = 7;
-    this.LINE_CAP_STYLE = 'butt';
-    this.LINE_JOIN_STYLE = 'round';
-    this.LINE_DASH = [18, 7];
-    this.LINE_DASH_OFFSET = 11;
 
     this.dirty = false;
     this.pointMap = {};
@@ -33,6 +24,14 @@ var Tier = function(game, name, points) {
     this.bitmap = this.game.add.bitmapData(this.game.width, this.game.height);
     this.image = this.game.add.image(100, 100, this.bitmap);
 };
+
+// Constants.
+Tier.HIGHLIGHT_AVATAR_PATHS = false;
+Tier.PATH_WIDTH = 7;
+Tier.LINE_CAP_STYLE = 'butt';
+Tier.LINE_JOIN_STYLE = 'round';
+Tier.LINE_DASH = [18, 7];
+Tier.LINE_DASH_OFFSET = 11;
 
 // Return a string that can be used to name a new point.
 Tier.prototype.getNewPointName = function() {
@@ -153,12 +152,13 @@ Tier.prototype.updateCaches = function() {
 Tier.prototype.drawTier = function() {
     this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
 
-    this.bitmap.context.strokeStyle = this.PATH_COLOR;
-    this.bitmap.context.fillStyle = this.PATH_COLOR;
-    this.bitmap.context.lineWidth = this.PATH_WIDTH;
-    this.bitmap.context.lineCap = this.LINE_CAP_STYLE;
-    this.bitmap.context.lineJoin = this.LINE_JOIN_STYLE;
-    this.bitmap.context.lineDashOffset = this.LINE_DASH_OFFSET;
+    var colors = this.game.settings.colors;
+    this.bitmap.context.strokeStyle = colors.PATH_COLOR.s;
+    this.bitmap.context.fillStyle = colors.PATH_COLOR.s;
+    this.bitmap.context.lineWidth = Tier.PATH_WIDTH;
+    this.bitmap.context.lineCap = Tier.LINE_CAP_STYLE;
+    this.bitmap.context.lineJoin = Tier.LINE_JOIN_STYLE;
+    this.bitmap.context.lineDashOffset = Tier.LINE_DASH_OFFSET;
 
     var pointsVisited = {};
     for (var i = 0; i < this.points.length; i++) {
@@ -200,7 +200,7 @@ Tier.prototype.drawTier_walk = function(point, from, pointsVisited) {
 // Also (optionally) highlight debug info.
 Tier.prototype.update = function() {
     // Figure it if we need to render (again).
-    if (this.dirty || (this.gpad && this.HIGHLIGHT_AVATAR_PATHS)) {
+    if (this.dirty || (this.gpad && Tier.HIGHLIGHT_AVATAR_PATHS)) {
         this.dirty = false;
         this.updateCaches();
         this.drawTier();

@@ -1,15 +1,5 @@
 // Simple player avatar placeholder.
 var Avatar = function(game, graphics, level) {
-    // Constants, for now.
-    this.MAX_SPEED = 300;
-    this.TILT_THRESHOLD = 0.15;
-    this.POINT_TILT_THRESHOLD_MODIFIER = 3.2;
-    this.POINT_SNAP_RADIUS = 3;
-    this.MIN_VELOCITY = 0.1;
-    this.TILT_TOTAL_ANGLE = Math.PI / 2;
-    this.TILT_FULLSPEED_ANGLE = this.TILT_TOTAL_ANGLE * 0.75;
-    this.TILT_PARTIAL_ANGLE = this.TILT_TOTAL_ANGLE - this.TILT_FULLSPEED_ANGLE;
-
     this.game = game;
     this.level = level;
     this.tier = undefined;
@@ -31,6 +21,16 @@ var Avatar = function(game, graphics, level) {
 Avatar.prototype = Object.create(Phaser.Sprite.prototype);
 Avatar.prototype.constructor = Avatar;
 
+// A bunch of constants.
+Avatar.MAX_SPEED = 300;
+Avatar.TILT_THRESHOLD = 0.15;
+Avatar.POINT_TILT_THRESHOLD_MODIFIER = 3.2;
+Avatar.POINT_SNAP_RADIUS = 3;
+Avatar.MIN_VELOCITY = 0.1;
+Avatar.TILT_TOTAL_ANGLE = Math.PI / 2;
+Avatar.TILT_FULLSPEED_ANGLE = Avatar.TILT_TOTAL_ANGLE * 0.75;
+Avatar.TILT_PARTIAL_ANGLE = Avatar.TILT_TOTAL_ANGLE - Avatar.TILT_FULLSPEED_ANGLE;
+
 // Figure out where we're starting.
 Avatar.prototype.snapToStartingPoint = function() {
     var vals = this.level.start.split('-');
@@ -45,9 +45,9 @@ Avatar.prototype.snapToStartingPoint = function() {
 // Move at a given angle and ratio of speed (0 to 1).
 Avatar.prototype.move = function(angle, ratio) {
     // Make sure there's enough tilt to justify movement.
-    var threshold = this.TILT_THRESHOLD;
+    var threshold = Avatar.TILT_THRESHOLD;
     if (this.point) {
-        threshold *= this.POINT_TILT_THRESHOLD_MODIFIER;
+        threshold *= Avatar.POINT_TILT_THRESHOLD_MODIFIER;
     }
     if (ratio < threshold) {
         ratio = 0;
@@ -123,7 +123,7 @@ Avatar.prototype.move = function(angle, ratio) {
             ip.x, ip.y, this.destination.x, this.destination.y);
         var distance = Utils.distanceBetweenPoints(
             ip.x, ip.y, this.destination.x, this.destination.y);
-        if (distance <= this.POINT_SNAP_RADIUS) {
+        if (distance <= Avatar.POINT_SNAP_RADIUS) {
             // Snap to a point.
             this.body.velocity.x = 0;
             this.body.velocity.y = 0;
@@ -137,12 +137,13 @@ Avatar.prototype.move = function(angle, ratio) {
             // If we're not lined up well with our target angle,
             // reduce tilt accordingly.
             var a4 = (fakeAngle) ? fakeAngle : a2;
-            var a3 = Utils.getBoundedAngleDifference(angle, a4) - this.TILT_FULLSPEED_ANGLE;
+            var a3 = Utils.getBoundedAngleDifference(angle, a4) -
+                Avatar.TILT_FULLSPEED_ANGLE;
             if (a3 > 0) {
-                ratio *= 1 - (a3 / this.TILT_PARTIAL_ANGLE);
+                ratio *= 1 - (a3 / Avatar.TILT_PARTIAL_ANGLE);
             }
-            this.body.velocity.x = this.roundVelocity(ratio * this.MAX_SPEED * Math.sin(a2));
-            this.body.velocity.y = this.roundVelocity(ratio * this.MAX_SPEED * Math.cos(a2));
+            this.body.velocity.x = this.roundVelocity(ratio * Avatar.MAX_SPEED * Math.sin(a2));
+            this.body.velocity.y = this.roundVelocity(ratio * Avatar.MAX_SPEED * Math.cos(a2));
         }
     } else {
         this.body.velocity.x = 0;
@@ -154,7 +155,7 @@ Avatar.prototype.move = function(angle, ratio) {
 // Eliminate microscopic velocities.
 Avatar.prototype.roundVelocity = function(velocity) {
     // return velocity;
-    return (Math.abs(velocity) >= this.MIN_VELOCITY) ? velocity : 0;
+    return (Math.abs(velocity) >= Avatar.MIN_VELOCITY) ? velocity : 0;
 };
 
 // Optional physics debug view.

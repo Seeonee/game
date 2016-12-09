@@ -49,10 +49,17 @@ var Colors = function() {
     this.GREY = new Color('A4A4A4');
     this.WHITE = new Color('FFFFFF');
 
-    // this.GREEN2 = new Shades(['7BEFAE', '4DE890', '26E278', '00DA5F', '00B04D']);
-    // this.BLUE2 = new Shades(['7ECAEB', '51B6E1', '2DA5D9', '0994D0', '046E9C']);
-    // this.YELLOW2 = new Shades(['FFC483', 'FFAE54', 'FF9B2B', 'FF8700', 'F78200']);
-    // this.RED2 = new Shades(['FF9D83', 'FF7854', 'FF572B', 'FF3500', 'F73300']);
+    // this.GREEN2 = new Shades(
+    // ['7BEFAE', '4DE890', '26E278', '00DA5F', '00B04D']);
+    // this.BLUE2 = new Shades(
+    // ['7ECAEB', '51B6E1', '2DA5D9', '0994D0', '046E9C']);
+    // this.YELLOW2 = new Shades(
+    // ['FFC483', 'FFAE54', 'FF9B2B', 'FF8700', 'F78200']);
+    // this.RED2 = new Shades(
+    // ['FF9D83', 'FF7854', 'FF572B', 'FF3500', 'F73300']);
+
+    this.PATH_COLOR = this.BLUE;
+    this.DEBUG_COLOR = this.RED;
 };
 
 // Restore a JSON'd Colors object.
