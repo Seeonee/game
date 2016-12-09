@@ -4,7 +4,8 @@
 // you may want to add more points first.
 // To finish initializing, create() on it (or wait 
 // for the first update()).
-var Tier = function(game, points) {
+var Tier = function(game, name, points) {
+    this.name = name;
     this.game = game;
     // Constants, for now.
     this.HIGHLIGHT_AVATAR_PATHS = false;
@@ -148,13 +149,6 @@ Tier.prototype.updateCaches = function() {
     }
 };
 
-// Add the player avatar to our starting point.
-Tier.prototype.addAvatar = function(avatar) {
-    this.avatar = avatar;
-    this.avatar.setStartingPoint(this.points[0]);
-    this.game.add.existing(this.avatar);
-};
-
 // Draw all paths onto the bitmap.
 Tier.prototype.drawTier = function() {
     this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
@@ -212,3 +206,102 @@ Tier.prototype.update = function() {
         this.drawTier();
     }
 };
+
+// Class that handles writing a tier out to JSON.
+Tier.Writer = function(tier) {
+    this.tier = tier;
+    this.pointsVisited = {};
+    this.pointMap = {};
+    this.index = 0;
+};
+
+// Convenience method that handles instantiating the writer.
+Tier.Writer.json = function(tier) {
+    return new Tier.Writer(tier)._json();
+};
+
+// Push out a JSON version of our points and paths.
+// We translate all our points so that 
+// p1 is at (0, 0).
+Tier.Writer.prototype._json = function() {
+    var minx = this.tier.points[0].x;
+    var miny = this.tier.points[0].y;
+    var result = '';
+    for (var i = 0; i < this.tier.points.length; i++) {
+        var point = this.tier.points[i];
+        result += '\n"' + point.name + '": {\n';
+        result += '"x": ' + (point.x - minx) + ',\n';
+        result += '"y": ' + (point.y - miny) + ',\n';
+        result += '"pathsTo": [\n';
+        for (var j = 0; j < point.paths.length; j++) {
+            var path = point.paths[j];
+            var other = path.getCounterpoint(point);
+            result += '"' + other.name + '"';
+            if (j < point.paths.length - 1) {
+                result += ',\n';
+            }
+        }
+        result += ']\n}';
+        if (i < this.tier.points.length - 1) {
+            result += ',';
+        }
+    }
+    return '{' + result + '\n}';
+};
+
+
+
+// Class that handles loading JSON data as a tier.
+Tier.Loader = function(game, name, json) {
+    this.game = game;
+    this.name = name;
+    this.json = json;
+};
+
+Tier.Loader.OFFSET = 5;
+
+// Convenience method that handles instantiating the loader.
+Tier.Loader.load = function(game, name, json) {
+    return new Tier.Loader(game, name, json)._load();
+};
+
+// Load a JSON representation of points and paths.
+// We also translate all loaded points so that 
+// all points have sufficiently positive x and y.
+Tier.Loader.prototype._load = function() {
+    var minx = Number.POSITIVE_INFINITY;
+    var miny = Number.POSITIVE_INFINITY;
+    var tier = new Tier(this.game, this.name);
+    var points = {};
+    var keys = Object.keys(this.json);
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var pointObj = this.json[key];
+        var point = tier.addPoint(key, pointObj.x, pointObj.y);
+        minx = (point.x < minx) ? point.x : minx;
+        miny = (point.y < miny) ? point.y : miny;
+        points[key] = point;
+    }
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var pointObj = this.json[key];
+        for (var j = 0; j < pointObj.pathsTo.length; j++) {
+            var otherKey = pointObj.pathsTo[j];
+            if (this._indexOf(key) < this._indexOf(otherKey)) {
+                points[key].connectTo(points[otherKey]);
+            }
+        }
+    }
+    for (var i = 0; i < tier.points.length; i++) {
+        var point = tier.points[i];
+        point.x += (Tier.Loader.OFFSET - minx);
+        point.y += (Tier.Loader.OFFSET - miny);
+    }
+    tier.updateCaches();
+    return tier;
+};
+
+// Given a JSON name for a point ("p1"), return its index (1).
+Tier.Loader.prototype._indexOf = function(key) {
+    return parseInt(key.substring(1));
+}

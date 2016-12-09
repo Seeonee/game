@@ -25,7 +25,8 @@ PlayLevelState.prototype.preload = function() {
 PlayLevelState.prototype.create = function() {
     AVATAR_GRAPHICS.create(game);
 
-    this.createLevel();
+    this.level = LevelLoader.load(this.game, this.levelName);
+    new Avatar(this.game, new AVATAR_GRAPHICS(this.game), this.level);
 
     this.game.input.gamepad.start();
     var gpad = new GPad(this.game, this.game.input.gamepad.pad1);
@@ -36,15 +37,6 @@ PlayLevelState.prototype.create = function() {
     this.game.camera.follow(this.level.avatar);
 };
 
-
-// Create a level of tiers, with an avatar attached.
-PlayLevelState.prototype.createLevel = function() {
-    var json = this.game.cache.getJSON(this.levelName);
-    this.level = LevelLoader.load(this.game, json);
-
-    var gfx = new AVATAR_GRAPHICS(this.game);
-    var avatar = new Avatar(this.game, gfx, this.level);
-};
 
 // Create a player sprite.
 PlayLevelState.prototype.render = function() {

@@ -11,7 +11,8 @@ var Avatar = function(game, graphics, level) {
     this.TILT_PARTIAL_ANGLE = this.TILT_TOTAL_ANGLE - this.TILT_FULLSPEED_ANGLE;
 
     this.game = game;
-    this.tier = level.tier;
+    this.level = level;
+    this.tier = undefined;
     this.graphics = graphics;
     // Set up graphics and physics.
     Phaser.Sprite.call(this, game, 0, 0);
@@ -22,16 +23,19 @@ var Avatar = function(game, graphics, level) {
     this.path = undefined;
     this.point = undefined;
 
-    this.tier.addAvatar(this);
-    level.avatar = this;
+    this.level.avatar = this;
+    this.snapToStartingPoint();
+    this.game.add.existing(this);
 };
 
 Avatar.prototype = Object.create(Phaser.Sprite.prototype);
 Avatar.prototype.constructor = Avatar;
 
 // Figure out where we're starting.
-Avatar.prototype.setStartingPoint = function(point) {
-    this.point = point;
+Avatar.prototype.snapToStartingPoint = function() {
+    var vals = this.level.start.split('-');
+    this.tier = this.level.tierMap[vals[0]];
+    this.point = this.tier.pointMap[vals[1]];
     var gp = this.tier.translateInternalPointToGamePoint(
         this.point.x, this.point.y);
     this.x = gp.x;

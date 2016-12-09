@@ -1,10 +1,12 @@
 // A Level object, which contains ordered Tiers.
-var Level = function(game) {
+var Level = function(game, name) {
     this.game = game;
+    this.name = name;
     this.avatar = undefined;
     this.tier = undefined;
     this.tiers = [];
     this.tierMap = {};
+    this.start = undefined; // Name.
 };
 
 // Update our current tier.
@@ -25,38 +27,49 @@ LevelWriter.json = function(level) {
 // Push out a JSON version of our tiers.
 LevelWriter.prototype._json = function() {
     var result = ''
+    result += '"name": "' + this.level.name + '",'
+    result += '\n"start": "' + this.level.start + '",'
+    result += '\n"tiers": {'
     for (var i = 0; i < this.level.tiers.length; i++) {
-        if (result) {
-            result += ',\n';
-        }
         var tier = this.level.tiers[i];
-        result += '"t' + i + '": ' + TierWriter.json(tier);
+        result += '\n"' + tier.name + '": ' + Tier.Writer.json(tier);
+        if (i < this.level.tiers.length - 1) {
+            result += ',';
+        }
     }
+    result += '}'
     return '{' + result + '\n}';
 };
 
 // Class that handles loading a level from JSON.
-var LevelLoader = function(game, json) {
+// The name value should correspond to an already-loaded 
+// asset's key within the game cache.
+var LevelLoader = function(game, name) {
     this.game = game;
-    this.json = json;
+    this.name = name;
+    this.json = this.game.cache.getJSON(this.name);
 };
 
 // Convenience method that handles instantiating the loader.
-LevelLoader.load = function(game, json) {
-    return new LevelLoader(game, json)._load();
+LevelLoader.load = function(game, name, json) {
+    return new LevelLoader(game, name, json)._load();
 };
 
 // Load a JSON representation of a level.
 LevelLoader.prototype._load = function() {
-    var level = new Level(this.game);
-    var keys = Object.keys(this.json);
+    var level = new Level(this.game, this.name);
+    level.start = this.json.start;
+    var tiers = this.json.tiers;
+    var keys = Object.keys(tiers);
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
-        var tierObj = this.json[key];
-        var tier = TierLoader.load(this.game, tierObj);
+        var tierObj = tiers[key];
+        var tier = Tier.Loader.load(this.game, key, tierObj);
         level.tiers.push(tier);
+        level.tierMap[key] = tier;
     }
     // TODO: Figure out the current tier!
-    level.tier = level.tiers[0];
+    var t = level.start.split('-')[0]
+    level.tier = level.tierMap[t];
     return level;
 };
