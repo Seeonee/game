@@ -16,7 +16,7 @@ AddFromPathIState.ADD_SNAP_DISTANCE = 15;
 
 // Action for adding new points along paths.
 AddFromPathIState.prototype.activated = function(prev) {
-    this.paths = this.level.currentPathsObj;
+    this.tier = this.level.tier;
     this.path = this.avatar.path;
     this.marks = [];
     this.near = undefined;
@@ -43,7 +43,7 @@ AddFromPathIState.prototype.cacheMarks = function() {
     for (var i = 0; i < max; i++) {
         var x = this.path.p1.x + (dx * (1 + i));
         var y = this.path.p1.y + (dy * (1 + i));
-        var gp = this.paths.translateInternalPointToGamePoint(
+        var gp = this.tier.translateInternalPointToGamePoint(
             x, y);
         this.marks.push(gp);
     }
@@ -100,9 +100,9 @@ AddFromPathIState.prototype.update = function() {
     } else if (this.gpad.justReleased(this.buttonMap.ADD_BUTTON)) {
         // New point, coming atcha!
         if (this.near) {
-            var ip = this.paths.translateGamePointToInternalPoint(
+            var ip = this.tier.translateGamePointToInternalPoint(
                 this.near.x, this.near.y);
-            var point = this.paths.addPointToPathAtCoords(
+            var point = this.tier.addPointToPathAtCoords(
                 this.path, ip.x, ip.y);
             this.avatar.path = undefined;
             this.avatar.point = point;
@@ -132,7 +132,7 @@ AddFromPointIState.prototype.constructor = AddFromPointIState;
 
 // Action for adding new points (and paths to them) from existing ones.
 AddFromPointIState.prototype.activated = function(prev) {
-    this.paths = this.level.currentPathsObj;
+    this.tier = this.level.tier;
     this.point = this.avatar.point;
     this.near = undefined;
     this.valid = false; // Only allow 45 degree angles.
@@ -140,11 +140,11 @@ AddFromPointIState.prototype.activated = function(prev) {
     // Initialize bitmap for rendering.
     this.bitmap = this.game.add.bitmapData(
         this.game.width, this.game.height);
-    this.bitmap.context.lineWidth = this.paths.PATH_WIDTH;
-    this.bitmap.context.lineCap = this.paths.LINE_CAP_STYLE;
+    this.bitmap.context.lineWidth = this.tier.PATH_WIDTH;
+    this.bitmap.context.lineCap = this.tier.LINE_CAP_STYLE;
     this.image = this.game.add.image(0, 0, this.bitmap);
     // Side effect of the JSON load. We need to shift slightly.
-    this.offset = this.paths.points[0].x % 50;
+    this.offset = this.tier.points[0].x % 50;
 };
 
 // Render the various point marks.
@@ -160,7 +160,7 @@ AddFromPointIState.prototype.renderMarks = function() {
             this.bitmap.context.strokeStyle = this.game.settings.colors.GREY.s;
         }
         this.bitmap.context.beginPath();
-        var gp = this.paths.translateInternalPointToGamePoint(
+        var gp = this.tier.translateInternalPointToGamePoint(
             this.point.x, this.point.y);
         this.bitmap.context.moveTo(gp.x, gp.y);
         this.bitmap.context.lineTo(this.near.x, this.near.y);
@@ -176,7 +176,7 @@ AddFromPointIState.prototype.renderMarks = function() {
 
 // Figure out if a mark is near the "cursor".
 AddFromPointIState.prototype.cacheSelectedMark = function() {
-    var ip = this.paths.translateGamePointToInternalPoint(
+    var ip = this.tier.translateGamePointToInternalPoint(
         this.avatar.x, this.avatar.y);
     ip.x -= this.offset;
     ip.y -= this.offset;
@@ -190,7 +190,7 @@ AddFromPointIState.prototype.cacheSelectedMark = function() {
         this.near = undefined;
         this.valid = false;
     } else {
-        var gp = this.paths.translateInternalPointToGamePoint(
+        var gp = this.tier.translateInternalPointToGamePoint(
             ip.x, ip.y);
         this.near = { x: gp.x, y: gp.y };
         var dx = Math.abs(this.point.x - ip.x);
@@ -221,23 +221,23 @@ AddFromPointIState.prototype.update = function() {
         // New point, coming atcha!
         if (this.near && this.valid) {
             // Find out if a point already exists at these coordinates.
-            var ip = this.paths.translateGamePointToInternalPoint(
+            var ip = this.tier.translateGamePointToInternalPoint(
                 this.near.x, this.near.y);
             var existing = undefined;
-            for (var i = 0; i < this.paths.points.length; i++) {
-                var point = this.paths.points[i];
+            for (var i = 0; i < this.tier.points.length; i++) {
+                var point = this.tier.points[i];
                 if (point.x == ip.x && point.y == ip.y) {
                     existing = point;
                     break;
                 }
             }
             if (existing) {
-                this.paths.connectPoints(this.point, existing);
+                this.tier.connectPoints(this.point, existing);
                 this.avatar.point = existing;
             } else {
 
-                var point = this.paths.addPoint(
-                    this.paths.getNewPointName(),
+                var point = this.tier.addPoint(
+                    this.tier.getNewPointName(),
                     ip.x, ip.y, this.point);
                 this.avatar.point = point;
             }

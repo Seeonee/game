@@ -4,7 +4,7 @@
 // you may want to add more points first.
 // To finish initializing, create() on it (or wait 
 // for the first update()).
-var Paths = function(game, points) {
+var Tier = function(game, points) {
     this.game = game;
     // Constants, for now.
     this.HIGHLIGHT_AVATAR_PATHS = false;
@@ -18,7 +18,7 @@ var Paths = function(game, points) {
 
     this.dirty = false;
     this.pointMap = {};
-    this.allPaths = [];
+    this.paths = [];
     // Set up our starting points.
     this.points = [];
     if (points) {
@@ -34,7 +34,7 @@ var Paths = function(game, points) {
 };
 
 // Return a string that can be used to name a new point.
-Paths.prototype.getNewPointName = function() {
+Tier.prototype.getNewPointName = function() {
     var i = 0;
     while (!(this.pointMap['p' + i])) {
         i += 1;
@@ -44,7 +44,7 @@ Paths.prototype.getNewPointName = function() {
 
 // Create a new point, optionally connected to an existing one.
 // Returns the newly created point.
-Paths.prototype.addPoint = function(name, x, y, point) {
+Tier.prototype.addPoint = function(name, x, y, point) {
     var point2 = new Point(name, x, y);
     this.points.push(point2);
     this.dirty = true;
@@ -55,14 +55,14 @@ Paths.prototype.addPoint = function(name, x, y, point) {
 };
 
 // Connect two points.
-Paths.prototype.connectPoints = function(point, point2) {
+Tier.prototype.connectPoints = function(point, point2) {
     point.connectTo(point2);
     this.dirty = true;
 };
 
 // Add a point at a distance partially along a path's length.
 // Return the newly created point.
-Paths.prototype.addPointToPathAtRatio = function(path, ratio) {
+Tier.prototype.addPointToPathAtRatio = function(path, ratio) {
     var name = this.getNewPointName();
     var point = path.addPointAtRatio(name, ratio);
     this.points.push(point);
@@ -72,7 +72,7 @@ Paths.prototype.addPointToPathAtRatio = function(path, ratio) {
 
 // Add a point to a path at coordinates that *should* lie along its length.
 // Return the newly created point.
-Paths.prototype.addPointToPathAtCoords = function(path, x, y) {
+Tier.prototype.addPointToPathAtCoords = function(path, x, y) {
     var name = this.getNewPointName();
     var point = path.addPointAtCoords(name, x, y);
     this.points.push(point);
@@ -82,7 +82,7 @@ Paths.prototype.addPointToPathAtCoords = function(path, x, y) {
 
 // Delete an existing point.
 // Return the deleted point, or undefined if it wasn't deleted.
-Paths.prototype.deletePoint = function(point) {
+Tier.prototype.deletePoint = function(point) {
     var i = this.points.indexOf(point);
     if (i >= 0) {
         point.delete();
@@ -96,7 +96,7 @@ Paths.prototype.deletePoint = function(point) {
 // Delete an existing point, merging each of its
 // connected points to the others.
 // Return the deleted point, or undefined if it wasn't deleted.
-Paths.prototype.deletePointAndMerge = function(point) {
+Tier.prototype.deletePointAndMerge = function(point) {
     var i = this.points.indexOf(point);
     if (i >= 0) {
         point.deleteAndMerge();
@@ -108,31 +108,31 @@ Paths.prototype.deletePointAndMerge = function(point) {
 }
 
 // Delete path between two points.
-Paths.prototype.deletePath = function(path) {
+Tier.prototype.deletePath = function(path) {
     path.delete();
     this.dirty = true;
 }
 
-// Takes x and y values relative to this Paths object's 
+// Takes x and y values relative to this Tier object's 
 // internal points, and returns an {x, y} object whose 
 // coordinates have been adjusted to work with the 
 // game.
-Paths.prototype.translateInternalPointToGamePoint = function(x, y) {
+Tier.prototype.translateInternalPointToGamePoint = function(x, y) {
     return { x: x + this.image.x, y: y + this.image.y };
 };
 
 // Takes x and y values relative to the game, 
 // and returns an {x, y} object whose coordinates 
-// have been adjusted to work with this Paths 
+// have been adjusted to work with this Tier 
 // object's internal points.
-Paths.prototype.translateGamePointToInternalPoint = function(x, y) {
+Tier.prototype.translateGamePointToInternalPoint = function(x, y) {
     return { x: x - this.image.x, y: y - this.image.y };
 };
 
 // Update our cache maps of points and paths.
-Paths.prototype.updateCaches = function() {
+Tier.prototype.updateCaches = function() {
     this.pointMap = {};
-    this.allPaths = [];
+    this.paths = [];
     var visited = {};
     for (var i = 0; i < this.points.length; i++) {
         var point = this.points[i];
@@ -142,21 +142,21 @@ Paths.prototype.updateCaches = function() {
             var key = path.asKey();
             if (!(key in visited)) {
                 visited[key] = 1;
-                this.allPaths.push(path);
+                this.paths.push(path);
             }
         }
     }
 };
 
 // Add the player avatar to our starting point.
-Paths.prototype.addAvatar = function(avatar) {
+Tier.prototype.addAvatar = function(avatar) {
     this.avatar = avatar;
     this.avatar.setStartingPoint(this.points[0]);
     this.game.add.existing(this.avatar);
 };
 
 // Draw all paths onto the bitmap.
-Paths.prototype.drawPaths = function() {
+Tier.prototype.drawTier = function() {
     this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
 
     this.bitmap.context.strokeStyle = this.PATH_COLOR;
@@ -173,7 +173,7 @@ Paths.prototype.drawPaths = function() {
         if (key in pointsVisited) {
             continue;
         }
-        this.drawPaths_walk(point, undefined, pointsVisited);
+        this.drawTier_walk(point, undefined, pointsVisited);
     }
     this.bitmap.dirty = true;
 };
@@ -181,7 +181,7 @@ Paths.prototype.drawPaths = function() {
 // Walk to a point during our recursive draw strategy.
 // This will trace out along all paths leading away from this node,
 // then trace back to the node it came from as it returns.
-Paths.prototype.drawPaths_walk = function(point, from, pointsVisited) {
+Tier.prototype.drawTier_walk = function(point, from, pointsVisited) {
     var key = point.asKey();
     if (!(key in pointsVisited)) {
         // Mark as visited.
@@ -195,7 +195,7 @@ Paths.prototype.drawPaths_walk = function(point, from, pointsVisited) {
                     continue;
                 }
                 path.draw(this);
-                this.drawPaths_walk(to, point, pointsVisited);
+                this.drawTier_walk(to, point, pointsVisited);
             }
         }
         point.draw(this);
@@ -204,11 +204,11 @@ Paths.prototype.drawPaths_walk = function(point, from, pointsVisited) {
 
 // Tick the avatar towards the joystick.
 // Also (optionally) highlight debug info.
-Paths.prototype.update = function() {
+Tier.prototype.update = function() {
     // Figure it if we need to render (again).
     if (this.dirty || (this.gpad && this.HIGHLIGHT_AVATAR_PATHS)) {
         this.dirty = false;
         this.updateCaches();
-        this.drawPaths();
+        this.drawTier();
     }
 };

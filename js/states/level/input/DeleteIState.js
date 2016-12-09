@@ -1,6 +1,7 @@
 // Handle point and path deletion.
 var DeleteIState = function(handler, level) {
     IState.call(this, DeleteIState.NAME, handler);
+    this.tier = level.tier;
     this.avatar = level.avatar;
 };
 
@@ -31,14 +32,14 @@ DeleteIState.prototype.update = function() {
         if (this.avatar.point) {
             if (ratio < 1) {
                 // Delete the point and its paths.
-                this.avatar.paths.deletePoint(this.avatar.point);
+                this.tier.deletePoint(this.avatar.point);
             } else {
                 // Delete the point, merge its paths.
-                this.avatar.paths.deletePointAndMerge(this.avatar.point);
+                this.tier.deletePointAndMerge(this.avatar.point);
             }
             this.avatar.point = undefined;
         } else if (this.avatar.path) {
-            this.avatar.paths.deletePath(this.avatar.path);
+            this.tier.deletePath(this.avatar.path);
             this.avatar.path = undefined;
         }
         this.avatar.children[0].tint = this.avatar.graphics.COLOR;

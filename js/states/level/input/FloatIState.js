@@ -18,9 +18,9 @@ FloatIState.FLOAT_ICON_SCALE = 0.5;
 
 // Called when we become the active state.
 FloatIState.prototype.activated = function(prev) {
-    this.paths = this.level.currentPathsObj;
-    this.points = this.paths.points;
-    this.allPaths = this.paths.allPaths;
+    this.tier = this.level.tier;
+    this.points = this.tier.points;
+    this.paths = this.tier.paths;
     this.x = this.avatar.x;
     this.y = this.avatar.y;
     this.point = undefined;
@@ -63,7 +63,7 @@ FloatIState.prototype.update = function() {
 
 // Return a nearby point, or undefined if none are found.
 FloatIState.prototype.findNearbyPoint = function() {
-    var ip = this.paths.translateGamePointToInternalPoint(
+    var ip = this.tier.translateGamePointToInternalPoint(
         this.avatar.x, this.avatar.y);
     var min = FloatIState.FLOAT_SNAP_DISTANCE;
     var found = undefined;
@@ -81,12 +81,12 @@ FloatIState.prototype.findNearbyPoint = function() {
 
 // Return a nearby path, or undefined if none are found.
 FloatIState.prototype.findNearbyPath = function() {
-    var ip = this.paths.translateGamePointToInternalPoint(
+    var ip = this.tier.translateGamePointToInternalPoint(
         this.avatar.x, this.avatar.y);
     var min = FloatIState.FLOAT_SNAP_DISTANCE;
     var found = undefined;
-    for (var i = 0; i < this.allPaths.length; i++) {
-        var path = this.allPaths[i];
+    for (var i = 0; i < this.paths.length; i++) {
+        var path = this.paths[i];
         var d = Utils.distanceBetweenPoints(
             path.p1.x, path.p1.y, ip.x, ip.y);
         var a1 = Utils.angleBetweenPoints(
@@ -109,7 +109,7 @@ FloatIState.prototype.findNearbyPath = function() {
 
 // Snap onto a point.
 FloatIState.prototype.snapToPoint = function(point) {
-    var gp = this.paths.translateInternalPointToGamePoint(
+    var gp = this.tier.translateInternalPointToGamePoint(
         point.x, point.y);
     this.avatar.x = gp.x;
     this.avatar.y = gp.y;
@@ -121,7 +121,7 @@ FloatIState.prototype.snapToPoint = function(point) {
 
 // Snap onto a path.
 FloatIState.prototype.snapToPath = function(path) {
-    var ip = this.paths.translateGamePointToInternalPoint(
+    var ip = this.tier.translateGamePointToInternalPoint(
         this.avatar.x, this.avatar.y);
     var d = Utils.distanceBetweenPoints(
         path.p1.x, path.p1.y, ip.x, ip.y);
@@ -129,7 +129,7 @@ FloatIState.prototype.snapToPath = function(path) {
     var dy = d * Math.cos(path.angleForward);
     var x = path.p1.x + dx;
     var y = path.p1.y + dy;
-    var gp = this.paths.translateInternalPointToGamePoint(x, y);
+    var gp = this.tier.translateInternalPointToGamePoint(x, y);
     this.avatar.x = gp.x;
     this.avatar.y = gp.y;
     this.avatar.body.velocity.x = 0;

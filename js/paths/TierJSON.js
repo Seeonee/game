@@ -1,5 +1,5 @@
-// Class that handles writing paths out to JSON.
-var PathsWriter = function(paths) {
+// Class that handles writing a tier out to JSON.
+var TierWriter = function(paths) {
     this.paths = paths;
     this.pointsVisited = {};
     this.pointMap = {};
@@ -7,14 +7,14 @@ var PathsWriter = function(paths) {
 };
 
 // Convenience method that handles instantiating the writer.
-PathsWriter.json = function(paths) {
-    return new PathsWriter(paths)._json();
+TierWriter.json = function(paths) {
+    return new TierWriter(paths)._json();
 };
 
 // Push out a JSON version of our points and paths.
 // We translate all our points so that 
 // p1 is at (0, 0).
-PathsWriter.prototype._json = function() {
+TierWriter.prototype._json = function() {
     var minx = this.paths.points[0].x;
     var miny = this.paths.points[0].y;
     var result = '';
@@ -42,26 +42,26 @@ PathsWriter.prototype._json = function() {
 
 
 
-// Class that handles loading JSON data as paths.
-var PathsLoader = function(game, json) {
+// Class that handles loading JSON data as a tier.
+var TierLoader = function(game, json) {
     this.game = game;
     this.json = json;
 };
 
-PathsLoader.OFFSET = 5;
+TierLoader.OFFSET = 5;
 
 // Convenience method that handles instantiating the loader.
-PathsLoader.load = function(game, json) {
-    return new PathsLoader(game, json)._load();
+TierLoader.load = function(game, json) {
+    return new TierLoader(game, json)._load();
 };
 
 // Load a JSON representation of points and paths.
 // We also translate all loaded points so that 
 // all points have sufficiently positive x and y.
-PathsLoader.prototype._load = function() {
+TierLoader.prototype._load = function() {
     var minx = Number.POSITIVE_INFINITY;
     var miny = Number.POSITIVE_INFINITY;
-    this.paths = new Paths(this.game);
+    this.paths = new Tier(this.game);
     var points = {};
     var keys = Object.keys(this.json);
     for (var i = 0; i < keys.length; i++) {
@@ -84,13 +84,13 @@ PathsLoader.prototype._load = function() {
     }
     for (var i = 0; i < this.paths.points.length; i++) {
         var point = this.paths.points[i];
-        point.x += (PathsLoader.OFFSET - minx);
-        point.y += (PathsLoader.OFFSET - miny);
+        point.x += (TierLoader.OFFSET - minx);
+        point.y += (TierLoader.OFFSET - miny);
     }
     return this.paths;
 };
 
 // Given a JSON name for a point ("p1"), return its index (1).
-PathsLoader.prototype._indexOf = function(key) {
+TierLoader.prototype._indexOf = function(key) {
     return parseInt(key.substring(1));
 }

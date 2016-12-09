@@ -1,5 +1,5 @@
 // Simple player avatar placeholder.
-var Avatar = function(game, graphics, paths) {
+var Avatar = function(game, graphics, tier) {
     // Constants, for now.
     this.MAX_SPEED = 300;
     this.TILT_THRESHOLD = 0.15;
@@ -11,7 +11,7 @@ var Avatar = function(game, graphics, paths) {
     this.TILT_PARTIAL_ANGLE = this.TILT_TOTAL_ANGLE - this.TILT_FULLSPEED_ANGLE;
 
     this.game = game;
-    this.paths = paths;
+    this.tier = tier;
     this.graphics = graphics;
     // Set up graphics and physics.
     Phaser.Sprite.call(this, game, 0, 0);
@@ -22,7 +22,7 @@ var Avatar = function(game, graphics, paths) {
     this.path = undefined;
     this.point = undefined;
 
-    this.paths.addAvatar(this);
+    this.tier.addAvatar(this);
 };
 
 Avatar.prototype = Object.create(Phaser.Sprite.prototype);
@@ -31,7 +31,7 @@ Avatar.prototype.constructor = Avatar;
 // Figure out where we're starting.
 Avatar.prototype.setStartingPoint = function(point) {
     this.point = point;
-    var gp = this.paths.translateInternalPointToGamePoint(
+    var gp = this.tier.translateInternalPointToGamePoint(
         this.point.x, this.point.y);
     this.x = gp.x;
     this.y = gp.y;
@@ -51,7 +51,7 @@ Avatar.prototype.move = function(angle, ratio) {
     }
 
     // Figure out where we are, and where we're headed.
-    var ip = this.paths.translateGamePointToInternalPoint(this.x, this.y);
+    var ip = this.tier.translateGamePointToInternalPoint(this.x, this.y);
     this.destination = undefined;
     fakeAngle = undefined;
     if (ratio > 0) {
@@ -78,7 +78,7 @@ Avatar.prototype.move = function(angle, ratio) {
                     var aP2 = Utils.angleBetweenPoints(xP0, yP0, xP2, yP2);
                     var dx2 = dMe * Math.sin(aP2);
                     var dy2 = dMe * Math.cos(aP2);
-                    var gp = this.paths.translateInternalPointToGamePoint(
+                    var gp = this.tier.translateInternalPointToGamePoint(
                         xP0 + dx2, yP0 + dy2);
                     this.x = gp.x;
                     this.y = gp.y;
@@ -88,7 +88,7 @@ Avatar.prototype.move = function(angle, ratio) {
                 // We may have overshot and be tilting the joystick, 
                 // but not tilting towards any valid paths.
                 // In that case, snap back to our point.
-                var gp = this.paths.translateInternalPointToGamePoint(
+                var gp = this.tier.translateInternalPointToGamePoint(
                     this.point.x, this.point.y);
                 this.x = gp.x;
                 this.y = gp.y;
@@ -103,14 +103,14 @@ Avatar.prototype.move = function(angle, ratio) {
     } else if (this.point) {
         // We may have overshot and then released the joystick.
         // Go ahead and make sure we've snapped back.
-        var gp = this.paths.translateInternalPointToGamePoint(
+        var gp = this.tier.translateInternalPointToGamePoint(
             this.point.x, this.point.y);
         this.x = gp.x;
         this.y = gp.y;
     }
 
     // Recompute our relative internal point, in case it's changed.
-    var ip = this.paths.translateGamePointToInternalPoint(this.x, this.y);
+    var ip = this.tier.translateGamePointToInternalPoint(this.x, this.y);
 
     // Start going there.
     if (this.destination) {
@@ -122,7 +122,7 @@ Avatar.prototype.move = function(angle, ratio) {
             // Snap to a point.
             this.body.velocity.x = 0;
             this.body.velocity.y = 0;
-            var gp = this.paths.translateInternalPointToGamePoint(
+            var gp = this.tier.translateInternalPointToGamePoint(
                 this.destination.x, this.destination.y);
             this.x = gp.x;
             this.y = gp.y;

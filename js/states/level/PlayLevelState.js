@@ -37,19 +37,19 @@ PlayLevelState.prototype.create = function() {
 };
 
 
-// Create a level of paths, with an avatar attached.
+// Create a level of tiers, with an avatar attached.
 PlayLevelState.prototype.createLevel = function() {
     var json = this.game.cache.getJSON(this.levelName);
-    var paths = PathsLoader.load(this.game, json);
+    var tier = TierLoader.load(this.game, json);
 
     var gfx = new AVATAR_GRAPHICS(this.game);
-    var avatar = new Avatar(this.game, gfx, paths);
+    var avatar = new Avatar(this.game, gfx, tier);
 
     this.level = {
-        currentPathsObj: paths,
+        tier: tier,
         avatar: avatar,
         update: function() {
-            paths.update();
+            tier.update();
         }
     };
 };
