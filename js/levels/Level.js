@@ -15,15 +15,15 @@ Level.prototype.update = function() {
 }
 
 // Push out a JSON version of our tiers.
-Level.write = function(level) {
+Level.prototype.toJSON = function() {
     var result = {
-        name: level.name,
-        start: level.start,
+        name: this.name,
+        start: this.start,
         tiers: {}
     };
-    for (var i = 0; i < level.tiers.length; i++) {
-        var tier = level.tiers[i];
-        result.tiers[tier.name] = Tier.Writer.json(tier);
+    for (var i = 0; i < this.tiers.length; i++) {
+        var tier = this.tiers[i];
+        result.tiers[tier.name] = tier;
     }
     return result;
 };

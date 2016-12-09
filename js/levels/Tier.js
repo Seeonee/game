@@ -210,15 +210,15 @@ Tier.prototype.update = function() {
 // More constants, for loading!
 Tier.LOAD_OFFSET = 5;
 
-// Push out a JSON version of our points and paths.
+// JSON conversion of our points and paths.
 // We translate all our points so that 
 // p1 is at (0, 0).
-Tier.write = function(tier) {
-    var minx = tier.points[0].x;
-    var miny = tier.points[0].y;
+Tier.prototype.toJSON = function() {
+    var minx = this.points[0].x;
+    var miny = this.points[0].y;
     var result = {};
-    for (var i = 0; i < tier.points.length; i++) {
-        var point = tier.points[i];
+    for (var i = 0; i < this.points.length; i++) {
+        var point = this.points[i];
         var paths = [];
         for (var j = 0; j < point.paths.length; j++) {
             var other = point.paths[j].getCounterpoint(point);
