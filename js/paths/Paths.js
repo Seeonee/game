@@ -27,7 +27,7 @@ var Paths = function(game, points) {
     }
     // Set up our bitmap.
     this.bitmap = this.game.add.bitmapData(this.game.width, this.game.height);
-    this.image = this.game.add.image(0, 0, this.bitmap);
+    this.image = this.game.add.image(100, 100, this.bitmap);
     // We support a gamepad joystick for input.
     this.gpad = undefined;
 };
@@ -100,6 +100,22 @@ Paths.prototype.deletePath = function(path) {
     path.delete();
     this.dirty = true;
 }
+
+// Takes x and y values relative to this Paths object's 
+// internal points, and returns an {x, y} object whose 
+// coordinates have been adjusted to work with the 
+// game.
+Paths.prototype.translateInternalPointToGamePoint = function(x, y) {
+    return { x: x + this.image.x, y: y + this.image.y };
+};
+
+// Takes x and y values relative to the game, 
+// and returns an {x, y} object whose coordinates 
+// have been adjusted to work with this Paths 
+// object's internal points.
+Paths.prototype.translateGamePointToInternalPoint = function(x, y) {
+    return { x: x - this.image.x, y: y - this.image.y };
+};
 
 // Add the player avatar to our starting point.
 Paths.prototype.addAvatar = function(avatar) {

@@ -18,8 +18,9 @@ FloatIState.FLOAT_ICON_SCALE = 0.5;
 
 // Called when we become the active state.
 FloatIState.prototype.activated = function(prev) {
+    this.paths = this.level.path;
     this.points = this.level.path.points;
-    this.paths = this.cacheAllPaths(); // this.level.path.paths;
+    this.allPaths = this.cacheAllPaths(); // this.level.path.paths;
     this.x = this.avatar.x;
     this.y = this.avatar.y;
     this.point = undefined;
@@ -86,11 +87,14 @@ FloatIState.prototype.update = function() {
 
 // Return a nearby point, or undefined if none are found.
 FloatIState.prototype.findNearbyPoint = function() {
+    var ip = this.paths.translateGamePointToInternalPoint(
+        this.avatar.x, this.avatar.y);
     var min = FloatIState.FLOAT_SNAP_DISTANCE;
     var found = undefined;
     for (var i = 0; i < this.points.length; i++) {
         var point = this.points[i];
-        var d = Utils.distanceBetweenPoints(this.avatar.x, this.avatar.y, point.x, point.y);
+        var d = Utils.distanceBetweenPoints(
+            ip.x, ip.y, point.x, point.y);
         if (d <= min) {
             found = point;
             min = d;
@@ -101,12 +105,16 @@ FloatIState.prototype.findNearbyPoint = function() {
 
 // Return a nearby path, or undefined if none are found.
 FloatIState.prototype.findNearbyPath = function() {
+    var ip = this.paths.translateGamePointToInternalPoint(
+        this.avatar.x, this.avatar.y);
     var min = FloatIState.FLOAT_SNAP_DISTANCE;
     var found = undefined;
-    for (var i = 0; i < this.paths.length; i++) {
-        var path = this.paths[i];
-        var d = Utils.distanceBetweenPoints(path.p1.x, path.p1.y, this.avatar.x, this.avatar.y);
-        var a1 = Utils.angleBetweenPoints(path.p1.x, path.p1.y, this.avatar.x, this.avatar.y);
+    for (var i = 0; i < this.allPaths.length; i++) {
+        var path = this.allPaths[i];
+        var d = Utils.distanceBetweenPoints(
+            path.p1.x, path.p1.y, ip.x, ip.y);
+        var a1 = Utils.angleBetweenPoints(
+            path.p1.x, path.p1.y, ip.x, ip.y);
         var a2 = path.angleForward;
         var a3 = Utils.getBoundedAngleDifference(a1, a2);
         var offset = d * Math.sin(a3);
@@ -125,8 +133,10 @@ FloatIState.prototype.findNearbyPath = function() {
 
 // Snap onto a point.
 FloatIState.prototype.snapToPoint = function(point) {
-    this.avatar.x = point.x;
-    this.avatar.y = point.y;
+    var gp = this.paths.translateInternalPointToGamePoint(
+        point.x, point.y);
+    this.avatar.x = gp.x;
+    this.avatar.y = gp.y;
     this.avatar.body.velocity.x = 0;
     this.avatar.body.velocity.y = 0;
     this.avatar.point = point;
@@ -135,14 +145,17 @@ FloatIState.prototype.snapToPoint = function(point) {
 
 // Snap onto a path.
 FloatIState.prototype.snapToPath = function(path) {
+    var ip = this.paths.translateGamePointToInternalPoint(
+        this.avatar.x, this.avatar.y);
     var d = Utils.distanceBetweenPoints(
-        path.p1.x, path.p1.y, this.avatar.x, this.avatar.y);
+        path.p1.x, path.p1.y, ip.x, ip.y);
     var dx = d * Math.sin(path.angleForward);
     var dy = d * Math.cos(path.angleForward);
     var x = path.p1.x + dx;
     var y = path.p1.y + dy;
-    this.avatar.x = x;
-    this.avatar.y = y;
+    var gp = this.paths.translateInternalPointToGamePoint(x, y);
+    this.avatar.x = gp.x;
+    this.avatar.y = gp.y;
     this.avatar.body.velocity.x = 0;
     this.avatar.body.velocity.y = 0;
     this.avatar.path = path;

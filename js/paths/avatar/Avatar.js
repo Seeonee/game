@@ -29,8 +29,10 @@ Avatar.prototype.constructor = Avatar;
 // Figure out where we're starting.
 Avatar.prototype.setStartingPoint = function(point) {
     this.point = point;
-    this.x = point.x;
-    this.y = point.y;
+    var gp = this.paths.translateInternalPointToGamePoint(
+        this.point.x, this.point.y);
+    this.x = gp.x;
+    this.y = gp.y;
 };
 
 // Move at a given angle and ratio of speed (0 to 1).
@@ -47,6 +49,7 @@ Avatar.prototype.move = function(angle, ratio) {
     }
 
     // Figure out where we are, and where we're headed.
+    var ip = this.paths.translateGamePointToInternalPoint(this.x, this.y);
     this.destination = undefined;
     fakeAngle = undefined;
     if (ratio > 0) {
@@ -55,7 +58,7 @@ Avatar.prototype.move = function(angle, ratio) {
             if (path) {
                 this.path = path;
                 this.destination = this.path.getCounterpoint(this.point);
-                if (this.x != this.point.x || this.y != this.point.y) {
+                if (ip.x != this.point.x || ip.y != this.point.y) {
                     // We've overshot our current point,
                     // but we're still headed towards another point.
                     // Find how far we overshot, then "orbit" around 
@@ -63,8 +66,8 @@ Avatar.prototype.move = function(angle, ratio) {
                     // in the direction of our next point.
                     var xP0 = this.point.x;
                     var yP0 = this.point.y;
-                    var xMe = this.x;
-                    var yMe = this.y;
+                    var xMe = ip.x;
+                    var yMe = ip.y;
                     // How far we overshot.
                     var dMe = Utils.distanceBetweenPoints(xP0, yP0, xMe, yMe);
                     var xP2 = this.destination.x;
@@ -73,19 +76,23 @@ Avatar.prototype.move = function(angle, ratio) {
                     var aP2 = Utils.angleBetweenPoints(xP0, yP0, xP2, yP2);
                     var dx2 = dMe * Math.sin(aP2);
                     var dy2 = dMe * Math.cos(aP2);
-                    this.x = xP0 + dx2;
-                    this.y = yP0 + dy2;
+                    var gp = this.paths.translateInternalPointToGamePoint(
+                        xP0 + dx2, yP0 + dy2);
+                    this.x = gp.x;
+                    this.y = gp.y;
                 }
                 this.point = undefined;
             } else {
                 // We may have overshot and be tilting the joystick, 
                 // but not tilting towards any valid paths.
                 // In that case, snap back to our point.
-                this.x = this.point.x;
-                this.y = this.point.y;
+                var gp = this.paths.translateInternalPointToGamePoint(
+                    this.point.x, this.point.y);
+                this.x = gp.x;
+                this.y = gp.y;
             }
         } else if (this.path) {
-            var target = this.path.getPoint(angle, this.x, this.y);
+            var target = this.path.getPoint(angle, ip.x, ip.y);
             if (target) {
                 this.destination = target.point;
                 fakeAngle = target.fakeAngle;
@@ -94,22 +101,29 @@ Avatar.prototype.move = function(angle, ratio) {
     } else if (this.point) {
         // We may have overshot and then released the joystick.
         // Go ahead and make sure we've snapped back.
-        this.x = this.point.x;
-        this.y = this.point.y;
+        var gp = this.paths.translateInternalPointToGamePoint(
+            this.point.x, this.point.y);
+        this.x = gp.x;
+        this.y = gp.y;
     }
+
+    // Recompute our relative internal point, in case it's changed.
+    var ip = this.paths.translateGamePointToInternalPoint(this.x, this.y);
 
     // Start going there.
     if (this.destination) {
         var a2 = Utils.angleBetweenPoints(
-            this.x, this.y, this.destination.x, this.destination.y);
+            ip.x, ip.y, this.destination.x, this.destination.y);
         var distance = Utils.distanceBetweenPoints(
-            this.x, this.y, this.destination.x, this.destination.y);
+            ip.x, ip.y, this.destination.x, this.destination.y);
         if (distance <= this.POINT_SNAP_RADIUS) {
             // Snap to a point.
             this.body.velocity.x = 0;
             this.body.velocity.y = 0;
-            this.x = this.destination.x;
-            this.y = this.destination.y;
+            var gp = this.paths.translateInternalPointToGamePoint(
+                this.destination.x, this.destination.y);
+            this.x = gp.x;
+            this.y = gp.y;
             this.point = this.destination;
             this.path = undefined;
         } else {
