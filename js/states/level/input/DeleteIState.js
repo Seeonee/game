@@ -1,7 +1,7 @@
 // Handle point and path deletion.
 var DeleteIState = function(handler, level) {
     IState.call(this, DeleteIState.NAME, handler);
-    this.tier = level.tier;
+    this.level = level;
     this.avatar = level.avatar;
 };
 
@@ -17,6 +17,7 @@ DeleteIState.PATH_WIDTH = 4;
 
 // Action for deleting nodes and paths.
 DeleteIState.prototype.activated = function(prev) {
+    this.tier = this.level.tier;
     this.start = this.game.time.now;
     this.avatar.body.velocity.x = 0;
     this.avatar.body.velocity.y = 0;
