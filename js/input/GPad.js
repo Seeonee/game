@@ -3,6 +3,7 @@
 var GPad = function(game, pad) {
     this.game = game;
     this.pad = pad;
+    this.baseTime = this.game.time.time;
     this.buttonTimes = {};
 
     this.angle = 0; // 0 to 2PI
@@ -37,27 +38,31 @@ GPad.prototype.isTilted = function() {
 // Figure out if a button was just pressed, taking into account 
 // if we've already consumed this event.
 GPad.prototype.justPressed = function(buttonCode) {
-    return this.buttonEvent(buttonCode, this.pad.justPressed);
+    return this.buttonEvent(buttonCode,
+        'timeDown', this.pad.justPressed);
 };
 
 // Figure out if a button was just released, taking into account 
 // if we've already consumed this event.
 GPad.prototype.justReleased = function(buttonCode) {
-    return this.buttonEvent(buttonCode, this.pad.justReleased);
+    return this.buttonEvent(buttonCode,
+        'timeUp', this.pad.justReleased);
 };
 
 // Figure out if a button was just pressed, taking into account 
 // if we've already consumed this event.
-GPad.prototype.buttonEvent = function(buttonCode, handler) {
+GPad.prototype.buttonEvent = function(buttonCode, timeName, handler) {
     var button = this.pad._buttons[buttonCode];
     if (!button) {
-        return false;
+        return;
+    }
+    var time = button[timeName];
+    if (time <= this.baseTime) {
+        return;
     }
     if (!(buttonCode in this.buttonTimes)) {
         return handler.call(this.pad, buttonCode);
     }
-
-    var time = Math.max(button.timeDown, button.timeUp);
     if (time > this.buttonTimes[buttonCode]) {
         delete this.buttonTimes[buttonCode];
         return handler.call(this.pad, buttonCode);
@@ -68,5 +73,10 @@ GPad.prototype.buttonEvent = function(buttonCode, handler) {
 // Figure out if a button was just pressed, taking into account 
 // if we've already consumed this event.
 GPad.prototype.consumeButtonEvent = function(buttonCode) {
-    this.buttonTimes[buttonCode] = this.game.time.time + 1;
+    var t = this.game.time.time + 1;
+    if (buttonCode) {
+        this.buttonTimes[buttonCode] = t;
+    } else {
+        this.baseTime = t;
+    }
 };
