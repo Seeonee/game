@@ -31,6 +31,14 @@ IHandler.prototype.update = function() {
     }
 };
 
+
+// Give our states a chance to render.
+IHandler.prototype.render = function() {
+    if (this.enabled && this.state) {
+        this.state.render();
+    }
+};
+
 // Set the current state to a named one.
 // If the named state isn't defined or if 
 // no name is passed, all state is cleared.
@@ -67,8 +75,14 @@ var IState = function(name, handler) {
 };
 
 // This will be called by the handler, 
-// giving us a chance to do things.
+// giving us a chance to update things.
 IState.prototype.update = function() {
+    // Do nothing.
+};
+
+// This will be called by the handler, 
+// giving us a chance to render things.
+IState.prototype.render = function() {
     // Do nothing.
 };
 

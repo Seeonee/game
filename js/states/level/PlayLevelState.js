@@ -51,6 +51,8 @@ PlayLevelState.prototype.render = function() {
     if (FPS_DISPLAY) {
         this.game.debug.text(this.game.time.fps, 2, 14, "#D92C57"); // FPS tracking.
     };
+    this.level.render();
+    this.ihandler.render();
 };
 
 // Create a player sprite.

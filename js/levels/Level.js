@@ -14,6 +14,12 @@ Level.prototype.update = function() {
     this.tier.update();
 }
 
+// Render our current tier.
+Level.prototype.render = function() {
+    // TODO: Some of our current update() stuff
+    // should happen here instead.
+}
+
 // Push out a JSON version of our tiers.
 Level.prototype.toJSON = function() {
     var result = {

@@ -32,11 +32,14 @@ DeleteIState.prototype.activated = function(prev) {
         this.avatar.y - (this.bitmap.height / 2),
         this.bitmap);
     this.game.state.getCurrentState().z.mg.add(this.image);
-    this.renderMark();
+    this.renderNeeded = true;
 }
 
 // Render the deletion progress indicator.
-DeleteIState.prototype.renderMark = function() {
+DeleteIState.prototype.render = function() {
+    if (!this.renderNeeded) {
+        return;
+    }
     var elapsed = Math.min(this.game.time.now - this.start,
         DeleteIState.THRESHOLD);
     var ratio = 1 - (elapsed / DeleteIState.THRESHOLD);
@@ -57,6 +60,9 @@ DeleteIState.prototype.renderMark = function() {
         this.bitmap.context.fill();
     }
     this.bitmap.dirty = true;
+    if (ratio == 0 || this.avatar.path) {
+        this.renderNeeded = false;
+    }
 };
 
 // Handle an update while holding the button.
@@ -64,7 +70,6 @@ DeleteIState.prototype.update = function() {
     var elapsed = Math.min(this.game.time.now - this.start,
         DeleteIState.THRESHOLD);
     var ratio = elapsed / DeleteIState.THRESHOLD;
-    this.renderMark();
     if (this.gpad.justReleased(this.buttonMap.DELETE_BUTTON)) {
         if (this.avatar.point) {
             if (ratio < 1) {

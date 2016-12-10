@@ -28,7 +28,7 @@ AddFromPathIState.prototype.activated = function(prev) {
     this.image = this.game.add.image(0, 0, this.bitmap);
     this.game.state.getCurrentState().z.mg.add(this.image);
     this.cacheMarks();
-    this.renderMarks();
+    this.renderNeeded = true;
 };
 
 // Render the various path marks.
@@ -51,7 +51,10 @@ AddFromPathIState.prototype.cacheMarks = function() {
 };
 
 // Render the various path marks.
-AddFromPathIState.prototype.renderMarks = function() {
+AddFromPathIState.prototype.render = function() {
+    if (!this.renderNeeded) {
+        return;
+    }
     this.bitmap.context.clearRect(0, 0,
         this.game.width, this.game.height);
     for (var i = 0; i < this.marks.length; i++) {
@@ -65,6 +68,7 @@ AddFromPathIState.prototype.renderMarks = function() {
         this.bitmap.context.fill();
     }
     this.bitmap.dirty = true;
+    this.renderNeeded = false;
 };
 
 // Figure out if a mark is near the "cursor".
@@ -90,7 +94,7 @@ AddFromPathIState.prototype.update = function() {
     var mark = this.getSelectedMark();
     if (mark !== this.near) {
         this.near = mark;
-        this.renderMarks();
+        this.renderNeeded = true;
     }
 
     var done = false;
@@ -145,12 +149,14 @@ AddFromPointIState.prototype.activated = function(prev) {
     this.bitmap.context.lineCap = 'round';
     this.image = this.game.add.image(0, 0, this.bitmap);
     this.game.state.getCurrentState().z.mg.add(this.image);
-    // Side effect of the JSON load. We need to shift slightly.
-    this.offset = this.tier.points[0].x % 50;
+    this.renderNeeded = false;
 };
 
 // Render the various point marks.
-AddFromPointIState.prototype.renderMarks = function() {
+AddFromPointIState.prototype.render = function() {
+    if (!this.renderNeeded) {
+        return;
+    }
     this.bitmap.context.clearRect(0, 0,
         this.game.width, this.game.height);
     if (this.near) {
@@ -174,30 +180,38 @@ AddFromPointIState.prototype.renderMarks = function() {
         this.bitmap.context.fill();
     }
     this.bitmap.dirty = true;
+    this.renderNeeded = false;
 };
 
 // Figure out if a mark is near the "cursor".
 AddFromPointIState.prototype.cacheSelectedMark = function() {
     var ip = this.tier.translateGamePointToInternalPoint(
         this.avatar.x, this.avatar.y);
-    ip.x -= this.offset;
-    ip.y -= this.offset;
+    ip.x -= Tier.PADDING;
+    ip.y -= Tier.PADDING;
     ip.x = Math.floor(ip.x + (25 * Math.sign(ip.x)));
     ip.y = Math.floor(ip.y + (25 * Math.sign(ip.y)));
     ip.x -= ip.x % 50;
     ip.y -= ip.y % 50;
-    ip.x += this.offset;
-    ip.y += this.offset;
+    ip.x += Tier.PADDING;
+    ip.y += Tier.PADDING;
+    var old = this.near;
     if (ip.x == this.point.x && ip.y == this.point.y) {
         this.near = undefined;
         this.valid = false;
     } else {
         var gp = this.tier.translateInternalPointToGamePoint(
             ip.x, ip.y);
-        this.near = { x: gp.x, y: gp.y };
+        var near = { x: gp.x, y: gp.y };
+        if (!old || old.x != near.x || old.y != near.y) {
+            this.near = near;
+        }
         var dx = Math.abs(this.point.x - ip.x);
         var dy = Math.abs(this.point.y - ip.y);
         this.valid = dx == dy || dx == 0 || dy == 0;
+    }
+    if (old !== this.near) {
+        this.renderNeeded = true;
     }
 };
 
@@ -212,7 +226,6 @@ AddFromPointIState.prototype.update = function() {
     this.avatar.body.velocity.y = speed * Math.cos(angle);
     // Next, find and render the candidate.
     this.cacheSelectedMark();
-    this.renderMarks();
 
     var done = false;
     if (this.gpad.justReleased(this.buttonMap.ADD_CANCEL_BUTTON)) {
