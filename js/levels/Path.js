@@ -1,6 +1,6 @@
 // A path is just two Point objects, connected.
-var Path = function(p1, p2) {
-    this.name = p1.name + '-' + p2.name; // TODO: Take a name param!
+var Path = function(name, p1, p2) {
+    this.name = name;
     this.p1 = p1;
     this.p2 = p2;
     // Store our angles.

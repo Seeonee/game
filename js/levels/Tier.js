@@ -64,15 +64,15 @@ Tier.prototype.addPoint = function(name, x, y, point2) {
     this.pointMap[name] = point;
     this.dirty = true;
     if (point2 != undefined) {
-        this.connectPoints(point, point2);
+        this.addPath(this.getNewPathName(), point, point2);
     }
     return point;
 };
 
 // Connect two points.
-Tier.prototype.connectPoints = function(point, point2) {
+Tier.prototype.addPath = function(name, point, point2) {
     if (!point.isConnectedTo(point2)) {
-        var path = new Path(point, point2);
+        var path = new Path(name, point, point2);
         point.paths.push(path);
         point2.paths.push(path);
         this.paths.push(path);
@@ -89,7 +89,7 @@ Tier.prototype.addPointToPathAtCoords = function(path, x, y) {
     point.paths.push(path);
     point2.deletePath(path);
     path.p2 = point;
-    this.connectPoints(point, point2);
+    this.addPath(this.getNewPathName(), point, point2);
     this.dirty = true;
     return point;
 }
@@ -123,7 +123,8 @@ Tier.prototype.deletePointAndMerge = function(point) {
         for (var i = 0; i < linked.length; i++) {
             for (var j = 0; j < linked.length; j++) {
                 if (i != j) {
-                    this.connectPoints(linked[i], linked[j]);
+                    this.addPath(this.getNewPathName(),
+                        linked[i], linked[j]);
                 }
             }
         }
@@ -285,18 +286,24 @@ Tier.prototype.update = function() {
 Tier.prototype.toJSON = function() {
     var minx = this.points[0].x;
     var miny = this.points[0].y;
-    var result = {};
+    var result = { points: {}, paths: {} };
     for (var i = 0; i < this.points.length; i++) {
         var point = this.points[i];
         var paths = [];
         for (var j = 0; j < point.paths.length; j++) {
-            var other = point.paths[j].getCounterpoint(point);
-            paths.push(other.name);
+            paths.push(point.paths[j].name);
         }
-        result[point.name] = {
+        result.points[point.name] = {
             x: point.x - minx,
             y: point.y - miny,
-            pathsTo: paths
+            paths: paths
+        };
+    }
+    for (var i = 0; i < this.paths.length; i++) {
+        var path = this.paths[i];
+        result.paths[path.name] = {
+            p1: path.p1.name,
+            p2: path.p2.name
         };
     }
     return result;
@@ -306,28 +313,24 @@ Tier.prototype.toJSON = function() {
 // We also translate all loaded points so that 
 // all points have sufficiently positive x and y.
 Tier.load = function(game, name, json) {
+    var tier = new Tier(game, name);
     var minx = Number.POSITIVE_INFINITY;
     var miny = Number.POSITIVE_INFINITY;
-    var tier = new Tier(game, name);
-    var points = {};
-    var keys = Object.keys(json);
+    var keys = Object.keys(json.points);
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
-        var pointObj = json[key];
+        var pointObj = json.points[key];
         var point = tier.addPoint(key, pointObj.x, pointObj.y);
         minx = (point.x < minx) ? point.x : minx;
         miny = (point.y < miny) ? point.y : miny;
-        points[key] = point;
     }
+    keys = Object.keys(json.paths);
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
-        var pointObj = json[key];
-        for (var j = 0; j < pointObj.pathsTo.length; j++) {
-            var otherKey = pointObj.pathsTo[j];
-            if (Tier._indexOf(key) < Tier._indexOf(otherKey)) {
-                tier.connectPoints(points[key], points[otherKey]);
-            }
-        }
+        var pathObj = json.paths[key];
+        var p1 = tier.pointMap[pathObj.p1];
+        var p2 = tier.pointMap[pathObj.p2];
+        tier.addPath(key, p1, p2);
     }
     for (var i = 0; i < tier.points.length; i++) {
         var point = tier.points[i];

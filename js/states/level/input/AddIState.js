@@ -233,7 +233,9 @@ AddFromPointIState.prototype.update = function() {
                 }
             }
             if (existing) {
-                this.tier.connectPoints(this.point, existing);
+                this.tier.addPath(
+                    this.tier.getNewPathName(),
+                    this.point, existing);
                 this.avatar.point = existing;
             } else {
 

@@ -1,4 +1,3 @@
-Add path names and lookup map
 Make events for avatar/point/path when they attach/detach
 Make world bounds larger, and resize to fit level (based on largest tier)
 Redo DeleteIState gfx to not use avatar tint
