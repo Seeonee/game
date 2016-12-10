@@ -1,8 +1,14 @@
 // Class that stores all of our button mappings.
 var ButtonMappings = function() {
     // Initialize with defaults.
+    // Basic menu actions.
+    this.SELECT = Phaser.Gamepad.PS3XC_STICK_LEFT_X;
+
+    // Player avatar controls during a level.
     this.MOVE_X = Phaser.Gamepad.PS3XC_STICK_LEFT_X;
     this.MOVE_Y = Phaser.Gamepad.PS3XC_STICK_LEFT_Y;
+
+    // Level editor controls.
     this.ADD_BUTTON = Phaser.Gamepad.PS3XC_X;
     this.ADD_CANCEL_BUTTON = Phaser.Gamepad.PS3XC_CIRCLE;
     this.FLOAT_BUTTON = Phaser.Gamepad.PS3XC_R2;

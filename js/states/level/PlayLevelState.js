@@ -7,8 +7,9 @@ var PlayLevelState = function(game) {};
 // We get passed the level asset to load.
 // This will be a .json file within the assets/levels directory.
 // It'll also be used as the load key within the cache.
-PlayLevelState.prototype.init = function(levelName) {
+PlayLevelState.prototype.init = function(levelName, gpad) {
     this.levelName = levelName;
+    this.gpad = gpad;
 };
 
 // Load any custom assets that our level requires, 
@@ -37,9 +38,7 @@ PlayLevelState.prototype.create = function() {
     this.level = Level.load(this.game, this.levelName);
     new Avatar(this.game, new AVATAR_GRAPHICS(this.game), this.level);
 
-    this.game.input.gamepad.start();
-    var gpad = new GPad(this.game, this.game.input.gamepad.pad1);
-    this.ihandler = new PlayLevelIHandler(this.game, gpad, this.level);
+    this.ihandler = new PlayLevelIHandler(this.game, this.gpad, this.level);
 
     this.game.time.advancedTiming = true; // For FPS tracking.
     // this.game.world.setBounds(0, 0, 1920, 1920);

@@ -141,7 +141,7 @@ AddFromPointIState.prototype.activated = function(prev) {
     this.bitmap = this.game.add.bitmapData(
         this.game.width, this.game.height);
     this.bitmap.context.lineWidth = Tier.PATH_WIDTH;
-    this.bitmap.context.lineCap = Tier.LINE_CAP_STYLE;
+    this.bitmap.context.lineCap = 'round';
     this.image = this.game.add.image(0, 0, this.bitmap);
     this.game.state.getCurrentState().z.mg.add(this.image);
     // Side effect of the JSON load. We need to shift slightly.

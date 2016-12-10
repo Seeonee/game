@@ -11,10 +11,21 @@ TitleMenuState.prototype.create = function() {
         boundsAlignH: 'center',
         boundsAlignV: 'middle'
     };
-    var text = this.game.add.text(0, 0, 'Click to play', style);
+    var text = this.game.add.text(0, 0, 'Press X to play', style);
     text.setTextBounds(0, 100, this.game.width, 100);
-    this.game.input.onDown.addOnce(this.startLevel);
+
+    this.game.input.gamepad.start();
+    this.gpad = new GPad(this.game, this.game.input.gamepad.pad1);
 };
+
+// When clicked, start the level.
+TitleMenuState.prototype.update = function() {
+    var buttonMap = this.game.settings.buttonMap;
+    if (this.gpad.justPressed(buttonMap.SELECT)) {
+        this.gpad.consumeButtonEvent(buttonMap.SELECT);
+        this.startLevel();
+    }
+}
 
 // When clicked, start the level.
 TitleMenuState.prototype.startLevel = function() {
@@ -22,5 +33,6 @@ TitleMenuState.prototype.startLevel = function() {
     // 'loading level' state which pulls in any 
     // unloaded resources, then goes to 'play level'.
     var levelName = 'level1';
-    this.game.state.start('PlayLevelState', true, false, levelName);
+    this.game.state.start('PlayLevelState', true, false,
+        levelName, this.gpad);
 };
