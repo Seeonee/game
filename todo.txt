@@ -1,0 +1,9 @@
+Separate Tier gfx from implementation
+Separate Point gfx from implementation
+Separate Path gfx from implementation
+Add Tier dirty state separate from gfx dirty state
+Add "reset level" functionality
+Make Tier bitmap sized to fit paths
+Make world bounds size to fit level (based on largest tier)
+Make events for avatar/point/path when they attach/detach
+Add path names and lookup map
