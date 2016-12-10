@@ -20,3 +20,10 @@ Utils.distanceBetweenPoints = function(x1, y1, x2, y2) {
 Utils.getBoundedAngleDifference = function(a1, a2) {
     return Math.abs(((a1 - a2 + (3 * Math.PI)) % (2 * Math.PI)) - Math.PI);
 }
+
+// Construct a class. You can pass one or more arguments 
+// after the class, and they'll be supplied to the constructor.
+Utils.construct = function(ctor) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return new(ctor.bind.apply(ctor, [null].concat(args)))();
+};
