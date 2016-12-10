@@ -21,10 +21,10 @@ TitleMenuState.prototype.create = function() {
 // When clicked, start the level.
 TitleMenuState.prototype.update = function() {
     var buttonMap = this.game.settings.buttonMap;
-    if (this.gpad.justReleased(buttonMap.SELECT)) {
-        this.gpad.consumeButtonEvent();
-        this.startLevel();
-    }
+    // if (this.gpad.justReleased(buttonMap.SELECT)) {
+    this.gpad.consumeButtonEvent();
+    this.startLevel();
+    // }
 }
 
 // When clicked, start the level.

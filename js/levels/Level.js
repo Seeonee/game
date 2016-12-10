@@ -58,16 +58,11 @@ Level.prototype.render = function() {
 
 // Push out a JSON version of our tiers.
 Level.prototype.toJSON = function() {
-    var result = {
+    return {
         name: this.name,
         start: this.start,
-        tiers: {}
+        tiers: this.tierMap
     };
-    for (var i = 0; i < this.tiers.length; i++) {
-        var tier = this.tiers[i];
-        result.tiers[tier.name] = tier;
-    }
-    return result;
 };
 
 // Load a JSON representation of a level.

@@ -66,3 +66,20 @@ Point.prototype.getPath = function(angle) {
     }
     return closest.path;
 };
+
+// JSON conversion of a point.
+Point.prototype.toJSON = function() {
+    return { x: this.x, y: this.y };
+};
+
+// Load a JSON representation of a point.
+Point.load = function(game, name, json) {
+    var type = json.type;
+    if (type && Point.load.factory[type]) {
+        Point.load.factory[type].load(game, name, json);
+    }
+    return new Point(name, json.x, json.y);
+};
+
+// This is a map of type values to Point subclasses.
+Point.load.factory = {};

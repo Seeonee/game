@@ -53,12 +53,19 @@ Tier.prototype.getNewPathName = function() {
 // Returns the newly created point.
 Tier.prototype.addPoint = function(name, x, y, point2) {
     var point = new Point(name, x, y);
-    this.points.push(point);
-    this.pointMap[name] = point;
-    this.dirty = true;
+    this._addPoint(point);
     if (point2 != undefined) {
         this.addPath(this.getNewPathName(), point, point2);
     }
+    return point;
+};
+
+// Internal use only.
+// Adds an already-constructed point.
+Tier.prototype._addPoint = function(point) {
+    this.points.push(point);
+    this.pointMap[point.name] = point;
+    this.dirty = true;
     return point;
 };
 
@@ -66,12 +73,19 @@ Tier.prototype.addPoint = function(name, x, y, point2) {
 Tier.prototype.addPath = function(name, point, point2) {
     if (!point.isConnectedTo(point2)) {
         var path = new Path(name, point, point2);
-        point.paths.push(path);
-        point2.paths.push(path);
-        this.paths.push(path);
-        this.pathMap[path.name] = path;
-        this.dirty = true;
+        return this._addPath(path, point, point2);
     }
+};
+
+// Internal use only.
+// Adds an already-constructed path.
+Tier.prototype._addPath = function(path, point, point2) {
+    point.paths.push(path);
+    point2.paths.push(path);
+    this.paths.push(path);
+    this.pathMap[path.name] = path;
+    this.dirty = true;
+    return path;
 };
 
 // Add a point to a path at coordinates that *should* lie along its length.
@@ -80,7 +94,8 @@ Tier.prototype.addPointToPathAtCoords = function(path, x, y) {
     var point = this.addPoint(this.getNewPointName(), x, y);
     var point2 = path.p2;
     point.paths.push(path);
-    point2.deletePath(path);
+    var index = point2.paths.indexOf(path);
+    point2.paths.splice(index, 1);
     path.p2 = point;
     this.addPath(this.getNewPathName(), point, point2);
     this.dirty = true;
@@ -287,44 +302,22 @@ Tier.prototype.render = function() {
 };
 
 // JSON conversion of our points and paths.
-// We translate all our points so that 
-// p1 is at (0, 0).
 Tier.prototype.toJSON = function() {
-    var minx = this.points[0].x;
-    var miny = this.points[0].y;
-    var result = { points: {}, paths: {} };
-    for (var i = 0; i < this.points.length; i++) {
-        var point = this.points[i];
-        var paths = [];
-        for (var j = 0; j < point.paths.length; j++) {
-            paths.push(point.paths[j].name);
-        }
-        result.points[point.name] = {
-            x: point.x - minx,
-            y: point.y - miny,
-            paths: paths
-        };
-    }
-    for (var i = 0; i < this.paths.length; i++) {
-        var path = this.paths[i];
-        result.paths[path.name] = {
-            p1: path.p1.name,
-            p2: path.p2.name
-        };
-    }
-    return result;
+    return {
+        points: this.pointMap,
+        paths: this.pathMap
+    };
 };
 
 // Load a JSON representation of points and paths.
-// We also translate all loaded points so that 
-// all points have sufficiently positive x and y.
 Tier.load = function(game, name, json) {
     var tier = new Tier(game, name);
     var keys = Object.keys(json.points);
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
         var pointObj = json.points[key];
-        tier.addPoint(key, pointObj.x, pointObj.y);
+        var point = Point.load(game, key, pointObj);
+        tier._addPoint(point);
     }
     keys = Object.keys(json.paths);
     for (var i = 0; i < keys.length; i++) {
@@ -332,12 +325,8 @@ Tier.load = function(game, name, json) {
         var pathObj = json.paths[key];
         var p1 = tier.pointMap[pathObj.p1];
         var p2 = tier.pointMap[pathObj.p2];
-        tier.addPath(key, p1, p2);
+        var path = Path.load(game, key, pathObj, p1, p2);
+        tier._addPath(path, p1, p2);
     }
     return tier;
 };
-
-// Given a JSON name for a point ("p1"), return its index (1).
-Tier._indexOf = function(key) {
-    return parseInt(key.substring(1));
-}
