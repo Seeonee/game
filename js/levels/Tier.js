@@ -137,6 +137,8 @@ Tier.prototype.translateGamePointToInternalPoint = function(x, y) {
 Tier.prototype.updateCaches = function() {
     this.pointMap = {};
     this.paths = [];
+    var x = Tier.PADDING;
+    var y = Tier.PADDING;
     this.width = Tier.PADDING;
     this.height = Tier.PADDING;
     var visited = {};
@@ -151,8 +153,22 @@ Tier.prototype.updateCaches = function() {
                 this.paths.push(path);
             }
         }
+        x = (point.x < x) ? point.x : x;
+        y = (point.y < y) ? point.y : y;
         this.width = (point.x > this.width) ? point.x : this.width;
         this.height = (point.y > this.height) ? point.y : this.height;
+    }
+    var dx = Math.min(0, x - Tier.PADDING);
+    var dy = Math.min(0, y - Tier.PADDING);
+    if (dx < 0 || dy < 0) {
+        for (var i = 0; i < this.points.length; i++) {
+            this.points[i].x -= dx;
+            this.points[i].y -= dy;
+        }
+        this.x += dx;
+        this.y += dy;
+        this.width -= dx;
+        this.height -= dy;
     }
     this.width += Tier.PADDING;
     this.height += Tier.PADDING;
@@ -193,7 +209,6 @@ Tier.prototype.drawTier = function() {
     this.bitmap.context.lineCap = Tier.LINE_CAP_STYLE;
     this.bitmap.context.lineJoin = Tier.LINE_JOIN_STYLE;
     this.bitmap.context.lineDashOffset = Tier.LINE_DASH_OFFSET;
-    this.bitmap.context.strokeRect(0, 0, this.width, this.height);
 
     var pointsVisited = {};
     for (var i = 0; i < this.points.length; i++) {

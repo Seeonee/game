@@ -160,7 +160,6 @@ AddFromPointIState.prototype.renderMarks = function() {
             this.bitmap.context.fillStyle = this.game.settings.colors.GREY.s;
             this.bitmap.context.strokeStyle = this.game.settings.colors.GREY.s;
         }
-        this.bitmap.context.strokeRect(0, 0, this.bitmap.width, this.bitmap.height);
         this.bitmap.context.beginPath();
         var gp = this.tier.translateInternalPointToGamePoint(
             this.point.x, this.point.y);
