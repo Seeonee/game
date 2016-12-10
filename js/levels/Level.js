@@ -16,8 +16,7 @@ Level.prototype.update = function() {
 
 // Render our current tier.
 Level.prototype.render = function() {
-    // TODO: Some of our current update() stuff
-    // should happen here instead.
+    this.tier.render();
 }
 
 // Push out a JSON version of our tiers.

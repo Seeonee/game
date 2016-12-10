@@ -4,7 +4,7 @@
 // you may want to add more points first.
 // To finish initializing, create() on it (or wait 
 // for the first update()).
-var Tier = function(game, name, points) {
+var Tier = function(game, name) {
     this.name = name;
     this.game = game;
     this.x = Tier.IMAGE_OFFSET;
@@ -15,13 +15,6 @@ var Tier = function(game, name, points) {
     this.paths = [];
     this.pointMap = {};
     this.pathMap = {};
-    // Set up our starting points.
-    if (points) {
-        for (var i = 0; i < points.length; i++) {
-            this.points.push(points[i]);
-        }
-        this.dirty = true;
-    }
 
     // Bitmap gets set up later.
     this.bitmap = undefined;
@@ -31,7 +24,6 @@ var Tier = function(game, name, points) {
 // Constants.
 Tier.PADDING = 5;
 Tier.IMAGE_OFFSET = 125;
-Tier.HIGHLIGHT_AVATAR_PATHS = false;
 Tier.PATH_WIDTH = 7;
 Tier.LINE_CAP_STYLE = 'butt';
 Tier.LINE_JOIN_STYLE = 'round';
@@ -168,8 +160,8 @@ Tier.prototype.translateGamePointToInternalPoint = function(x, y) {
     return { x: x - this.x, y: y - this.y };
 };
 
-// Update our cache maps of points and paths.
-Tier.prototype.updateCaches = function() {
+// Update our dimensions.
+Tier.prototype.recalculateDimensions = function() {
     var x = Tier.PADDING;
     var y = Tier.PADDING;
     this.width = Tier.PADDING;
@@ -199,7 +191,7 @@ Tier.prototype.updateCaches = function() {
 
 // Make sure our current image is big enough 
 // to render our full size.
-Tier.prototype.updateImageSize = function() {
+Tier.prototype.recreateImageAsNeeded = function() {
     var w = (this.bitmap) ? this.bitmap.width : 0;
     var h = (this.bitmap) ? this.bitmap.height : 0;
     if (this.width > w || this.height > h) {
@@ -224,7 +216,8 @@ Tier.prototype.updateImageSize = function() {
 
 // Draw all paths onto the bitmap.
 Tier.prototype.drawTier = function() {
-    this.updateImageSize();
+    this.recalculateDimensions();
+    this.recreateImageAsNeeded();
     var colors = this.game.settings.colors;
     this.bitmap.context.strokeStyle = colors.PATH_COLOR.s;
     this.bitmap.context.fillStyle = colors.PATH_COLOR.s;
@@ -269,13 +262,17 @@ Tier.prototype.drawTier_walk = function(point, from, pointsVisited) {
     }
 };
 
-// Tick the avatar towards the joystick.
-// Also (optionally) highlight debug info.
+// Update loop processing.
 Tier.prototype.update = function() {
+    // We don't actually do anything at the moment.
+    // Input's all handled by the IHandler states.
+};
+
+// T
+Tier.prototype.render = function() {
     // Figure it if we need to render (again).
-    if (this.dirty || (this.gpad && Tier.HIGHLIGHT_AVATAR_PATHS)) {
+    if (this.dirty) {
         this.dirty = false;
-        this.updateCaches();
         this.drawTier();
     }
 };
@@ -337,7 +334,6 @@ Tier.load = function(game, name, json) {
         point.x += (Tier.PADDING - minx);
         point.y += (Tier.PADDING - miny);
     }
-    tier.updateCaches();
     return tier;
 };
 
