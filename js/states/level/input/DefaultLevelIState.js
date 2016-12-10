@@ -22,6 +22,10 @@ DefaultLevelIState.prototype.update = function() {
         this.activate(DeleteIState.NAME);
     } else if (this.gpad.justPressed(this.buttonMap.FLOAT_BUTTON)) {
         this.activate(FloatIState.NAME);
+    } else if (this.gpad.justPressed(this.buttonMap.STEP_UP_BUTTON)) {
+        this.activate(StepUpIState.NAME);
+    } else if (this.gpad.justPressed(this.buttonMap.STEP_DOWN_BUTTON)) {
+        this.activate(StepDownIState.NAME);
     } else {
         this.activate(MoveIState.NAME);
     }

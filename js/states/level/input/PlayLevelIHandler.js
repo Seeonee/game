@@ -7,6 +7,8 @@ var PlayLevelIHandler = function(game, gpad, level) {
     // creation automatically registers them.
     new DefaultLevelIState(this, this.level);
     new MoveIState(this, this.level);
+    new StepUpIState(this, this.level);
+    new StepDownIState(this, this.level);
     new FloatIState(this, this.level);
     new AddFromPathIState(this, this.level);
     new AddFromPointIState(this, this.level);

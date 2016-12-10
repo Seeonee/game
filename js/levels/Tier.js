@@ -10,6 +10,7 @@ var Tier = function(game, name) {
     this.x = Tier.IMAGE_OFFSET;
     this.y = Tier.IMAGE_OFFSET; // Sufficient?
     this.dirty = false;
+    this.visible = false;
 
     this.points = [];
     this.paths = [];
@@ -160,6 +161,14 @@ Tier.prototype.translateGamePointToInternalPoint = function(x, y) {
     return { x: x - this.x, y: y - this.y };
 };
 
+// Update our visibility.
+Tier.prototype.setVisible = function(visible) {
+    this.visible = visible;
+    if (this.image) {
+        this.image.visible = visible;
+    }
+};
+
 // Update our dimensions.
 Tier.prototype.recalculateDimensions = function() {
     var x = Tier.PADDING;
@@ -271,7 +280,7 @@ Tier.prototype.update = function() {
 // T
 Tier.prototype.render = function() {
     // Figure it if we need to render (again).
-    if (this.dirty) {
+    if (this.visible && this.dirty) {
         this.dirty = false;
         this.drawTier();
     }
@@ -311,15 +320,11 @@ Tier.prototype.toJSON = function() {
 // all points have sufficiently positive x and y.
 Tier.load = function(game, name, json) {
     var tier = new Tier(game, name);
-    var minx = Number.POSITIVE_INFINITY;
-    var miny = Number.POSITIVE_INFINITY;
     var keys = Object.keys(json.points);
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
         var pointObj = json.points[key];
-        var point = tier.addPoint(key, pointObj.x, pointObj.y);
-        minx = (point.x < minx) ? point.x : minx;
-        miny = (point.y < miny) ? point.y : miny;
+        tier.addPoint(key, pointObj.x, pointObj.y);
     }
     keys = Object.keys(json.paths);
     for (var i = 0; i < keys.length; i++) {
@@ -328,11 +333,6 @@ Tier.load = function(game, name, json) {
         var p1 = tier.pointMap[pathObj.p1];
         var p2 = tier.pointMap[pathObj.p2];
         tier.addPath(key, p1, p2);
-    }
-    for (var i = 0; i < tier.points.length; i++) {
-        var point = tier.points[i];
-        point.x += (Tier.PADDING - minx);
-        point.y += (Tier.PADDING - miny);
     }
     return tier;
 };

@@ -3,4 +3,3 @@ Make world bounds larger, and resize to fit level (based on largest tier)
 Separate Tier gfx from implementation
 Separate Point gfx from implementation
 Separate Path gfx from implementation
-Add "reset level" functionality

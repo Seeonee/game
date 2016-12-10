@@ -9,15 +9,52 @@ var Level = function(game, name) {
     this.start = undefined; // Name.
 };
 
+// Slide up one layer among our tiers.
+// Optionally allows you to specify how many 
+// layers to slide upwards.
+Level.prototype.advanceTierUp = function(howMany) {
+    howMany = (howMany == undefined) ? 1 : howMany;
+    var name = 't' + (parseInt(this.tier.name.substring(1)) + howMany);
+    return this.advanceToTier(name);
+};
+
+// Slide down one layer among our tiers.
+// Optionally allows you to specify how many 
+// layers to slide downwards.
+Level.prototype.advanceTierDown = function(howMany) {
+    howMany = (howMany == undefined) ? 1 : howMany;
+    var name = 't' + (parseInt(this.tier.name.substring(1)) - howMany);
+    return this.advanceToTier(name);
+};
+
+// Advance to a named tier, if it exists.
+// Returns the tier if found, or undefined if not.
+Level.prototype.advanceToTier = function(name) {
+    var tier = this.tierMap[name];
+    if (tier) {
+        this.setTier(tier);
+    }
+    return tier;
+};
+
+// Set the currently active tier, and hide previous tiers.
+Level.prototype.setTier = function(tier) {
+    this.tier = tier;
+    for (var i = 0; i < this.tiers.length; i++) {
+        var t2 = this.tiers[i];
+        t2.setVisible(t2 === tier);
+    }
+};
+
 // Update our current tier.
 Level.prototype.update = function() {
     this.tier.update();
-}
+};
 
 // Render our current tier.
 Level.prototype.render = function() {
     this.tier.render();
-}
+};
 
 // Push out a JSON version of our tiers.
 Level.prototype.toJSON = function() {
@@ -50,6 +87,6 @@ Level.load = function(game, name) {
         level.tierMap[key] = tier;
     }
     var t = level.start.split('-')[0]
-    level.tier = level.tierMap[t];
+    level.setTier(level.tierMap[t]);
     return level;
 };
