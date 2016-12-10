@@ -7,6 +7,8 @@
 var Tier = function(game, name, points) {
     this.name = name;
     this.game = game;
+    this.x = Tier.IMAGE_OFFSET;
+    this.y = Tier.IMAGE_OFFSET; // Sufficient?
 
     this.dirty = false;
     this.pointMap = {};
@@ -20,12 +22,14 @@ var Tier = function(game, name, points) {
         this.dirty = true;
     }
 
-    // Set up our bitmap.
-    this.bitmap = this.game.add.bitmapData(this.game.width, this.game.height);
-    this.image = this.game.add.image(100, 100, this.bitmap);
+    // Bitmap gets set up later.
+    this.bitmap = undefined;
+    this.image = undefined;
 };
 
 // Constants.
+Tier.PADDING = 5;
+Tier.IMAGE_OFFSET = 125;
 Tier.HIGHLIGHT_AVATAR_PATHS = false;
 Tier.PATH_WIDTH = 7;
 Tier.LINE_CAP_STYLE = 'butt';
@@ -118,7 +122,7 @@ Tier.prototype.deletePath = function(path) {
 // coordinates have been adjusted to work with the 
 // game.
 Tier.prototype.translateInternalPointToGamePoint = function(x, y) {
-    return { x: x + this.image.x, y: y + this.image.y };
+    return { x: x + this.x, y: y + this.y };
 };
 
 // Takes x and y values relative to the game, 
@@ -126,13 +130,15 @@ Tier.prototype.translateInternalPointToGamePoint = function(x, y) {
 // have been adjusted to work with this Tier 
 // object's internal points.
 Tier.prototype.translateGamePointToInternalPoint = function(x, y) {
-    return { x: x - this.image.x, y: y - this.image.y };
+    return { x: x - this.x, y: y - this.y };
 };
 
 // Update our cache maps of points and paths.
 Tier.prototype.updateCaches = function() {
     this.pointMap = {};
     this.paths = [];
+    this.width = Tier.PADDING;
+    this.height = Tier.PADDING;
     var visited = {};
     for (var i = 0; i < this.points.length; i++) {
         var point = this.points[i];
@@ -145,13 +151,41 @@ Tier.prototype.updateCaches = function() {
                 this.paths.push(path);
             }
         }
+        this.width = (point.x > this.width) ? point.x : this.width;
+        this.height = (point.y > this.height) ? point.y : this.height;
     }
+    this.width += Tier.PADDING;
+    this.height += Tier.PADDING;
 };
+
+// Make sure our current image is big enough 
+// to render our full size.
+Tier.prototype.updateImageSize = function() {
+    var w = (this.bitmap) ? this.bitmap.width : 0;
+    var h = (this.bitmap) ? this.bitmap.height : 0;
+    if (this.width > w || this.height > h) {
+        if (this.bitmap) {
+            this.image.destroy();
+            this.bitmap.destroy();
+            this.image = undefined;
+            this.bitmap = undefined;
+        }
+    }
+    if (this.bitmap) {
+        this.bitmap.context.clearRect(0, 0, w, h);
+    } else {
+        this.bitmap = this.game.add.bitmapData(
+            this.width, this.height);
+        this.image = this.game.add.image(this.x, this.y,
+            this.bitmap);
+        this.game.state.getCurrentState().z.level.add(
+            this.image);
+    }
+}
 
 // Draw all paths onto the bitmap.
 Tier.prototype.drawTier = function() {
-    this.bitmap.context.clearRect(0, 0, this.game.width, this.game.height);
-
+    this.updateImageSize();
     var colors = this.game.settings.colors;
     this.bitmap.context.strokeStyle = colors.PATH_COLOR.s;
     this.bitmap.context.fillStyle = colors.PATH_COLOR.s;
@@ -159,6 +193,7 @@ Tier.prototype.drawTier = function() {
     this.bitmap.context.lineCap = Tier.LINE_CAP_STYLE;
     this.bitmap.context.lineJoin = Tier.LINE_JOIN_STYLE;
     this.bitmap.context.lineDashOffset = Tier.LINE_DASH_OFFSET;
+    this.bitmap.context.strokeRect(0, 0, this.width, this.height);
 
     var pointsVisited = {};
     for (var i = 0; i < this.points.length; i++) {
@@ -206,9 +241,6 @@ Tier.prototype.update = function() {
         this.drawTier();
     }
 };
-
-// More constants, for loading!
-Tier.LOAD_OFFSET = 5;
 
 // JSON conversion of our points and paths.
 // We translate all our points so that 
@@ -262,8 +294,8 @@ Tier.load = function(game, name, json) {
     }
     for (var i = 0; i < tier.points.length; i++) {
         var point = tier.points[i];
-        point.x += (Tier.LOAD_OFFSET - minx);
-        point.y += (Tier.LOAD_OFFSET - miny);
+        point.x += (Tier.PADDING - minx);
+        point.y += (Tier.PADDING - miny);
     }
     tier.updateCaches();
     return tier;

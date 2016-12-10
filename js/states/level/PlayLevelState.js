@@ -23,6 +23,15 @@ PlayLevelState.prototype.preload = function() {
 
 // Setup the example
 PlayLevelState.prototype.create = function() {
+    // Used for rendering z-order.
+    this.z = {
+        bg: this.game.add.group(), // Background.
+        level: this.game.add.group(),
+        mg: this.game.add.group(), // Midground?
+        player: this.game.add.group(),
+        fg: this.game.add.group() // Foreground!
+    };
+
     AVATAR_GRAPHICS.create(game);
 
     this.level = Level.load(this.game, this.levelName);

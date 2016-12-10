@@ -6,6 +6,7 @@ var Avatar = function(game, graphics, level) {
     this.graphics = graphics;
     // Set up graphics and physics.
     Phaser.Sprite.call(this, game, 0, 0);
+    this.game.state.getCurrentState().z.player.add(this);
     this.graphics.createGraphics(this);
     this.body.collideWorldBounds = true;
     // Track which point we're starting on.

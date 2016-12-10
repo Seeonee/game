@@ -26,6 +26,7 @@ AddFromPathIState.prototype.activated = function(prev) {
         this.game.width, this.game.height);
     this.bitmap.context.fillStyle = this.game.settings.colors.RED.s;
     this.image = this.game.add.image(0, 0, this.bitmap);
+    this.game.state.getCurrentState().z.mg.add(this.image);
     this.cacheMarks();
     this.renderMarks();
 };
@@ -82,8 +83,6 @@ AddFromPathIState.prototype.getSelectedMark = function() {
 
 // Handle an update while holding the button.
 AddFromPathIState.prototype.update = function() {
-    var done = false;
-
     // Move along rails.
     var joystick = this.gpad.getAngleAndTilt();
     this.avatar.move(joystick.angle, joystick.tilt);
@@ -93,6 +92,7 @@ AddFromPathIState.prototype.update = function() {
         this.renderMarks();
     }
 
+    var done = false;
     if (this.gpad.justReleased(this.buttonMap.ADD_CANCEL_BUTTON)) {
         // Just finish; don't add any paths.
         done = true;
@@ -143,6 +143,7 @@ AddFromPointIState.prototype.activated = function(prev) {
     this.bitmap.context.lineWidth = Tier.PATH_WIDTH;
     this.bitmap.context.lineCap = Tier.LINE_CAP_STYLE;
     this.image = this.game.add.image(0, 0, this.bitmap);
+    this.game.state.getCurrentState().z.mg.add(this.image);
     // Side effect of the JSON load. We need to shift slightly.
     this.offset = this.tier.points[0].x % 50;
 };
