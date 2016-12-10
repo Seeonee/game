@@ -10,24 +10,61 @@ DeleteIState.prototype = Object.create(IState.prototype);
 DeleteIState.prototype.constructor = DeleteIState;
 
 // Some constants.
-DeleteIState.threshold = 1000; // ms
+DeleteIState.THRESHOLD = 700; // ms
+DeleteIState.STARTING_RADIUS = 25;
+DeleteIState.ENDING_RADIUS = 5;
+DeleteIState.PATH_WIDTH = 4;
 
 // Action for deleting nodes and paths.
 DeleteIState.prototype.activated = function(prev) {
     this.start = this.game.time.now;
-    this.avatar.children[0].tint = this.game.settings.colors.RED.i;
     this.avatar.body.velocity.x = 0;
     this.avatar.body.velocity.y = 0;
+    // Initialize bitmap for rendering.
+    this.bitmap = this.game.add.bitmapData(
+        DeleteIState.STARTING_RADIUS * 4,
+        DeleteIState.STARTING_RADIUS * 4);
+    this.bitmap.context.strokeStyle = this.game.settings.colors.RED.s;
+    this.bitmap.context.fillStyle = this.game.settings.colors.RED.s;
+    this.bitmap.context.lineWidth = DeleteIState.PATH_WIDTH;
+    this.image = this.game.add.image(
+        this.avatar.x - (this.bitmap.width / 2),
+        this.avatar.y - (this.bitmap.height / 2),
+        this.bitmap);
+    this.game.state.getCurrentState().z.mg.add(this.image);
+    this.renderMark();
 }
+
+// Render the deletion progress indicator.
+DeleteIState.prototype.renderMark = function() {
+    var elapsed = Math.min(this.game.time.now - this.start,
+        DeleteIState.THRESHOLD);
+    var ratio = 1 - (elapsed / DeleteIState.THRESHOLD);
+    ratio = (this.avatar.point) ? Math.sqrt(ratio) : 0.2;
+
+    this.bitmap.context.clearRect(0, 0,
+        this.bitmap.width, this.bitmap.height);
+    this.bitmap.context.beginPath();
+    var radius = DeleteIState.ENDING_RADIUS +
+        (ratio * (DeleteIState.STARTING_RADIUS -
+            DeleteIState.ENDING_RADIUS));
+    this.bitmap.context.arc(
+        DeleteIState.STARTING_RADIUS * 2,
+        DeleteIState.STARTING_RADIUS * 2,
+        radius, 0, 2 * Math.PI, false);
+    this.bitmap.context.stroke();
+    if (ratio == 0) {
+        this.bitmap.context.fill();
+    }
+    this.bitmap.dirty = true;
+};
 
 // Handle an update while holding the button.
 DeleteIState.prototype.update = function() {
     var elapsed = Math.min(this.game.time.now - this.start,
-        DeleteIState.threshold);
-    var ratio = elapsed / DeleteIState.threshold;
-    if (ratio == 1) {
-        this.avatar.children[0].tint = this.game.settings.colors.GREY.i;
-    }
+        DeleteIState.THRESHOLD);
+    var ratio = elapsed / DeleteIState.THRESHOLD;
+    this.renderMark();
     if (this.gpad.justReleased(this.buttonMap.DELETE_BUTTON)) {
         if (this.avatar.point) {
             if (ratio < 1) {
@@ -42,7 +79,7 @@ DeleteIState.prototype.update = function() {
             this.tier.deletePath(this.avatar.path);
             this.avatar.path = undefined;
         }
-        this.avatar.children[0].tint = this.avatar.graphics.COLOR;
+        this.image.destroy();
         this.activate(DefaultLevelIState.NAME);
     }
 };

@@ -49,6 +49,7 @@ AddFromPathIState.prototype.cacheMarks = function() {
         this.marks.push(gp);
     }
 };
+
 // Render the various path marks.
 AddFromPathIState.prototype.renderMarks = function() {
     this.bitmap.context.clearRect(0, 0,

@@ -1,6 +1,6 @@
 Make events for avatar/point/path when they attach/detach
+Figure out what should go in update() vs render()
 Make world bounds larger, and resize to fit level (based on largest tier)
-Redo DeleteIState gfx to not use avatar tint
 Separate Tier gfx from implementation
 Separate Point gfx from implementation
 Separate Path gfx from implementation
