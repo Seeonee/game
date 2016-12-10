@@ -239,7 +239,7 @@ Tier.prototype.recreateImageAsNeeded = function() {
 }
 
 // Draw all paths onto the bitmap.
-Tier.prototype.drawTier = function() {
+Tier.prototype.draw = function() {
     this.recalculateDimensions();
     this.recreateImageAsNeeded();
     var colors = this.game.settings.colors;
@@ -250,40 +250,13 @@ Tier.prototype.drawTier = function() {
     this.bitmap.context.lineJoin = Tier.LINE_JOIN_STYLE;
     this.bitmap.context.lineDashOffset = Tier.LINE_DASH_OFFSET;
 
-    var pointsVisited = {};
+    for (var i = 0; i < this.paths.length; i++) {
+        this.paths[i].draw(this);
+    }
     for (var i = 0; i < this.points.length; i++) {
-        var point = this.points[i];
-        var key = point.asKey();
-        if (key in pointsVisited) {
-            continue;
-        }
-        this.drawTier_walk(point, undefined, pointsVisited);
+        this.points[i].draw(this);
     }
     this.bitmap.dirty = true;
-};
-
-// Walk to a point during our recursive draw strategy.
-// This will trace out along all paths leading away from this node,
-// then trace back to the node it came from as it returns.
-Tier.prototype.drawTier_walk = function(point, from, pointsVisited) {
-    var key = point.asKey();
-    if (!(key in pointsVisited)) {
-        // Mark as visited.
-        pointsVisited[key] = true;
-        // Walk each of our points, except the one we came from.
-        if (point.paths.length) {
-            for (var i = 0; i < point.paths.length; i++) {
-                var path = point.paths[i];
-                var to = path.getCounterpoint(point);
-                if (to == from) {
-                    continue;
-                }
-                path.draw(this);
-                this.drawTier_walk(to, point, pointsVisited);
-            }
-        }
-        point.draw(this);
-    }
 };
 
 // Update loop processing.
@@ -297,7 +270,7 @@ Tier.prototype.render = function() {
     // Figure it if we need to render (again).
     if (this.visible && this.dirty) {
         this.dirty = false;
-        this.drawTier();
+        this.draw();
     }
 };
 
