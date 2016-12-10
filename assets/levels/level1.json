@@ -1,6 +1,6 @@
 {
     "name": "level1",
-    "start": "t0-p0",
+    "start": "t1-p0",
     "tiers": {
         "t0": {
             "p0": {

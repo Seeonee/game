@@ -9,12 +9,13 @@ var Tier = function(game, name, points) {
     this.game = game;
     this.x = Tier.IMAGE_OFFSET;
     this.y = Tier.IMAGE_OFFSET; // Sufficient?
-
     this.dirty = false;
-    this.pointMap = {};
-    this.paths = [];
-    // Set up our starting points.
+
     this.points = [];
+    this.paths = [];
+    this.pointMap = {};
+    this.pathMap = {};
+    // Set up our starting points.
     if (points) {
         for (var i = 0; i < points.length; i++) {
             this.points.push(points[i]);
@@ -40,46 +41,55 @@ Tier.LINE_DASH_OFFSET = 11;
 // Return a string that can be used to name a new point.
 Tier.prototype.getNewPointName = function() {
     var i = 0;
-    while (!(this.pointMap['p' + i])) {
+    while (this.pointMap['p' + i]) {
         i += 1;
     }
     return 'p' + i;
 };
 
+// Return a string that can be used to name a new path.
+Tier.prototype.getNewPathName = function() {
+    var i = 0;
+    while (this.pathMap['a' + i]) {
+        i += 1;
+    }
+    return 'a' + i;
+};
+
 // Create a new point, optionally connected to an existing one.
 // Returns the newly created point.
-Tier.prototype.addPoint = function(name, x, y, point) {
-    var point2 = new Point(name, x, y);
-    this.points.push(point2);
+Tier.prototype.addPoint = function(name, x, y, point2) {
+    var point = new Point(name, x, y);
+    this.points.push(point);
+    this.pointMap[name] = point;
     this.dirty = true;
-    if (point != undefined) {
+    if (point2 != undefined) {
         this.connectPoints(point, point2);
     }
-    return point2;
+    return point;
 };
 
 // Connect two points.
 Tier.prototype.connectPoints = function(point, point2) {
-    point.connectTo(point2);
-    this.dirty = true;
+    if (!point.isConnectedTo(point2)) {
+        var path = new Path(point, point2);
+        point.paths.push(path);
+        point2.paths.push(path);
+        this.paths.push(path);
+        this.pathMap[path.name] = path;
+        this.dirty = true;
+    }
 };
-
-// Add a point at a distance partially along a path's length.
-// Return the newly created point.
-Tier.prototype.addPointToPathAtRatio = function(path, ratio) {
-    var name = this.getNewPointName();
-    var point = path.addPointAtRatio(name, ratio);
-    this.points.push(point);
-    this.dirty = true;
-    return point;
-}
 
 // Add a point to a path at coordinates that *should* lie along its length.
 // Return the newly created point.
 Tier.prototype.addPointToPathAtCoords = function(path, x, y) {
-    var name = this.getNewPointName();
-    var point = path.addPointAtCoords(name, x, y);
-    this.points.push(point);
+    var point = this.addPoint(this.getNewPointName(), x, y);
+    var point2 = path.p2;
+    point.paths.push(path);
+    point2.deletePath(path);
+    path.p2 = point;
+    this.connectPoints(point, point2);
     this.dirty = true;
     return point;
 }
@@ -87,10 +97,13 @@ Tier.prototype.addPointToPathAtCoords = function(path, x, y) {
 // Delete an existing point.
 // Return the deleted point, or undefined if it wasn't deleted.
 Tier.prototype.deletePoint = function(point) {
-    var i = this.points.indexOf(point);
-    if (i >= 0) {
-        point.delete();
-        this.points.splice(i, 1);
+    var index = this.points.indexOf(point);
+    if (index >= 0) {
+        while (point.paths.length) {
+            this.deletePath(point.paths[0]);
+        }
+        this.points.splice(index, 1);
+        delete this.pointMap[point.name];
         this.dirty = true;
         return point;
     }
@@ -101,20 +114,41 @@ Tier.prototype.deletePoint = function(point) {
 // connected points to the others.
 // Return the deleted point, or undefined if it wasn't deleted.
 Tier.prototype.deletePointAndMerge = function(point) {
-    var i = this.points.indexOf(point);
-    if (i >= 0) {
-        point.deleteAndMerge();
-        this.points.splice(i, 1);
-        this.dirty = true;
-        return point;
+    var index = this.points.indexOf(point);
+    if (index >= 0) {
+        var linked = [];
+        for (var i = 0; i < point.paths.length; i++) {
+            linked.push(point.paths[i].getCounterpoint(point));
+        }
+        for (var i = 0; i < linked.length; i++) {
+            for (var j = 0; j < linked.length; j++) {
+                if (i != j) {
+                    this.connectPoints(linked[i], linked[j]);
+                }
+            }
+        }
+        return this.deletePoint(point);
     }
     return undefined;
 }
 
-// Delete path between two points.
+// Delete an existing path between two points.
+// Return the deleted path, or undefined if it wasn't deleted.
 Tier.prototype.deletePath = function(path) {
-    path.delete();
-    this.dirty = true;
+    var index = this.paths.indexOf(path);
+    if (index >= 0) {
+        var points = [path.p1, path.p2];
+        for (var i = 0; i < points.length; i++) {
+            var point = points[i];
+            var index2 = point.paths.indexOf(path);
+            point.paths.splice(index2, 1);
+        }
+        this.paths.splice(index, 1);
+        delete this.pathMap[path.name];
+        this.dirty = true;
+        return path;
+    }
+    return undefined;
 }
 
 // Takes x and y values relative to this Tier object's 
@@ -135,24 +169,12 @@ Tier.prototype.translateGamePointToInternalPoint = function(x, y) {
 
 // Update our cache maps of points and paths.
 Tier.prototype.updateCaches = function() {
-    this.pointMap = {};
-    this.paths = [];
     var x = Tier.PADDING;
     var y = Tier.PADDING;
     this.width = Tier.PADDING;
     this.height = Tier.PADDING;
-    var visited = {};
     for (var i = 0; i < this.points.length; i++) {
         var point = this.points[i];
-        this.pointMap[point.name] = point;
-        for (var j = 0; j < point.paths.length; j++) {
-            var path = point.paths[j];
-            var key = path.asKey();
-            if (!(key in visited)) {
-                visited[key] = 1;
-                this.paths.push(path);
-            }
-        }
         x = (point.x < x) ? point.x : x;
         y = (point.y < y) ? point.y : y;
         this.width = (point.x > this.width) ? point.x : this.width;
@@ -303,7 +325,7 @@ Tier.load = function(game, name, json) {
         for (var j = 0; j < pointObj.pathsTo.length; j++) {
             var otherKey = pointObj.pathsTo[j];
             if (Tier._indexOf(key) < Tier._indexOf(otherKey)) {
-                points[key].connectTo(points[otherKey]);
+                tier.connectPoints(points[key], points[otherKey]);
             }
         }
     }
