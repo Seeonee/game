@@ -1,8 +1,5 @@
 // A path is just two Point objects, connected.
 var Path = function(p1, p2) {
-    // Constants, for now.
-    this.ANGLE_CATCH = Math.PI / 2.1;
-
     this.p1 = p1;
     this.p2 = p2;
     // Store our angles.
@@ -13,6 +10,9 @@ var Path = function(p1, p2) {
         this.p1.x, this.p1.y,
         this.p2.x, this.p2.y);
 };
+
+// Constants.
+Path.ANGLE_CATCH = Math.PI / 2.1;
 
 // Convenient string representation.
 Path.prototype.asKey = function() {
@@ -82,7 +82,7 @@ Path.prototype.getPoint = function(angle, x, y) {
         return a.angle - b.angle;
     });
     var closest = targets[0];
-    if (closest.angle <= this.ANGLE_CATCH) {
+    if (closest.angle <= Path.ANGLE_CATCH) {
         return closest;
     }
     return undefined;

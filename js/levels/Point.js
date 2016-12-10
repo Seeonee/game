@@ -1,14 +1,14 @@
 // A point is a juncture among one or more paths.
 var Point = function(name, x, y) {
-    // Constants, for now.
-    this.ANGLE_CATCH = Math.PI / 2.1;
-    this.MIN_ANGLE_RATIO = 2;
-
     this.name = name;
     this.x = x;
     this.y = y;
     this.paths = [];
 };
+
+// Constants.
+Point.ANGLE_CATCH = Math.PI / 2.1;
+Point.MIN_ANGLE_RATIO = 2;
 
 // Convenient string representation.
 Point.prototype.asKey = function() {
@@ -68,7 +68,7 @@ Point.prototype.getPath = function(angle) {
         var point = path.getCounterpoint(this);
         var a2 = Utils.angleBetweenPoints(this.x, this.y, point.x, point.y);
         var difference = Utils.getBoundedAngleDifference(angle, a2);
-        if (difference < this.ANGLE_CATCH) {
+        if (difference < Point.ANGLE_CATCH) {
             pathAngles.push({ path: path, angle: difference });
         }
     }
@@ -80,7 +80,7 @@ Point.prototype.getPath = function(angle) {
     });
     var closest = pathAngles[0];
     var next = pathAngles[1];
-    if (this.MIN_ANGLE_RATIO * closest.angle >= next.angle) {
+    if (Point.MIN_ANGLE_RATIO * closest.angle >= next.angle) {
         return undefined;
     }
     return closest.path;
