@@ -1,5 +1,3 @@
-Add z-ordering to all action gfx
-Make AddFromPoint support adding points to the north and west of the Tier image
 Separate Tier gfx from implementation
 Separate Point gfx from implementation
 Separate Path gfx from implementation

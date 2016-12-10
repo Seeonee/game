@@ -160,6 +160,7 @@ AddFromPointIState.prototype.renderMarks = function() {
             this.bitmap.context.fillStyle = this.game.settings.colors.GREY.s;
             this.bitmap.context.strokeStyle = this.game.settings.colors.GREY.s;
         }
+        this.bitmap.context.strokeRect(0, 0, this.bitmap.width, this.bitmap.height);
         this.bitmap.context.beginPath();
         var gp = this.tier.translateInternalPointToGamePoint(
             this.point.x, this.point.y);
@@ -181,8 +182,8 @@ AddFromPointIState.prototype.cacheSelectedMark = function() {
         this.avatar.x, this.avatar.y);
     ip.x -= this.offset;
     ip.y -= this.offset;
-    ip.x = Math.floor(ip.x + 25);
-    ip.y = Math.floor(ip.y + 25);
+    ip.x = Math.floor(ip.x + (25 * Math.sign(ip.x)));
+    ip.y = Math.floor(ip.y + (25 * Math.sign(ip.y)));
     ip.x -= ip.x % 50;
     ip.y -= ip.y % 50;
     ip.x += this.offset;
