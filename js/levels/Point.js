@@ -84,6 +84,11 @@ Point.prototype.getPath = function(angle) {
     return closest.path;
 };
 
+// Test avatar attachment.
+Point.prototype.notifyAttached = function(avatar) {
+    console.log('attach ' + this.name);
+};
+
 // JSON conversion of a point.
 Point.prototype.toJSON = function() {
     return { x: this.x, y: this.y };

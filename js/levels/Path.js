@@ -110,6 +110,11 @@ Path.prototype.getPoint = function(angle, x, y) {
     return undefined;
 };
 
+// Test avatar attachment.
+Path.prototype.notifyAttached = function(avatar) {
+    console.log('attach ' + this.name);
+};
+
 // JSON conversion of a path.
 Path.prototype.toJSON = function() {
     return { p1: this.p1.name, p2: this.p2.name };

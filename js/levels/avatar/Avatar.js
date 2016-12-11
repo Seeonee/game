@@ -17,6 +17,8 @@ var Avatar = function(game, graphics, level) {
     this.level.avatar = this;
     this.snapToStartingPoint();
     this.game.add.existing(this);
+
+    this.attached = undefined;
 };
 
 Avatar.prototype = Object.create(Phaser.Sprite.prototype);
@@ -151,12 +153,31 @@ Avatar.prototype.move = function(angle, ratio) {
         this.body.velocity.y = 0;
     }
     this.graphics.move(this);
+    this.updateAttachment();
 };
 
 // Eliminate microscopic velocities.
 Avatar.prototype.roundVelocity = function(velocity) {
     // return velocity;
     return (Math.abs(velocity) >= Avatar.MIN_VELOCITY) ? velocity : 0;
+};
+
+// Figure out if what we're attached to has changed.
+// Note that this will fire during render; if you don't 
+// want to handle it until update, it's your job as the 
+// recipient to defer processing.
+Avatar.prototype.updateAttachment = function() {
+    var attached = this.point ? this.point : this.path;
+    if (this.attached === attached) {
+        return;
+    }
+    if (this.attached && this.attached.notifyDetached) {
+        this.attached.notifyDetached(this);
+    }
+    this.attached = attached;
+    if (this.attached && this.attached.notifyAttached) {
+        this.attached.notifyAttached(this);
+    }
 };
 
 // Optional physics debug view.
