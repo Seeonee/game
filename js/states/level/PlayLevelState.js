@@ -4,6 +4,8 @@ var PlayLevelState = function(game) {};
 
 // A few constants, for now at least.
 PlayLevelState.FPS_DISPLAY = true;
+PlayLevelState.DEADZONE_EDGE_X = 200;
+PlayLevelState.DEADZONE_EDGE_Y = 200;
 
 // We get passed the level asset to load.
 // This will be a .json file within the assets/levels directory.
@@ -32,6 +34,10 @@ PlayLevelState.prototype.create = function() {
 
     this.game.time.advancedTiming = true; // For FPS tracking.
     this.game.camera.follow(this.level.avatar);
+    this.game.camera.deadzone = new Phaser.Rectangle(
+        PlayLevelState.DEADZONE_EDGE_X, PlayLevelState.DEADZONE_EDGE_Y,
+        this.game.width - (2 * PlayLevelState.DEADZONE_EDGE_X),
+        this.game.height - (2 * PlayLevelState.DEADZONE_EDGE_Y));
 };
 
 
