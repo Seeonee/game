@@ -140,13 +140,13 @@
                 },
                 "p3": {
                     "x": 355,
-                    "y": 5
+                    "y": 5,
+                    "type": "power",
+                    "subtype": "crown"
                 },
                 "p4": {
                     "x": 455,
-                    "y": 105,
-                    "type": "power",
-                    "subtype": "crown"
+                    "y": 105
                 }
             },
             "paths": {
