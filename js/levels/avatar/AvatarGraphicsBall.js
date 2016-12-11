@@ -27,13 +27,3 @@ AvatarGraphicsBall.prototype.createGraphics = function(avatar) {
 AvatarGraphicsBall.prototype.move = function(avatar) {
     // Nothing.
 };
-
-// Called by the main game's preload().
-AvatarGraphicsBall.preload = function(game) {
-    // Nothing.
-};
-
-// Called by the main game's create().
-AvatarGraphicsBall.create = function(game) {
-    // Nothing.
-};

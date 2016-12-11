@@ -1,7 +1,3 @@
-// TODO: Get rid of this eventually!!!
-var AVATAR_GRAPHICS = AvatarGraphicsKey;
-// var AVATAR_GRAPHICS = AvatarGraphicsBall;
-
 // This state is responsible for loading 
 // all primary assets.
 // Note that other states may be allowed to 
@@ -11,7 +7,27 @@ var PreloadState = function(game) {};
 // Load the commonly-used game assets.
 PreloadState.prototype.preload = function() {
     this.initializeLoadingBar();
-    AVATAR_GRAPHICS.preload(game);
+
+    this.game.load.image('keyplate', 'assets/keyplate.png');
+    this.game.load.image('keyhole', 'assets/keyhole.png');
+    this.game.load.image('smoke', 'assets/smoke.png');
+
+    this.game.load.image('herne', 'assets/mask_herne.png');
+    this.game.load.image('norwife', 'assets/mask_norwife.png');
+    this.game.load.image('ragna', 'assets/mask_ragna.png');
+    this.game.load.image('dunlevy', 'assets/mask_dunlevy.png');
+
+    this.game.load.image('power_diamond', 'assets/powerdiamond.png');
+    this.game.load.image('power_icon_crown', 'assets/power_crown.png');
+    this.game.load.image('power_icon_hourglass', 'assets/power_hourglass.png');
+    this.game.load.image('power_icon_stealth', 'assets/power_stealth.png');
+    this.game.load.image('power_icon_might', 'assets/power_might.png');
+    this.game.load.image('power_icon_wit', 'assets/power_wit.png');
+    this.game.load.image('power_icon_presence', 'assets/power_presence.png');
+    this.game.load.image('power_icon_sword', 'assets/power_sword.png');
+    this.game.load.image('power_icon_axe', 'assets/power_axe.png');
+    this.game.load.image('power_icon_shield', 'assets/power_shield.png');
+
     // TODO: Do the rest of the this.game.load.image() calls here!
 };
 

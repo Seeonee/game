@@ -1,6 +1,9 @@
 // Handles rendering for avatar objects.
 var AvatarGraphicsKey = function(game) {
     this.game = game;
+    if (!AvatarGraphicsKey.MASKS_CREATED) {
+        AvatarGraphicsKey.create(game);
+    }
 };
 
 // Constants, for now.
@@ -78,19 +81,9 @@ AvatarGraphicsKey.prototype.move = function(avatar) {
     }
 };
 
-// Called by the main game's preload().
-AvatarGraphicsKey.preload = function(game) {
-    game.load.image('keyplate', 'assets/keyplate.png');
-    game.load.image('keyhole', 'assets/keyhole.png');
-    game.load.image('smoke', 'assets/smoke.png');
-    game.load.image('herne', 'assets/mask_herne.png');
-    game.load.image('norwife', 'assets/mask_norwife.png');
-    game.load.image('ragna', 'assets/mask_ragna.png');
-    game.load.image('dunlevy', 'assets/mask_dunlevy.png');
-};
-
 // Called by the main game's create().
 AvatarGraphicsKey.create = function(game) {
+    AvatarGraphicsKey.MASKS_CREATED = true;
     AvatarMasq.KEYHOLE = new AvatarMasq(game, 'keyhole', -55);
     AvatarMasq.HERNE = new AvatarMasq(game, 'herne', -61);
     AvatarMasq.NORWIFE = new AvatarMasq(game, 'norwife', -55);

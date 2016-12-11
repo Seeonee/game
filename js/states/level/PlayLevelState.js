@@ -1,8 +1,9 @@
-var FPS_DISPLAY = true;
-
 // This state encapsulates all the logic 
 // needed to play a loaded level.
 var PlayLevelState = function(game) {};
+
+// A few constants, for now at least.
+PlayLevelState.FPS_DISPLAY = true;
 
 // We get passed the level asset to load.
 // This will be a .json file within the assets/levels directory.
@@ -33,10 +34,8 @@ PlayLevelState.prototype.create = function() {
         fg: this.game.add.group() // Foreground!
     };
 
-    AVATAR_GRAPHICS.create(game);
-
     this.level = Level.load(this.game, this.levelName);
-    new Avatar(this.game, new AVATAR_GRAPHICS(this.game), this.level);
+    new Avatar(this.game, new AvatarGraphicsKey(this.game), this.level);
 
     this.ihandler = new PlayLevelIHandler(this.game, this.gpad, this.level);
 
@@ -48,8 +47,9 @@ PlayLevelState.prototype.create = function() {
 
 // Create a player sprite.
 PlayLevelState.prototype.render = function() {
-    if (FPS_DISPLAY) {
-        this.game.debug.text(this.game.time.fps, 2, 14, "#D92C57"); // FPS tracking.
+    if (PlayLevelState.FPS_DISPLAY) {
+        this.game.debug.text(this.game.time.fps,
+            2, 14, this.game.settings.colors.RED.s);
     };
     this.level.render();
     this.ihandler.render();
