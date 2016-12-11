@@ -19,6 +19,8 @@ var Avatar = function(game, graphics, level) {
     this.game.add.existing(this);
 
     this.attached = undefined;
+    this.events.onAttach = new Phaser.Signal();
+    this.events.onDetach = new Phaser.Signal();
 };
 
 Avatar.prototype = Object.create(Phaser.Sprite.prototype);
@@ -166,18 +168,25 @@ Avatar.prototype.roundVelocity = function(velocity) {
 // Note that this will fire during render; if you don't 
 // want to handle it until update, it's your job as the 
 // recipient to defer processing.
+// Anyone who's registered for our signals via 
+// avatar.events.onAttach.add or avatar.events.onDetach.add 
+// will also get their callbacks invoked now; they'll be passed 
+// the avatar, the previously attached object, and the newly 
+// attached object.
 Avatar.prototype.updateAttachment = function() {
-    var attached = this.point ? this.point : this.path;
-    if (this.attached === attached) {
+    var old = this.attached;
+    this.attached = this.point ? this.point : this.path;
+    if (this.attached === old) {
         return;
     }
-    if (this.attached && this.attached.notifyDetached) {
-        this.attached.notifyDetached(this);
+    if (old && old.notifyDetached) {
+        old.notifyDetached(this);
     }
-    this.attached = attached;
     if (this.attached && this.attached.notifyAttached) {
         this.attached.notifyAttached(this);
     }
+    this.events.onDetach.dispatch(this, old, this.attached);
+    this.events.onAttach.dispatch(this, old, this.attached);
 };
 
 // Optional physics debug view.
