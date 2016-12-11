@@ -31,6 +31,12 @@ IHandler.prototype.update = function() {
     }
 };
 
+// Like update(), but while paused.
+IHandler.prototype.pauseUpdate = function() {
+    if (this.enabled && this.state) {
+        this.state.pauseUpdate();
+    }
+};
 
 // Give our states a chance to render.
 IHandler.prototype.render = function() {
@@ -76,15 +82,16 @@ var IState = function(name, handler) {
 
 // This will be called by the handler, 
 // giving us a chance to update things.
-IState.prototype.update = function() {
-    // Do nothing.
-};
+IState.prototype.update = function() {};
+
+// This will be called by the handler, 
+// giving us a chance to update things
+// while the game is paused.
+IState.prototype.pauseUpdate = function() {};
 
 // This will be called by the handler, 
 // giving us a chance to render things.
-IState.prototype.render = function() {
-    // Do nothing.
-};
+IState.prototype.render = function() {};
 
 // Convenience method to activate a named 
 // state in our handler.
@@ -95,13 +102,9 @@ IState.prototype.activate = function(name) {
 // Called when we become the active state.
 // If defined, prev is the state that was 
 // just active.
-IState.prototype.activated = function(prev) {
-    // Do nothing.
-};
+IState.prototype.activated = function(prev) {};
 
 // Called when we stop being the active state.
 // If defined, next is the state that is 
 // becoming active.
-IState.prototype.deactivated = function(next) {
-    // Do nothing.
-};
+IState.prototype.deactivated = function(next) {};

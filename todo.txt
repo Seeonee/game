@@ -2,5 +2,3 @@ Make PortalPoint gfx
 Make PortalPoint IState for handling button press while colocated
 Make level swap fx
 Disable input during level swap transition
-Make menu ihandler
-Make pause menu

@@ -114,10 +114,10 @@ AddFromPathIState.prototype.update = function() {
     }
 
     var done = false;
-    if (this.gpad.justReleased(this.buttonMap.ADD_CANCEL_BUTTON)) {
+    if (this.gpad.justReleased(this.buttonMap.CANCEL_BUTTON)) {
         // Just finish; don't add any paths.
         done = true;
-        this.gpad.consumeButtonEvent(this.buttonMap.ADD_CANCEL_BUTTON);
+        this.gpad.consumeButtonEvent(this.buttonMap.CANCEL_BUTTON);
     } else if (this.gpad.justReleased(this.buttonMap.ADD_BUTTON)) {
         // New point, coming atcha!
         if (this.near) {
@@ -262,10 +262,10 @@ AddFromPointIState.prototype.update = function() {
     this.cacheSelectedMark();
 
     var done = false;
-    if (this.gpad.justReleased(this.buttonMap.ADD_CANCEL_BUTTON)) {
+    if (this.gpad.justReleased(this.buttonMap.CANCEL_BUTTON)) {
         // Just finish; don't add any paths.
         done = true;
-        this.gpad.consumeButtonEvent(this.buttonMap.ADD_CANCEL_BUTTON);
+        this.gpad.consumeButtonEvent(this.buttonMap.CANCEL_BUTTON);
     } else if (this.gpad.justReleased(this.buttonMap.ADD_BUTTON)) {
         // New point, coming atcha!
         if (this.near && this.valid) {

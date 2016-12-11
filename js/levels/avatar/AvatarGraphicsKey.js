@@ -54,6 +54,7 @@ AvatarGraphicsKey.prototype.setMasq = function(avatar, masq) {
 AvatarGraphicsKey.prototype.createSmokeEmitter = function(avatar) {
     // Let's get really fancy and add a smoke trail while moving.
     avatar.smokeEmitter = this.game.add.emitter(0, 0, 100);
+    avatar.game.state.getCurrentState().z.player.add(avatar.smokeEmitter);
     avatar.smokeEmitter.gravity = 150;
     avatar.smokeEmitter.setXSpeed(-50, 50);
     avatar.smokeEmitter.setYSpeed(-30, -70);

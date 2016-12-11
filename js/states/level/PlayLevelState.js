@@ -30,7 +30,10 @@ PlayLevelState.prototype.create = function() {
     this.level = Level.load(this.game, this.levelName);
     new Avatar(this.game, new AvatarGraphicsKey(this.game), this.level);
 
-    this.ihandler = new PlayLevelIHandler(this.game, this.gpad, this.level);
+    this.ihandler = new PlayLevelIHandler(
+        this.game, this.gpad, this.level);
+    this.menuhandler = new PlayLevelMenuIHandler(
+        this.game, this.gpad, this.level, this.ihandler);
 
     this.game.time.advancedTiming = true; // For FPS tracking.
     this.game.camera.follow(this.level.avatar);
@@ -48,11 +51,16 @@ PlayLevelState.prototype.render = function() {
             2, 14, this.game.settings.colors.RED.s);
     };
     this.level.render();
-    this.ihandler.render();
+    this.menuhandler.render();
 };
 
 // Create a player sprite.
 PlayLevelState.prototype.update = function() {
     this.level.update();
-    this.ihandler.update();
+    this.menuhandler.update();
+};
+
+// Create a player sprite.
+PlayLevelState.prototype.pauseUpdate = function() {
+    this.menuhandler.pauseUpdate();
 };

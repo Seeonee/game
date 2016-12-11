@@ -9,10 +9,11 @@ var ButtonMappings = function() {
     this.MOVE_Y = Phaser.Gamepad.PS3XC_STICK_LEFT_Y;
 
     // Level editor controls.
-    this.STEP_UP_BUTTON = Phaser.Gamepad.PS3XC_SQUARE;
-    this.STEP_DOWN_BUTTON = Phaser.Gamepad.PS3XC_TRIANGLE;
+    this.PAUSE_BUTTON = Phaser.Gamepad.PS3XC_START;
+    this.STEP_DOWN_BUTTON = Phaser.Gamepad.PS3XC_SQUARE;
+    this.STEP_UP_BUTTON = Phaser.Gamepad.PS3XC_TRIANGLE;
     this.ADD_BUTTON = Phaser.Gamepad.PS3XC_X;
-    this.ADD_CANCEL_BUTTON = Phaser.Gamepad.PS3XC_CIRCLE;
+    this.CANCEL_BUTTON = Phaser.Gamepad.PS3XC_CIRCLE;
     this.FLOAT_BUTTON = Phaser.Gamepad.PS3XC_R2;
     this.DELETE_BUTTON = Phaser.Gamepad.PS3XC_CIRCLE;
 };
