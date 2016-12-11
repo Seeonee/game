@@ -20,15 +20,31 @@ AddFromPathIState.prototype.activated = function(prev) {
     this.path = this.avatar.path;
     this.marks = [];
     this.near = undefined;
+    var view = this.game.camera.view;
+    this.x = view.x;
+    this.y = view.y;
+    this.w = view.width;
+    this.h = view.height;
     this.gpad.consumeButtonEvent(this.buttonMap.ADD_BUTTON);
     // Initialize bitmap for rendering.
-    this.bitmap = this.game.add.bitmapData(
-        this.game.width, this.game.height);
+    this.bitmap = this.game.add.bitmapData(this.w, this.h);
     this.bitmap.context.fillStyle = this.game.settings.colors.RED.s;
-    this.image = this.game.add.image(0, 0, this.bitmap);
+    this.image = this.game.add.image(this.x, this.y, this.bitmap);
     this.game.state.getCurrentState().z.mg.tier().add(this.image);
     this.cacheMarks();
     this.renderNeeded = true;
+};
+
+// Translate a game coordinate point so that it can 
+// be drawn onto our image.
+AddFromPathIState.prototype.translateGamePointToImagePoint = function(x, y) {
+    return { x: x + this.x, y: y + this.y };
+};
+
+// Translate an image coordinate point so that it maps 
+// back to a point in the game world.
+AddFromPathIState.prototype.translateGamePointToImagePoint = function(x, y) {
+    return { x: x - this.x, y: y - this.y };
 };
 
 // Render the various path marks.
@@ -55,8 +71,7 @@ AddFromPathIState.prototype.render = function() {
     if (!this.renderNeeded) {
         return;
     }
-    this.bitmap.context.clearRect(0, 0,
-        this.game.width, this.game.height);
+    this.bitmap.context.clearRect(0, 0, this.w, this.h);
     for (var i = 0; i < this.marks.length; i++) {
         this.bitmap.context.beginPath();
         var mark = this.marks[i];
@@ -64,7 +79,8 @@ AddFromPathIState.prototype.render = function() {
         var radius = (selected) ?
             AddFromPathIState.ADD_PATH_SELECTED_MARK_RADIUS :
             AddFromPathIState.ADD_PATH_MARK_RADIUS;
-        this.bitmap.context.arc(mark.x, mark.y, radius, 0, 2 * Math.PI, false);
+        var ip = this.translateGamePointToImagePoint(mark.x, mark.y);
+        this.bitmap.context.arc(ip.x, ip.y, radius, 0, 2 * Math.PI, false);
         this.bitmap.context.fill();
     }
     this.bitmap.dirty = true;
@@ -141,15 +157,31 @@ AddFromPointIState.prototype.activated = function(prev) {
     this.point = this.avatar.point;
     this.near = undefined;
     this.valid = false; // Only allow 45 degree angles.
+    var view = this.game.camera.view;
+    this.x = view.x - (view.width / 2);
+    this.y = view.y - (view.height / 2);
+    this.w = 2 * view.width;
+    this.h = 2 * view.height;
     this.gpad.consumeButtonEvent(this.buttonMap.ADD_BUTTON);
     // Initialize bitmap for rendering.
-    this.bitmap = this.game.add.bitmapData(
-        this.game.width, this.game.height);
+    this.bitmap = this.game.add.bitmapData(this.w, this.h);
     this.bitmap.context.lineWidth = Tier.PATH_WIDTH;
     this.bitmap.context.lineCap = 'round';
-    this.image = this.game.add.image(0, 0, this.bitmap);
+    this.image = this.game.add.image(this.x, this.y, this.bitmap);
     this.game.state.getCurrentState().z.mg.tier().add(this.image);
     this.renderNeeded = false;
+};
+
+// Translate a game coordinate point so that it can 
+// be drawn onto our image.
+AddFromPointIState.prototype.translateGamePointToImagePoint = function(x, y) {
+    return { x: x + this.x, y: y + this.y };
+};
+
+// Translate an image coordinate point so that it maps 
+// back to a point in the game world.
+AddFromPointIState.prototype.translateGamePointToImagePoint = function(x, y) {
+    return { x: x - this.x, y: y - this.y };
 };
 
 // Render the various point marks.
@@ -157,9 +189,10 @@ AddFromPointIState.prototype.render = function() {
     if (!this.renderNeeded) {
         return;
     }
-    this.bitmap.context.clearRect(0, 0,
-        this.game.width, this.game.height);
+    this.bitmap.context.clearRect(0, 0, this.w, this.h);
     if (this.near) {
+        var ip = this.translateGamePointToImagePoint(
+            this.near.x, this.near.y);
         if (this.valid) {
             this.bitmap.context.fillStyle = this.game.settings.colors.RED.s;
             this.bitmap.context.strokeStyle = this.game.settings.colors.RED.s;
@@ -170,12 +203,13 @@ AddFromPointIState.prototype.render = function() {
         this.bitmap.context.beginPath();
         var gp = this.tier.translateInternalPointToGamePoint(
             this.point.x, this.point.y);
-        this.bitmap.context.moveTo(gp.x, gp.y);
-        this.bitmap.context.lineTo(this.near.x, this.near.y);
+        var ip2 = this.translateGamePointToImagePoint(gp.x, gp.y);
+        this.bitmap.context.moveTo(ip2.x, ip2.y);
+        this.bitmap.context.lineTo(ip.x, ip.y);
         this.bitmap.context.stroke();
         this.bitmap.context.beginPath();
         var radius = AddFromPathIState.ADD_PATH_SELECTED_MARK_RADIUS;
-        this.bitmap.context.arc(this.near.x, this.near.y,
+        this.bitmap.context.arc(ip.x, ip.y,
             radius, 0, 2 * Math.PI, false);
         this.bitmap.context.fill();
     }
