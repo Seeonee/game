@@ -66,8 +66,8 @@ Power.prototype.setRotation = function(angle) {
     this.icon.rotation = -angle;
 };
 
-// On render, redo our tints.
-Power.prototype.render = function() {
+// On update, redo our tints.
+Power.prototype.update = function() {
     this.icon.tint = (this.icon_rgb.r << 16) +
         (this.icon_rgb.g << 8) +
         (this.icon_rgb.b);
@@ -77,17 +77,17 @@ Power.prototype.render = function() {
 };
 
 // These are the effects triggered by mouseover.
-Power.prototype.select = function(e) {
-    e.clearTweens();
-    e.diamond_fade_in();
-    e.icon_power_up();
+Power.prototype.select = function() {
+    this.clearTweens();
+    this.diamond_fade_in();
+    this.icon_power_up();
 };
 
 // This reverses the mouseover effects.
-Power.prototype.deselect = function(e) {
-    e.clearTweens();
-    e.diamond_fade_out();
-    e.icon_power_down();
+Power.prototype.deselect = function() {
+    this.clearTweens();
+    this.diamond_fade_out();
+    this.icon_power_down();
 };
 
 // Stop all currently firing tweens.

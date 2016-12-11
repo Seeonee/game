@@ -179,10 +179,10 @@ Avatar.prototype.updateAttachment = function() {
         return;
     }
     if (old && old.notifyDetached) {
-        old.notifyDetached(this);
+        old.notifyDetached(this, this.attached);
     }
     if (this.attached && this.attached.notifyAttached) {
-        this.attached.notifyAttached(this);
+        this.attached.notifyAttached(this, old);
     }
     this.events.onDetach.dispatch(this, old, this.attached);
     this.events.onAttach.dispatch(this, old, this.attached);

@@ -84,10 +84,15 @@ Point.prototype.getPath = function(angle) {
     return closest.path;
 };
 
-// Test avatar attachment.
-Point.prototype.notifyAttached = function(avatar) {
+// Called upon avatar attachment.
+// Also takes the previous path the avatar was attached to.
+Point.prototype.notifyAttached = function(avatar, prev) {
     console.log('attach ' + this.name);
 };
+
+// Called upon avatar detachment.
+// Also takes the path the avatar is leaving us for.
+Point.prototype.notifyDetached = function(avatar, next) {};
 
 // Called when we're being deleted.
 // Primarily for subclasses to do cleanup.

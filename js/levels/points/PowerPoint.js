@@ -16,11 +16,31 @@ Point.load.factory[PowerPoint.TYPE] = PowerPoint;
 PowerPoint.prototype.draw = function(tier) {
     if (!(this.power)) {
         var game = tier.game;
-        this.power = new Power(game,
-            this.x, this.y, this.powerType);
-        game.state.getCurrentState().z.fg.add(this.power);
+        var gp = tier.translateInternalPointToGamePoint(
+            this.x, this.y);
+        this.power = new Power(game, gp.x, gp.y,
+            this.powerType);
+        game.state.getCurrentState().z.mg.add(this.power);
     }
     Point.prototype.draw.call(this, tier);
+};
+
+// Light up the power.
+PowerPoint.prototype.notifyAttached = function(avatar, prev) {
+    Point.prototype.notifyAttached.call(this, avatar, prev);
+    this.power.select();
+};
+
+// Lights out for the power.
+PowerPoint.prototype.notifyDetached = function(avatar, next) {
+    Point.prototype.notifyDetached.call(this, avatar, next);
+    this.power.deselect();
+};
+
+
+// Delete our power.
+PowerPoint.prototype.delete = function() {
+    this.power.destroy();
 };
 
 // JSON conversion of a portal.
