@@ -65,7 +65,6 @@ Tier.prototype.addPoint = function(name, x, y, point2) {
 Tier.prototype._addPoint = function(point) {
     this.points.push(point);
     this.pointMap[point.name] = point;
-    this.renderNeeded = true;
     return point;
 };
 
@@ -84,7 +83,6 @@ Tier.prototype._addPath = function(path, point, point2) {
     point2.paths.push(path);
     this.paths.push(path);
     this.pathMap[path.name] = path;
-    this.renderNeeded = true;
     return path;
 };
 
@@ -98,7 +96,6 @@ Tier.prototype.addPointToPathAtCoords = function(path, x, y) {
     point2.paths.splice(index, 1);
     path.p2 = point;
     this.addPath(this.getNewPathName(), point, point2);
-    this.renderNeeded = true;
     return point;
 }
 
@@ -269,10 +266,29 @@ Tier.prototype.update = function() {
     // Input's all handled by the IHandler states.
 };
 
-// T
+// Return true if we, or any of our points/paths, 
+// need a new render.
+Tier.prototype.isRenderNeeded = function() {
+    if (this.renderNeeded) {
+        return true;
+    }
+    for (var i = 0; i < this.points.length; i++) {
+        if (this.points[i].renderNeeded) {
+            return true;
+        }
+    }
+    for (var i = 0; i < this.paths.length; i++) {
+        if (this.paths[i].renderNeeded) {
+            return true;
+        }
+    }
+    return false;
+};
+
+// The rendering loop.
 Tier.prototype.render = function() {
     // Figure it if we need to render (again).
-    if (this.visible && this.renderNeeded) {
+    if (this.visible && this.isRenderNeeded()) {
         this.draw();
     }
 };
