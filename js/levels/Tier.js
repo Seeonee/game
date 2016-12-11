@@ -158,7 +158,10 @@ Tier.prototype.deletePath = function(path) {
 // coordinates have been adjusted to work with the 
 // game.
 Tier.prototype.translateInternalPointToGamePoint = function(x, y) {
-    return { x: x + this.x, y: y + this.y };
+    return {
+        x: x + this.x - (this.width / 2),
+        y: y + this.y - (this.height / 2)
+    };
 };
 
 // Takes x and y values relative to the game, 
@@ -166,7 +169,10 @@ Tier.prototype.translateInternalPointToGamePoint = function(x, y) {
 // have been adjusted to work with this Tier 
 // object's internal points.
 Tier.prototype.translateGamePointToInternalPoint = function(x, y) {
-    return { x: x - this.x, y: y - this.y };
+    return {
+        x: x - this.x + (this.width / 2),
+        y: y - this.y + (this.height / 2)
+    };
 };
 
 // Update our dimensions.
@@ -218,6 +224,7 @@ Tier.prototype.recreateImageAsNeeded = function() {
             this.width, this.height);
         this.image = this.game.add.image(this.x, this.y,
             this.bitmap);
+        this.image.anchor.setTo(0.5, 0.5);
         this.game.state.getCurrentState().z.level.tier().add(
             this.image);
         this.updateWorldBounds();
@@ -229,11 +236,16 @@ Tier.prototype.updateWorldBounds = function() {
     if (this.renderNeeded) {
         return; // We'll update during our next render.
     }
+    var p = Tier.CAMERA_PADDING;
+    var w = this.width;
+    var h = this.height;
+    var x = this.x - (w / 2);
+    var y = this.y - (h / 2);
     this.game.world.setBounds(
-        this.x - Tier.CAMERA_PADDING,
-        this.y - Tier.CAMERA_PADDING,
-        this.width + (2 * Tier.CAMERA_PADDING),
-        this.height + (2 * Tier.CAMERA_PADDING)
+        this.x - p,
+        this.y - p,
+        this.width + (2 * p),
+        this.height + (2 * p)
     );
 };
 
