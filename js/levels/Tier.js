@@ -9,7 +9,7 @@ var Tier = function(game, name) {
     this.game = game;
     this.x = Tier.IMAGE_OFFSET;
     this.y = Tier.IMAGE_OFFSET; // Sufficient?
-    this.dirty = false;
+    this.renderNeeded = false;
     this.visible = false;
 
     this.points = [];
@@ -65,7 +65,7 @@ Tier.prototype.addPoint = function(name, x, y, point2) {
 Tier.prototype._addPoint = function(point) {
     this.points.push(point);
     this.pointMap[point.name] = point;
-    this.dirty = true;
+    this.renderNeeded = true;
     return point;
 };
 
@@ -84,7 +84,7 @@ Tier.prototype._addPath = function(path, point, point2) {
     point2.paths.push(path);
     this.paths.push(path);
     this.pathMap[path.name] = path;
-    this.dirty = true;
+    this.renderNeeded = true;
     return path;
 };
 
@@ -98,7 +98,7 @@ Tier.prototype.addPointToPathAtCoords = function(path, x, y) {
     point2.paths.splice(index, 1);
     path.p2 = point;
     this.addPath(this.getNewPathName(), point, point2);
-    this.dirty = true;
+    this.renderNeeded = true;
     return point;
 }
 
@@ -112,7 +112,7 @@ Tier.prototype.deletePoint = function(point) {
         }
         this.points.splice(index, 1);
         delete this.pointMap[point.name];
-        this.dirty = true;
+        this.renderNeeded = true;
         return point;
     }
     return undefined;
@@ -154,7 +154,7 @@ Tier.prototype.deletePath = function(path) {
         }
         this.paths.splice(index, 1);
         delete this.pathMap[path.name];
-        this.dirty = true;
+        this.renderNeeded = true;
         return path;
     }
     return undefined;
@@ -240,6 +240,7 @@ Tier.prototype.recreateImageAsNeeded = function() {
 
 // Draw all paths onto the bitmap.
 Tier.prototype.draw = function() {
+    this.renderNeeded = false;
     this.recalculateDimensions();
     this.recreateImageAsNeeded();
     var colors = this.game.settings.colors;
@@ -250,11 +251,14 @@ Tier.prototype.draw = function() {
     this.bitmap.context.lineJoin = Tier.LINE_JOIN_STYLE;
     this.bitmap.context.lineDashOffset = Tier.LINE_DASH_OFFSET;
 
-    for (var i = 0; i < this.paths.length; i++) {
-        this.paths[i].draw(this);
-    }
-    for (var i = 0; i < this.points.length; i++) {
-        this.points[i].draw(this);
+    var objects = this.paths.concat(this.points);
+    objects.sort(function(a, b) {
+        var z1 = a.z ? a.z : 10;
+        var z2 = b.z ? b.z : 10;
+        return z1 - z2;
+    });
+    for (var i = 0; i < objects.length; i++) {
+        objects[i].draw(this);
     }
     this.bitmap.dirty = true;
 };
@@ -268,8 +272,7 @@ Tier.prototype.update = function() {
 // T
 Tier.prototype.render = function() {
     // Figure it if we need to render (again).
-    if (this.visible && this.dirty) {
-        this.dirty = false;
+    if (this.visible && this.renderNeeded) {
         this.draw();
     }
 };

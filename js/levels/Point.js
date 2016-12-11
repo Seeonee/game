@@ -4,11 +4,14 @@ var Point = function(name, x, y) {
     this.x = x;
     this.y = y;
     this.paths = [];
+    this.z = Point.Z;
+    this.renderNeeded = true;
 };
 
 // Constants.
 Point.ANGLE_CATCH = Math.PI / 2.1;
 Point.MIN_ANGLE_RATIO = 2;
+Point.Z = 7; // Rendering depth.
 
 // Convenient string representation.
 Point.prototype.asKey = function() {
@@ -25,11 +28,25 @@ Point.prototype.isConnectedTo = function(point) {
     return false;
 };
 
+// Returns true or false based on whether we are 
+// connected solely to broken paths.
+Point.prototype.isBroken = function() {
+    for (var i = 0; i < this.paths.length; i++) {
+        if (!(this.paths[i].broken)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 // Called during the draw walk by our Paths object.
 // This gives us a chance to render ourself to the bitmap.
 Point.prototype.draw = function(tier) {
+    this.renderNeeded = false;
+    var colors = tier.game.settings.colors;
+    tier.bitmap.context.fillStyle = this.isBroken() ?
+        colors.GREY.s : colors.PATH_COLOR.s;
     tier.bitmap.context.beginPath();
-    tier.bitmap.context.fillStyle = Tier.PATH_COLOR;
     tier.bitmap.context.arc(this.x, this.y,
         Math.floor(Tier.PATH_WIDTH / 2), 0, 2 * Math.PI, false);
     tier.bitmap.context.fill();

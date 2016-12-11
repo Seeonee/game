@@ -10,10 +10,18 @@ var Path = function(name, p1, p2) {
     this.length = Utils.distanceBetweenPoints(
         this.p1.x, this.p1.y,
         this.p2.x, this.p2.y);
+    this.z = Path.Z;
+    this.broken = false;
+    this.renderNeeded = true;
+    if (Math.random() > 0.75) {
+        this.setBroken(true);
+    }
 };
 
 // Constants.
 Path.ANGLE_CATCH = Math.PI / 2.1;
+Path.Z = 3; // Rendering depth.
+Path.Z_BROKEN = 2;
 
 // Convenient string representation.
 Path.prototype.asKey = function() {
@@ -25,12 +33,25 @@ Path.prototype.getCounterpoint = function(point) {
     return (this.p1.x == point.x && this.p1.y == point.y) ? this.p2 : this.p1;
 };
 
+// Set whether this path is broken (true or false).
+Path.prototype.setBroken = function(broken) {
+    if (this.broken == broken) {
+        return;
+    }
+    this.broken = broken;
+    this.z = this.broken ? Path.Z : Path.Z_BROKEN;
+    this.renderNeeded = true;
+}
+
+
 // Called during the draw walk by our Paths object.
 // This gives us a chance to render ourself to the bitmap.
 Path.prototype.draw = function(tier) {
-    // tier.bitmap.context.setLineDash(
-    //     (Math.random() > 0.75) ? Tier.LINE_DASH : []);
-    tier.bitmap.context.strokeStyle = Tier.PATH_COLOR;
+    this.renderNeeded = false;
+    tier.bitmap.context.setLineDash(this.broken ? Tier.LINE_DASH : []);
+    var colors = tier.game.settings.colors;
+    tier.bitmap.context.strokeStyle = this.broken ?
+        colors.GREY.s : colors.PATH_COLOR.s;
     tier.bitmap.context.beginPath();
     tier.bitmap.context.moveTo(this.p1.x, this.p1.y);
     tier.bitmap.context.lineTo(this.p2.x, this.p2.y);

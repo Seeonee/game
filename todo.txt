@@ -1,4 +1,4 @@
-Sort all drawn objects and render in z-order
+Change Tier renderNeeded behavior to poll all child objects
 Make events for avatar/point/path when they attach/detach
 Make a basic PowerPoint
 Make PortalPoint gfx
