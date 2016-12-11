@@ -89,6 +89,10 @@ Point.prototype.notifyAttached = function(avatar) {
     console.log('attach ' + this.name);
 };
 
+// Called when we're being deleted.
+// Primarily for subclasses to do cleanup.
+Point.prototype.delete = function() {};
+
 // JSON conversion of a point.
 Point.prototype.toJSON = function() {
     return { x: this.x, y: this.y };

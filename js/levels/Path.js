@@ -115,6 +115,10 @@ Path.prototype.notifyAttached = function(avatar) {
     console.log('attach ' + this.name);
 };
 
+// Called when we're being deleted.
+// Primarily for subclasses to do cleanup.
+Path.prototype.delete = function() {};
+
 // JSON conversion of a path.
 Path.prototype.toJSON = function() {
     return { p1: this.p1.name, p2: this.p2.name };

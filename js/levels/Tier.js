@@ -107,6 +107,7 @@ Tier.prototype.deletePoint = function(point) {
         while (point.paths.length) {
             this.deletePath(point.paths[0]);
         }
+        point.delete();
         this.points.splice(index, 1);
         delete this.pointMap[point.name];
         this.renderNeeded = true;
@@ -149,6 +150,7 @@ Tier.prototype.deletePath = function(path) {
             var index2 = point.paths.indexOf(path);
             point.paths.splice(index2, 1);
         }
+        path.delete();
         this.paths.splice(index, 1);
         delete this.pathMap[path.name];
         this.renderNeeded = true;
