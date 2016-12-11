@@ -144,7 +144,9 @@
                 },
                 "p4": {
                     "x": 455,
-                    "y": 105
+                    "y": 105,
+                    "type": "power",
+                    "subtype": "crown"
                 }
             },
             "paths": {

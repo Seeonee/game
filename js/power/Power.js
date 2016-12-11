@@ -66,8 +66,8 @@ Power.prototype.setRotation = function(angle) {
     this.icon.rotation = -angle;
 };
 
-// On update, redo our tints.
-Power.prototype.update = function() {
+// On render, redo our tints.
+Power.prototype.render = function() {
     this.icon.tint = (this.icon_rgb.r << 16) +
         (this.icon_rgb.g << 8) +
         (this.icon_rgb.b);
