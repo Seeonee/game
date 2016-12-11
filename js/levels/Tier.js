@@ -159,8 +159,8 @@ Tier.prototype.deletePath = function(path) {
 // game.
 Tier.prototype.translateInternalPointToGamePoint = function(x, y) {
     return {
-        x: x + this.x - (this.width / 2),
-        y: y + this.y - (this.height / 2)
+        x: x + this.x - this.widthOver2,
+        y: y + this.y - this.heightOver2
     };
 };
 
@@ -170,8 +170,8 @@ Tier.prototype.translateInternalPointToGamePoint = function(x, y) {
 // object's internal points.
 Tier.prototype.translateGamePointToInternalPoint = function(x, y) {
     return {
-        x: x - this.x + (this.width / 2),
-        y: y - this.y + (this.height / 2)
+        x: x - this.x + this.widthOver2,
+        y: y - this.y + this.heightOver2
     };
 };
 
@@ -202,6 +202,8 @@ Tier.prototype.recalculateDimensions = function() {
     }
     this.width += Tier.PADDING;
     this.height += Tier.PADDING;
+    this.widthOver2 = this.width / 2;
+    this.heightOver2 = this.height / 2;
 };
 
 // Make sure our current image is big enough 
@@ -239,8 +241,8 @@ Tier.prototype.updateWorldBounds = function() {
     var p = Tier.CAMERA_PADDING;
     var w = this.width;
     var h = this.height;
-    var x = this.x - (w / 2);
-    var y = this.y - (h / 2);
+    var x = this.x - this.widthOver2;
+    var y = this.y - this.heightOver2;
     this.game.world.setBounds(
         this.x - p,
         this.y - p,
