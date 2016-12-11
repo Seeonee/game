@@ -29,7 +29,7 @@ PowerPoint.prototype.draw = function(tier) {
             rotation *= Math.PI;
         }
         this.power.setRotation(rotation);
-        game.state.getCurrentState().z.mg.add(this.power);
+        game.state.getCurrentState().z.mg.tier().add(this.power);
     }
     Point.prototype.draw.call(this, tier);
 };

@@ -1,5 +1,3 @@
-Make a basic PowerPoint
-Make bg/ground/mg/player/fg groups for the state as a whole, as well as for each individual tier for controlling visibility
 Make PortalPoint gfx
 Make PortalPoint IState for handling button press while colocated
 Make world bounds larger, and resize to fit level (based on largest tier)

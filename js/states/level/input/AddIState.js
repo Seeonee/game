@@ -26,7 +26,7 @@ AddFromPathIState.prototype.activated = function(prev) {
         this.game.width, this.game.height);
     this.bitmap.context.fillStyle = this.game.settings.colors.RED.s;
     this.image = this.game.add.image(0, 0, this.bitmap);
-    this.game.state.getCurrentState().z.mg.add(this.image);
+    this.game.state.getCurrentState().z.mg.tier().add(this.image);
     this.cacheMarks();
     this.renderNeeded = true;
 };
@@ -148,7 +148,7 @@ AddFromPointIState.prototype.activated = function(prev) {
     this.bitmap.context.lineWidth = Tier.PATH_WIDTH;
     this.bitmap.context.lineCap = 'round';
     this.image = this.game.add.image(0, 0, this.bitmap);
-    this.game.state.getCurrentState().z.mg.add(this.image);
+    this.game.state.getCurrentState().z.mg.tier().add(this.image);
     this.renderNeeded = false;
 };
 

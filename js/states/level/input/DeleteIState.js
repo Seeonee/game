@@ -32,7 +32,7 @@ DeleteIState.prototype.activated = function(prev) {
         this.avatar.x - (this.bitmap.width / 2),
         this.avatar.y - (this.bitmap.height / 2),
         this.bitmap);
-    this.game.state.getCurrentState().z.mg.add(this.image);
+    this.game.state.getCurrentState().z.mg.tier().add(this.image);
     this.renderNeeded = true;
 }
 

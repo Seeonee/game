@@ -10,7 +10,6 @@ var Tier = function(game, name) {
     this.x = Tier.IMAGE_OFFSET;
     this.y = Tier.IMAGE_OFFSET; // Sufficient?
     this.renderNeeded = false;
-    this.visible = false;
 
     this.points = [];
     this.paths = [];
@@ -175,14 +174,6 @@ Tier.prototype.translateGamePointToInternalPoint = function(x, y) {
     return { x: x - this.x, y: y - this.y };
 };
 
-// Update our visibility.
-Tier.prototype.setVisible = function(visible) {
-    this.visible = visible;
-    if (this.image) {
-        this.image.visible = visible;
-    }
-};
-
 // Update our dimensions.
 Tier.prototype.recalculateDimensions = function() {
     var x = Tier.PADDING;
@@ -232,7 +223,7 @@ Tier.prototype.recreateImageAsNeeded = function() {
             this.width, this.height);
         this.image = this.game.add.image(this.x, this.y,
             this.bitmap);
-        this.game.state.getCurrentState().z.level.add(
+        this.game.state.getCurrentState().z.level.tier().add(
             this.image);
     }
 }
@@ -290,7 +281,7 @@ Tier.prototype.isRenderNeeded = function() {
 // The rendering loop.
 Tier.prototype.render = function() {
     // Figure it if we need to render (again).
-    if (this.visible && this.isRenderNeeded()) {
+    if (this.isRenderNeeded()) {
         this.draw();
     }
 };

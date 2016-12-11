@@ -7,6 +7,51 @@ var Level = function(game, name) {
     this.tiers = [];
     this.tierMap = {};
     this.start = undefined; // Name.
+
+    // We're responsible for setting up our 
+    // parent state's group hierarchy for 
+    // rendering z-order
+    // Each possible z group has a "base" layer, 
+    // as well as one layer for each tier.
+    // Tier-specific layers are only visible 
+    // while a tier is currently active.
+    this.z = {
+        bg: this.createZGroup(), // Background.
+        level: this.createZGroup(),
+        mg: this.createZGroup(), // Midground?
+        player: this.createZGroup(),
+        fg: this.createZGroup() // Foreground!
+    };
+    game.state.getCurrentState().z = this.z;
+};
+
+// Create a group for z-order rendering.
+// It also contains a tier() method which 
+// will return (and if necessary instantiate)
+// a subgroup for the currently selected tier.
+Level.prototype.createZGroup = function() {
+    var group = this.game.add.group();
+    group.level = this;
+    group.tierSubs = {};
+    group.tier = function() {
+        var sub = this;
+        if (this.level.tier) {
+            var t = this.level.tier.name;
+            sub = this.tierSubs[t];
+            if (!sub) {
+                sub = this.game.add.group(this);
+                this.tierSubs[t] = sub;
+            }
+        }
+        return sub;
+    };
+    group.setVisibleFor = function(tier, visible) {
+        var sub = this.tierSubs[tier.name];
+        if (sub) {
+            sub.visible = visible;
+        }
+    };
+    return group;
 };
 
 // Slide up one layer among our tiers.
@@ -42,7 +87,12 @@ Level.prototype.setTier = function(tier) {
     this.tier = tier;
     for (var i = 0; i < this.tiers.length; i++) {
         var t2 = this.tiers[i];
-        t2.setVisible(t2 === tier);
+        var visible = t2 === tier;
+        var keys = Object.keys(this.z);
+        for (var j = 0; j < keys.length; j++) {
+            var key = keys[j];
+            this.z[key].setVisibleFor(t2, visible);
+        }
     }
 };
 
