@@ -1,6 +1,5 @@
 Make PortalPoint gfx
 Make PortalPoint IState for handling button press while colocated
-Make world bounds larger, and resize to fit level (based on largest tier)
 Make level swap fx
 Disable input during level swap transition
 Make menu ihandler

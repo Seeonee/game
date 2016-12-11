@@ -84,6 +84,9 @@ Level.prototype.advanceToTier = function(name) {
 
 // Set the currently active tier, and hide previous tiers.
 Level.prototype.setTier = function(tier) {
+    if (this.tier === tier) {
+        return;
+    }
     this.tier = tier;
     for (var i = 0; i < this.tiers.length; i++) {
         var t2 = this.tiers[i];
@@ -94,6 +97,7 @@ Level.prototype.setTier = function(tier) {
             this.z[key].setVisibleFor(t2, visible);
         }
     }
+    this.tier.updateWorldBounds();
 };
 
 // Update our current tier.

@@ -1,14 +1,9 @@
-// Set up the bare bones.
-// Optionally accepts a starting set of points.
-// This will not finish creating the object, since 
-// you may want to add more points first.
-// To finish initializing, create() on it (or wait 
-// for the first update()).
+// Set up one tier of a wider level.
 var Tier = function(game, name) {
     this.name = name;
     this.game = game;
-    this.x = Tier.IMAGE_OFFSET;
-    this.y = Tier.IMAGE_OFFSET; // Sufficient?
+    this.x = 0;
+    this.y = 0;
     this.renderNeeded = false;
 
     this.points = [];
@@ -23,7 +18,7 @@ var Tier = function(game, name) {
 
 // Constants.
 Tier.PADDING = 5;
-Tier.IMAGE_OFFSET = 125;
+Tier.CAMERA_PADDING = 1500;
 Tier.PATH_WIDTH = 7;
 Tier.LINE_CAP_STYLE = 'butt';
 Tier.LINE_JOIN_STYLE = 'round';
@@ -225,8 +220,22 @@ Tier.prototype.recreateImageAsNeeded = function() {
             this.bitmap);
         this.game.state.getCurrentState().z.level.tier().add(
             this.image);
+        this.updateWorldBounds();
     }
 }
+
+// Draw all paths onto the bitmap.
+Tier.prototype.updateWorldBounds = function() {
+    if (this.renderNeeded) {
+        return; // We'll update during our next render.
+    }
+    this.game.world.setBounds(
+        this.x - Tier.CAMERA_PADDING,
+        this.y - Tier.CAMERA_PADDING,
+        this.width + (2 * Tier.CAMERA_PADDING),
+        this.height + (2 * Tier.CAMERA_PADDING)
+    );
+};
 
 // Draw all paths onto the bitmap.
 Tier.prototype.draw = function() {

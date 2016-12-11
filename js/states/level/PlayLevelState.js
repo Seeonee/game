@@ -31,7 +31,6 @@ PlayLevelState.prototype.create = function() {
     this.ihandler = new PlayLevelIHandler(this.game, this.gpad, this.level);
 
     this.game.time.advancedTiming = true; // For FPS tracking.
-    // this.game.world.setBounds(0, 0, 1920, 1920);
     this.game.camera.follow(this.level.avatar);
 };
 
