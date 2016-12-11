@@ -39,7 +39,7 @@ Path.prototype.setBroken = function(broken) {
         return;
     }
     this.broken = broken;
-    this.z = this.broken ? Path.Z : Path.Z_BROKEN;
+    this.z = this.broken ? Path.Z_BROKEN : Path.Z;
     this.renderNeeded = true;
 }
 
