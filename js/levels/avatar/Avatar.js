@@ -16,7 +16,6 @@ var Avatar = function(game, graphics, level) {
 
     this.level.avatar = this;
     this.snapToStartingPoint();
-    this.game.add.existing(this);
 
     this.attached = undefined;
     this.events.onAttach = new Phaser.Signal();
