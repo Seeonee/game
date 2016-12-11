@@ -98,7 +98,7 @@ Point.prototype.toJSON = function() {
 Point.load = function(game, name, json) {
     var type = json.type;
     if (type && Point.load.factory[type]) {
-        Point.load.factory[type].load(game, name, json);
+        return Point.load.factory[type].load(game, name, json);
     }
     return new Point(name, json.x, json.y);
 };
