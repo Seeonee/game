@@ -1,9 +1,6 @@
 // Handles rendering for avatar objects.
 var AvatarGraphicsKey = function(game) {
     this.game = game;
-    if (!AvatarGraphicsKey.MASKS_CREATED) {
-        AvatarGraphicsKey.create(game);
-    }
 };
 
 // Constants, for now.
@@ -20,7 +17,7 @@ AvatarGraphicsKey.prototype.createGraphics = function(avatar) {
     avatar.keyplate.y = yOffset;
     avatar.keyplate.anchor.setTo(0.5, 0.5);
     // Initialize our keyhole.
-    this.setMasq(avatar, AvatarMasq.KEYHOLE);
+    this.setMasq(avatar, new AvatarMasq(game, 'keyhole', -55));
     // Enable physics.
     this.game.physics.enable(avatar, Phaser.Physics.ARCADE);
     // For fun, adjust bounding box to match keyplate,
@@ -82,16 +79,6 @@ AvatarGraphicsKey.prototype.move = function(avatar) {
     }
 };
 
-// Called by the main game's create().
-AvatarGraphicsKey.create = function(game) {
-    AvatarGraphicsKey.MASKS_CREATED = true;
-    AvatarMasq.KEYHOLE = new AvatarMasq(game, 'keyhole', -55);
-    AvatarMasq.HERNE = new AvatarMasq(game, 'herne', -61);
-    AvatarMasq.NORWIFE = new AvatarMasq(game, 'norwife', -55);
-    AvatarMasq.RAGNA = new AvatarMasq(game, 'ragna', -62);
-    AvatarMasq.DUNLEVY = new AvatarMasq(game, 'dunlevy', -55);
-};
-
 // A mask that can be attached to the avatar.
 // Named to avoid clashing with sprite.mask.
 var AvatarMasq = function(game, name, yOffset, scale) {
@@ -99,4 +86,13 @@ var AvatarMasq = function(game, name, yOffset, scale) {
     this.sprite = game.make.sprite(0, 0, name);
     this.yOffset = yOffset;
     this.scale = (scale) ? scale : 1;
+};
+
+// Called by the main game's create().
+AvatarMasq.create = function(game) {
+    AvatarMasq.KEYHOLE = new AvatarMasq(game, 'keyhole', -55);
+    AvatarMasq.HERNE = new AvatarMasq(game, 'herne', -61);
+    AvatarMasq.NORWIFE = new AvatarMasq(game, 'norwife', -55);
+    AvatarMasq.RAGNA = new AvatarMasq(game, 'ragna', -62);
+    AvatarMasq.DUNLEVY = new AvatarMasq(game, 'dunlevy', -55);
 };
