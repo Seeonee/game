@@ -5,6 +5,20 @@
 var Color = function(shade) {
     this.s = '#' + shade;
     this.i = parseInt(shade, 16);
+    this._r = (this.i >> 16) & 0xFF;
+    this._g = (this.i >> 8) & 0xFF;
+    this._b = (this.i) & 0xFF;
+};
+
+// Return an 'rgba(r, g, b, a)' string.
+// If you omit alpha, it will be 1.
+Color.prototype.rgba = function(alpha) {
+    alpha = alpha == undefined ? 1 : alpha;
+    return 'rgba(' +
+        this._r + ', ' +
+        this._g + ', ' +
+        this._b + ', ' +
+        alpha + ')';
 };
 
 // Restore a JSON'd Color object.
@@ -48,6 +62,7 @@ var Colors = function() {
     this.RED = new Color('D92C57');
     this.GREY = new Color('A4A4A4');
     this.WHITE = new Color('FFFFFF');
+    this.BLACK = new Color('000000');
 
     // this.GREEN2 = new Shades(
     // ['7BEFAE', '4DE890', '26E278', '00DA5F', '00B04D']);

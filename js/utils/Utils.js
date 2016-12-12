@@ -27,3 +27,17 @@ Utils.construct = function(ctor) {
     var args = Array.prototype.slice.call(arguments, 1);
     return new(ctor.bind.apply(ctor, [null].concat(args)))();
 };
+
+// Extend one associative array with the contents 
+// of another.
+// Returns the first array (which gets extended).
+Utils.extend = function(a1, a2) {
+    var keys = Object.keys(a2);
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        if (a2.hasOwnProperty(key)) {
+            a1[key] = a2[key];
+        }
+    }
+    return a1;
+};

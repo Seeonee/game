@@ -4,6 +4,11 @@
 var Settings = function() {
     this.buttonMap = new ButtonMappings();
     this.colors = new Colors();
+    this.font = {
+        size: 30,
+        sizePx: '30px',
+        name: 'Arial'
+    };
     // this.sounds = new Sounds();
 };
 

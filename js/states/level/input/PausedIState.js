@@ -2,28 +2,7 @@
 var PausedIState = function(handler, level) {
     IState.call(this, PausedIState.NAME, handler);
     this.level = level;
-};
 
-PausedIState.NAME = 'paused';
-PausedIState.prototype = Object.create(IState.prototype);
-PausedIState.prototype.constructor = PausedIState;
-
-// Constants!
-PausedIState.TEXT_Y_DELTA = 50;
-PausedIState.MENU_TEXT_STYLE = { font: '30px Arial', fill: '#fff' };
-PausedIState.SELECTOR_SIDE = 16;
-PausedIState.SELECTOR_THICKNESS = 3;
-PausedIState.ANGLE_CATCH = Math.PI / 10;
-PausedIState.TILT_CATCH = 0.5;
-PausedIState.TILT_TIME = 300; // ms
-PausedIState.TILT_HOLD_DELAY_FACTOR = 1.7;
-PausedIState.BLUR = 15; // 0 is no blur.
-PausedIState.BLUR_TIME = 700; // ms
-
-// Called when the game is first paused.
-PausedIState.prototype.activated = function(prev) {
-    this.gpad.consumeButtonEvent();
-    this.game.paused = true;
     this.options = [
         { text: 'continue', action: this.selectContinue },
         { text: 'restart', action: this.selectRestart },
@@ -33,9 +12,41 @@ PausedIState.prototype.activated = function(prev) {
         { angle: 0, action: this.setSelectedToPrevious },
         { angle: Math.PI, action: this.setSelectedToNext }
     ];
-    var totalDelta = (this.options.length - 1) * PausedIState.TEXT_Y_DELTA;
-    this.initialDelta = totalDelta / -2;
+
+    this.totalDelta = (this.options.length - 1) * PausedIState.TEXT_Y_DELTA;
+    this.initialDelta = 0; // this.totalDelta / -2;
     this.perItemDelta = PausedIState.TEXT_Y_DELTA;
+    this.style = PausedIState.STYLE.BAR_LEFT;
+    this.color1 = this.game.settings.colors.WHITE;
+    this.color2 = this.game.settings.colors.RED;
+};
+
+PausedIState.NAME = 'paused';
+PausedIState.prototype = Object.create(IState.prototype);
+PausedIState.prototype.constructor = PausedIState;
+
+// Constants!
+PausedIState.TEXT_Y_DELTA = 50;
+PausedIState.SELECTOR_SIDE = 16;
+PausedIState.SELECTOR_THICKNESS = 3;
+PausedIState.SELECTOR_QUARTER_TURN_TIME = 2000; // ms
+PausedIState.ANGLE_CATCH = Math.PI / 10;
+PausedIState.TILT_CATCH = 0.5;
+PausedIState.TILT_TIME = 300; // ms
+PausedIState.TILT_HOLD_DELAY_FACTOR = 1.7;
+PausedIState.BLUR = 15; // 0 is no blur.
+PausedIState.BLUR_TIME = 700; // ms
+PausedIState.STYLE = {
+    DIVIDED: 0,
+    BAR_LEFT: 1,
+    BAR_RIGHT: 2
+};
+PausedIState.COLOR2_ALPHA = 0.25;
+
+// Called when the game is first paused.
+PausedIState.prototype.activated = function(prev) {
+    this.gpad.consumeButtonEvent();
+    this.game.paused = true;
 
     var view = this.game.camera.view;
     this.x = view.x;
@@ -43,16 +54,31 @@ PausedIState.prototype.activated = function(prev) {
     this.width = view.width;
     this.height = view.height;
     var bitmap = this.game.add.bitmapData(this.width, this.height);
-    bitmap.context.fillStyle = 'rgba(0, 0, 0, 0.5)'; // Black, alpha'd.
-    bitmap.context.strokeStyle = '#fff';
-    bitmap.context.lineWidth = 1;
+    bitmap.context.fillStyle = this.game.settings.colors.BLACK.rgba(0.5);
     bitmap.context.fillRect(0, 0, this.width, this.height);
-    bitmap.context.beginPath();
-    bitmap.context.moveTo(this.width / 2 - (PausedIState.TEXT_Y_DELTA / 2),
-        (this.height / 2) + (2 * this.initialDelta));
-    bitmap.context.lineTo(this.width / 2 - (PausedIState.TEXT_Y_DELTA / 2),
-        (this.height / 2) - (2 * this.initialDelta));
-    bitmap.context.stroke();
+    if (this.style == PausedIState.STYLE.DIVIDED) {
+        bitmap.context.strokeStyle = this.color2.s;
+        bitmap.context.lineWidth = 1;
+        bitmap.context.beginPath();
+        bitmap.context.moveTo(
+            this.width / 2 - (PausedIState.TEXT_Y_DELTA / 2), 0);
+        bitmap.context.lineTo(
+            this.width / 2 - (PausedIState.TEXT_Y_DELTA / 2),
+            this.height);
+        bitmap.context.stroke();
+    } else {
+        bitmap.context.beginPath();
+        bitmap.context.fillStyle = this.color2.rgba(PausedIState.COLOR2_ALPHA);
+        var h = 2 * PausedIState.TEXT_Y_DELTA / 2;
+        var w = this.width / 2 - (PausedIState.TEXT_Y_DELTA / 2);
+        if (this.style == PausedIState.STYLE.BAR_LEFT) {
+            bitmap.context.fillRect(
+                0, (this.height / 2) - (h / 2), w, h);
+        } else if (this.style == PausedIState.STYLE.BAR_RIGHT) {
+            bitmap.context.fillRect(
+                w, (this.height / 2) - (h / 2), this.width - w, h);
+        }
+    }
     this.cloth = this.game.add.image(this.x, this.y, bitmap);
     this.game.state.getCurrentState().z.menu.add(this.cloth);
 
@@ -63,8 +89,8 @@ PausedIState.prototype.activated = function(prev) {
     var d = PausedIState.SELECTOR_SIDE;
     var w = PausedIState.SELECTOR_THICKNESS;
     this.bitmap = this.game.add.bitmapData(d, d);
-    this.bitmap.context.fillStyle = '#fff';
-    this.bitmap.context.strokeStyle = '#fff';
+    this.bitmap.context.fillStyle = this.color1.s;
+    this.bitmap.context.strokeStyle = this.color1.s;
     this.bitmap.context.lineWidth = w;
     this.bitmap.context.strokeRect(w / 2, w / 2,
         d - w, d - w);
@@ -76,7 +102,8 @@ PausedIState.prototype.activated = function(prev) {
     this.game.state.getCurrentState().z.menu.add(this.selector);
     var tween = this.game.add.tween(this.selector)
     tween.to({ rotation: Math.PI / 2 },
-        1000, Phaser.Easing.Linear.InOut, true, 0,
+        PausedIState.SELECTOR_QUARTER_TURN_TIME,
+        Phaser.Easing.Linear.InOut, true, 0,
         Number.POSITIVE_INFINITY, false);
     this.tweens = [tween];
 
@@ -98,11 +125,14 @@ PausedIState.prototype.activated = function(prev) {
 
 // Create one of our menu text options.
 PausedIState.prototype.createText = function(text, index) {
-    var textObj = game.add.text(
-        this.x + (this.width / 2),
+    var font = this.game.settings.font;
+    var style = {
+        font: font.sizePx + ' ' + font.name,
+        fill: this.color1.s
+    };
+    var textObj = game.add.text(this.x + (this.width / 2),
         this.y + (this.height / 2) + this.initialDelta +
-        (this.perItemDelta * index),
-        text, PausedIState.MENU_TEXT_STYLE);
+        (this.perItemDelta * index), text, style);
     textObj.anchor.setTo(0, 0.5);
     this.game.state.getCurrentState().z.menu.add(textObj);
     return textObj;
@@ -121,10 +151,16 @@ PausedIState.prototype.activateSelector = function() {
 PausedIState.prototype.setSelected = function(index) {
     this.selectedIndex = index;
     for (var i = 0; i < this.texts.length; i++) {
-        this.texts[i].alpha = i == this.selectedIndex ? 1 : 0.25;
+        var text = this.texts[i];
+        var selected = i == this.selectedIndex;
+        text.style.fill = selected ? this.color1.s :
+            this.color2.rgba(PausedIState.COLOR2_ALPHA);
+        text.y = this.y + (this.height / 2) +
+            this.initialDelta + (this.perItemDelta * (i - index));
+        text.dirty = true;
     }
-    this.selector.y = this.y + (this.height / 2) + this.initialDelta +
-        (this.perItemDelta * index);
+    // this.selector.y = this.y + (this.height / 2) + this.initialDelta +
+    //     (this.perItemDelta * index);
 };
 
 // User tilted up.
