@@ -16,6 +16,8 @@ PausedIState.SELECTOR_THICKNESS = 3;
 PausedIState.ANGLE_CATCH = Math.PI / 10;
 PausedIState.TILT_TIME = 300; // ms
 PausedIState.TILT_HOLD_DELAY_FACTOR = 1.7;
+PausedIState.BLUR = 15; // 0 is no blur.
+PausedIState.BLUR_TIME = 700; // ms
 
 // Called when the game is first paused.
 PausedIState.prototype.activated = function(prev) {
@@ -26,6 +28,7 @@ PausedIState.prototype.activated = function(prev) {
         { text: 'restart', action: this.selectRestart },
         { text: 'exit', action: this.selectExit }
     ];
+    // this.tilts = { up: 0, down: Math.PI };
     this.tiltTimes = {
         up: 0,
         down: 0
@@ -51,7 +54,11 @@ PausedIState.prototype.activated = function(prev) {
         (this.height / 2) - (2 * this.initialDelta));
     bitmap.context.stroke();
     this.cloth = this.game.add.image(this.x, this.y, bitmap);
-    this.game.state.getCurrentState().z.fg.add(this.cloth);
+    this.game.state.getCurrentState().z.menu.add(this.cloth);
+
+    bitmap = this.game.add.bitmapData(this.width, this.height);
+    this.spacer = this.game.add.image(this.x, this.y, bitmap);
+    this.game.state.getCurrentState().z.level.add(this.spacer);
 
     var d = PausedIState.SELECTOR_SIDE;
     var w = PausedIState.SELECTOR_THICKNESS;
@@ -67,16 +74,25 @@ PausedIState.prototype.activated = function(prev) {
         this.y + (this.height / 2),
         this.bitmap);
     this.selector.anchor.setTo(0.5, 0.5);
-    this.game.state.getCurrentState().z.fg.add(this.selector);
-    this.tween = this.game.add.tween(this.selector)
-    this.tween.to({ rotation: Math.PI / 2 },
+    this.game.state.getCurrentState().z.menu.add(this.selector);
+    var tween = this.game.add.tween(this.selector)
+    tween.to({ rotation: Math.PI / 2 },
         1000, Phaser.Easing.Linear.InOut, true, 0,
         Number.POSITIVE_INFINITY, false);
+    this.tweens = [tween];
 
     this.texts = [];
     for (var i = 0; i < this.options.length; i++) {
         this.texts.push(this.createText(this.options[i].text, i));
     }
+
+    this.myFilter = new PIXI.BlurFilter();
+    this.myFilter.blur = 0;
+    this.game.state.getCurrentState().zAll.filters = [this.myFilter];
+    tween = this.game.add.tween(this.myFilter);
+    tween.to({ blur: PausedIState.BLUR }, PausedIState.BLUR_TIME,
+        Phaser.Easing.Cubic.Out, true);
+    this.tweens.push(tween);
 
     this.setSelected(0);
 };
@@ -89,8 +105,17 @@ PausedIState.prototype.createText = function(text, index) {
         (this.perItemDelta * index),
         text, PausedIState.MENU_TEXT_STYLE);
     textObj.anchor.setTo(0, 0.5);
-    this.game.state.getCurrentState().z.fg.add(textObj);
+    this.game.state.getCurrentState().z.menu.add(textObj);
     return textObj;
+};
+
+// Redraw our selector when the button's depressed.
+PausedIState.prototype.activateSelector = function() {
+    var d = PausedIState.SELECTOR_SIDE;
+    var w = PausedIState.SELECTOR_THICKNESS;
+    this.bitmap.context.clearRect(0, 0, d, d);
+    this.bitmap.context.fillRect(w, w, d - (2 * w), d - (2 * w));
+    this.bitmap.dirty = true;
 };
 
 // User opted to unpause.
@@ -130,14 +155,30 @@ PausedIState.prototype.unpause = function() {
     for (var i = 0; i < this.texts.length; i++) {
         this.texts[i].destroy();
     }
-    this.tween.stop();
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    var tween = this.game.add.tween(this.myFilter);
+    tween.scope = this;
+    tween.to({ blur: 0 }, PausedIState.BLUR_TIME,
+        Phaser.Easing.Cubic.Out, true);
+    tween.onComplete.add(function(filter, tween) {
+        tween.scope.spacer.destroy();
+        tween.scope.game.state.getCurrentState().zAll.filters = null;
+    });
+
     this.game.paused = false;
 };
 
 // Handle an update.
 PausedIState.prototype.pauseUpdate = function() {
     this.game.input.update();
-    this.tween.update();
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].update();
+    }
+    if (this.bitmap.dirty) {
+        this.bitmap.render();
+    }
     this.update();
 };
 
@@ -179,7 +220,7 @@ PausedIState.prototype.update = function() {
         this.gpad.justReleased(this.buttonMap.CANCEL_BUTTON)) {
         this.selectContinue();
     } else if (this.gpad.justPressed(this.buttonMap.SELECT)) {
-        this.selector.scale.setTo(0.7);
+        this.activateSelector();
     } else if (this.gpad.justReleased(this.buttonMap.SELECT)) {
         this.options[this.selectedIndex].action.call(this);
     }

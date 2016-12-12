@@ -15,22 +15,25 @@ var Level = function(game, name) {
     // as well as one layer for each tier.
     // Tier-specific layers are only visible 
     // while a tier is currently active.
+    this.zAll = this.game.add.group();
     this.z = {
-        bg: this.createZGroup(), // Background.
-        level: this.createZGroup(),
-        mg: this.createZGroup(), // Midground?
-        player: this.createZGroup(),
-        fg: this.createZGroup() // Foreground!
+        bg: this.createZGroup(this.zAll), // Background.
+        level: this.createZGroup(this.zAll),
+        mg: this.createZGroup(this.zAll), // Midground?
+        player: this.createZGroup(this.zAll),
+        fg: this.createZGroup(this.zAll), // Foreground!
+        menu: this.createZGroup()
     };
     game.state.getCurrentState().z = this.z;
+    game.state.getCurrentState().zAll = this.zAll;
 };
 
 // Create a group for z-order rendering.
 // It also contains a tier() method which 
 // will return (and if necessary instantiate)
 // a subgroup for the currently selected tier.
-Level.prototype.createZGroup = function() {
-    var group = this.game.add.group();
+Level.prototype.createZGroup = function(parentGroup) {
+    var group = this.game.add.group(parentGroup);
     group.level = this;
     group.tierSubs = {};
     group.tier = function() {
