@@ -7,7 +7,7 @@ var Settings = function() {
     this.font = {
         size: 30,
         sizePx: '30px',
-        name: 'Arial'
+        name: 'Roboto'
     };
     // this.sounds = new Sounds();
 };

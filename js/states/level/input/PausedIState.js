@@ -51,8 +51,31 @@ PausedIState.prototype.activated = function(prev) {
     var view = this.game.camera.view;
     this.x = view.x;
     this.y = view.y;
+    this.z = this.game.state.getCurrentState().z;
+    this.zAll = this.game.state.getCurrentState().zAll;
     this.width = view.width;
     this.height = view.height;
+    this.tweens = [];
+    this.texts = [];
+
+    // Create EVERYTHING.
+    this.cloth = this.createCloth();
+    this.spacer = this.createSpacer();
+    this.bitmap = this.createSelectorBitmap();
+    this.selector = this.createSelector(this.bitmap);
+    this.tweens.push(this.createSelectorTween(this.selector));
+    for (var i = 0; i < this.options.length; i++) {
+        this.texts.push(this.createText(this.options[i].text, i));
+    }
+    this.myFilter = this.createFilter();
+    this.tweens.push(this.createFilterTween(this.myFilter));
+
+    this.setSelected(0);
+};
+
+// Create the blackout cloth that covers the stage.
+// This also includes some of the menu chrome.
+PausedIState.prototype.createCloth = function() {
     var bitmap = this.game.add.bitmapData(this.width, this.height);
     bitmap.context.fillStyle = this.game.settings.colors.BLACK.rgba(0.5);
     bitmap.context.fillRect(0, 0, this.width, this.height);
@@ -79,48 +102,51 @@ PausedIState.prototype.activated = function(prev) {
                 w, (this.height / 2) - (h / 2), this.width - w, h);
         }
     }
-    this.cloth = this.game.add.image(this.x, this.y, bitmap);
-    this.game.state.getCurrentState().z.menu.add(this.cloth);
+    var cloth = this.game.add.image(this.x, this.y, bitmap);
+    this.z.menu.add(cloth);
+    return cloth;
+};
 
-    bitmap = this.game.add.bitmapData(this.width, this.height);
-    this.spacer = this.game.add.image(this.x, this.y, bitmap);
-    this.game.state.getCurrentState().z.level.add(this.spacer);
+// Create the camera view spacer that makes the blur work properly.
+PausedIState.prototype.createSpacer = function() {
+    var bitmap = this.game.add.bitmapData(this.width, this.height);
+    var spacer = this.game.add.image(this.x, this.y, bitmap);
+    this.z.level.add(spacer);
+    return spacer;
+};
 
+// Create the selector's bitmap data.
+PausedIState.prototype.createSelectorBitmap = function() {
     var d = PausedIState.SELECTOR_SIDE;
     var w = PausedIState.SELECTOR_THICKNESS;
-    this.bitmap = this.game.add.bitmapData(d, d);
-    this.bitmap.context.fillStyle = this.color1.s;
-    this.bitmap.context.strokeStyle = this.color1.s;
-    this.bitmap.context.lineWidth = w;
-    this.bitmap.context.strokeRect(w / 2, w / 2,
+    var bitmap = this.game.add.bitmapData(d, d);
+    bitmap.context.fillStyle = this.color1.s;
+    bitmap.context.strokeStyle = this.color1.s;
+    bitmap.context.lineWidth = w;
+    bitmap.context.strokeRect(w / 2, w / 2,
         d - w, d - w);
-    this.selector = this.game.add.image(
+    return bitmap;
+};
+
+// Create the selector image from its bitmap data.
+PausedIState.prototype.createSelector = function(bitmap) {
+    var selector = this.game.add.image(
         this.x + (this.width / 2) - PausedIState.TEXT_Y_DELTA,
         this.y + (this.height / 2),
-        this.bitmap);
-    this.selector.anchor.setTo(0.5, 0.5);
-    this.game.state.getCurrentState().z.menu.add(this.selector);
-    var tween = this.game.add.tween(this.selector)
+        bitmap);
+    selector.anchor.setTo(0.5, 0.5);
+    this.z.menu.add(selector);
+    return selector;
+};
+
+// Create the selector's spin.
+PausedIState.prototype.createSelectorTween = function(selector) {
+    var tween = this.game.add.tween(selector)
     tween.to({ rotation: Math.PI / 2 },
         PausedIState.SELECTOR_QUARTER_TURN_TIME,
         Phaser.Easing.Linear.InOut, true, 0,
         Number.POSITIVE_INFINITY, false);
-    this.tweens = [tween];
-
-    this.texts = [];
-    for (var i = 0; i < this.options.length; i++) {
-        this.texts.push(this.createText(this.options[i].text, i));
-    }
-
-    this.myFilter = new PIXI.BlurFilter();
-    this.myFilter.blur = 0;
-    this.game.state.getCurrentState().zAll.filters = [this.myFilter];
-    tween = this.game.add.tween(this.myFilter);
-    tween.to({ blur: PausedIState.BLUR }, PausedIState.BLUR_TIME,
-        Phaser.Easing.Cubic.Out, true);
-    this.tweens.push(tween);
-
-    this.setSelected(0);
+    return tween;
 };
 
 // Create one of our menu text options.
@@ -134,8 +160,23 @@ PausedIState.prototype.createText = function(text, index) {
         this.y + (this.height / 2) + this.initialDelta +
         (this.perItemDelta * index), text, style);
     textObj.anchor.setTo(0, 0.5);
-    this.game.state.getCurrentState().z.menu.add(textObj);
+    this.z.menu.add(textObj);
     return textObj;
+};
+
+// Create our blur filter.
+PausedIState.prototype.createFilter = function() {
+    var myFilter = new PIXI.BlurFilter();
+    myFilter.blur = 0;
+    this.zAll.filters = [myFilter];
+    return myFilter;
+};
+// Make the blur appear gradually.
+PausedIState.prototype.createFilterTween = function(myFilter) {
+    var tween = this.game.add.tween(myFilter);
+    tween.to({ blur: PausedIState.BLUR }, PausedIState.BLUR_TIME,
+        Phaser.Easing.Cubic.Out, true);
+    return tween;
 };
 
 // Redraw our selector when the button's depressed.
