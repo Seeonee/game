@@ -14,6 +14,7 @@ PausedIState.MENU_TEXT_STYLE = { font: '30px Arial', fill: '#fff' };
 PausedIState.SELECTOR_SIDE = 16;
 PausedIState.SELECTOR_THICKNESS = 3;
 PausedIState.ANGLE_CATCH = Math.PI / 10;
+PausedIState.TILT_CATCH = 0.5;
 PausedIState.TILT_TIME = 300; // ms
 PausedIState.TILT_HOLD_DELAY_FACTOR = 1.7;
 PausedIState.BLUR = 15; // 0 is no blur.
@@ -28,11 +29,10 @@ PausedIState.prototype.activated = function(prev) {
         { text: 'restart', action: this.selectRestart },
         { text: 'exit', action: this.selectExit }
     ];
-    // this.tilts = { up: 0, down: Math.PI };
-    this.tiltTimes = {
-        up: 0,
-        down: 0
-    };
+    this.tilts = [
+        { angle: 0, action: this.setSelectedToPrevious },
+        { angle: Math.PI, action: this.setSelectedToNext }
+    ];
     var totalDelta = (this.options.length - 1) * PausedIState.TEXT_Y_DELTA;
     this.initialDelta = totalDelta / -2;
     this.perItemDelta = PausedIState.TEXT_Y_DELTA;
@@ -66,7 +66,6 @@ PausedIState.prototype.activated = function(prev) {
     this.bitmap.context.fillStyle = '#fff';
     this.bitmap.context.strokeStyle = '#fff';
     this.bitmap.context.lineWidth = w;
-    // this.bitmap.context.fillRect(0, 0, d, d);
     this.bitmap.context.strokeRect(w / 2, w / 2,
         d - w, d - w);
     this.selector = this.game.add.image(
@@ -128,6 +127,19 @@ PausedIState.prototype.setSelected = function(index) {
         (this.perItemDelta * index);
 };
 
+// User tilted up.
+PausedIState.prototype.setSelectedToPrevious = function() {
+    var index = (this.selectedIndex + 1) % this.options.length;
+    this.setSelected(index);
+};
+
+// User tilted down.
+PausedIState.prototype.setSelectedToNext = function() {
+    var delta = this.options.length - 1; // Modular -1!
+    var index = (this.selectedIndex + delta) % this.options.length;
+    this.setSelected(index);
+};
+
 // User opted to unpause.
 PausedIState.prototype.selectContinue = function() {
     this.unpause();
@@ -145,6 +157,45 @@ PausedIState.prototype.selectRestart = function() {
 PausedIState.prototype.selectExit = function() {
     this.unpause();
     this.game.state.start('TitleMenuState');
+};
+
+// User pressed okay; fire the currently selected thing!
+PausedIState.prototype.selectCurrent = function(joystick) {
+    this.options[this.selectedIndex].action.call(this);
+};
+
+// User is tilting; figure out towards what, 
+// and do it!
+PausedIState.prototype.updateFromJoystick = function(joystick) {
+    if (joystick.tilt > PausedIState.TILT_CATCH) {
+        var t = this.game.time.now;
+        for (var i = 0; i < this.tilts.length; i++) {
+            var tilt = this.tilts[i];
+            var a = Utils.getBoundedAngleDifference(
+                joystick.angle, tilt.angle);
+            if (a < PausedIState.ANGLE_CATCH) {
+                // Set all other tilt times to 0.
+                for (var j = 0; j < this.tilts.length; j++) {
+                    if (i != j) {
+                        var tilt2 = this.tilts[j];
+                        tilt2.time = 0;
+                    }
+                }
+                // First time, or is stick being held?
+                var first = tilt.time == undefined || tilt.time == 0;
+                if (first || tilt.time <= t) {
+                    tilt.action.call(this);
+                    var factor = first ?
+                        PausedIState.TILT_HOLD_DELAY_FACTOR : 1;
+                    tilt.time = t + factor * PausedIState.TILT_TIME;
+                }
+                return;
+            }
+        }
+    }
+    for (var i = 0; i < this.tilts.length; i++) {
+        this.tilts[i].time = 0;
+    }
 };
 
 // Unpause the game.
@@ -185,43 +236,13 @@ PausedIState.prototype.pauseUpdate = function() {
 // Handle an update.
 PausedIState.prototype.update = function() {
     var joystick = this.gpad.getAngleAndTilt();
-    if (joystick.tilt > 0.5) {
-        var t = this.game.time.now;
-        var aUp = Utils.getBoundedAngleDifference(joystick.angle, 0);
-        var aDown = Utils.getBoundedAngleDifference(joystick.angle, Math.PI);
-        if (aUp < PausedIState.ANGLE_CATCH) {
-            this.tiltTimes.down = 0;
-            var first = this.tiltTimes.up == 0;
-            if (first || this.tiltTimes.up <= t) {
-                var index = (this.selectedIndex + 1) % this.options.length;
-                this.setSelected(index);
-                var factor = first ? PausedIState.TILT_HOLD_DELAY_FACTOR : 1;
-                this.tiltTimes.up = t + factor * PausedIState.TILT_TIME;
-            }
-        } else if (aDown < PausedIState.ANGLE_CATCH) {
-            this.tiltTimes.up = 0;
-            var first = this.tiltTimes.down == 0;
-            if (first || this.tiltTimes.down <= t) {
-                var change = this.options.length - 1;
-                var index = (this.selectedIndex + change) % this.options.length;
-                this.setSelected(index);
-                var factor = first ? PausedIState.TILT_HOLD_DELAY_FACTOR : 1;
-                this.tiltTimes.down = t + factor * PausedIState.TILT_TIME;
-            }
-        } else {
-            this.tiltTimes.up = 0;
-            this.tiltTimes.down = 0;
-        }
-    } else {
-        this.tiltTimes.up = 0;
-        this.tiltTimes.down = 0;
-    }
+    this.updateFromJoystick(joystick);
     if (this.gpad.justReleased(this.buttonMap.PAUSE_BUTTON) ||
         this.gpad.justReleased(this.buttonMap.CANCEL_BUTTON)) {
         this.selectContinue();
     } else if (this.gpad.justPressed(this.buttonMap.SELECT)) {
         this.activateSelector();
     } else if (this.gpad.justReleased(this.buttonMap.SELECT)) {
-        this.options[this.selectedIndex].action.call(this);
+        this.selectCurrent();
     }
 };
