@@ -75,6 +75,8 @@ var Colors = function() {
 
     this.PATH_COLOR = this.BLUE;
     this.DEBUG_COLOR = this.RED;
+    this.MENU1 = this.WHITE; // Default menu selector color.
+    this.MENU2 = this.RED; // Default menu chrome color.
 };
 
 // Restore a JSON'd Colors object.

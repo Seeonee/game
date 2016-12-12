@@ -13,12 +13,15 @@ var PausedIState = function(handler, level) {
         { angle: Math.PI, action: this.setSelectedToNext }
     ];
 
+    this.initialIndex = 0;
     this.totalDelta = (this.options.length - 1) * PausedIState.TEXT_Y_DELTA;
     this.initialDelta = 0; // this.totalDelta / -2;
     this.perItemDelta = PausedIState.TEXT_Y_DELTA;
     this.style = PausedIState.STYLE.BAR_LEFT;
-    this.color1 = this.game.settings.colors.WHITE;
-    this.color2 = this.game.settings.colors.RED;
+    this.color1 = this.game.settings.colors.MENU1;
+    this.color2 = this.game.settings.colors.MENU2;
+    this.dropCloth = true;
+    this.blurBackground = true;
 };
 
 PausedIState.NAME = 'paused';
@@ -59,26 +62,32 @@ PausedIState.prototype.activated = function(prev) {
     this.texts = [];
 
     // Create EVERYTHING.
-    this.cloth = this.createCloth();
-    this.spacer = this.createSpacer();
+    this.chrome = this.createChrome(this.dropCloth);
+    if (this.blurBackground) {
+        this.spacer = this.createSpacer();
+    }
     this.bitmap = this.createSelectorBitmap();
     this.selector = this.createSelector(this.bitmap);
     this.tweens.push(this.createSelectorTween(this.selector));
     for (var i = 0; i < this.options.length; i++) {
         this.texts.push(this.createText(this.options[i].text, i));
     }
-    this.myFilter = this.createFilter();
-    this.tweens.push(this.createFilterTween(this.myFilter));
+    if (this.blurBackground) {
+        this.myFilter = this.createFilter();
+        this.tweens.push(this.createFilterTween(this.myFilter));
+    }
 
-    this.setSelected(0);
+    this.setSelected(this.initialIndex);
 };
 
-// Create the blackout cloth that covers the stage.
-// This also includes some of the menu chrome.
-PausedIState.prototype.createCloth = function() {
+// Creates the menu chrome, and if asked also draws
+// the blackout cloth that covers the stage.
+PausedIState.prototype.createChrome = function(dropCloth) {
     var bitmap = this.game.add.bitmapData(this.width, this.height);
-    bitmap.context.fillStyle = this.game.settings.colors.BLACK.rgba(0.5);
-    bitmap.context.fillRect(0, 0, this.width, this.height);
+    if (dropCloth) {
+        bitmap.context.fillStyle = this.game.settings.colors.BLACK.rgba(0.5);
+        bitmap.context.fillRect(0, 0, this.width, this.height);
+    }
     if (this.style == PausedIState.STYLE.DIVIDED) {
         bitmap.context.strokeStyle = this.color2.s;
         bitmap.context.lineWidth = 1;
@@ -102,16 +111,16 @@ PausedIState.prototype.createCloth = function() {
                 w, (this.height / 2) - (h / 2), this.width - w, h);
         }
     }
-    var cloth = this.game.add.image(this.x, this.y, bitmap);
-    this.z.menu.add(cloth);
-    return cloth;
+    var chrome = this.game.add.image(this.x, this.y, bitmap);
+    this.z.menu.add(chrome);
+    return chrome;
 };
 
 // Create the camera view spacer that makes the blur work properly.
 PausedIState.prototype.createSpacer = function() {
     var bitmap = this.game.add.bitmapData(this.width, this.height);
     var spacer = this.game.add.image(this.x, this.y, bitmap);
-    this.z.level.add(spacer);
+    this.zAll.add(spacer);
     return spacer;
 };
 
@@ -200,8 +209,6 @@ PausedIState.prototype.setSelected = function(index) {
             this.initialDelta + (this.perItemDelta * (i - index));
         text.dirty = true;
     }
-    // this.selector.y = this.y + (this.height / 2) + this.initialDelta +
-    //     (this.perItemDelta * index);
 };
 
 // User tilted up.
@@ -278,7 +285,7 @@ PausedIState.prototype.updateFromJoystick = function(joystick) {
 // Unpause the game.
 PausedIState.prototype.unpause = function() {
     this.gpad.consumeButtonEvent();
-    this.cloth.destroy();
+    this.chrome.destroy();
     this.selector.destroy();
     for (var i = 0; i < this.texts.length; i++) {
         this.texts[i].destroy();
@@ -286,14 +293,16 @@ PausedIState.prototype.unpause = function() {
     for (var i = 0; i < this.tweens.length; i++) {
         this.tweens[i].stop();
     }
-    var tween = this.game.add.tween(this.myFilter);
-    tween.scope = this;
-    tween.to({ blur: 0 }, PausedIState.BLUR_TIME,
-        Phaser.Easing.Cubic.Out, true);
-    tween.onComplete.add(function(filter, tween) {
-        tween.scope.spacer.destroy();
-        tween.scope.game.state.getCurrentState().zAll.filters = null;
-    });
+    if (this.blurBackground) {
+        var tween = this.game.add.tween(this.myFilter);
+        tween.scope = this;
+        tween.to({ blur: 0 }, PausedIState.BLUR_TIME,
+            Phaser.Easing.Cubic.Out, true);
+        tween.onComplete.add(function(filter, tween) {
+            tween.scope.spacer.destroy();
+            tween.scope.game.state.getCurrentState().zAll.filters = null;
+        });
+    }
 
     this.game.paused = false;
 };
