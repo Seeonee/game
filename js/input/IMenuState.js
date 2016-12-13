@@ -40,7 +40,9 @@ IMenuState.STYLE = {
     BAR_LEFT: 1,
     BAR_RIGHT: 2
 };
-IMenuState.COLOR2_ALPHA = 0.25;
+IMenuState.ROOT_OPTION_ALPHA = 1;
+IMenuState.UNSELECTED_OPTION_ALPHA = 0.25;
+IMenuState.CHROME_ALPHA = 1;
 IMenuState.OPTION_TRANSITION_TIME = 100; // ms
 IMenuState.LEVEL_TRANSITION_TIME = 300; // ms
 
@@ -78,7 +80,9 @@ IMenuOption.prototype.add = function(text, action, cancel) {
 IMenuOption.prototype.cleanUp = function() {
     if (this.t) {
         this.t.destroy();
+        this.t = undefined;
     }
+    this.childIndex = 0;
     for (var i = 0; i < this.length; i++) {
         this.options[i].cleanUp();
     }
@@ -148,7 +152,8 @@ IMenuState.prototype.createChrome = function(dropCloth) {
         bitmap.context.stroke();
     } else {
         bitmap.context.beginPath();
-        bitmap.context.fillStyle = this.color2.rgba(IMenuState.COLOR2_ALPHA);
+        bitmap.context.fillStyle = this.color2.rgba(
+            IMenuState.CHROME_ALPHA);
         var h = 2 * IMenuState.TEXT_Y_DELTA / 2;
         var w = this.width / 2 - (IMenuState.TEXT_Y_DELTA / 2);
         if (this.style == IMenuState.STYLE.BAR_LEFT) {
@@ -177,6 +182,9 @@ IMenuState.prototype.createSelectorBitmap = function() {
     var d = IMenuState.SELECTOR_SIDE;
     var w = IMenuState.SELECTOR_THICKNESS;
     var bitmap = this.game.add.bitmapData(d, d);
+    bitmap.context.fillStyle = this.color1.s;
+    bitmap.context.strokeStyle = this.color1.s;
+    bitmap.context.lineWidth = w;
     return bitmap;
 };
 
@@ -228,7 +236,7 @@ IMenuState.prototype.createText = function(text, x, y) {
         fill: this.color1.s
     };
     var textObj = game.add.text(x, y, text, style);
-    textObj.alpha = IMenuState.COLOR2_ALPHA;
+    textObj.alpha = IMenuState.UNSELECTED_OPTION_ALPHA;
     textObj.anchor.setTo(0, 0.5);
     this.z.menu.add(textObj);
     return textObj;
@@ -254,9 +262,6 @@ IMenuState.prototype.deactivateSelector = function() {
     var d = IMenuState.SELECTOR_SIDE;
     var w = IMenuState.SELECTOR_THICKNESS;
     this.bitmap.context.clearRect(0, 0, d, d);
-    this.bitmap.context.fillStyle = this.color1.s;
-    this.bitmap.context.strokeStyle = this.color1.s;
-    this.bitmap.context.lineWidth = w;
     this.bitmap.context.strokeRect(w / 2, w / 2,
         d - w, d - w);
     this.bitmap.dirty = true;
@@ -290,7 +295,7 @@ IMenuState.prototype.setSelected = function(index) {
         var selected = i == this.selectedIndex;
         text.style.fill = this.color2.s;
         text.dirty = true;
-        var alpha = selected ? 1 : IMenuState.COLOR2_ALPHA;
+        var alpha = selected ? 1 : IMenuState.UNSELECTED_OPTION_ALPHA;
         var y = this.y + (this.height / 2) +
             this.initialDelta + (this.perItemDelta * (i - index));
         var tween = this.game.add.tween(text);
@@ -338,7 +343,7 @@ IMenuState.prototype.advanceIntoSelection = function() {
     for (var i = 0; i < this.current.length; i++) {
         var text = this.current.options[i].t;
         var selected = i == this.selectedIndex;
-        var alpha = selected ? IMenuState.COLOR2_ALPHA : 0;
+        var alpha = selected ? IMenuState.ROOT_OPTION_ALPHA : 0;
         var x = this.x + (0.5 * this.perItemDelta);
         var tween = this.game.add.tween(text);
         tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
@@ -354,7 +359,7 @@ IMenuState.prototype.advanceIntoSelection = function() {
         var selected = i == this.selectedIndex;
         text.style.fill = this.color2.s;
         text.dirty = true;
-        var alpha = selected ? 1 : IMenuState.COLOR2_ALPHA;
+        var alpha = selected ? 1 : IMenuState.UNSELECTED_OPTION_ALPHA;
         var x = this.x + (this.width / 2);
         var tween = this.game.add.tween(text);
         tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
@@ -396,7 +401,7 @@ IMenuState.prototype.retreatOutOfSelection = function() {
         var tween = this.game.add.tween(text);
         var delay = IMenuState.LEVEL_TRANSITION_TIME -
             IMenuState.OPTION_TRANSITION_TIME;
-        tween.to({ alpha: IMenuState.COLOR2_ALPHA },
+        tween.to({ alpha: IMenuState.ROOT_OPTION_ALPHA },
             IMenuState.OPTION_TRANSITION_TIME,
             Phaser.Easing.Sinusoidal.InOut, true, delay);
         this.tweens.push(tween);
@@ -406,7 +411,7 @@ IMenuState.prototype.retreatOutOfSelection = function() {
     for (var i = 0; i < this.current.length; i++) {
         var text = this.current.options[i].t;
         var selected = i == this.selectedIndex;
-        var alpha = selected ? 1 : IMenuState.COLOR2_ALPHA;
+        var alpha = selected ? 1 : IMenuState.UNSELECTED_OPTION_ALPHA;
         var x = this.x + (this.width / 2);
         var tween = this.game.add.tween(text);
         tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
