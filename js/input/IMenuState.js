@@ -1,11 +1,13 @@
 // A reusable, customizable menu.
 var IMenuState = function(name, handler, context) {
     IState.call(this, name, handler);
-    this.root = new IMenuOption();
-    this.current = this.root;
+    this.root = new IMenuOption(name);
+    this.current = undefined;
     this.tilts = [
         { angle: 0, action: this.setSelectedToPrevious },
-        { angle: Math.PI, action: this.setSelectedToNext }
+        { angle: Math.PI, action: this.setSelectedToNext },
+        { angle: Math.PI / 2, action: this.advanceIntoSelection },
+        { angle: 3 * Math.PI / 2, action: this.retreatOutOfSelection }
     ];
     this.z = this.game.state.getCurrentState().z;
     this.zAll = this.game.state.getCurrentState().zAll;
@@ -54,7 +56,7 @@ IMenuState.LEVEL_TRANSITION_TIME = 300; // ms
 
 // *************************
 // Menu item, with possible nested subitems.
-// Each action will be called with its text and index as params.
+// Each action will be passed its option when called.
 var IMenuOption = function(text, action, cancel) {
     this.text = text;
     this.action = action;
@@ -69,7 +71,7 @@ var IMenuOption = function(text, action, cancel) {
 };
 
 // Menu item, with possible nested subitems.
-// Each action will be called with its text and index as params.
+// Each action will be passed its option when called.
 IMenuOption.prototype.add = function(text, action, cancel) {
     var option = new IMenuOption(text, action, cancel);
     option.parent = this;
@@ -101,7 +103,7 @@ IMenuOption.prototype.cleanUp = function() {
 // via .addSubOption().
 // If cancel is true, this will also be set as the overall 
 // cancel action for this menu or submenu.
-// Each action will be called with its text and index as params.
+// Each action will be passed its option when called.
 IMenuState.prototype.add = function(text, action, cancel) {
     return this.root.add(text, action, cancel);
 }
@@ -110,6 +112,7 @@ IMenuState.prototype.add = function(text, action, cancel) {
 IMenuState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
     this.game.paused = true;
+    this.current = this.root;
 
     var view = this.game.camera.view;
     this.x = view.x;
@@ -214,21 +217,27 @@ IMenuState.prototype.createSelectorTween = function(selector) {
 };
 
 // Recursively create an option's text elements.
-IMenuState.prototype.createTextFor = function(option, level) {
-    var level = level == undefined ? 0 : level;
+IMenuState.prototype.createTextFor = function(option, level, index) {
+    level = level == undefined ? -1 : level;
+    index = index == undefined ? 0 : index;
+    var x = this.x + (this.width / 2);
+    if (level > 0) {
+        x += this.width / 2 - (0.5 * this.perItemDelta);
+    } else if (level < 0) {
+        x -= this.width / 2 - (0.5 * this.perItemDelta);
+    }
+    var y = this.y + (this.height / 2) + this.initialDelta +
+        (this.perItemDelta * index);
+    var text = option.text;
+    if (level >= 0 && text && option.length) {
+        text += ' ▸';
+    }
+    option.t = this.createText(text, x, y);
+    if (level > 0) {
+        option.t.alpha = 0;
+    }
     for (var i = 0; i < option.length; i++) {
-        var o2 = option.options[i];
-        var x = this.x + (this.width / 2);
-        if (level > 0) {
-            x += this.width / 2 - (0.5 * this.perItemDelta);
-        }
-        var y = this.y + (this.height / 2) + this.initialDelta +
-            (this.perItemDelta * i);
-        o2.t = this.createText(option.options[i].text, x, y);
-        if (level > 0) {
-            o2.t.alpha = 0;
-        }
-        this.createTextFor(o2, level + 1);
+        this.createTextFor(option.options[i], level + 1, i);
     }
 };
 
@@ -247,23 +256,34 @@ IMenuState.prototype.createText = function(text, x, y) {
 };
 
 // Recursively position text elements to their starting points.
-IMenuState.prototype.positionTextFor = function(option, level) {
-    var level = level == undefined ? 0 : level;
+IMenuState.prototype.positionTextFor = function(option, level, index) {
+    level = level == undefined ? -1 : level;
+    index = index == undefined ? 0 : index;
+    var x = this.x + (this.width / 2);
+    if (level < 0) {
+        x -= this.width / 2 - (0.5 * this.perItemDelta);
+    } else if (level > 0) {
+        x += this.width / 2 - (0.5 * this.perItemDelta);
+    }
+    var y = this.y + (this.height / 2) + this.initialDelta +
+        (this.perItemDelta * index);
+    option.t.x = x;
+    option.t.y = y;
+    option.t.visible = true;
+    if (level < 0) {
+        option.t.style.fill = this.color2.s;
+    } else {
+        option.t.style.fill = this.color1.s;
+    }
+    if (level < 0) {
+        option.t.alpha = 1;
+    } else if (level == 0) {
+        option.t.alpha = IMenuState.UNSELECTED_OPTION_ALPHA;
+    } else {
+        option.t.alpha = 0;
+    }
     for (var i = 0; i < option.length; i++) {
-        var o2 = option.options[i];
-        var x = this.x + (this.width / 2);
-        if (level > 0) {
-            x += this.width / 2 - (0.5 * this.perItemDelta);
-        }
-        var y = this.y + (this.height / 2) + this.initialDelta +
-            (this.perItemDelta * i);
-        o2.t.x = x;
-        o2.t.y = y;
-        o2.t.style.fill = this.color1.s;
-        o2.t.alpha = IMenuState.UNSELECTED_OPTION_ALPHA;
-        o2.t.dirty = true;
-        o2.t.visible = level == 0;
-        this.createTextFor(o2, level + 1);
+        this.positionTextFor(option.options[i], level + 1, i);
     }
 };
 
@@ -335,6 +355,9 @@ IMenuState.prototype.show = function() {
 
 // User opted to unpause.
 IMenuState.prototype.setSelected = function(index) {
+    if (this.selectedIndex == index) {
+        return;
+    }
     this.setInputBlocked(true);
     this.selectedIndex = index;
     for (var i = 0; i < this.current.length; i++) {
@@ -375,6 +398,10 @@ IMenuState.prototype.setSelectedToNext = function() {
 
 // User advanced into a submenu.
 IMenuState.prototype.advanceIntoSelection = function() {
+    // Make sure we have children to dive into.
+    if (!this.current.options[this.selectedIndex].length) {
+        return;
+    }
     this.setInputBlocked(true);
     this.gpad.consumeButtonEvent();
     // Fade out the currently selected root item.
@@ -425,6 +452,10 @@ IMenuState.prototype.advanceIntoSelection = function() {
 
 // User backed out of a submenu.
 IMenuState.prototype.retreatOutOfSelection = function() {
+    // Make sure we have a parent to back out to.
+    if (!this.current.parent) {
+        return;
+    }
     this.setInputBlocked(true);
     this.gpad.consumeButtonEvent();
     // Pan/fade out/uncolor the current items.
@@ -448,10 +479,18 @@ IMenuState.prototype.retreatOutOfSelection = function() {
         var tween = this.game.add.tween(text);
         var delay = IMenuState.LEVEL_TRANSITION_TIME -
             IMenuState.OPTION_TRANSITION_TIME;
-        tween.to({ alpha: IMenuState.ROOT_OPTION_ALPHA },
-            IMenuState.OPTION_TRANSITION_TIME,
-            Phaser.Easing.Sinusoidal.InOut, true, delay);
+        tween.to({}, delay, Phaser.Easing.Sinusoidal.InOut, true);
         this.tweens.push(tween);
+        var t2 = this.game.add.tween(text);
+        t2.to({ alpha: IMenuState.ROOT_OPTION_ALPHA },
+            IMenuState.OPTION_TRANSITION_TIME,
+            Phaser.Easing.Sinusoidal.InOut, true);
+        tween.scope = this;
+        tween.t2 = t2;
+        tween.onComplete.add(function(text, tween) {
+            tween.scope.tweens.push(tween.t2);
+        });
+        tween.chain(t2);
     }
     // Pan the current root back over to become the menu.
     // Non-selected items also fade back in.
@@ -478,23 +517,30 @@ IMenuState.prototype.retreatOutOfSelection = function() {
 IMenuState.prototype.selectCancel = function() {
     if (this.current.cancelOption && this.current.cancelOption.action) {
         this.current.cancelOption.action.call(
-            this.context, this.current.cancelOption.text,
-            this.current.cancelOption.index);
+            this.context, this.current.cancelOption);
     } else if (this.current.parent) {
         this.gpad.consumeButtonEvent();
         this.retreatOutOfSelection();
     }
 };
 
+// If the user's defined top-level cancel behavior, 
+// invoke it.
+IMenuState.prototype.selectClose = function() {
+    if (this.root.cancelOption && this.root.cancelOption.action) {
+        this.root.cancelOption.action.call(
+            this.context, this.root.cancelOption);
+    }
+};
+
 // User pressed okay; fire the currently selected thing!
 IMenuState.prototype.selectCurrent = function(joystick) {
     var option = this.current.options[this.selectedIndex];
-    if (option.length > 1) {
+    if (option.length > 0) {
         this.gpad.consumeButtonEvent();
         this.advanceIntoSelection();
     } else if (option.action) {
-        option.action.call(this.context,
-            option.text, option.index);
+        option.action.call(this.context, option);
     } else if (option.cancel && option.parent) {
         this.gpad.consumeButtonEvent();
         this.retreatOutOfSelection();
@@ -540,13 +586,17 @@ IMenuState.prototype.updateFromJoystick = function(joystick) {
 IMenuState.prototype.updateSelector = function() {
     var cancelExists = this.current.parent != undefined ||
         this.current.cancelOption != undefined;
+    var closeExists = this.root.cancelOption != undefined;
     var selectDown = this.gpad.justPressed(this.buttonMap.SELECT);
     var cancelDown = this.gpad.justPressed(this.buttonMap.CANCEL);
+    var closeDown = this.gpad.justPressed(this.buttonMap.PAUSE);
     var selectUp = this.gpad.justReleased(this.buttonMap.SELECT);
     var cancelUp = this.gpad.justReleased(this.buttonMap.CANCEL);
-    if (selectDown || (cancelDown && cancelExists)) {
+    var closeUp = this.gpad.justReleased(this.buttonMap.PAUSE);
+    if (selectDown || (cancelDown && cancelExists) ||
+        (closeDown && closeExists)) {
         this.activateSelector();
-    } else if (selectUp || cancelUp) {
+    } else if (selectUp || cancelUp || closeUp) {
         this.deactivateSelector();
     }
 };
@@ -608,8 +658,9 @@ IMenuState.prototype.update = function() {
     }
     var joystick = this.gpad.getAngleAndTilt();
     this.updateFromJoystick(joystick);
-    if (this.gpad.justReleased(this.buttonMap.PAUSE) ||
-        this.gpad.justReleased(this.buttonMap.CANCEL)) {
+    if (this.gpad.justReleased(this.buttonMap.PAUSE)) {
+        this.selectClose();
+    } else if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
         this.selectCancel();
     } else if (this.gpad.justReleased(this.buttonMap.SELECT)) {
         this.selectCurrent();

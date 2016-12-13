@@ -5,10 +5,13 @@ var PausedIState = function(handler, level) {
     this.dropCloth = true;
     this.blurBackground = true;
 
+    this.root.text = level.name;
     this.add('continue', this.selectContinue, true);
     var more = this.add('more');
+    var evenMore = more.add('even more');
     more.add('restart', this.selectRestart);
     more.add('back', null, true);
+    evenMore.add('back again', null, true);
     this.add('exit', this.selectExit);
 };
 
@@ -23,20 +26,20 @@ PausedIState.prototype.activated = function(prev) {
 };
 
 // User opted to unpause.
-PausedIState.prototype.selectContinue = function(text, index) {
+PausedIState.prototype.selectContinue = function(option) {
     this.unpause();
     this.activate(UnpausedIState.NAME);
 };
 
 // User opted to restart.
-PausedIState.prototype.selectRestart = function(text, index) {
+PausedIState.prototype.selectRestart = function(option) {
     this.unpause();
     this.game.state.start('PlayLevelState', true, false,
         this.level.name, this.gpad);
 };
 
 // User opted to exit.
-PausedIState.prototype.selectExit = function(text, index) {
+PausedIState.prototype.selectExit = function(option) {
     this.unpause();
     this.game.state.start('TitleMenuState');
 };
