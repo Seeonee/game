@@ -18,6 +18,7 @@ var IMenuState = function(name, handler, context) {
     this.dropCloth = false;
     this.blurBackground = false;
     this.updateDuringPause = true;
+    this.inputBlocked = false;
 };
 
 IMenuState.prototype = Object.create(IState.prototype);
@@ -270,9 +271,19 @@ IMenuState.prototype.activateSelector = function() {
     this.bitmap.dirty = true;
 };
 
+// Turn on or off input temporarily.
+// Mainly used so that menu animations don't get screwed.
+IMenuState.prototype.setInputBlocked = function(inputBlocked) {
+    if (!inputBlocked) {
+        this.gpad.consumeButtonEvent();
+    }
+    this.inputBlocked = inputBlocked;
+};
+
 
 // User opted to unpause.
 IMenuState.prototype.setSelected = function(index) {
+    this.setInputBlocked(true);
     this.selectedIndex = index;
     for (var i = 0; i < this.current.length; i++) {
         var text = this.current.options[i].t;
@@ -289,6 +300,7 @@ IMenuState.prototype.setSelected = function(index) {
             tween.scope = this;
             tween.onComplete.add(function(text, tween) {
                 text.style.fill = tween.scope.color1.s;
+                tween.scope.setInputBlocked(false);
                 text.dirty = true;
             });
         }
@@ -311,6 +323,8 @@ IMenuState.prototype.setSelectedToNext = function() {
 
 // User advanced into a submenu.
 IMenuState.prototype.advanceIntoSelection = function() {
+    this.setInputBlocked(true);
+    this.gpad.consumeButtonEvent();
     // Fade out the currently selected root item.
     var text = this.current.t;
     if (text) {
@@ -324,7 +338,7 @@ IMenuState.prototype.advanceIntoSelection = function() {
     for (var i = 0; i < this.current.length; i++) {
         var text = this.current.options[i].t;
         var selected = i == this.selectedIndex;
-        var alpha = selected ? 0.5 : 0;
+        var alpha = selected ? IMenuState.COLOR2_ALPHA : 0;
         var x = this.x + (0.5 * this.perItemDelta);
         var tween = this.game.add.tween(text);
         tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
@@ -349,6 +363,7 @@ IMenuState.prototype.advanceIntoSelection = function() {
             tween.scope = this;
             tween.onComplete.add(function(text, tween) {
                 text.style.fill = tween.scope.color1.s;
+                tween.scope.setInputBlocked(false);
                 text.dirty = true;
             });
         }
@@ -358,6 +373,8 @@ IMenuState.prototype.advanceIntoSelection = function() {
 
 // User backed out of a submenu.
 IMenuState.prototype.retreatOutOfSelection = function() {
+    this.setInputBlocked(true);
+    this.gpad.consumeButtonEvent();
     // Pan/fade out/uncolor the current items.
     for (var i = 0; i < this.current.length; i++) {
         var text = this.current.options[i].t;
@@ -379,7 +396,8 @@ IMenuState.prototype.retreatOutOfSelection = function() {
         var tween = this.game.add.tween(text);
         var delay = IMenuState.LEVEL_TRANSITION_TIME -
             IMenuState.OPTION_TRANSITION_TIME;
-        tween.to({ alpha: 0.5 }, IMenuState.OPTION_TRANSITION_TIME,
+        tween.to({ alpha: IMenuState.COLOR2_ALPHA },
+            IMenuState.OPTION_TRANSITION_TIME,
             Phaser.Easing.Sinusoidal.InOut, true, delay);
         this.tweens.push(tween);
     }
@@ -393,6 +411,12 @@ IMenuState.prototype.retreatOutOfSelection = function() {
         var tween = this.game.add.tween(text);
         tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
             Phaser.Easing.Sinusoidal.InOut, true);
+        if (selected) {
+            tween.scope = this;
+            tween.onComplete.add(function(text, tween) {
+                tween.scope.setInputBlocked(false);
+            });
+        }
         this.tweens.push(tween);
     }
 };
@@ -523,9 +547,12 @@ IMenuState.prototype.pauseUpdate = function() {
 // Handle an update.
 IMenuState.prototype.update = function() {
     this.cleanUpTweens();
+    this.updateSelector();
+    if (this.inputBlocked) {
+        return;
+    }
     var joystick = this.gpad.getAngleAndTilt();
     this.updateFromJoystick(joystick);
-    this.updateSelector();
     if (this.gpad.justReleased(this.buttonMap.PAUSE) ||
         this.gpad.justReleased(this.buttonMap.CANCEL)) {
         this.selectCancel();
