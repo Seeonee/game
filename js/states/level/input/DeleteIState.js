@@ -71,7 +71,7 @@ DeleteIState.prototype.update = function() {
     var elapsed = Math.min(this.game.time.now - this.start,
         DeleteIState.THRESHOLD);
     var ratio = elapsed / DeleteIState.THRESHOLD;
-    if (this.gpad.justReleased(this.buttonMap.DELETE_BUTTON)) {
+    if (this.gpad.justReleased(this.buttonMap.EDIT_DELETE)) {
         if (this.avatar.point) {
             if (ratio < 1) {
                 // Delete the point and its paths.

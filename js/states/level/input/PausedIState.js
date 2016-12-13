@@ -6,7 +6,9 @@ var PausedIState = function(handler, level) {
     this.blurBackground = true;
 
     this.add('continue', this.selectContinue, true);
-    this.add('restart', this.selectRestart);
+    var more = this.add('more');
+    more.add('restart', this.selectRestart);
+    more.add('back', null, true);
     this.add('exit', this.selectExit);
 };
 

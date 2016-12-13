@@ -25,7 +25,7 @@ AddFromPathIState.prototype.activated = function(prev) {
     this.y = view.y;
     this.w = view.width;
     this.h = view.height;
-    this.gpad.consumeButtonEvent(this.buttonMap.ADD_BUTTON);
+    this.gpad.consumeButtonEvent(this.buttonMap.EDIT_ADD);
     // Initialize bitmap for rendering.
     this.bitmap = this.game.add.bitmapData(this.w, this.h);
     this.bitmap.context.fillStyle = this.game.settings.colors.RED.s;
@@ -114,11 +114,11 @@ AddFromPathIState.prototype.update = function() {
     }
 
     var done = false;
-    if (this.gpad.justReleased(this.buttonMap.CANCEL_BUTTON)) {
+    if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
         // Just finish; don't add any paths.
         done = true;
-        this.gpad.consumeButtonEvent(this.buttonMap.CANCEL_BUTTON);
-    } else if (this.gpad.justReleased(this.buttonMap.ADD_BUTTON)) {
+        this.gpad.consumeButtonEvent(this.buttonMap.CANCEL);
+    } else if (this.gpad.justReleased(this.buttonMap.EDIT_ADD)) {
         // New point, coming atcha!
         if (this.near) {
             var ip = this.tier.translateGamePointToInternalPoint(
@@ -129,7 +129,7 @@ AddFromPathIState.prototype.update = function() {
             this.avatar.point = point;
         }
         done = true;
-        this.gpad.consumeButtonEvent(this.buttonMap.ADD_BUTTON);
+        this.gpad.consumeButtonEvent(this.buttonMap.EDIT_ADD);
     }
     if (done) {
         this.image.destroy();
@@ -162,7 +162,7 @@ AddFromPointIState.prototype.activated = function(prev) {
     this.y = view.y - (view.height / 2);
     this.w = 2 * view.width;
     this.h = 2 * view.height;
-    this.gpad.consumeButtonEvent(this.buttonMap.ADD_BUTTON);
+    this.gpad.consumeButtonEvent(this.buttonMap.EDIT_ADD);
     // Initialize bitmap for rendering.
     this.bitmap = this.game.add.bitmapData(this.w, this.h);
     this.bitmap.context.lineWidth = Tier.PATH_WIDTH;
@@ -262,11 +262,11 @@ AddFromPointIState.prototype.update = function() {
     this.cacheSelectedMark();
 
     var done = false;
-    if (this.gpad.justReleased(this.buttonMap.CANCEL_BUTTON)) {
+    if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
         // Just finish; don't add any paths.
         done = true;
-        this.gpad.consumeButtonEvent(this.buttonMap.CANCEL_BUTTON);
-    } else if (this.gpad.justReleased(this.buttonMap.ADD_BUTTON)) {
+        this.gpad.consumeButtonEvent(this.buttonMap.CANCEL);
+    } else if (this.gpad.justReleased(this.buttonMap.EDIT_ADD)) {
         // New point, coming atcha!
         if (this.near && this.valid) {
             // Find out if a point already exists at these coordinates.
@@ -294,7 +294,7 @@ AddFromPointIState.prototype.update = function() {
             }
         }
         done = true;
-        this.gpad.consumeButtonEvent(this.buttonMap.ADD_BUTTON);
+        this.gpad.consumeButtonEvent(this.buttonMap.EDIT_ADD);
     }
     if (done) {
         this.image.destroy();

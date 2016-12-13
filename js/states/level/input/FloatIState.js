@@ -47,7 +47,7 @@ FloatIState.prototype.update = function() {
     }
 
     // Has the player released the button?
-    if (this.gpad.justReleased(this.buttonMap.FLOAT_BUTTON)) {
+    if (this.gpad.justReleased(this.buttonMap.EDIT_FLOAT)) {
         if (this.point) {
             this.snapToPoint(this.point);
         } else if (this.path) {

@@ -1,7 +1,8 @@
 // A reusable, customizable menu.
 var IMenuState = function(name, handler, context) {
     IState.call(this, name, handler);
-    this.options = [];
+    this.root = new IMenuOption();
+    this.current = this.root;
     this.tilts = [
         { angle: 0, action: this.setSelectedToPrevious },
         { angle: Math.PI, action: this.setSelectedToNext }
@@ -9,7 +10,6 @@ var IMenuState = function(name, handler, context) {
 
     this.context = context ? context : this; // For called actions.
     this.initialIndex = 0;
-    this.totalDelta = (this.options.length - 1) * IMenuState.TEXT_Y_DELTA;
     this.initialDelta = 0;
     this.perItemDelta = IMenuState.TEXT_Y_DELTA;
     this.style = IMenuState.STYLE.BAR_LEFT;
@@ -17,7 +17,6 @@ var IMenuState = function(name, handler, context) {
     this.color2 = this.game.settings.colors.MENU2;
     this.dropCloth = false;
     this.blurBackground = false;
-    this.cancelOption = undefined;
     this.updateDuringPause = true;
 };
 
@@ -41,23 +40,47 @@ IMenuState.STYLE = {
     BAR_RIGHT: 2
 };
 IMenuState.COLOR2_ALPHA = 0.25;
+IMenuState.OPTION_TRANSITION_TIME = 100; // ms
+IMenuState.LEVEL_TRANSITION_TIME = 300; // ms
 
 
 // *************************
 // Menu item, with possible nested subitems.
-var IMenuStateOption = function(text, action) {
+var IMenuOption = function(text, action, cancel) {
     this.text = text;
     this.action = action;
-    this.subOptions = [];
+    this.cancel = cancel;
+    this.cancelOption = undefined;
     this.parent = undefined;
+    this.options = [];
+    this.length = 0;
+    this.index = 0;
+    this.childIndex = 0;
+    this.t = undefined;
 };
 
 // Menu item, with possible nested subitems.
-IMenuStateOption.prototype.add = function(text, action) {
-    var option = new IMenuStateOption(text, action);
+IMenuOption.prototype.add = function(text, action, cancel) {
+    var option = new IMenuOption(text, action, cancel);
     option.parent = this;
-    this.subOptions.push(option);
+    option.index = this.length;
+    this.options.push(option);
+    this.length += 1;
+    if (cancel) {
+        this.cancelOption = option;
+    }
     return option;
+};
+
+// Cleans up the item's display state each time 
+// the menu closes.
+IMenuOption.prototype.cleanUp = function() {
+    if (this.t) {
+        this.t.destroy();
+    }
+    for (var i = 0; i < this.length; i++) {
+        this.options[i].cleanUp();
+    }
 };
 // *************************
 
@@ -68,12 +91,7 @@ IMenuStateOption.prototype.add = function(text, action) {
 // If cancel is true, this will also be set as the overall 
 // cancel action for this menu or submenu.
 IMenuState.prototype.add = function(text, action, cancel) {
-    var option = new IMenuStateOption(text, action);
-    this.options.push(option);
-    if (cancel) {
-        this.cancelOption = option;
-    }
-    return option;
+    return this.root.add(text, action, cancel);
 }
 
 // Called when the game is first paused.
@@ -99,14 +117,13 @@ IMenuState.prototype.activated = function(prev) {
     this.bitmap = this.createSelectorBitmap();
     this.selector = this.createSelector(this.bitmap);
     this.tweens.push(this.createSelectorTween(this.selector));
-    for (var i = 0; i < this.options.length; i++) {
-        this.texts.push(this.createText(this.options[i].text, i));
-    }
+    this.createTextFor(this.root);
     if (this.blurBackground) {
         this.myFilter = this.createFilter();
         this.tweens.push(this.createFilterTween(this.myFilter));
     }
 
+    this.deactivateSelector();
     this.setSelected(this.initialIndex);
 };
 
@@ -159,11 +176,6 @@ IMenuState.prototype.createSelectorBitmap = function() {
     var d = IMenuState.SELECTOR_SIDE;
     var w = IMenuState.SELECTOR_THICKNESS;
     var bitmap = this.game.add.bitmapData(d, d);
-    bitmap.context.fillStyle = this.color1.s;
-    bitmap.context.strokeStyle = this.color1.s;
-    bitmap.context.lineWidth = w;
-    bitmap.context.strokeRect(w / 2, w / 2,
-        d - w, d - w);
     return bitmap;
 };
 
@@ -188,16 +200,34 @@ IMenuState.prototype.createSelectorTween = function(selector) {
     return tween;
 };
 
+// Recursively create an option's text elements.
+IMenuState.prototype.createTextFor = function(option, level) {
+    var level = level == undefined ? 0 : level;
+    for (var i = 0; i < option.length; i++) {
+        var o2 = option.options[i];
+        var x = this.x + (this.width / 2);
+        if (level > 0) {
+            x += this.width / 2 - (0.5 * this.perItemDelta);
+        }
+        var y = this.y + (this.height / 2) + this.initialDelta +
+            (this.perItemDelta * i);
+        o2.t = this.createText(option.options[i].text, x, y);
+        if (level > 0) {
+            o2.t.alpha = 0;
+        }
+        this.createTextFor(o2, level + 1);
+    }
+};
+
 // Create one of our menu text options.
-IMenuState.prototype.createText = function(text, index) {
+IMenuState.prototype.createText = function(text, x, y) {
     var font = this.game.settings.font;
     var style = {
         font: font.sizePx + ' ' + font.name,
         fill: this.color1.s
     };
-    var textObj = game.add.text(this.x + (this.width / 2),
-        this.y + (this.height / 2) + this.initialDelta +
-        (this.perItemDelta * index), text, style);
+    var textObj = game.add.text(x, y, text, style);
+    textObj.alpha = IMenuState.COLOR2_ALPHA;
     textObj.anchor.setTo(0, 0.5);
     this.z.menu.add(textObj);
     return textObj;
@@ -218,6 +248,19 @@ IMenuState.prototype.createFilterTween = function(myFilter) {
     return tween;
 };
 
+// Redraw our selector when the button's lifted.
+IMenuState.prototype.deactivateSelector = function() {
+    var d = IMenuState.SELECTOR_SIDE;
+    var w = IMenuState.SELECTOR_THICKNESS;
+    this.bitmap.context.clearRect(0, 0, d, d);
+    this.bitmap.context.fillStyle = this.color1.s;
+    this.bitmap.context.strokeStyle = this.color1.s;
+    this.bitmap.context.lineWidth = w;
+    this.bitmap.context.strokeRect(w / 2, w / 2,
+        d - w, d - w);
+    this.bitmap.dirty = true;
+};
+
 // Redraw our selector when the button's depressed.
 IMenuState.prototype.activateSelector = function() {
     var d = IMenuState.SELECTOR_SIDE;
@@ -227,45 +270,156 @@ IMenuState.prototype.activateSelector = function() {
     this.bitmap.dirty = true;
 };
 
+
 // User opted to unpause.
 IMenuState.prototype.setSelected = function(index) {
     this.selectedIndex = index;
-    for (var i = 0; i < this.texts.length; i++) {
-        var text = this.texts[i];
+    for (var i = 0; i < this.current.length; i++) {
+        var text = this.current.options[i].t;
         var selected = i == this.selectedIndex;
-        text.style.fill = selected ? this.color1.s :
-            this.color2.rgba(IMenuState.COLOR2_ALPHA);
-        text.y = this.y + (this.height / 2) +
-            this.initialDelta + (this.perItemDelta * (i - index));
+        text.style.fill = this.color2.s;
         text.dirty = true;
+        var alpha = selected ? 1 : IMenuState.COLOR2_ALPHA;
+        var y = this.y + (this.height / 2) +
+            this.initialDelta + (this.perItemDelta * (i - index));
+        var tween = this.game.add.tween(text);
+        tween.to({ y: y, alpha: alpha }, IMenuState.OPTION_TRANSITION_TIME,
+            Phaser.Easing.Sinusoidal.InOut, true);
+        if (selected) {
+            tween.scope = this;
+            tween.onComplete.add(function(text, tween) {
+                text.style.fill = tween.scope.color1.s;
+                text.dirty = true;
+            });
+        }
+        this.tweens.push(tween);
     }
 };
 
 // User tilted up.
 IMenuState.prototype.setSelectedToPrevious = function() {
-    var index = (this.selectedIndex + 1) % this.options.length;
+    var index = (this.selectedIndex + 1) % this.current.length;
     this.setSelected(index);
 };
 
 // User tilted down.
 IMenuState.prototype.setSelectedToNext = function() {
-    var delta = this.options.length - 1; // Modular -1!
-    var index = (this.selectedIndex + delta) % this.options.length;
+    var delta = this.current.length - 1; // Modular -1!
+    var index = (this.selectedIndex + delta) % this.current.length;
     this.setSelected(index);
 };
 
+// User advanced into a submenu.
+IMenuState.prototype.advanceIntoSelection = function() {
+    // Fade out the currently selected root item.
+    var text = this.current.t;
+    if (text) {
+        var tween = this.game.add.tween(text);
+        tween.to({ alpha: 0 }, IMenuState.OPTION_TRANSITION_TIME,
+            Phaser.Easing.Sinusoidal.InOut, true);
+        this.tweens.push(tween);
+    }
+    // Pan the current menu over to become the new root.
+    // All items fade except the selected one.
+    for (var i = 0; i < this.current.length; i++) {
+        var text = this.current.options[i].t;
+        var selected = i == this.selectedIndex;
+        var alpha = selected ? 0.5 : 0;
+        var x = this.x + (0.5 * this.perItemDelta);
+        var tween = this.game.add.tween(text);
+        tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
+            Phaser.Easing.Sinusoidal.InOut, true);
+        this.tweens.push(tween);
+    }
+    // Pan/fade in the new items, selecting the first one.
+    // It'll be colored in once it lands.
+    this.current = this.current.options[this.selectedIndex];
+    this.selectedIndex = this.current.childIndex;
+    for (var i = 0; i < this.current.length; i++) {
+        var text = this.current.options[i].t;
+        var selected = i == this.selectedIndex;
+        text.style.fill = this.color2.s;
+        text.dirty = true;
+        var alpha = selected ? 1 : IMenuState.COLOR2_ALPHA;
+        var x = this.x + (this.width / 2);
+        var tween = this.game.add.tween(text);
+        tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
+            Phaser.Easing.Sinusoidal.InOut, true);
+        if (selected) {
+            tween.scope = this;
+            tween.onComplete.add(function(text, tween) {
+                text.style.fill = tween.scope.color1.s;
+                text.dirty = true;
+            });
+        }
+        this.tweens.push(tween);
+    }
+};
+
+// User backed out of a submenu.
+IMenuState.prototype.retreatOutOfSelection = function() {
+    // Pan/fade out/uncolor the current items.
+    for (var i = 0; i < this.current.length; i++) {
+        var text = this.current.options[i].t;
+        text.style.fill = this.color2.s;
+        text.dirty = true;
+        var alpha = 0;
+        var x = this.x + this.width - (0.5 * this.perItemDelta);
+        var tween = this.game.add.tween(text);
+        tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
+            Phaser.Easing.Sinusoidal.InOut, true);
+        this.tweens.push(tween);
+    }
+    // Fade back in the (soon to be) currently selected root item.
+    this.current.childIndex = this.selectedIndex;
+    this.selectedIndex = this.current.index;
+    this.current = this.current.parent;
+    var text = this.current.t;
+    if (text) {
+        var tween = this.game.add.tween(text);
+        var delay = IMenuState.LEVEL_TRANSITION_TIME -
+            IMenuState.OPTION_TRANSITION_TIME;
+        tween.to({ alpha: 0.5 }, IMenuState.OPTION_TRANSITION_TIME,
+            Phaser.Easing.Sinusoidal.InOut, true, delay);
+        this.tweens.push(tween);
+    }
+    // Pan the current root back over to become the menu.
+    // Non-selected items also fade back in.
+    for (var i = 0; i < this.current.length; i++) {
+        var text = this.current.options[i].t;
+        var selected = i == this.selectedIndex;
+        var alpha = selected ? 1 : IMenuState.COLOR2_ALPHA;
+        var x = this.x + (this.width / 2);
+        var tween = this.game.add.tween(text);
+        tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
+            Phaser.Easing.Sinusoidal.InOut, true);
+        this.tweens.push(tween);
+    }
+};
 
 // If the user's defined cancel behavior, 
 // invoke it.
 IMenuState.prototype.selectCancel = function() {
-    if (this.cancelOption) {
-        this.cancelOption.action.call(this.context);
+    if (this.current.cancelOption && this.current.cancelOption.action) {
+        this.current.cancelOption.action.call(this.context);
+    } else if (this.current.parent) {
+        this.gpad.consumeButtonEvent();
+        this.retreatOutOfSelection();
     }
 };
 
 // User pressed okay; fire the currently selected thing!
 IMenuState.prototype.selectCurrent = function(joystick) {
-    this.options[this.selectedIndex].action.call(this.context);
+    var option = this.current.options[this.selectedIndex];
+    if (option.length > 1) {
+        this.gpad.consumeButtonEvent();
+        this.advanceIntoSelection();
+    } else if (option.action) {
+        option.action.call(this.context);
+    } else if (option.cancel && option.parent) {
+        this.gpad.consumeButtonEvent();
+        this.retreatOutOfSelection();
+    }
 };
 
 // User is tilting; figure out towards what, 
@@ -302,14 +456,28 @@ IMenuState.prototype.updateFromJoystick = function(joystick) {
     }
 };
 
+// Figure out if the user's currently pressing a button 
+// that we animate for.
+IMenuState.prototype.updateSelector = function() {
+    var cancelExists = this.current.parent != undefined ||
+        this.current.cancelOption != undefined;
+    var selectDown = this.gpad.justPressed(this.buttonMap.SELECT);
+    var cancelDown = this.gpad.justPressed(this.buttonMap.CANCEL);
+    var selectUp = this.gpad.justReleased(this.buttonMap.SELECT);
+    var cancelUp = this.gpad.justReleased(this.buttonMap.CANCEL);
+    if (selectDown || (cancelDown && cancelExists)) {
+        this.activateSelector();
+    } else if (selectUp || cancelUp) {
+        this.deactivateSelector();
+    }
+};
+
 // Close the menu and clean up.
 IMenuState.prototype.cleanUp = function() {
     this.gpad.consumeButtonEvent();
     this.chrome.destroy();
     this.selector.destroy();
-    for (var i = 0; i < this.texts.length; i++) {
-        this.texts[i].destroy();
-    }
+    this.root.cleanUp();
     for (var i = 0; i < this.tweens.length; i++) {
         this.tweens[i].stop();
     }
@@ -322,6 +490,18 @@ IMenuState.prototype.cleanUp = function() {
             tween.scope.spacer.destroy();
             tween.scope.game.state.getCurrentState().zAll.filters = null;
         });
+    }
+};
+
+// Weed out any tweens that are no longer active.
+IMenuState.prototype.cleanUpTweens = function() {
+    var i = 0;
+    while (i < this.tweens.length) {
+        if (this.tweens[i].isRunning) {
+            i += 1;
+        } else {
+            this.tweens.splice(i, 1);
+        }
     }
 };
 
@@ -342,13 +522,13 @@ IMenuState.prototype.pauseUpdate = function() {
 
 // Handle an update.
 IMenuState.prototype.update = function() {
+    this.cleanUpTweens();
     var joystick = this.gpad.getAngleAndTilt();
     this.updateFromJoystick(joystick);
-    if (this.gpad.justReleased(this.buttonMap.PAUSE_BUTTON) ||
-        this.gpad.justReleased(this.buttonMap.CANCEL_BUTTON)) {
+    this.updateSelector();
+    if (this.gpad.justReleased(this.buttonMap.PAUSE) ||
+        this.gpad.justReleased(this.buttonMap.CANCEL)) {
         this.selectCancel();
-    } else if (this.gpad.justPressed(this.buttonMap.SELECT)) {
-        this.activateSelector();
     } else if (this.gpad.justReleased(this.buttonMap.SELECT)) {
         this.selectCurrent();
     }
