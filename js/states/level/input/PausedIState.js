@@ -23,20 +23,20 @@ PausedIState.prototype.activated = function(prev) {
 };
 
 // User opted to unpause.
-PausedIState.prototype.selectContinue = function() {
+PausedIState.prototype.selectContinue = function(text, index) {
     this.unpause();
     this.activate(UnpausedIState.NAME);
 };
 
 // User opted to restart.
-PausedIState.prototype.selectRestart = function() {
+PausedIState.prototype.selectRestart = function(text, index) {
     this.unpause();
     this.game.state.start('PlayLevelState', true, false,
         this.level.name, this.gpad);
 };
 
 // User opted to exit.
-PausedIState.prototype.selectExit = function() {
+PausedIState.prototype.selectExit = function(text, index) {
     this.unpause();
     this.game.state.start('TitleMenuState');
 };

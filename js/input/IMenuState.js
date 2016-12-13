@@ -7,6 +7,11 @@ var IMenuState = function(name, handler, context) {
         { angle: 0, action: this.setSelectedToPrevious },
         { angle: Math.PI, action: this.setSelectedToNext }
     ];
+    this.z = this.game.state.getCurrentState().z;
+    this.zAll = this.game.state.getCurrentState().zAll;
+    this.tweens = [];
+    this.texts = [];
+    this.created = false;
 
     this.context = context ? context : this; // For called actions.
     this.initialIndex = 0;
@@ -49,6 +54,7 @@ IMenuState.LEVEL_TRANSITION_TIME = 300; // ms
 
 // *************************
 // Menu item, with possible nested subitems.
+// Each action will be called with its text and index as params.
 var IMenuOption = function(text, action, cancel) {
     this.text = text;
     this.action = action;
@@ -63,6 +69,7 @@ var IMenuOption = function(text, action, cancel) {
 };
 
 // Menu item, with possible nested subitems.
+// Each action will be called with its text and index as params.
 IMenuOption.prototype.add = function(text, action, cancel) {
     var option = new IMenuOption(text, action, cancel);
     option.parent = this;
@@ -79,8 +86,7 @@ IMenuOption.prototype.add = function(text, action, cancel) {
 // the menu closes.
 IMenuOption.prototype.cleanUp = function() {
     if (this.t) {
-        this.t.destroy();
-        this.t = undefined;
+        this.t.visible = false;
     }
     this.childIndex = 0;
     for (var i = 0; i < this.length; i++) {
@@ -95,6 +101,7 @@ IMenuOption.prototype.cleanUp = function() {
 // via .addSubOption().
 // If cancel is true, this will also be set as the overall 
 // cancel action for this menu or submenu.
+// Each action will be called with its text and index as params.
 IMenuState.prototype.add = function(text, action, cancel) {
     return this.root.add(text, action, cancel);
 }
@@ -107,29 +114,26 @@ IMenuState.prototype.activated = function(prev) {
     var view = this.game.camera.view;
     this.x = view.x;
     this.y = view.y;
-    this.z = this.game.state.getCurrentState().z;
-    this.zAll = this.game.state.getCurrentState().zAll;
     this.width = view.width;
     this.height = view.height;
-    this.tweens = [];
-    this.texts = [];
 
-    // Create EVERYTHING.
-    this.chrome = this.createChrome(this.dropCloth);
-    if (this.blurBackground) {
+    if (!this.created) {
+        // Create EVERYTHING.
+        this.chrome = this.createChrome(this.dropCloth);
+        if (this.blurBackground) {
+            this.spacer = this.createSpacer();
+        }
+        this.bitmap = this.createSelectorBitmap();
+        this.selector = this.createSelector(this.bitmap);
+        this.createTextFor(this.root);
+        if (this.blurBackground) {
+            this.myFilter = this.createFilter();
+        }
+        this.created = true;
+    } else if (this.blurBackground) {
         this.spacer = this.createSpacer();
     }
-    this.bitmap = this.createSelectorBitmap();
-    this.selector = this.createSelector(this.bitmap);
-    this.tweens.push(this.createSelectorTween(this.selector));
-    this.createTextFor(this.root);
-    if (this.blurBackground) {
-        this.myFilter = this.createFilter();
-        this.tweens.push(this.createFilterTween(this.myFilter));
-    }
-
-    this.deactivateSelector();
-    this.setSelected(this.initialIndex);
+    this.show();
 };
 
 // Creates the menu chrome, and if asked also draws
@@ -242,11 +246,31 @@ IMenuState.prototype.createText = function(text, x, y) {
     return textObj;
 };
 
+// Recursively position text elements to their starting points.
+IMenuState.prototype.positionTextFor = function(option, level) {
+    var level = level == undefined ? 0 : level;
+    for (var i = 0; i < option.length; i++) {
+        var o2 = option.options[i];
+        var x = this.x + (this.width / 2);
+        if (level > 0) {
+            x += this.width / 2 - (0.5 * this.perItemDelta);
+        }
+        var y = this.y + (this.height / 2) + this.initialDelta +
+            (this.perItemDelta * i);
+        o2.t.x = x;
+        o2.t.y = y;
+        o2.t.style.fill = this.color1.s;
+        o2.t.alpha = IMenuState.UNSELECTED_OPTION_ALPHA;
+        o2.t.dirty = true;
+        o2.t.visible = level == 0;
+        this.createTextFor(o2, level + 1);
+    }
+};
+
 // Create our blur filter.
 IMenuState.prototype.createFilter = function() {
     var myFilter = new PIXI.BlurFilter();
     myFilter.blur = 0;
-    this.zAll.filters = [myFilter];
     return myFilter;
 };
 // Make the blur appear gradually.
@@ -283,6 +307,29 @@ IMenuState.prototype.setInputBlocked = function(inputBlocked) {
         this.gpad.consumeButtonEvent();
     }
     this.inputBlocked = inputBlocked;
+};
+
+// Resets everything to its starting position, 
+// and makes it all visible again.
+IMenuState.prototype.show = function() {
+    this.chrome.x = this.x;
+    this.chrome.y = this.y;
+    this.chrome.visible = true;
+
+    this.selector.x = this.x + (this.width / 2) - IMenuState.TEXT_Y_DELTA;
+    this.selector.y = this.y + (this.height / 2);
+    this.selector.visible = true;
+    this.tweens.push(this.createSelectorTween(this.selector));
+
+    this.positionTextFor(this.root);
+
+    if (this.blurBackground) {
+        this.zAll.filters = [this.myFilter];
+        this.tweens.push(this.createFilterTween(this.myFilter));
+    }
+
+    this.deactivateSelector();
+    this.setSelected(this.initialIndex);
 };
 
 
@@ -430,7 +477,9 @@ IMenuState.prototype.retreatOutOfSelection = function() {
 // invoke it.
 IMenuState.prototype.selectCancel = function() {
     if (this.current.cancelOption && this.current.cancelOption.action) {
-        this.current.cancelOption.action.call(this.context);
+        this.current.cancelOption.action.call(
+            this.context, this.current.cancelOption.text,
+            this.current.cancelOption.index);
     } else if (this.current.parent) {
         this.gpad.consumeButtonEvent();
         this.retreatOutOfSelection();
@@ -444,7 +493,8 @@ IMenuState.prototype.selectCurrent = function(joystick) {
         this.gpad.consumeButtonEvent();
         this.advanceIntoSelection();
     } else if (option.action) {
-        option.action.call(this.context);
+        option.action.call(this.context,
+            option.text, option.index);
     } else if (option.cancel && option.parent) {
         this.gpad.consumeButtonEvent();
         this.retreatOutOfSelection();
@@ -504,8 +554,8 @@ IMenuState.prototype.updateSelector = function() {
 // Close the menu and clean up.
 IMenuState.prototype.cleanUp = function() {
     this.gpad.consumeButtonEvent();
-    this.chrome.destroy();
-    this.selector.destroy();
+    this.chrome.visible = false;
+    this.selector.visible = false;
     this.root.cleanUp();
     for (var i = 0; i < this.tweens.length; i++) {
         this.tweens[i].stop();
