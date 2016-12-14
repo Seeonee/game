@@ -9,7 +9,6 @@ AvatarGraphicsKey.SMOKE_RATIO_THRESHOLD = 0.75;
 
 // Figure out what we look like. Also enables physics.
 AvatarGraphicsKey.prototype.createGraphics = function(avatar) {
-    this.color = avatar.game.settings.colors.BLUE; /////////////////////////////////
     avatar.anchor.setTo(0.5, 0.5);
     // Initialize our graphics.
     avatar.keyplate = avatar.addChild(
@@ -17,7 +16,6 @@ AvatarGraphicsKey.prototype.createGraphics = function(avatar) {
     var yOffset = -avatar.keyplate.height / 1.65;
     avatar.keyplate.y = yOffset;
     avatar.keyplate.anchor.setTo(0.5, 0.5);
-    avatar.keyplate.tint = this.color.i; /////////////////////////////////
     // Initialize our keyhole.
     this.setMasq(avatar, new AvatarMasq(game, 'keyhole', -55));
     // Enable physics.
@@ -72,10 +70,6 @@ AvatarGraphicsKey.prototype.createSmokeEmitter = function(avatar) {
         AvatarGraphicsKey.SMOKE_LIFETIME,
         Phaser.Easing.Cubic.Out);
     avatar.smokeEmitter.makeParticles('smoke');
-    avatar.smokeEmitter.tint = this.color.i; /////////////////////////////////
-    avatar.smokeEmitter.forEach(function(particle) { /////////////////////////////////
-        particle.tint = particle.parent.tint; /////////////////////////////////
-    }); /////////////////////////////////
 };
 
 // Update an avatar's smoke emitter. Hooray!

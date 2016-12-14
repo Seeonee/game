@@ -1,7 +1,10 @@
 Add title menu
-Make tiers have different colors
-Make pause menu inherit tier color
+Choose cohesive tier color palettes
+Change tier backgrounds to colors based on palettes
+Make sure point emitters turn off while tier is inactive
+Make notifier broadcasts to all tier items when tier becomes in/active
 Make PortalPoint gfx
 Make PortalPoint IState for handling button press while colocated
+Make framework for points/paths to provide custom "overlay" IStates easily
 Make level swap fx
 Disable input during level swap transition
