@@ -327,14 +327,16 @@ Tier.load = function(game, name, json) {
         var point = Point.load(game, key, pointObj);
         tier._addPoint(point);
     }
-    keys = Object.keys(json.paths);
-    for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        var pathObj = json.paths[key];
-        var p1 = tier.pointMap[pathObj.p1];
-        var p2 = tier.pointMap[pathObj.p2];
-        var path = Path.load(game, key, pathObj, p1, p2);
-        tier._addPath(path, p1, p2);
+    if (json.paths) {
+        keys = Object.keys(json.paths);
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var pathObj = json.paths[key];
+            var p1 = tier.pointMap[pathObj.p1];
+            var p2 = tier.pointMap[pathObj.p2];
+            var path = Path.load(game, key, pathObj, p1, p2);
+            tier._addPath(path, p1, p2);
+        }
     }
     return tier;
 };
