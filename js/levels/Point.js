@@ -45,7 +45,7 @@ Point.prototype.draw = function(tier) {
     this.renderNeeded = false;
     var colors = tier.game.settings.colors;
     tier.bitmap.context.fillStyle = this.isBroken() ?
-        colors.GREY.s : colors.PATH_COLOR.s;
+        colors.GREY.s : tier.palette.c1.s;
     tier.bitmap.context.beginPath();
     tier.bitmap.context.arc(this.x, this.y,
         Math.floor(Tier.PATH_WIDTH / 2), 0, 2 * Math.PI, false);

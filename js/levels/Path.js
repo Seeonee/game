@@ -51,7 +51,7 @@ Path.prototype.draw = function(tier) {
     tier.bitmap.context.setLineDash(this.broken ? Tier.LINE_DASH : []);
     var colors = tier.game.settings.colors;
     tier.bitmap.context.strokeStyle = this.broken ?
-        colors.GREY.s : colors.PATH_COLOR.s;
+        colors.GREY.s : tier.palette.c1.s;
     tier.bitmap.context.beginPath();
     tier.bitmap.context.moveTo(this.p1.x, this.p1.y);
     tier.bitmap.context.lineTo(this.p2.x, this.p2.y);

@@ -14,6 +14,8 @@ var Tier = function(game, name) {
     // Bitmap gets set up later.
     this.bitmap = undefined;
     this.image = undefined;
+
+    this.palette = this.game.settings.colors[name];
 };
 
 // Constants.
@@ -256,9 +258,8 @@ Tier.prototype.draw = function() {
     this.renderNeeded = false;
     this.recalculateDimensions();
     this.recreateImageAsNeeded();
-    var colors = this.game.settings.colors;
-    this.bitmap.context.strokeStyle = colors.PATH_COLOR.s;
-    this.bitmap.context.fillStyle = colors.PATH_COLOR.s;
+    this.bitmap.context.strokeStyle = this.palette.c1.s;
+    this.bitmap.context.fillStyle = this.palette.c1.s;
     this.bitmap.context.lineWidth = Tier.PATH_WIDTH;
     this.bitmap.context.lineCap = Tier.LINE_CAP_STYLE;
     this.bitmap.context.lineJoin = Tier.LINE_JOIN_STYLE;

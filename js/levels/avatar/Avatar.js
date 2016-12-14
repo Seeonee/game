@@ -16,6 +16,7 @@ var Avatar = function(game, graphics, level) {
 
     this.level.avatar = this;
     this.snapToStartingPoint();
+    this.setColor(this.tier.palette.c1);
 
     this.attached = undefined;
     this.events.onAttach = new Phaser.Signal();
@@ -186,6 +187,11 @@ Avatar.prototype.updateAttachment = function() {
     }
     this.events.onDetach.dispatch(this, old, this.attached);
     this.events.onAttach.dispatch(this, old, this.attached);
+};
+
+// Update our gfx color.
+Avatar.prototype.setColor = function(color) {
+    this.graphics.setColor(this, color);
 };
 
 // Optional physics debug view.

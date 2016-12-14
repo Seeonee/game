@@ -22,6 +22,7 @@ PausedIState.prototype.constructor = PausedIState;
 // Called when the game is first paused.
 PausedIState.prototype.activated = function(prev) {
     this.game.paused = true;
+    this.color = this.level.tier.palette.c1;
     IMenuState.prototype.activated.call(this, prev);
 };
 

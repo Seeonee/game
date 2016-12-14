@@ -41,6 +41,12 @@ var Shades = function(shades) {
     this.i = this.primary.i;
 };
 
+// Return an 'rgba(r, g, b, a)' string.
+// If you omit alpha, it will be 1.
+Shades.prototype.rgba = function(alpha) {
+    return this.primary.rgba(alpha);
+};
+
 
 // Restore a JSON'd Shades object.
 Shades.load = function(json) {
@@ -64,19 +70,26 @@ var Colors = function() {
     this.WHITE = new Color('FFFFFF');
     this.BLACK = new Color('000000');
 
-    // this.GREEN2 = new Shades(
-    // ['7BEFAE', '4DE890', '26E278', '00DA5F', '00B04D']);
-    // this.BLUE2 = new Shades(
-    // ['7ECAEB', '51B6E1', '2DA5D9', '0994D0', '046E9C']);
-    // this.YELLOW2 = new Shades(
-    // ['FFC483', 'FFAE54', 'FF9B2B', 'FF8700', 'F78200']);
-    // this.RED2 = new Shades(
-    // ['FF9D83', 'FF7854', 'FF572B', 'FF3500', 'F73300']);
+    this.GREEN2 = new Shades(
+        ['7BEFAE', '4DE890', '26E278', '00DA5F', '00B04D']);
+    this.BLUE2 = new Shades(
+        ['7ECAEB', '51B6E1', '2DA5D9', '0994D0', '046E9C']);
+    this.YELLOW2 = new Shades(
+        ['FFC483', 'FFAE54', 'FF9B2B', 'FF8700', 'F78200']);
+    this.RED2 = new Shades(
+        ['FF9D83', 'FF7854', 'FF572B', 'FF3500', 'F73300']);
 
-    this.PATH_COLOR = this.BLUE;
-    this.DEBUG_COLOR = this.RED;
-    this.MENU1 = this.WHITE; // Default menu selector color.
-    this.MENU2 = this.BLUE; // Default menu chrome color.
+    this.MENU_PRIMARY = this.RED; // Default menu chrome color.
+    this.MENU_SELECTION = this.WHITE; // Default menu selector color.
+
+    // Tier color palettes.
+    this.t0 = { c1: this.BLUE };
+    this.t1 = { c1: this.GREEN2 };
+    this.t2 = { c1: this.RED2 };
+    this.t3 = { c1: this.YELLOW2 };
+    this.t4 = { c1: this.BLUE2.d };
+    this.t5 = { c1: this.GREEN2.d };
+    this.t6 = { c1: this.YELLOW2.d };
 };
 
 // Restore a JSON'd Colors object.

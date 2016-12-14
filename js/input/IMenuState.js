@@ -20,8 +20,9 @@ var IMenuState = function(name, handler, context) {
     this.initialDelta = 0;
     this.perItemDelta = IMenuState.TEXT_Y_DELTA;
     this.style = IMenuState.STYLE.BAR_LEFT;
-    this.color1 = this.game.settings.colors.MENU1;
-    this.color2 = this.game.settings.colors.MENU2;
+    this.colorPrimary = this.game.settings.colors.MENU_PRIMARY;
+    this.colorSelection = this.game.settings.colors.MENU_SELECTION;
+    this.color = this.colorPrimary;
     this.dropCloth = false;
     this.blurBackground = false;
     this.updateDuringPause = true;
@@ -113,6 +114,7 @@ IMenuState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
     this.game.paused = true;
     this.current = this.root;
+    this.selectedIndex = 0;
 
     var view = this.game.camera.view;
     this.x = view.x;
@@ -122,58 +124,82 @@ IMenuState.prototype.activated = function(prev) {
 
     if (!this.created) {
         // Create EVERYTHING.
-        this.chrome = this.createChrome(this.dropCloth);
+        this.colorPrimary = this.color;
+        this.cBitmap = this.createChromeBitmap();
+        this.drawChromeBitmap();
+        this.chrome = this.createChrome(this.cBitmap);
         if (this.blurBackground) {
             this.spacer = this.createSpacer();
         }
-        this.bitmap = this.createSelectorBitmap();
-        this.selector = this.createSelector(this.bitmap);
+        this.sBitmap = this.createSelectorBitmap();
+        this.selector = this.createSelector(this.sBitmap);
         this.createTextFor(this.root);
         if (this.blurBackground) {
             this.myFilter = this.createFilter();
         }
         this.created = true;
-    } else if (this.blurBackground) {
-        this.spacer = this.createSpacer();
+    } else {
+        if (this.colorPrimary != this.color) {
+            // Have to rebuild our chrome, and 
+            // recolor our text components.
+            this.colorPrimary = this.color;
+            this.drawChromeBitmap();
+        }
+        if (this.blurBackground) {
+            this.spacer = this.createSpacer();
+        }
     }
     this.show();
 };
 
 // Creates the menu chrome, and if asked also draws
 // the blackout cloth that covers the stage.
-IMenuState.prototype.createChrome = function(dropCloth) {
-    var bitmap = this.game.add.bitmapData(this.width, this.height);
-    if (dropCloth) {
-        bitmap.context.fillStyle = this.game.settings.colors.BLACK.rgba(0.5);
-        bitmap.context.fillRect(0, 0, this.width, this.height);
+IMenuState.prototype.createChromeBitmap = function() {
+    return this.game.add.bitmapData(this.width, this.height);
+};
+
+// Creates the menu chrome, and if asked also draws
+// the blackout cloth that covers the stage.
+IMenuState.prototype.createChrome = function(bitmap) {
+    var chrome = this.game.add.image(this.x, this.y, bitmap);
+    this.z.menu.add(chrome);
+    return chrome;
+};
+
+// Creates the menu chrome, and if asked also draws
+// the blackout cloth that covers the stage.
+IMenuState.prototype.drawChromeBitmap = function() {
+    this.cBitmap.context.clearRect(0, 0, this.width, this.height);
+    if (this.dropCloth) {
+        this.cBitmap.context.fillStyle =
+            this.game.settings.colors.BLACK.rgba(0.5);
+        this.cBitmap.context.fillRect(0, 0, this.width, this.height);
     }
     if (this.style == IMenuState.STYLE.DIVIDED) {
-        bitmap.context.strokeStyle = this.color2.s;
-        bitmap.context.lineWidth = 1;
-        bitmap.context.beginPath();
-        bitmap.context.moveTo(
+        this.cBitmap.context.strokeStyle = this.colorPrimary.s;
+        this.cBitmap.context.lineWidth = 1;
+        this.cBitmap.context.beginPath();
+        this.cBitmap.context.moveTo(
             this.width / 2 - (IMenuState.TEXT_Y_DELTA / 2), 0);
-        bitmap.context.lineTo(
+        this.cBitmap.context.lineTo(
             this.width / 2 - (IMenuState.TEXT_Y_DELTA / 2),
             this.height);
-        bitmap.context.stroke();
+        this.cBitmap.context.stroke();
     } else {
-        bitmap.context.beginPath();
-        bitmap.context.fillStyle = this.color2.rgba(
+        this.cBitmap.context.beginPath();
+        this.cBitmap.context.fillStyle = this.colorPrimary.rgba(
             IMenuState.CHROME_ALPHA);
         var h = 2 * IMenuState.TEXT_Y_DELTA / 2;
         var w = this.width / 2 - (IMenuState.TEXT_Y_DELTA / 2);
         if (this.style == IMenuState.STYLE.BAR_LEFT) {
-            bitmap.context.fillRect(
+            this.cBitmap.context.fillRect(
                 0, (this.height / 2) - (h / 2), w, h);
         } else if (this.style == IMenuState.STYLE.BAR_RIGHT) {
-            bitmap.context.fillRect(
+            this.cBitmap.context.fillRect(
                 w, (this.height / 2) - (h / 2), this.width - w, h);
         }
     }
-    var chrome = this.game.add.image(this.x, this.y, bitmap);
-    this.z.menu.add(chrome);
-    return chrome;
+    this.cBitmap.dirty = true;
 };
 
 // Create the camera view spacer that makes the blur work properly.
@@ -189,8 +215,8 @@ IMenuState.prototype.createSelectorBitmap = function() {
     var d = IMenuState.SELECTOR_SIDE;
     var w = IMenuState.SELECTOR_THICKNESS;
     var bitmap = this.game.add.bitmapData(d, d);
-    bitmap.context.fillStyle = this.color1.s;
-    bitmap.context.strokeStyle = this.color1.s;
+    bitmap.context.fillStyle = this.colorSelection.s;
+    bitmap.context.strokeStyle = this.colorSelection.s;
     bitmap.context.lineWidth = w;
     return bitmap;
 };
@@ -208,6 +234,7 @@ IMenuState.prototype.createSelector = function(bitmap) {
 
 // Create the selector's spin.
 IMenuState.prototype.createSelectorTween = function(selector) {
+    selector.rotation = 0;
     var tween = this.game.add.tween(selector)
     tween.to({ rotation: Math.PI / 2 },
         IMenuState.SELECTOR_QUARTER_TURN_TIME,
@@ -246,7 +273,7 @@ IMenuState.prototype.createText = function(text, x, y) {
     var font = this.game.settings.font;
     var style = {
         font: font.sizePx + ' ' + font.name,
-        fill: this.color1.s
+        fill: this.colorPrimary.s
     };
     var textObj = game.add.text(x, y, text, style);
     textObj.alpha = IMenuState.UNSELECTED_OPTION_ALPHA;
@@ -271,14 +298,21 @@ IMenuState.prototype.positionTextFor = function(option, level, index) {
     option.t.y = y;
     option.t.visible = true;
     if (level < 0) {
-        option.t.style.fill = this.color2.s;
+        option.t.style.fill = this.colorSelection.s;
+    } else if (level == 0 && index == this.selectedIndex) {
+        option.t.style.fill = this.colorSelection.s;
     } else {
-        option.t.style.fill = this.color1.s;
+        option.t.style.fill = this.colorPrimary.s;
     }
+    option.t.dirty = true;
     if (level < 0) {
         option.t.alpha = 1;
     } else if (level == 0) {
-        option.t.alpha = IMenuState.UNSELECTED_OPTION_ALPHA;
+        if (index == this.selectedIndex) {
+            option.t.alpha = 1;
+        } else {
+            option.t.alpha = IMenuState.UNSELECTED_OPTION_ALPHA;
+        }
     } else {
         option.t.alpha = 0;
     }
@@ -305,19 +339,19 @@ IMenuState.prototype.createFilterTween = function(myFilter) {
 IMenuState.prototype.deactivateSelector = function() {
     var d = IMenuState.SELECTOR_SIDE;
     var w = IMenuState.SELECTOR_THICKNESS;
-    this.bitmap.context.clearRect(0, 0, d, d);
-    this.bitmap.context.strokeRect(w / 2, w / 2,
+    this.sBitmap.context.clearRect(0, 0, d, d);
+    this.sBitmap.context.strokeRect(w / 2, w / 2,
         d - w, d - w);
-    this.bitmap.dirty = true;
+    this.sBitmap.dirty = true;
 };
 
 // Redraw our selector when the button's depressed.
 IMenuState.prototype.activateSelector = function() {
     var d = IMenuState.SELECTOR_SIDE;
     var w = IMenuState.SELECTOR_THICKNESS;
-    this.bitmap.context.clearRect(0, 0, d, d);
-    this.bitmap.context.fillRect(w, w, d - (2 * w), d - (2 * w));
-    this.bitmap.dirty = true;
+    this.sBitmap.context.clearRect(0, 0, d, d);
+    this.sBitmap.context.fillRect(w, w, d - (2 * w), d - (2 * w));
+    this.sBitmap.dirty = true;
 };
 
 // Turn on or off input temporarily.
@@ -349,7 +383,7 @@ IMenuState.prototype.show = function() {
     }
 
     this.deactivateSelector();
-    this.setSelected(this.initialIndex);
+    // this.setSelected(this.initialIndex);
 };
 
 
@@ -363,7 +397,7 @@ IMenuState.prototype.setSelected = function(index) {
     for (var i = 0; i < this.current.length; i++) {
         var text = this.current.options[i].t;
         var selected = i == this.selectedIndex;
-        text.style.fill = this.color2.s;
+        text.style.fill = this.colorPrimary.s;
         text.dirty = true;
         var alpha = selected ? 1 : IMenuState.UNSELECTED_OPTION_ALPHA;
         var y = this.y + (this.height / 2) +
@@ -374,7 +408,7 @@ IMenuState.prototype.setSelected = function(index) {
         if (selected) {
             tween.scope = this;
             tween.onComplete.add(function(text, tween) {
-                text.style.fill = tween.scope.color1.s;
+                text.style.fill = tween.scope.colorSelection.s;
                 tween.scope.setInputBlocked(false);
                 text.dirty = true;
             });
@@ -408,7 +442,7 @@ IMenuState.prototype.advanceIntoSelection = function() {
     var text = this.current.t;
     if (text) {
         var tween = this.game.add.tween(text);
-        tween.to({ alpha: 0 }, IMenuState.OPTION_TRANSITION_TIME,
+        tween.to({ alpha: 0 }, IMenuState.LEVEL_TRANSITION_TIME,
             Phaser.Easing.Sinusoidal.InOut, true);
         this.tweens.push(tween);
     }
@@ -431,7 +465,7 @@ IMenuState.prototype.advanceIntoSelection = function() {
     for (var i = 0; i < this.current.length; i++) {
         var text = this.current.options[i].t;
         var selected = i == this.selectedIndex;
-        text.style.fill = this.color2.s;
+        text.style.fill = this.colorPrimary.s;
         text.dirty = true;
         var alpha = selected ? 1 : IMenuState.UNSELECTED_OPTION_ALPHA;
         var x = this.x + (this.width / 2);
@@ -441,7 +475,7 @@ IMenuState.prototype.advanceIntoSelection = function() {
         if (selected) {
             tween.scope = this;
             tween.onComplete.add(function(text, tween) {
-                text.style.fill = tween.scope.color1.s;
+                text.style.fill = tween.scope.colorSelection.s;
                 tween.scope.setInputBlocked(false);
                 text.dirty = true;
             });
@@ -461,7 +495,7 @@ IMenuState.prototype.retreatOutOfSelection = function() {
     // Pan/fade out/uncolor the current items.
     for (var i = 0; i < this.current.length; i++) {
         var text = this.current.options[i].t;
-        text.style.fill = this.color2.s;
+        text.style.fill = this.colorPrimary.s;
         text.dirty = true;
         var alpha = 0;
         var x = this.x + this.width - (0.5 * this.perItemDelta);
@@ -477,20 +511,10 @@ IMenuState.prototype.retreatOutOfSelection = function() {
     var text = this.current.t;
     if (text) {
         var tween = this.game.add.tween(text);
-        var delay = IMenuState.LEVEL_TRANSITION_TIME -
-            IMenuState.OPTION_TRANSITION_TIME;
-        tween.to({}, delay, Phaser.Easing.Sinusoidal.InOut, true);
-        this.tweens.push(tween);
-        var t2 = this.game.add.tween(text);
-        t2.to({ alpha: IMenuState.ROOT_OPTION_ALPHA },
-            IMenuState.OPTION_TRANSITION_TIME,
+        tween.to({ alpha: IMenuState.ROOT_OPTION_ALPHA },
+            IMenuState.LEVEL_TRANSITION_TIME,
             Phaser.Easing.Sinusoidal.InOut, true);
-        tween.scope = this;
-        tween.t2 = t2;
-        tween.onComplete.add(function(text, tween) {
-            tween.scope.tweens.push(tween.t2);
-        });
-        tween.chain(t2);
+        this.tweens.push(tween);
     }
     // Pan the current root back over to become the menu.
     // Non-selected items also fade back in.
@@ -643,8 +667,11 @@ IMenuState.prototype.pauseUpdate = function() {
     for (var i = 0; i < this.tweens.length; i++) {
         this.tweens[i].update();
     }
-    if (this.bitmap.dirty) {
-        this.bitmap.render();
+    if (this.sBitmap.dirty) {
+        this.sBitmap.render();
+    }
+    if (this.cBitmap.dirty) {
+        this.cBitmap.render();
     }
     this.update();
 };

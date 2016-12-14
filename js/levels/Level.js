@@ -101,6 +101,9 @@ Level.prototype.setTier = function(tier) {
         }
     }
     this.tier.updateWorldBounds();
+    if (this.avatar) {
+        this.avatar.setColor(this.tier.palette.c1);
+    }
 };
 
 // Update our current tier.

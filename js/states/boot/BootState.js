@@ -12,6 +12,7 @@ BootState.prototype.preload = function() {
 // Our only job on creation is to transition 
 // into preload.
 BootState.prototype.create = function() {
+    // this.game.stage.smoothed = false;
     this.game.settings = new Settings();
     this.game.stage.backgroundColor = this.game.settings.colors.BACKGROUND.i;
     this.game.state.start('PreloadState');

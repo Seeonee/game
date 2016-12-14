@@ -10,6 +10,7 @@ var Settings = function() {
         name: 'Roboto'
     };
     // this.sounds = new Sounds();
+    this.edit = true;
 };
 
 // Restore a JSON'd Settings object.
