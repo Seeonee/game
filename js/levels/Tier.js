@@ -232,8 +232,8 @@ Tier.prototype.recreateImageAsNeeded = function() {
             this.x + this.widthOver2, this.y + this.heightOver2,
             this.bitmap);
         this.image.anchor.setTo(0.5, 0.5);
-        this.game.state.getCurrentState().z.level.tier().add(
-            this.image);
+        this.game.state.getCurrentState().z.level.tier().addAt(
+            this.image, 0);
         this.updateWorldBounds();
     }
 };
