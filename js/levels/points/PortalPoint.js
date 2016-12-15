@@ -93,6 +93,7 @@ PortalPoint.prototype.createEmitter = function(tier, x, y) {
 PortalPoint.prototype.setEmitting = function(emit) {
     for (var i = 0; i < this.emitters.length; i++) {
         if (emit) {
+            this.emitters[i].emitParticle();
             this.emitters[i].start(false,
                 PortalPoint.PARTICLE_LIFETIME,
                 PortalPoint.PARTICLE_FREQUENCY);
