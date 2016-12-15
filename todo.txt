@@ -1,6 +1,7 @@
 Add title menu
 Choose cohesive tier color palettes
 Change tier backgrounds to colors based on palettes
+Learn how to insta-move avatar but keep relative camera lock
 Make sure point emitters turn off while tier is inactive
 Make notifier broadcasts to all tier items when tier becomes in/active
 Make PortalPoint gfx
