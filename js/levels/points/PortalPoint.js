@@ -27,14 +27,10 @@ PortalPoint.prototype.draw = function(tier) {
     this.renderNeeded = false;
     this.game = tier.game;
     var c = tier.bitmap.context;
-    var r = PortalPoint.RADIUS;
     var x = this.x - r / 2;
     var y = this.y - r / 2;
-    c.beginPath();
-    c.arc(this.x, this.y, r / 2, 0, 2 * Math.PI, false);
-    c.clip();
-    c.clearRect(this.x - r - 1, this.y - r - 1,
-        r * 2 + 2, r * 2 + 2);
+    var r = PortalPoint.RADIUS;
+    Utils.clearArc(c, this.x, this.y, r / 2);
     if (!this.drawn) {
         this.b = this.game.add.bitmapData(2 * r, 2 * r);
         var c2 = this.b.context;

@@ -41,3 +41,12 @@ Utils.extend = function(a1, a2) {
     }
     return a1;
 };
+
+// Helper function for clearing a bitmap arc.
+Utils.clearArc = function(context, x, y, r) {
+    context.beginPath();
+    context.globalCompositeOperation = 'destination-out';
+    context.arc(x, y, r, 0, 2 * Math.PI, true);
+    context.fill();
+    context.globalCompositeOperation = 'source-over';
+};

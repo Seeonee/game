@@ -267,6 +267,7 @@ Tier.prototype.draw = function() {
     this.bitmap.context.lineCap = Tier.LINE_CAP_STYLE;
     this.bitmap.context.lineJoin = Tier.LINE_JOIN_STYLE;
     this.bitmap.context.lineDashOffset = Tier.LINE_DASH_OFFSET;
+    // this.bitmap.context.strokeRect(0, 0, this.width, this.height);
 
     var objects = this.paths.concat(this.points);
     objects.sort(function(a, b) {
