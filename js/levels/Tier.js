@@ -8,6 +8,7 @@ var Tier = function(game, name) {
 
     this.points = [];
     this.paths = [];
+    this.objects = [];
     this.pointMap = {};
     this.pathMap = {};
 
@@ -177,6 +178,28 @@ Tier.prototype.translateGamePointToInternalPoint = function(x, y) {
     };
 };
 
+// Takes x and y values relative to this Tier object's 
+// internal points, and returns an {x, y} object whose 
+// coordinates have been adjusted to be offset from the 
+// tier's anchor point.
+Tier.prototype.translateInternalPointToAnchorPoint = function(x, y) {
+    return {
+        x: x - this.widthOver2,
+        y: y - this.heightOver2
+    };
+};
+
+// Takes x and y values relative to the tier's anchor, 
+// and returns an {x, y} object whose coordinates 
+// have been adjusted to work with this Tier 
+// object's internal points.
+Tier.prototype.translateAnchorPointToInternalPoint = function(x, y) {
+    return {
+        x: x + this.widthOver2,
+        y: y + this.heightOver2
+    };
+};
+
 // Update our dimensions.
 Tier.prototype.recalculateDimensions = function() {
     var x = Tier.PADDING;
@@ -228,7 +251,7 @@ Tier.prototype.recreateImageAsNeeded = function() {
     } else {
         this.bitmap = this.game.add.bitmapData(
             this.width, this.height);
-        this.image = this.game.add.image(
+        this.image = this.game.add.sprite(
             this.x + this.widthOver2, this.y + this.heightOver2,
             this.bitmap);
         this.image.anchor.setTo(0.5, 0.5);
@@ -269,14 +292,14 @@ Tier.prototype.draw = function() {
     this.bitmap.context.lineDashOffset = Tier.LINE_DASH_OFFSET;
     // this.bitmap.context.strokeRect(0, 0, this.width, this.height);
 
-    var objects = this.paths.concat(this.points);
-    objects.sort(function(a, b) {
+    this.objects = this.paths.concat(this.points);
+    this.objects.sort(function(a, b) {
         var z1 = a.z ? a.z : 10;
         var z2 = b.z ? b.z : 10;
         return z1 - z2;
     });
-    for (var i = 0; i < objects.length; i++) {
-        objects[i].draw(this);
+    for (var i = 0; i < this.objects.length; i++) {
+        this.objects[i].draw(this);
     }
     this.bitmap.dirty = true;
 };
@@ -285,6 +308,10 @@ Tier.prototype.draw = function() {
 Tier.prototype.update = function() {
     // We don't actually do anything at the moment.
     // Input's all handled by the IHandler states.
+    // However, we'll go ahead and let our paths/points know.
+    for (var i = 0; i < this.objects.length; i++) {
+        this.objects[i].update();
+    }
 };
 
 // Return true if we, or any of our points/paths, 

@@ -17,9 +17,9 @@ Point.load.factory[PowerPoint.TYPE] = PowerPoint;
 PowerPoint.prototype.draw = function(tier) {
     if (!(this.power)) {
         var game = tier.game;
-        var gp = tier.translateInternalPointToGamePoint(
+        var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
-        this.power = new Power(game, gp.x, gp.y,
+        this.power = new Power(game, ap.x, ap.y,
             this.powerType);
         var rotation = this.rotation;
         if (rotation == undefined) {
@@ -29,7 +29,7 @@ PowerPoint.prototype.draw = function(tier) {
             rotation *= Math.PI;
         }
         this.power.setRotation(rotation);
-        game.state.getCurrentState().z.mg.tier().add(this.power);
+        tier.image.addChild(this.power);
     }
     Point.prototype.draw.call(this, tier);
 };
@@ -44,6 +44,13 @@ PowerPoint.prototype.notifyAttached = function(avatar, prev) {
 PowerPoint.prototype.notifyDetached = function(avatar, next) {
     Point.prototype.notifyDetached.call(this, avatar, next);
     this.power.deselect();
+};
+
+// Called when the tier updates.
+PowerPoint.prototype.update = function() {
+    if (this.power) {
+        this.power.update();
+    }
 };
 
 

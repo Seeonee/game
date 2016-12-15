@@ -54,21 +54,23 @@ PortalPoint.prototype.draw = function(tier) {
         c2.beginPath();
         c2.arc(r, r, r / 2, 0, 2 * Math.PI, false);
         c2.stroke();
-        var gp = tier.translateInternalPointToGamePoint(
+        var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
-        this.image = this.game.add.image(gp.x, gp.y, this.b);
+        this.image = this.game.make.sprite(ap.x, ap.y, this.b);
+        this.tier.image.addChild(this.image);
         this.image.anchor.setTo(0.5, 0.5);
-        this.game.state.getCurrentState().z.level.tier().add(this.image);
         // Triangles center weirdly; shift to look better.
-        gp.y -= Math.sign(this.direction) * 2;
-        this.image2 = this.game.add.image(gp.x, gp.y, 'smoke');
+        ap.y -= Math.sign(this.direction) * 2;
+        this.image2 = this.game.make.sprite(ap.x, ap.y, 'smoke');
+        this.tier.image.addChild(this.image2);
         this.image2.anchor.setTo(0.5, 0.5);
         if (this.direction < 0) {
             this.image2.rotation = Math.PI;
         }
-        this.image2
-        this.game.state.getCurrentState().z.level.tier().add(this.image2);
         this.drawn = true;
+        var gp = tier.translateInternalPointToGamePoint(
+            this.x, this.y);
+        gp.y -= Math.sign(this.direction) * 2;
         this.emitters.push(this.createEmitter(tier, gp.x, gp.y));
     }
 };

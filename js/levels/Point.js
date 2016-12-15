@@ -104,6 +104,9 @@ Point.prototype.shift = function(tier, dx, dy) {
 // Primarily for subclasses to do cleanup.
 Point.prototype.delete = function() {};
 
+// Called when the tier updates.
+Point.prototype.update = function() {};
+
 // JSON conversion of a point.
 Point.prototype.toJSON = function() {
     return { x: this.x, y: this.y };
