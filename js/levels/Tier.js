@@ -93,7 +93,7 @@ Tier.prototype.addPointToPathAtCoords = function(path, x, y) {
     path.p2 = point;
     this.addPath(this.getNewPathName(), point, point2);
     return point;
-}
+};
 
 // Delete an existing point.
 // Return the deleted point, or undefined if it wasn't deleted.
@@ -110,7 +110,7 @@ Tier.prototype.deletePoint = function(point) {
         return point;
     }
     return undefined;
-}
+};
 
 // Delete an existing point, merging each of its
 // connected points to the others.
@@ -133,7 +133,7 @@ Tier.prototype.deletePointAndMerge = function(point) {
         return this.deletePoint(point);
     }
     return undefined;
-}
+};
 
 // Delete an existing path between two points.
 // Return the deleted path, or undefined if it wasn't deleted.
@@ -153,7 +153,7 @@ Tier.prototype.deletePath = function(path) {
         return path;
     }
     return undefined;
-}
+};
 
 // Takes x and y values relative to this Tier object's 
 // internal points, and returns an {x, y} object whose 
@@ -161,8 +161,8 @@ Tier.prototype.deletePath = function(path) {
 // game.
 Tier.prototype.translateInternalPointToGamePoint = function(x, y) {
     return {
-        x: x + this.x - this.widthOver2,
-        y: y + this.y - this.heightOver2
+        x: x + this.x,
+        y: y + this.y
     };
 };
 
@@ -172,8 +172,8 @@ Tier.prototype.translateInternalPointToGamePoint = function(x, y) {
 // object's internal points.
 Tier.prototype.translateGamePointToInternalPoint = function(x, y) {
     return {
-        x: x - this.x + this.widthOver2,
-        y: y - this.y + this.heightOver2
+        x: x - this.x,
+        y: y - this.y
     };
 };
 
@@ -193,14 +193,16 @@ Tier.prototype.recalculateDimensions = function() {
     var dx = Math.min(0, x - Tier.PADDING);
     var dy = Math.min(0, y - Tier.PADDING);
     if (dx < 0 || dy < 0) {
-        for (var i = 0; i < this.points.length; i++) {
-            this.points[i].x -= dx;
-            this.points[i].y -= dy;
-        }
         this.x += dx;
         this.y += dy;
         this.width -= dx;
         this.height -= dy;
+        for (var i = 0; i < this.points.length; i++) {
+            this.points[i].shift(this, -dx, -dy);
+        }
+        for (var i = 0; i < this.paths.length; i++) {
+            this.paths[i].shift(this, -dx, -dy);
+        }
     }
     this.width += Tier.PADDING;
     this.height += Tier.PADDING;
@@ -226,14 +228,15 @@ Tier.prototype.recreateImageAsNeeded = function() {
     } else {
         this.bitmap = this.game.add.bitmapData(
             this.width, this.height);
-        this.image = this.game.add.image(this.x, this.y,
+        this.image = this.game.add.image(
+            this.x + this.widthOver2, this.y + this.heightOver2,
             this.bitmap);
         this.image.anchor.setTo(0.5, 0.5);
         this.game.state.getCurrentState().z.level.tier().add(
             this.image);
         this.updateWorldBounds();
     }
-}
+};
 
 // Draw all paths onto the bitmap.
 Tier.prototype.updateWorldBounds = function() {

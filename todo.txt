@@ -1,3 +1,5 @@
+Adding point at SE (one tick) isn't rendering
+When image shifts up or left, portal point erase becomes off-center
 Add title menu
 Choose cohesive tier color palettes
 Change tier backgrounds to colors based on palettes

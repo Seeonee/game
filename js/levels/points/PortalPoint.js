@@ -24,6 +24,7 @@ PortalPoint.PARTICLE_FREQUENCY = 200; // ms
 
 // During our first draw, we create the emitters.
 PortalPoint.prototype.draw = function(tier) {
+    this.renderNeeded = false;
     this.game = tier.game;
     var c = tier.bitmap.context;
     var r = PortalPoint.RADIUS;

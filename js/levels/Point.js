@@ -37,7 +37,7 @@ Point.prototype.isBroken = function() {
         }
     }
     return true;
-}
+};
 
 // Called during the draw walk by our Paths object.
 // This gives us a chance to render ourself to the bitmap.
@@ -50,7 +50,7 @@ Point.prototype.draw = function(tier) {
     tier.bitmap.context.arc(this.x, this.y,
         Math.floor(Tier.PATH_WIDTH / 2), 0, 2 * Math.PI, false);
     tier.bitmap.context.fill();
-}
+};
 
 // Figure out which path is the best option 
 // for a particular input angle.
@@ -93,6 +93,12 @@ Point.prototype.notifyAttached = function(avatar, prev) {
 // Called upon avatar detachment.
 // Also takes the path the avatar is leaving us for.
 Point.prototype.notifyDetached = function(avatar, next) {};
+
+// Shift our (x, y) coordinates.
+Point.prototype.shift = function(tier, dx, dy) {
+    this.x += dx;
+    this.y += dy;
+};
 
 // Called when we're being deleted.
 // Primarily for subclasses to do cleanup.

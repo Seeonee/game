@@ -43,8 +43,7 @@ PlayLevelState.prototype.create = function() {
         this.game.height - (2 * PlayLevelState.DEADZONE_EDGE_Y));
 };
 
-
-// Create a player sprite.
+// Render loop.
 PlayLevelState.prototype.render = function() {
     if (PlayLevelState.FPS_DISPLAY) {
         this.game.debug.text(this.game.time.fps,
@@ -54,13 +53,13 @@ PlayLevelState.prototype.render = function() {
     this.menuhandler.render();
 };
 
-// Create a player sprite.
+// Update loop.
 PlayLevelState.prototype.update = function() {
     this.level.update();
     this.menuhandler.update();
 };
 
-// Create a player sprite.
+// Update loop while paused.
 PlayLevelState.prototype.pauseUpdate = function() {
     this.menuhandler.pauseUpdate();
 };

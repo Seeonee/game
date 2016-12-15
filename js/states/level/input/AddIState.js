@@ -286,7 +286,6 @@ AddFromPointIState.prototype.update = function() {
                     this.point, existing);
                 this.avatar.point = existing;
             } else {
-
                 var point = this.tier.addPoint(
                     this.tier.getNewPointName(),
                     ip.x, ip.y, this.point);

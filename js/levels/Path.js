@@ -120,6 +120,9 @@ Path.prototype.notifyAttached = function(avatar, prev) {
 // Also takes the point the avatar is leaving us for.
 Path.prototype.notifyDetached = function(avatar, next) {};
 
+// Shift our (x, y) coordinates.
+Path.prototype.shift = function(tier, dx, dy) {};
+
 // Called when we're being deleted.
 // Primarily for subclasses to do cleanup.
 Path.prototype.delete = function() {};
