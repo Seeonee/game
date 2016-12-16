@@ -13,16 +13,13 @@ StepUpIState.prototype.constructor = StepUpIState;
 // Handle an update.
 StepUpIState.prototype.update = function() {
     this.gpad.consumeButtonEvent();
-    var tier = this.level.advanceTierUp();
-    if (tier) {
-        var point = tier.points[0];
-        var gp = tier.translateInternalPointToGamePoint(
-            point.x, point.y);
-        this.avatar.tier = tier;
-        this.avatar.point = point;
-        this.avatar.x = gp.x;
-        this.avatar.y = gp.y;
+    var direction = 1;
+    var pointName = 'p0';
+    if (this.avatar.point instanceof PortalPoint) {
+        pointName = this.avatar.point.to;
+        direction = this.avatar.point.direction;
     }
+    this.level.advanceTierUp(pointName, direction);
     this.activate(DefaultLevelIState.NAME);
 };
 
@@ -41,15 +38,12 @@ StepDownIState.prototype.constructor = StepDownIState;
 // Handle an update.
 StepDownIState.prototype.update = function() {
     this.gpad.consumeButtonEvent();
-    var tier = this.level.advanceTierDown();
-    if (tier) {
-        var point = tier.points[0];
-        var gp = tier.translateInternalPointToGamePoint(
-            point.x, point.y);
-        this.avatar.tier = tier;
-        this.avatar.point = point;
-        this.avatar.x = gp.x;
-        this.avatar.y = gp.y;
+    var direction = -1;
+    var pointName = 'p0';
+    if (this.avatar.point instanceof PortalPoint) {
+        pointName = this.avatar.point.to;
+        direction = this.avatar.point.direction;
     }
+    this.level.advanceTierUp(pointName, direction);
     this.activate(DefaultLevelIState.NAME);
 };

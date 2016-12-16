@@ -1,9 +1,10 @@
 // A point that allows transitioning to other tiers.
-var PortalPoint = function(name, x, y, direction) {
+var PortalPoint = function(name, x, y, direction, to) {
     Point.call(this, name, x, y);
     this.direction = direction;
     this.emitters = [];
     this.z = Point.Z + 1;
+    this.to = to;
 };
 
 PortalPoint.TYPE = 'portal';
@@ -22,19 +23,6 @@ PortalPoint.PARTICLE_ALPHA_TIME = 1000; // ms
 PortalPoint.PARTICLE_LIFETIME = 1000; // ms
 PortalPoint.PARTICLE_FREQUENCY = 200; // ms
 
-PortalPoint.FLASH_DIMENSION = 32;
-PortalPoint.FLASH_DELAY = 0; // ms
-PortalPoint.FLASH_COLOR = '#ffffff';
-PortalPoint.Y_SCALE = 30;
-PortalPoint.X_SCALE1 = 8;
-PortalPoint.X_SCALE2 = 0.1;
-PortalPoint.FLASH_IN = 50; // ms
-PortalPoint.FLASH_HOLD = 100; // ms
-PortalPoint.FLASH_OUT = 150; // ms
-PortalPoint.FLASH_TOTAL = PortalPoint.FLASH_IN +
-    PortalPoint.FLASH_HOLD +
-    PortalPoint.FLASH_OUT;
-
 
 // During our first draw, we create the emitters.
 PortalPoint.prototype.draw = function(tier) {
@@ -42,15 +30,15 @@ PortalPoint.prototype.draw = function(tier) {
     this.tier = tier;
     this.game = tier.game;
     var c = tier.bitmap.context;
+    var r = PortalPoint.RADIUS;
     var x = this.x - r / 2;
     var y = this.y - r / 2;
-    var r = PortalPoint.RADIUS;
     Utils.clearArc(c, this.x, this.y, r / 2);
     if (!this.drawn) {
         this.b = this.game.add.bitmapData(2 * r, 2 * r);
         var c2 = this.b.context;
         c2.strokeStyle = c.strokeStyle;
-        c2.lineWidth = c.lineWidth;
+        c2.lineWidth = Tier.PATH_WIDTH;
         c2.beginPath();
         c2.arc(r, r, r / 2, 0, 2 * Math.PI, false);
         c2.stroke();
@@ -124,59 +112,6 @@ PortalPoint.prototype.setEmitting = function(emit) {
 PortalPoint.prototype.notifyAttached = function(avatar, prev) {
     Point.prototype.notifyAttached.call(this, avatar, prev);
     this.setEmitting(true);
-    this.flash();
-};
-
-// Horizontal flash on the portal position.
-PortalPoint.prototype.flash = function() {
-    var gp = this.tier.translateInternalPointToGamePoint(
-        this.x, this.y);
-    this._flash(this.game, gp.x, gp.y);
-};
-
-// Horizontal flash on the portal position.
-PortalPoint.prototype._flash = function(game, x, y) {
-    var delay = PortalPoint.FLASH_DELAY;
-    var d = PortalPoint.FLASH_DIMENSION;
-    var b = game.add.bitmapData(d, d);
-    var c = b.context;
-    c.fillStyle = PortalPoint.FLASH_COLOR;
-    c.beginPath();
-    c.fillRect(0, 0, d, d);
-    var img = game.add.image(x, y, b);
-    img.anchor.setTo(0.5, 0.5);
-    game.state.getCurrentState().z.fg.add(img);
-    img.scale.setTo(PortalPoint.X_SCALE1, PortalPoint.Y_SCALE);
-    img.alpha = 0;
-
-    var t = game.add.tween(img);
-    t.to({ alpha: 1 }, PortalPoint.FLASH_IN,
-        Phaser.Easing.Cubic.Out, true, delay);
-    var t2 = game.add.tween(img);
-    t2.to({ alpha: 0 }, PortalPoint.FLASH_OUT,
-        Phaser.Easing.Quadratic.Out, false,
-        PortalPoint.FLASH_HOLD);
-    t.chain(t2);
-    var t3 = game.add.tween(img.scale);
-    t3.img = img;
-    t3.to({ x: PortalPoint.X_SCALE2 },
-        PortalPoint.FLASH_TOTAL,
-        Phaser.Easing.Cubic.Out, true, delay);
-    t3.onComplete.add(function(a, tween) {
-        tween.img.destroy();
-    });
-
-    // var t4 = game.add.tween(this.tier.image);
-    // t4.to({ y: this.tier.image.y + 15 },
-    //     250, Phaser.Easing.Sinusoidal.InOut, true);
-    // var t41 = game.add.tween(this.tier.image);
-    // t41.to({ y: this.tier.image.y - 500 },
-    //     250, Phaser.Easing.Sinusoidal.In, false);
-    // t4.chain(t41);
-    // var g = game.state.getCurrentState().z.level.tier();
-    // var t5 = game.add.tween(g);
-    // t5.to({ alpha: 0 },
-    //     300, Phaser.Easing.Cubic.Out, true, 200);
 };
 
 // Lights out for the portal.
@@ -198,10 +133,11 @@ PortalPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
     result.type = PortalPoint.TYPE;
     result.direction = this.direction;
+    result.to = this.to;
     return result;
 };
 
 // Load a JSON representation of a portal.
 PortalPoint.load = function(game, name, json) {
-    return new PortalPoint(name, json.x, json.y, json.direction);
+    return new PortalPoint(name, json.x, json.y, json.direction, json.to);
 };

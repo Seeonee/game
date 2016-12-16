@@ -58,52 +58,109 @@ Level.prototype.createZGroup = function(parentGroup) {
 };
 
 // Slide up one layer among our tiers.
+// Latches on to a specified point name.
 // Optionally allows you to specify how many 
 // layers to slide upwards.
-Level.prototype.advanceTierUp = function(howMany) {
+Level.prototype.advanceTierUp = function(pointName, howMany) {
     howMany = (howMany == undefined) ? 1 : howMany;
     var name = 't' + (parseInt(this.tier.name.substring(1)) + howMany);
-    return this.advanceToTier(name);
+    return this.advanceToTier(name, pointName);
 };
 
 // Slide down one layer among our tiers.
+// Latches on to a specified point name.
 // Optionally allows you to specify how many 
 // layers to slide downwards.
-Level.prototype.advanceTierDown = function(howMany) {
+Level.prototype.advanceTierDown = function(pointName, howMany) {
     howMany = (howMany == undefined) ? 1 : howMany;
     var name = 't' + (parseInt(this.tier.name.substring(1)) - howMany);
-    return this.advanceToTier(name);
+    return this.advanceToTier(name, pointName);
 };
 
 // Advance to a named tier, if it exists.
+// Latches on to a specified point name.
 // Returns the tier if found, or undefined if not.
-Level.prototype.advanceToTier = function(name) {
+Level.prototype.advanceToTier = function(name, pointName) {
     var tier = this.tierMap[name];
     if (tier) {
-        this.setTier(tier);
+        this.setTier(tier, pointName);
     }
     return tier;
 };
 
 // Set the currently active tier, and hide previous tiers.
-Level.prototype.setTier = function(tier) {
+// Latches on to a specified point name.
+Level.prototype.setTier = function(tier, pointName) {
     if (this.tier === tier) {
         return;
     }
+    var old = this.tier;
     this.tier = tier;
+    if (old && this.tier) {
+        var increasing = parseInt(old.name.substring(1)) <
+            parseInt(this.tier.name.substring(1));
+    } else {
+        increasing = false;
+    }
+    var keys = Object.keys(this.z);
     for (var i = 0; i < this.tiers.length; i++) {
         var t2 = this.tiers[i];
         var visible = t2 === tier;
-        var keys = Object.keys(this.z);
-        for (var j = 0; j < keys.length; j++) {
-            var key = keys[j];
-            this.z[key].setVisibleFor(t2, visible);
+        if (visible) {
+            this.fade(t2, true, increasing);
+        }
+        if (t2 === old) {
+            this.fade(t2, false, !increasing);
+        } else {
+            for (var j = 0; j < keys.length; j++) {
+                var key = keys[j];
+                this.z[key].setVisibleFor(t2, visible);
+            }
         }
     }
     this.tier.updateWorldBounds();
     if (this.avatar) {
         this.avatar.setColor(this.tier.palette.c1);
+        var point = this.tier.pointMap[pointName];
+        point = point ? point : tier.points[0];
+        var gp = this.tier.translateInternalPointToGamePoint(
+            point.x, point.y);
+        this.avatar.tier = this.tier;
+        this.avatar.point = point;
+        var dx = this.avatar.x - this.game.camera.x;
+        var dy = this.avatar.y - this.game.camera.y;
+        this.avatar.x = gp.x;
+        this.avatar.y = gp.y;
+        this.game.camera.x = gp.x - dx;
+        this.game.camera.y = gp.y - dy;
+        this.avatar.updateAttachment();
+        this.flash(increasing);
     }
+};
+
+// Transition a tier via fade + scaling.
+Level.prototype.fade = function(tier, fadeIn, increasing) {
+    tier.render();
+    tier.image.alpha = fadeIn ? 0 : 1;
+    var t = this.game.add.tween(tier.image);
+    t.to({ alpha: fadeIn ? 1 : 0 }, 300,
+        Phaser.Easing.Cubic.Out, true);
+    // If we're going up, the old tier's going to shrink,
+    // so the new tier needs to start huge and shrink down 
+    // to normal as well.
+    var scale = increasing ? 3 : 0.3;
+    tier.image.scale.setTo(fadeIn ? scale : 1);
+    var t = this.game.add.tween(tier.image.scale);
+    t.to({ x: fadeIn ? 1 : scale, y: fadeIn ? 1 : scale },
+        300, Phaser.Easing.Quartic.Out, true);
+};
+
+// Some sparkles for your level transition, sir.
+Level.prototype.flash = function(increasing) {
+    new HFlash(this.game, this.z.fg,
+        this.avatar.x, this.avatar.y).flash();
+    new PortalFlash(this.game, this.z.fg,
+        this.avatar.x, this.avatar.y, increasing).flash();
 };
 
 // Update our current tier.

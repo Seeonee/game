@@ -19,16 +19,16 @@ IHandler.DEFAULT_STATE_NAME = 'default';
 // our state to affect how we'll process future 
 // input.
 IHandler.prototype.update = function() {
-    if (!this.enabled) {
-        return;
-    }
-    if (this.state) {
-        this.state.update();
-    } else {
-        if (this.states[IHandler.DEFAULT_STATE_NAME]) {
+    var handled = false;
+    if (this.enabled) {
+        if (this.state) {
+            handled = this.state.update();
+        } else if (this.states[IHandler.DEFAULT_STATE_NAME]) {
             this.activate(IHandler.DEFAULT_STATE_NAME);
+            handled = this.state.update();
         }
     }
+    return handled;
 };
 
 // Like update(), but while paused.
@@ -97,6 +97,11 @@ IState.prototype.render = function() {};
 // state in our handler.
 IState.prototype.activate = function(name) {
     this.handler.activate(name);
+};
+
+// Check if we're active.
+IState.prototype.isActive = function() {
+    return this.handler.state === this;
 };
 
 // Called when we become the active state.

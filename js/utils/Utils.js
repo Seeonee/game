@@ -50,3 +50,27 @@ Utils.clearArc = function(context, x, y, r) {
     context.fill();
     context.globalCompositeOperation = 'source-over';
 };
+
+// Simple factory for instantiating new sprite-based objects.
+// Main goal is that it will return a new sprite if 
+// necessary, otherwise it'll revive an earlier one.
+// Either way, its reset method is then called.
+var SpriteFactory = function(game, ctor) {
+    this.game = game;
+    this.ctor = ctor;
+    this.all = this.game.add.group();
+};
+
+// Instantiate a new sprite.
+// If a dead sprite is found, it's revived.
+// All arguments are passed to both the sprite 
+// constructor, as well as its reset() method.
+SpriteFactory.prototype.make = function() {
+    var args = Array.prototype.slice.call(arguments, 1);
+    var sprite = this.all.getFirstDead();
+    if (!sprite) {
+        sprite = Utils.construct(this.ctor, args);
+    }
+    sprite.reset(args)
+    return sprite;
+};
