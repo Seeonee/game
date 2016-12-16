@@ -14,10 +14,28 @@ var PortalFlash = function(game) {
     Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
-    this.triangle = this.game.make.sprite(0, 0, 'smoke');
+
+
+    var w = r * 0.6;
+    var h = w * 0.87;
+    bitmap = this.game.add.bitmapData(w, h);
+    c = bitmap.context;
+    c.strokeStyle = PortalFlash.COLOR;
+    c.fillStyle = PortalFlash.COLOR;
+    c.lineWidth = 1.5;
+    c.lineWidth *= PortalFlash.SCALE;
+    c.beginPath();
+    var xs = [0, w / 2, w];
+    var ys = [h, 0, h];
+    c.moveTo(xs[0], ys[0]);
+    c.lineTo(xs[1], ys[1]);
+    c.lineTo(xs[2], ys[2]);
+    c.lineTo(xs[0], ys[0]);
+    c.closePath();
+    c.fill();
+    this.triangle = this.game.make.sprite(0, 0, bitmap);
     this.addChild(this.triangle);
-    this.triangle.anchor.setTo(0.5, 0.6);
-    this.triangle.scale.setTo(PortalFlash.SCALE);
+    this.triangle.anchor.setTo(0.5, 0.65);
     // this.events.onRevived.add(function(portalFlash) {});
 };
 
@@ -28,7 +46,7 @@ PortalFlash.prototype.constructor = PortalFlash;
 PortalFlash.RADIUS = PortalPoint.RADIUS;
 PortalFlash.SCALE = 5;
 PortalFlash.COLOR = '#ffffff';
-PortalFlash.DURATION = 500; // ms
+PortalFlash.DURATION = 5000; // ms
 PortalFlash.ROTATION = 2.1 * Math.PI;
 
 
@@ -44,9 +62,9 @@ PortalFlash.prototype.flash = function(zgroup, x, y, pointedUp) {
     this.visible = true;
     this.scale.setTo(1 / PortalFlash.SCALE);
     this.rotation = 0;
-    var t = this.game.add.tween(this);
-    t.to({ rotation: 2.1 * Math.PI },
-        PortalFlash.DURATION, Phaser.Easing.Quadratic.Out, true);
+    // var t = this.game.add.tween(this);
+    // t.to({ rotation: 2.1 * Math.PI },
+    //     PortalFlash.DURATION, Phaser.Easing.Quadratic.Out, true);
     var t2 = this.game.add.tween(this);
     t2.to({ alpha: 1 },
         PortalFlash.DURATION / 2, Phaser.Easing.Quadratic.Out,
