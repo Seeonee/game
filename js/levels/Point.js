@@ -6,6 +6,9 @@ var Point = function(name, x, y) {
     this.paths = [];
     this.z = Point.Z;
     this.renderNeeded = true;
+    // The name of the default istate for handling 
+    // input while we're attached.
+    this.istateName = undefined;
 };
 
 // Constants.
@@ -88,11 +91,22 @@ Point.prototype.getPath = function(angle) {
 // Also takes the previous path the avatar was attached to.
 Point.prototype.notifyAttached = function(avatar, prev) {
     console.log('attach ' + this.name);
+    if (this.istateName) {
+        var ihandler = game.state.getCurrentState().pointhandler;
+        ihandler.activate(this.istateName);
+    }
 };
 
 // Called upon avatar detachment.
 // Also takes the path the avatar is leaving us for.
-Point.prototype.notifyDetached = function(avatar, next) {};
+Point.prototype.notifyDetached = function(avatar, next) {
+    if (this.istateName) {
+        var ihandler = game.state.getCurrentState().pointhandler;
+        if (ihandler.isActive(this.istateName)) {
+            ihandler.activate(); // Clear istate.
+        }
+    }
+};
 
 // Shift our (x, y) coordinates.
 Point.prototype.shift = function(tier, dx, dy) {

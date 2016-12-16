@@ -3,12 +3,13 @@ var ButtonMappings = function() {
     // Initialize with defaults.
     // Basic menu actions.
     this.PAUSE = Phaser.Gamepad.PS3XC_START;
-    this.SELECT = Phaser.Gamepad.PS3XC_STICK_LEFT_X;
+    this.SELECT = Phaser.Gamepad.PS3XC_X;
     this.CANCEL = Phaser.Gamepad.PS3XC_CIRCLE;
 
     // Player avatar controls during a level.
     this.MOVE_X = Phaser.Gamepad.PS3XC_STICK_LEFT_X;
     this.MOVE_Y = Phaser.Gamepad.PS3XC_STICK_LEFT_Y;
+    this.PORTAL = Phaser.Gamepad.PS3XC_X;
 
     // Level editor controls.
     this.EDIT_STEP_DOWN = Phaser.Gamepad.PS3XC_SQUARE;

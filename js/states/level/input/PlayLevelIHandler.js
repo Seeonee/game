@@ -6,6 +6,7 @@ var PlayLevelIHandler = function(game, gpad, level) {
     // Set up all of our available states;
     // creation automatically registers them.
     new DefaultLevelIState(this, this.level);
+    new PortalIState(this, this.level);
     new StepUpIState(this, this.level);
     new StepDownIState(this, this.level);
     new FloatIState(this, this.level);

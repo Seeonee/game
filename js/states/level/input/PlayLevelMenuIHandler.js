@@ -5,11 +5,11 @@
 var PlayLevelMenuIHandler = function(game, gpad, level, ihandler) {
     IHandler.call(this, game, gpad);
     this.level = level;
-    this.ihandler = ihandler;
+    this.wrap(ihandler);
 
     // Set up all of our available states;
     // creation automatically registers them.
-    new UnpausedIState(this, ihandler);
+    new UnpausedIState(this);
     new PausedIState(this, level);
 
     // Set our starting state.

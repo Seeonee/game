@@ -13,13 +13,7 @@ StepUpIState.prototype.constructor = StepUpIState;
 // Handle an update.
 StepUpIState.prototype.update = function() {
     this.gpad.consumeButtonEvent();
-    var direction = 1;
-    var pointName = 'p0';
-    if (this.avatar.point instanceof PortalPoint) {
-        pointName = this.avatar.point.to;
-        direction = this.avatar.point.direction;
-    }
-    this.level.advanceTierUp(pointName, direction);
+    this.level.advanceTierUp('p0');
     this.activate(DefaultLevelIState.NAME);
 };
 
@@ -38,12 +32,6 @@ StepDownIState.prototype.constructor = StepDownIState;
 // Handle an update.
 StepDownIState.prototype.update = function() {
     this.gpad.consumeButtonEvent();
-    var direction = -1;
-    var pointName = 'p0';
-    if (this.avatar.point instanceof PortalPoint) {
-        pointName = this.avatar.point.to;
-        direction = this.avatar.point.direction;
-    }
-    this.level.advanceTierUp(pointName, direction);
+    this.level.advanceTierDown('p0');
     this.activate(DefaultLevelIState.NAME);
 };

@@ -1,7 +1,6 @@
 // Pause the game.
-var UnpausedIState = function(handler, ihandler) {
+var UnpausedIState = function(handler) {
     IState.call(this, UnpausedIState.NAME, handler);
-    this.ihandler = ihandler; // Wrapped handler.
 };
 
 UnpausedIState.NAME = 'unpaused';
@@ -13,11 +12,11 @@ UnpausedIState.prototype.update = function() {
     if (this.gpad.justReleased(this.buttonMap.PAUSE)) {
         this.activate(PausedIState.NAME);
     } else {
-        this.ihandler.update();
+        return false;
     }
 };
 
 // Handle a render.
 UnpausedIState.prototype.render = function() {
-    this.ihandler.render();
+    return false;
 };

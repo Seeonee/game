@@ -5,6 +5,7 @@ var PortalPoint = function(name, x, y, direction, to) {
     this.emitters = [];
     this.z = Point.Z + 1;
     this.to = to;
+    this.istateName = PortalIState.NAME;
 };
 
 PortalPoint.TYPE = 'portal';
