@@ -7,6 +7,8 @@ var Level = function(game, name) {
     this.tiers = [];
     this.tierMap = {};
     this.start = undefined; // Name.
+    this.hfPool = new SpritePool(this.game, HFlash);
+    this.pfPool = new SpritePool(this.game, PortalFlash);
 
     // We're responsible for setting up our 
     // parent state's group hierarchy for 
@@ -107,10 +109,14 @@ Level.prototype.setTier = function(tier, pointName) {
         var t2 = this.tiers[i];
         var visible = t2 === tier;
         if (visible) {
+            // New tier gets faded in.
             this.fade(t2, true, increasing);
         }
         if (t2 === old) {
+            // Old tier gets faded out.
             this.fade(t2, false, !increasing);
+            // TODO: Still need to set everything else in its
+            // group to be invisible.
         } else {
             for (var j = 0; j < keys.length; j++) {
                 var key = keys[j];
@@ -120,20 +126,7 @@ Level.prototype.setTier = function(tier, pointName) {
     }
     this.tier.updateWorldBounds();
     if (this.avatar) {
-        this.avatar.setColor(this.tier.palette.c1);
-        var point = this.tier.pointMap[pointName];
-        point = point ? point : tier.points[0];
-        var gp = this.tier.translateInternalPointToGamePoint(
-            point.x, point.y);
-        this.avatar.tier = this.tier;
-        this.avatar.point = point;
-        var dx = this.avatar.x - this.game.camera.x;
-        var dy = this.avatar.y - this.game.camera.y;
-        this.avatar.x = gp.x;
-        this.avatar.y = gp.y;
-        this.game.camera.x = gp.x - dx;
-        this.game.camera.y = gp.y - dy;
-        this.avatar.updateAttachment();
+        this.updateAvatarForNewTier(pointName);
         this.flash(increasing);
     }
 };
@@ -156,11 +149,30 @@ Level.prototype.fade = function(tier, fadeIn, increasing) {
 };
 
 // Some sparkles for your level transition, sir.
+Level.prototype.updateAvatarForNewTier = function(pointName) {
+    this.avatar.setColor(this.tier.palette.c1);
+    var point = this.tier.pointMap[pointName];
+    point = point ? point : tier.points[0];
+    var gp = this.tier.translateInternalPointToGamePoint(
+        point.x, point.y);
+    this.avatar.tier = this.tier;
+    this.avatar.point = point;
+    // Keep the relative camera/avatar positioning.
+    var dx = this.avatar.x - this.game.camera.x;
+    var dy = this.avatar.y - this.game.camera.y;
+    this.avatar.x = gp.x;
+    this.avatar.y = gp.y;
+    this.game.camera.x = gp.x - dx;
+    this.game.camera.y = gp.y - dy;
+    this.avatar.updateAttachment();
+};
+
+// Some sparkles for your level transition, sir.
 Level.prototype.flash = function(increasing) {
-    new HFlash(this.game, this.z.fg,
-        this.avatar.x, this.avatar.y).flash();
-    new PortalFlash(this.game, this.z.fg,
-        this.avatar.x, this.avatar.y, increasing).flash();
+    this.hfPool.make(this.game).flash(this.z.fg,
+        this.avatar.x, this.avatar.y);
+    this.pfPool.make(this.game).flash(this.z.fg,
+        this.avatar.x, this.avatar.y, increasing);
 };
 
 // Update our current tier.

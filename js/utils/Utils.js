@@ -55,22 +55,35 @@ Utils.clearArc = function(context, x, y, r) {
 // Main goal is that it will return a new sprite if 
 // necessary, otherwise it'll revive an earlier one.
 // Either way, its reset method is then called.
-var SpriteFactory = function(game, ctor) {
+var SpritePool = function(game, ctor) {
     this.game = game;
     this.ctor = ctor;
-    this.all = this.game.add.group();
+    this.all = [];
 };
 
 // Instantiate a new sprite.
 // If a dead sprite is found, it's revived.
-// All arguments are passed to both the sprite 
-// constructor, as well as its reset() method.
-SpriteFactory.prototype.make = function() {
-    var args = Array.prototype.slice.call(arguments, 1);
-    var sprite = this.all.getFirstDead();
+SpritePool.prototype.make = function() {
+    var sprite = this.getFirstDead();
     if (!sprite) {
-        sprite = Utils.construct(this.ctor, args);
+        var args = [this.ctor].concat(
+            Array.prototype.slice.call(arguments, 0));
+        sprite = Utils.construct.apply(null, args);
+        this.all.push(sprite);
+    } else {
+        sprite.revive();
     }
-    sprite.reset(args)
     return sprite;
 };
+
+// Find a currently destroyed sprite.
+SpritePool.prototype.getFirstDead = function() {
+    var i = 0;
+    while (i < this.all.length) {
+        if (!this.all[i].alive) {
+            return this.all[i];
+        }
+        i += 1;
+    }
+    return null;
+}

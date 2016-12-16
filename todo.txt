@@ -3,9 +3,8 @@ Choose cohesive tier color palettes
 Change tier backgrounds to colors based on palettes
 Learn how to insta-move avatar but keep relative camera lock
 Make sure point emitters turn off while tier is inactive
+Make sure the tier that fades out still gets all its groups' visibilities disabled
 Make notifier broadcasts to all tier items when tier becomes in/active
-Make PortalPoint gfx
 Make PortalPoint IState for handling button press while colocated
 Make framework for points/paths to provide custom "overlay" IStates easily
-Make level swap fx
 Disable input during level swap transition
