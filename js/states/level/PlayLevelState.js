@@ -29,6 +29,7 @@ PlayLevelState.prototype.preload = function() {
 PlayLevelState.prototype.create = function() {
     this.level = Level.load(this.game, this.levelName);
     new Avatar(this.game, new AvatarGraphicsKey(this.game), this.level);
+    new TierMeter(this.game, this.level);
 
     this.ihandler = new PlayLevelIHandler(
         this.game, this.gpad, this.level);

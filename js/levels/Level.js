@@ -9,6 +9,9 @@ var Level = function(game, name) {
     this.start = undefined; // Name.
     this.hfPool = new SpritePool(this.game, HFlash);
     this.pfPool = new SpritePool(this.game, PortalFlash);
+    this.events = {
+        onTierChange: new Phaser.Signal()
+    }
 
     // We're responsible for setting up our 
     // parent state's group hierarchy for 
@@ -97,6 +100,7 @@ Level.prototype.setTier = function(tier, pointName) {
         this.flash(increasing);
     }
     this.game.stage.backgroundColor = this.tier.palette.c3.i;
+    this.events.onTierChange.dispatch(this.tier, old);
 };
 
 // Transition a tier via fade + scaling.
