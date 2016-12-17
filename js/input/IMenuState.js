@@ -56,11 +56,15 @@ IMenuState.LEVEL_TRANSITION_TIME = 300; // ms
 
 // *************************
 // Menu item, with possible nested subitems.
-// Each action will be passed its option when called.
-var IMenuOption = function(text, action, cancel) {
+// Each action will be passed its option when called,
+// as well as any bonus arguments.
+// If an option is set as a cancel option, it'll be 
+// the option called if the cancel button is pressed.
+var IMenuOption = function(text, cancel, action, args) {
     this.text = text;
-    this.action = action;
     this.cancel = cancel;
+    this.action = action;
+    this.args = args;
     this.cancelOption = undefined;
     this.parent = undefined;
     this.options = [];
@@ -71,9 +75,25 @@ var IMenuOption = function(text, action, cancel) {
 };
 
 // Menu item, with possible nested subitems.
+// Each action will be passed its option when called,
+// as well as any bonus arguments.
+IMenuOption.prototype.add = function(text, action, args) {
+    return this._add(text, false, action, args);
+};
+
+// Menu item, with possible nested subitems.
+// This item will also be the one called if the cancel 
+// button is pressed.
+// Each action will be passed its option when called,
+// as well as any bonus arguments.
+IMenuOption.prototype.addCancel = function(text, action, args) {
+    return this._add(text, true, action, args);
+};
+
+// Menu item, with possible nested subitems.
 // Each action will be passed its option when called.
-IMenuOption.prototype.add = function(text, action, cancel) {
-    var option = new IMenuOption(text, action, cancel);
+IMenuOption.prototype._add = function(text, cancel, action, args) {
+    var option = new IMenuOption(text, cancel, action, args);
     option.parent = this;
     option.index = this.length;
     this.options.push(option);
@@ -98,15 +118,30 @@ IMenuOption.prototype.cleanUp = function() {
 // *************************
 
 
-// Defines an action.
+// Defines a menu option that'll invoke an associated action.
 // Returns it, so that subactions can be added to it 
-// via .addSubOption().
-// If cancel is true, this will also be set as the overall 
-// cancel action for this menu or submenu.
-// Each action will be passed its option when called.
-IMenuState.prototype.add = function(text, action, cancel) {
-    return this.root.add(text, action, cancel);
-}
+// via .add() or .addCancel().
+// Each action will be passed its option when called,
+// as well as any bonus arguments.
+IMenuState.prototype.add = function(text, action, args) {
+    return this._add(text, false, action, args);
+};
+
+// Defines a menu option that'll invoke an associated action.
+// This option will also be the one called if the cancel 
+// button is pressed.
+// Returns it, so that subactions can be added to it 
+// via .add() or .addCancel().
+// Each action will be passed its option when called,
+// as well as any bonus arguments.
+IMenuState.prototype.addCancel = function(text, action, args) {
+    return this._add(text, true, action, args);
+};
+
+// Defines a menu option that'll invoke an associated action.
+IMenuState.prototype._add = function(text, cancel, action, args) {
+    return this.root._add(text, cancel, action, args);
+};
 
 // Called when the game is first paused.
 IMenuState.prototype.activated = function(prev) {

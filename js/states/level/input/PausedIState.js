@@ -6,14 +6,14 @@ var PausedIState = function(handler, level) {
     this.blurBackground = true;
 
     this.root.text = level.name;
-    this.add('continue', this.selectContinue, true);
+    this.addCancel('continue', this.selectContinue);
     var settings = this.add('settings');
     var hud = settings.add('show HUD');
     hud.add('sometimes', this.showHUD);
     hud.add('always', this.showHUD);
     hud.add('never', this.showHUD);
-    hud.add('back', null, true);
-    settings.add('back', null, true);
+    hud.addCancel('back');
+    settings.addCancel('back');
     this.add('restart', this.selectRestart);
     this.add('exit', this.selectExit);
 };

@@ -17,7 +17,8 @@ var TitleMenuIState = function(handler, color) {
         var name = this.levelNames[i];
         selectLevel.add(name, this.selectLevel);
     }
-    this.add('exit', this.selectExit, true);
+    selectLevel.addCancel('back');
+    this.addCancel('exit', this.selectExit);
 };
 
 TitleMenuIState.NAME = 'menu';
