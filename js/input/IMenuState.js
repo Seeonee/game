@@ -1,7 +1,7 @@
 // A reusable, customizable menu.
 var IMenuState = function(name, handler, context) {
     IState.call(this, name, handler);
-    this.root = new IMenuOption(name);
+    this.root = new IMenuOption(this, name);
     this.current = undefined;
     this.tilts = [
         { angle: 0, action: this.setSelectedToPrevious },
@@ -60,11 +60,12 @@ IMenuState.LEVEL_TRANSITION_TIME = 300; // ms
 // as well as any bonus arguments.
 // If an option is set as a cancel option, it'll be 
 // the option called if the cancel button is pressed.
-var IMenuOption = function(text, cancel, action, args) {
+var IMenuOption = function(menu, text, cancel, action, args) {
+    this.menu = menu;
     this.text = text;
     this.cancel = cancel;
     this.action = action;
-    this.args = args;
+    this.args = args ? args : [];
     this.cancelOption = undefined;
     this.parent = undefined;
     this.options = [];
@@ -93,7 +94,7 @@ IMenuOption.prototype.addCancel = function(text, action, args) {
 // Menu item, with possible nested subitems.
 // Each action will be passed its option when called.
 IMenuOption.prototype._add = function(text, cancel, action, args) {
-    var option = new IMenuOption(text, cancel, action, args);
+    var option = new IMenuOption(this.menu, text, cancel, action, args);
     option.parent = this;
     option.index = this.length;
     this.options.push(option);
@@ -102,6 +103,12 @@ IMenuOption.prototype._add = function(text, cancel, action, args) {
         this.cancelOption = option;
     }
     return option;
+};
+
+// Fire our action.
+IMenuOption.prototype.activate = function(context) {
+    var args = [this].concat(this.args);
+    this.action.apply(context, args);
 };
 
 // Cleans up the item's display state each time 
@@ -124,7 +131,7 @@ IMenuOption.prototype.cleanUp = function() {
 // Each action will be passed its option when called,
 // as well as any bonus arguments.
 IMenuState.prototype.add = function(text, action, args) {
-    return this._add(text, false, action, args);
+    return this.root.add(text, action, args);
 };
 
 // Defines a menu option that'll invoke an associated action.
@@ -135,12 +142,7 @@ IMenuState.prototype.add = function(text, action, args) {
 // Each action will be passed its option when called,
 // as well as any bonus arguments.
 IMenuState.prototype.addCancel = function(text, action, args) {
-    return this._add(text, true, action, args);
-};
-
-// Defines a menu option that'll invoke an associated action.
-IMenuState.prototype._add = function(text, cancel, action, args) {
-    return this.root._add(text, cancel, action, args);
+    return this.root.addCancel(text, action, args);
 };
 
 // Called when the game is first paused.
@@ -572,9 +574,9 @@ IMenuState.prototype.retreatOutOfSelection = function() {
 // If the user's defined cancel behavior, 
 // invoke it.
 IMenuState.prototype.selectCancel = function() {
-    if (this.current.cancelOption && this.current.cancelOption.action) {
-        this.current.cancelOption.action.call(
-            this.context, this.current.cancelOption);
+    var cancel = this.current.cancelOption;
+    if (cancel && cancel.action) {
+        cancel.activate(this.context);
     } else if (this.current.parent) {
         this.gpad.consumeButtonEvent();
         this.retreatOutOfSelection();
@@ -584,9 +586,9 @@ IMenuState.prototype.selectCancel = function() {
 // If the user's defined top-level cancel behavior, 
 // invoke it.
 IMenuState.prototype.selectClose = function() {
-    if (this.root.cancelOption && this.root.cancelOption.action) {
-        this.root.cancelOption.action.call(
-            this.context, this.root.cancelOption);
+    var close = this.root.cancelOption;
+    if (close && close.action) {
+        close.activate(this.context);
     }
 };
 
@@ -597,7 +599,7 @@ IMenuState.prototype.selectCurrent = function(joystick) {
         this.gpad.consumeButtonEvent();
         this.advanceIntoSelection();
     } else if (option.action) {
-        option.action.call(this.context, option);
+        option.activate(this.context);
     } else if (option.cancel && option.parent) {
         this.gpad.consumeButtonEvent();
         this.retreatOutOfSelection();

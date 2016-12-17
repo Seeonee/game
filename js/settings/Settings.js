@@ -26,3 +26,23 @@ Settings.load = function(json) {
     settings.colors = Colors.load(json.colors);
     return settings;
 };
+
+
+// Root object for all our settings menu stuff.
+Settings.Menu = {};
+
+// Fill in a settings submenu within a root 
+// settings menu option.
+Settings.Menu.populateSubmenu = function(settings) {
+    var hud = settings.add('show HUD');
+    hud.add('sometimes', Settings.Menu.showHUD, Settings.HUD_SOMETIMES);
+    hud.add('always', Settings.Menu.showHUD, Settings.HUD_ALWAYS);
+    hud.add('never', Settings.Menu.showHUD, Settings.HUD_NEVER);
+    hud.addCancel('back');
+    settings.addCancel('back');
+};
+
+// Called when the user changes the show HUD option.
+Settings.Menu.showHUD = function(option, hud) {
+    console.log(hud);
+};

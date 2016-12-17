@@ -7,13 +7,7 @@ var PausedIState = function(handler, level) {
 
     this.root.text = level.name;
     this.addCancel('continue', this.selectContinue);
-    var settings = this.add('settings');
-    var hud = settings.add('show HUD');
-    hud.add('sometimes', this.showHUD);
-    hud.add('always', this.showHUD);
-    hud.add('never', this.showHUD);
-    hud.addCancel('back');
-    settings.addCancel('back');
+    Settings.Menu.populateSubmenu(this.add('settings'));
     this.add('restart', this.selectRestart);
     this.add('exit', this.selectExit);
 };

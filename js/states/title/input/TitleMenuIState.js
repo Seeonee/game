@@ -15,7 +15,7 @@ var TitleMenuIState = function(handler, color) {
     var selectLevel = this.add('select level');
     for (var i = 0; i < this.levelNames.length; i++) {
         var name = this.levelNames[i];
-        selectLevel.add(name, this.selectLevel);
+        selectLevel.add(name, this.selectLevel, name);
     }
     selectLevel.addCancel('back');
     this.addCancel('exit', this.selectExit);
@@ -26,8 +26,7 @@ TitleMenuIState.prototype = Object.create(IMenuState.prototype);
 TitleMenuIState.prototype.constructor = TitleMenuIState;
 
 // Start up a selected level!
-TitleMenuIState.prototype.selectLevel = function(option) {
-    var name = option.text;
+TitleMenuIState.prototype.selectLevel = function(option, name) {
     this.game.state.getCurrentState().startLevel(name);
 };
 
