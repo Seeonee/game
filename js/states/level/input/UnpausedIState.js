@@ -9,7 +9,7 @@ UnpausedIState.prototype.constructor = UnpausedIState;
 
 // Handle an update.
 UnpausedIState.prototype.update = function() {
-    if (this.gpad.justReleased(this.buttonMap.PAUSE)) {
+    if (this.gpad.justReleased(this.buttonMap.START)) {
         this.activate(PausedIState.NAME);
     } else {
         return false;

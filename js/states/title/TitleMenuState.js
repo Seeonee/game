@@ -5,34 +5,34 @@ var TitleMenuState = function(game) {};
 
 // For now, just make a button which launches the level.
 TitleMenuState.prototype.create = function() {
-    var style = {
-        font: 'bold 32px Arial',
-        fill: '#FFFFFF',
-        boundsAlignH: 'center',
-        boundsAlignV: 'middle'
-    };
-    var text = this.game.add.text(0, 0, 'Press X to play', style);
-    text.setTextBounds(0, 100, this.game.width, 100);
-
+    this.game.stage.backgroundColor = this.game.settings.colors.BACKGROUND.i;
     this.game.input.gamepad.start();
     this.gpad = new GPad(this.game, this.game.input.gamepad.pad1);
+
+    this.z = new ZGroup(this.game, ['bg', 'mg', 'fg']);
+    this.z.createSubgroup('menu', false);
+
+    // TODO: Fade in stuff prior to popping up the menu?
+    // Have a "press start" to bring up initial menu?
+    this.menuhandler = new TitleMenuIHandler(
+        this.game, this.gpad);
 };
 
-// When clicked, start the level.
+// Update loop.
 TitleMenuState.prototype.update = function() {
-    var buttonMap = this.game.settings.buttonMap;
-    // if (this.gpad.justReleased(buttonMap.SELECT)) {
-    this.gpad.consumeButtonEvent();
-    this.startLevel();
-    // }
+    this.menuhandler.update();
+}
+
+// Render loop.
+TitleMenuState.prototype.render = function() {
+    this.menuhandler.render();
 }
 
 // When clicked, start the level.
-TitleMenuState.prototype.startLevel = function() {
+TitleMenuState.prototype.startLevel = function(levelName) {
     // TODO: May want to instead transition to a 
     // 'loading level' state which pulls in any 
     // unloaded resources, then goes to 'play level'.
-    var levelName = 'level4';
     this.game.state.start('PlayLevelState', true, false,
         levelName, this.gpad);
 };

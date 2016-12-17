@@ -2,7 +2,7 @@
 var ButtonMappings = function() {
     // Initialize with defaults.
     // Basic menu actions.
-    this.PAUSE = Phaser.Gamepad.PS3XC_START;
+    this.START = Phaser.Gamepad.PS3XC_START;
     this.SELECT = Phaser.Gamepad.PS3XC_X;
     this.CANCEL = Phaser.Gamepad.PS3XC_CIRCLE;
 

@@ -111,7 +111,6 @@ IMenuState.prototype.add = function(text, action, cancel) {
 // Called when the game is first paused.
 IMenuState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
-    this.game.paused = true;
     this.current = this.root;
     this.selectedIndex = 0;
 
@@ -612,16 +611,21 @@ IMenuState.prototype.updateSelector = function() {
     var closeExists = this.root.cancelOption != undefined;
     var selectDown = this.gpad.justPressed(this.buttonMap.SELECT);
     var cancelDown = this.gpad.justPressed(this.buttonMap.CANCEL);
-    var closeDown = this.gpad.justPressed(this.buttonMap.PAUSE);
+    var closeDown = this.gpad.justPressed(this.buttonMap.START);
     var selectUp = this.gpad.justReleased(this.buttonMap.SELECT);
     var cancelUp = this.gpad.justReleased(this.buttonMap.CANCEL);
-    var closeUp = this.gpad.justReleased(this.buttonMap.PAUSE);
+    var closeUp = this.gpad.justReleased(this.buttonMap.START);
     if (selectDown || (cancelDown && cancelExists) ||
         (closeDown && closeExists)) {
         this.activateSelector();
     } else if (selectUp || cancelUp || closeUp) {
         this.deactivateSelector();
     }
+};
+
+// Close the menu and clean up. Just an alias for cleanUp().
+IMenuState.prototype.close = function() {
+    this.cleanUp();
 };
 
 // Close the menu and clean up.
@@ -684,7 +688,7 @@ IMenuState.prototype.update = function() {
     }
     var joystick = this.gpad.getAngleAndTilt();
     this.updateFromJoystick(joystick);
-    if (this.gpad.justReleased(this.buttonMap.PAUSE)) {
+    if (this.gpad.justReleased(this.buttonMap.START)) {
         this.selectClose();
     } else if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
         this.selectCancel();

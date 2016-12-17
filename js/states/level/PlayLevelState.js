@@ -37,7 +37,9 @@ PlayLevelState.prototype.create = function() {
     this.menuhandler = new PlayLevelMenuIHandler(
         this.game, this.gpad, this.level, this.pointhandler);
 
-    this.game.time.advancedTiming = true; // For FPS tracking.
+    if (PlayLevelState.FPS_DISPLAY) {
+        this.game.time.advancedTiming = true; // For FPS tracking.
+    }
     this.game.camera.follow(this.level.avatar);
     this.game.camera.deadzone = new Phaser.Rectangle(
         PlayLevelState.DEADZONE_EDGE_X, PlayLevelState.DEADZONE_EDGE_Y,

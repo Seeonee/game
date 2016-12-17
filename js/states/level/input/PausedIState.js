@@ -47,6 +47,6 @@ PausedIState.prototype.selectExit = function(option) {
 
 // Unpause the game.
 PausedIState.prototype.unpause = function() {
-    IMenuState.prototype.cleanUp.call(this);
+    this.close();
     this.game.paused = false;
 };
