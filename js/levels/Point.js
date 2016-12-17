@@ -87,6 +87,11 @@ Point.prototype.getPath = function(angle) {
     return closest.path;
 };
 
+// Should the avatar "stick" briefly when passing this point?
+Point.prototype.shouldHold = function() {
+    return this.istateName;
+};
+
 // Called upon avatar attachment.
 // Also takes the previous path the avatar was attached to.
 Point.prototype.notifyAttached = function(avatar, prev) {

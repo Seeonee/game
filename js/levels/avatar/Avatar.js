@@ -34,7 +34,10 @@ Avatar.POINT_SNAP_RADIUS = 3;
 Avatar.MIN_VELOCITY = 0.1;
 Avatar.TILT_TOTAL_ANGLE = Math.PI / 2;
 Avatar.TILT_FULLSPEED_ANGLE = Avatar.TILT_TOTAL_ANGLE * 0.75;
-Avatar.TILT_PARTIAL_ANGLE = Avatar.TILT_TOTAL_ANGLE - Avatar.TILT_FULLSPEED_ANGLE;
+Avatar.TILT_PARTIAL_ANGLE =
+    Avatar.TILT_TOTAL_ANGLE -
+    Avatar.TILT_FULLSPEED_ANGLE;
+Avatar.HOLD_TIME = 250; // ms
 
 // Figure out where we're starting.
 Avatar.prototype.snapToStartingPoint = function() {
@@ -49,7 +52,28 @@ Avatar.prototype.snapToStartingPoint = function() {
 
 // Move at a given angle and ratio of speed (0 to 1).
 Avatar.prototype.move = function(angle, ratio) {
-    // Make sure there's enough tilt to justify movement.
+    var hold = false;
+    if (this.holdTime) {
+        if (this.game.time.now < this.holdTime) {
+            hold = true;
+        } else {
+            this.holdTime = undefined;
+        }
+    }
+    if (hold) {
+        this.x = this.destination.x;
+        this.y = this.destination.y;
+    } else {
+        ratio = this.adjustRatio(ratio);
+        this.updateDestination(angle, ratio);
+        this.headTowardsDestination(ratio, angle);
+    }
+    this.graphics.move(this);
+    this.updateAttachment();
+};
+
+// Make sure there's enough tilt to justify movement.
+Avatar.prototype.adjustRatio = function(ratio) {
     var threshold = Avatar.TILT_THRESHOLD;
     if (this.point) {
         threshold *= Avatar.POINT_TILT_THRESHOLD_MODIFIER;
@@ -59,11 +83,14 @@ Avatar.prototype.move = function(angle, ratio) {
     } else if (ratio < 1) {
         ratio = (ratio - threshold) * (1 / (1 - threshold));
     }
+    return ratio;
+};
 
-    // Figure out where we are, and where we're headed.
+// Figure out where we are, and where we're headed.
+Avatar.prototype.updateDestination = function(angle, ratio) {
     var ip = this.tier.translateGamePointToInternalPoint(this.x, this.y);
     this.destination = undefined;
-    fakeAngle = undefined;
+    this.fakeAngle = undefined;
     if (ratio > 0) {
         if (this.point) {
             var path = this.point.getPath(angle);
@@ -107,7 +134,7 @@ Avatar.prototype.move = function(angle, ratio) {
             var target = this.path.getPoint(angle, ip.x, ip.y);
             if (target) {
                 this.destination = target.point;
-                fakeAngle = target.fakeAngle;
+                this.fakeAngle = target.fakeAngle;
             }
         }
     } else if (this.point) {
@@ -118,11 +145,12 @@ Avatar.prototype.move = function(angle, ratio) {
         this.x = gp.x;
         this.y = gp.y;
     }
+};
 
-    // Recompute our relative internal point, in case it's changed.
+// Head towards our destination point, 
+// if we have one.
+Avatar.prototype.headTowardsDestination = function(ratio, angle) {
     var ip = this.tier.translateGamePointToInternalPoint(this.x, this.y);
-
-    // Start going there.
     if (this.destination) {
         var a2 = Utils.angleBetweenPoints(
             ip.x, ip.y, this.destination.x, this.destination.y);
@@ -138,10 +166,13 @@ Avatar.prototype.move = function(angle, ratio) {
             this.y = gp.y;
             this.point = this.destination;
             this.path = undefined;
+            if (this.destination.shouldHold()) {
+                this.holdTime = this.game.time.now + Avatar.HOLD_TIME;
+            }
         } else {
             // If we're not lined up well with our target angle,
             // reduce tilt accordingly.
-            var a4 = (fakeAngle) ? fakeAngle : a2;
+            var a4 = (this.fakeAngle) ? this.fakeAngle : a2;
             var a3 = Utils.getBoundedAngleDifference(angle, a4) -
                 Avatar.TILT_FULLSPEED_ANGLE;
             if (a3 > 0) {
@@ -154,8 +185,6 @@ Avatar.prototype.move = function(angle, ratio) {
         this.body.velocity.x = 0;
         this.body.velocity.y = 0;
     }
-    this.graphics.move(this);
-    this.updateAttachment();
 };
 
 // Eliminate microscopic velocities.
