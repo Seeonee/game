@@ -3,7 +3,7 @@
 var PlayLevelState = function(game) {};
 
 // A few constants, for now at least.
-PlayLevelState.FPS_DISPLAY = true;
+PlayLevelState.FPS_DISPLAY = false;
 PlayLevelState.DEADZONE_EDGE_X = 200;
 PlayLevelState.DEADZONE_EDGE_Y = 200;
 

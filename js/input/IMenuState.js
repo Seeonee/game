@@ -10,7 +10,6 @@ var IMenuState = function(name, handler, context) {
         { angle: 3 * Math.PI / 2, action: this.retreatOutOfSelection }
     ];
     this.z = this.game.state.getCurrentState().z;
-    this.zAll = this.game.state.getCurrentState().zAll;
     this.tweens = [];
     this.texts = [];
     this.created = false;
@@ -206,7 +205,7 @@ IMenuState.prototype.drawChromeBitmap = function() {
 IMenuState.prototype.createSpacer = function() {
     var bitmap = this.game.add.bitmapData(this.width, this.height);
     var spacer = this.game.add.image(this.x, this.y, bitmap);
-    this.zAll.add(spacer);
+    this.z.add(spacer);
     return spacer;
 };
 
@@ -378,7 +377,7 @@ IMenuState.prototype.show = function() {
     this.positionTextFor(this.root);
 
     if (this.blurBackground) {
-        this.zAll.filters = [this.myFilter];
+        this.z.filters = [this.myFilter];
         this.tweens.push(this.createFilterTween(this.myFilter));
     }
 
@@ -641,7 +640,7 @@ IMenuState.prototype.cleanUp = function() {
             Phaser.Easing.Cubic.Out, true);
         tween.onComplete.add(function(filter, tween) {
             tween.scope.spacer.destroy();
-            tween.scope.game.state.getCurrentState().zAll.filters = null;
+            tween.scope.game.state.getCurrentState().z.filters = null;
         });
     }
 };

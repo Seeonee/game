@@ -17,46 +17,15 @@ var Level = function(game, name) {
     // as well as one layer for each tier.
     // Tier-specific layers are only visible 
     // while a tier is currently active.
-    this.zAll = this.game.add.group();
-    this.z = {
-        bg: this.createZGroup(this.zAll), // Background.
-        level: this.createZGroup(this.zAll),
-        mg: this.createZGroup(this.zAll), // Midground?
-        player: this.createZGroup(this.zAll),
-        fg: this.createZGroup(this.zAll), // Foreground!
-        menu: this.createZGroup()
-    };
+    this.z = new ZGroup(this, [
+        'bg',
+        'level',
+        'mg',
+        'player',
+        'fg',
+    ]);
+    this.z.createSubgroup('menu', false);
     game.state.getCurrentState().z = this.z;
-    game.state.getCurrentState().zAll = this.zAll;
-};
-
-// Create a group for z-order rendering.
-// It also contains a tier() method which 
-// will return (and if necessary instantiate)
-// a subgroup for the currently selected tier.
-Level.prototype.createZGroup = function(parentGroup) {
-    var group = this.game.add.group(parentGroup);
-    group.level = this;
-    group.tierSubs = {};
-    group.tier = function() {
-        var sub = this;
-        if (this.level.tier) {
-            var t = this.level.tier.name;
-            sub = this.tierSubs[t];
-            if (!sub) {
-                sub = this.game.add.group(this);
-                this.tierSubs[t] = sub;
-            }
-        }
-        return sub;
-    };
-    group.setVisibleFor = function(tier, visible) {
-        var sub = this.tierSubs[tier.name];
-        if (sub) {
-            sub.visible = visible;
-        }
-    };
-    return group;
 };
 
 // Slide up one layer among our tiers.
@@ -104,7 +73,6 @@ Level.prototype.setTier = function(tier, pointName) {
     } else {
         increasing = false;
     }
-    var keys = Object.keys(this.z);
     for (var i = 0; i < this.tiers.length; i++) {
         var t2 = this.tiers[i];
         var visible = t2 === tier;
@@ -118,9 +86,8 @@ Level.prototype.setTier = function(tier, pointName) {
             // TODO: Still need to set everything else in its
             // group to be invisible.
         } else {
-            for (var j = 0; j < keys.length; j++) {
-                var key = keys[j];
-                this.z[key].setVisibleFor(t2, visible);
+            for (var j = 0; j < this.z.layers.length; j++) {
+                this.z.layers[j].setVisibleFor(t2, visible);
             }
         }
     }

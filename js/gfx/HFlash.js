@@ -41,6 +41,7 @@ HFlash.prototype.flash = function(zgroup, x, y, rotation) {
     zgroup.add(this);
     this.scale.setTo(HFlash.X_SCALE1, HFlash.Y_SCALE);
     this.alpha = 0;
+    this.visible = true;
 
     var t = this.game.add.tween(this);
     t.to({ alpha: 1 }, HFlash.FLASH_IN,
