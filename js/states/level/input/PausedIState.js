@@ -7,11 +7,14 @@ var PausedIState = function(handler, level) {
 
     this.root.text = level.name;
     this.add('continue', this.selectContinue, true);
-    var more = this.add('more');
-    var evenMore = more.add('even more');
-    more.add('restart', this.selectRestart);
-    more.add('back', null, true);
-    evenMore.add('back again', null, true);
+    var settings = this.add('settings');
+    var hud = settings.add('show HUD');
+    hud.add('sometimes', this.showHUD);
+    hud.add('always', this.showHUD);
+    hud.add('never', this.showHUD);
+    hud.add('back', null, true);
+    settings.add('back', null, true);
+    this.add('restart', this.selectRestart);
     this.add('exit', this.selectExit);
 };
 
@@ -24,6 +27,11 @@ PausedIState.prototype.activated = function(prev) {
     this.game.paused = true;
     this.color = this.level.tier.palette.c1;
     IMenuState.prototype.activated.call(this, prev);
+};
+
+// Update HUD.
+PausedIState.prototype.showHUD = function(option) {
+
 };
 
 // User opted to unpause.

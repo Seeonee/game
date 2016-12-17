@@ -5,9 +5,8 @@ var TierMeter = function(game, level) {
     this.lowest = parseInt(this.level.tiers[0].name.substring(1));
     this.numTiers = level.tiers.length;
     this.keys = {};
-    this.always = false;
+    this.hud = undefined;
     this.lit = false;
-    this.updateSettings(this.game.settings);
 
     var w = TierMeter.PATH_LX + TierMeter.XBAR;
     var dh = TierMeter.PATH_W + TierMeter.YPAD;
@@ -35,6 +34,7 @@ var TierMeter = function(game, level) {
     Phaser.Sprite.call(this, game, 0, 0, this.bitmap);
     level.z.fg.add(this);
     this.alpha = 0;
+    this.updateSettings(this.game.settings);
 
     this.fixedToCamera = true;
     this.cameraOffset.setTo(TierMeter.CAMERA_X, TierMeter.CAMERA_Y);
@@ -60,13 +60,15 @@ TierMeter.FADE_OUT_DELAY = 2000; // ms
 
 // Update anytime the settings change.
 TierMeter.prototype.updateSettings = function(settings) {
-    var old = this.always;
-    this.always = settings.hudAlways;
-    if (old == this.always) {
+    var old = this.hud;
+    this.hud = settings.hud;
+    if (old == this.hud) {
         return;
     }
-    if (this.always) {
+    if (this.hud == Settings.HUD_ALWAYS) {
         this.alpha = 1;
+    } else if (this.hud == Settings.HUD_NEVER) {
+        this.alpha = 0;
     } else {
         this.fade(this.lit);
     }
@@ -74,7 +76,7 @@ TierMeter.prototype.updateSettings = function(settings) {
 
 // Fade ourselves in or out.
 TierMeter.prototype.fade = function(fadeIn) {
-    if (this.always) {
+    if (this.hud != Settings.HUD_SOMETIMES) {
         return;
     }
     this.lit = fadeIn;
