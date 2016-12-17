@@ -95,7 +95,7 @@ Point.prototype.shouldHold = function() {
 // Called upon avatar attachment.
 // Also takes the previous path the avatar was attached to.
 Point.prototype.notifyAttached = function(avatar, prev) {
-    console.log('attach ' + this.name);
+    console.log('attach ' + this.name, this.x, this.y);
     if (this.istateName) {
         var ihandler = game.state.getCurrentState().pointhandler;
         ihandler.activate(this.istateName);

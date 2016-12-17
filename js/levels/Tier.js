@@ -2,6 +2,7 @@
 var Tier = function(game, name) {
     this.name = name;
     this.game = game;
+    this.level = undefined; // Set during load.
     this.x = 0;
     this.y = 0;
     this.renderNeeded = false;

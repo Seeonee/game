@@ -11,7 +11,7 @@ TitleMenuState.prototype.init = function(palette) {
 // For now, just make a button which launches the level.
 TitleMenuState.prototype.create = function() {
     if (!this.palette) {
-        var i = Math.floor(Math.random() * (7 + 1));
+        var i = Math.floor(Math.random() * (7 + 1)) % 7;
         this.palette = this.game.settings.colors['t' + i];
     }
     this.game.stage.backgroundColor = this.palette.c3.i;
@@ -32,6 +32,7 @@ TitleMenuState.prototype.create = function() {
 // Update loop.
 TitleMenuState.prototype.update = function() {
     if (Math.random() < 0.01) {
+        // TODO: Add a more uniform-rate spawner.
         this.tsPool.make(this.game).cascade(
             this.z.fg, this.palette.c1.i);
     }

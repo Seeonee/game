@@ -1,3 +1,9 @@
+add key/lock mechanics
+figure out what powers should do
+add options menu to both title and pause screens
+add ability for menu items to have things other than raw text
+add editor mode for defining point properties such as portals, powers, etc
+add intra-level warp nodes + gfx
 Make sure point emitters turn off while tier is inactive
 Make sure the tier that fades out still gets all its groups' visibilities disabled
 Make notifier broadcasts to all tier items when tier becomes in/active
