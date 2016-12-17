@@ -53,8 +53,8 @@ TierMeter.CAMERA_Y = 15;
 
 // Change the current tier.
 TierMeter.prototype.setTier = function(tier) {
-    var index = this.numTiers - this.lowest - 1 -
-        parseInt(tier.name.substring(1));
+    var index = (this.numTiers - 1) -
+        (parseInt(tier.name.substring(1)) - this.lowest);
 
     var x = TierMeter.PATH_LX;
     var dh = TierMeter.PATH_W + TierMeter.YPAD;
