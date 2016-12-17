@@ -58,7 +58,7 @@ var TierMeter = function(game, level) {
     level.z.fg.add(this);
 
     this.triangle = this.game.make.sprite(0, 0, 'smoke');
-    var scale = 0.5;
+    var scale = TierMeter.TRIANGLE_SCALE;
     this.triangle.anchor.setTo(0.5, TierMeter.TRIANGLE_OFFSET -
         TierMeter.R2 / (scale * this.triangle.height));
     this.anchor.setTo(0.5);
@@ -79,9 +79,9 @@ TierMeter.prototype = Object.create(Phaser.Sprite.prototype);
 TierMeter.prototype.constructor = TierMeter;
 
 // Constants.
-TierMeter.R1 = 25;
-TierMeter.R2 = 34;
-TierMeter.ANGLE = 2 * Math.PI / 10;
+TierMeter.R1 = 38;
+TierMeter.R2 = 50;
+TierMeter.ANGLE = 2 * Math.PI / 10.5;
 TierMeter.APAD = TierMeter.ANGLE / 5;
 TierMeter.APAD_L = TierMeter.R2 * Math.sin(TierMeter.APAD / 2);
 TierMeter.PAD = 0;
@@ -90,6 +90,7 @@ TierMeter.CAMERA_X = 15 + TierMeter.R2;
 TierMeter.CAMERA_Y = 15 + TierMeter.R2;
 TierMeter.FADE_TIME = 300; // ms
 TierMeter.FADE_OUT_DELAY = 2000; // ms
+TierMeter.TRIANGLE_SCALE = 0.65;
 TierMeter.TRIANGLE_OFFSET = 0.5;
 TierMeter.SPIN_TIME = 500; // ms
 
