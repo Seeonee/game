@@ -65,21 +65,24 @@ TierMeter.prototype.updateSettings = function(settings) {
     if (old == this.hud) {
         return;
     }
+    if (this.t && this.hud != Settings.HUD_SOMETIMES) {
+        this.t.stop();
+    }
     if (this.hud == Settings.HUD_ALWAYS) {
         this.alpha = 1;
     } else if (this.hud == Settings.HUD_NEVER) {
         this.alpha = 0;
     } else {
-        this.fade(this.lit);
+        this.alpha = this.lit ? 1 : 0;
     }
 };
 
 // Fade ourselves in or out.
 TierMeter.prototype.fade = function(fadeIn) {
+    this.lit = fadeIn;
     if (this.hud != Settings.HUD_SOMETIMES) {
         return;
     }
-    this.lit = fadeIn;
     var alpha = fadeIn ? 1 : 0;
     var delay = fadeIn ? 0 : TierMeter.FADE_OUT_DELAY;
     if (this.t) {
