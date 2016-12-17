@@ -17,7 +17,7 @@ var Avatar = function(game, graphics, level) {
     this.level.avatar = this;
     this.snapToStartingPoint();
     this.setColor(this.tier.palette);
-    new TierMeter(this.game, this.level);
+    this.tierMeter = new TierMeter(this.game, this.level);
 
     this.attached = undefined;
     this.events.onAttach = new Phaser.Signal();
@@ -39,6 +39,11 @@ Avatar.TILT_PARTIAL_ANGLE =
     Avatar.TILT_TOTAL_ANGLE -
     Avatar.TILT_FULLSPEED_ANGLE;
 Avatar.HOLD_TIME = 250; // ms
+
+// Update anytime the settings change.
+Avatar.prototype.updateSettings = function(settings) {
+    this.tierMeter.updateSettings(settings);
+};
 
 // Figure out where we're starting.
 Avatar.prototype.snapToStartingPoint = function() {

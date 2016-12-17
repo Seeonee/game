@@ -179,6 +179,7 @@ Level.load = function(game, name) {
         var key = keys[i];
         var tierObj = tiers[key];
         var tier = Tier.load(game, key, tierObj);
+        tier.level = this;
         level.tiers.push(tier);
         level.tierMap[key] = tier;
     }

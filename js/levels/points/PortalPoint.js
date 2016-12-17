@@ -112,12 +112,14 @@ PortalPoint.prototype.setEmitting = function(emit) {
 // Light up the portal.
 PortalPoint.prototype.notifyAttached = function(avatar, prev) {
     Point.prototype.notifyAttached.call(this, avatar, prev);
+    avatar.tierMeter.fade(true);
     this.setEmitting(true);
 };
 
 // Lights out for the portal.
 PortalPoint.prototype.notifyDetached = function(avatar, next) {
     Point.prototype.notifyDetached.call(this, avatar, next);
+    avatar.tierMeter.fade(false);
     this.setEmitting(false);
 };
 

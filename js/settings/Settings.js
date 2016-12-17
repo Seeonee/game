@@ -11,6 +11,7 @@ var Settings = function() {
     };
     // this.sounds = new Sounds();
     this.edit = false;
+    this.hudAlways = false;
 };
 
 // Restore a JSON'd Settings object.

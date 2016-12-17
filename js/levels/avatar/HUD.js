@@ -4,6 +4,10 @@ var TierMeter = function(game, level) {
     this.level = level;
     this.lowest = parseInt(this.level.tiers[0].name.substring(1));
     this.numTiers = level.tiers.length;
+    this.keys = {};
+    this.always = false;
+    this.lit = false;
+    this.updateSettings(this.game.settings);
 
     var w = TierMeter.PATH_LX + TierMeter.XBAR;
     var dh = TierMeter.PATH_W + TierMeter.YPAD;
@@ -30,6 +34,7 @@ var TierMeter = function(game, level) {
     }
     Phaser.Sprite.call(this, game, 0, 0, this.bitmap);
     level.z.fg.add(this);
+    this.alpha = 0;
 
     this.fixedToCamera = true;
     this.cameraOffset.setTo(TierMeter.CAMERA_X, TierMeter.CAMERA_Y);
@@ -43,13 +48,45 @@ TierMeter.prototype.constructor = TierMeter;
 
 // Constants.
 TierMeter.PATH_W = 5;
-TierMeter.PATH_LX = 10;
-TierMeter.PATH_LY = 10;
-TierMeter.XBAR = 13;
-TierMeter.YPAD = 3;
+TierMeter.PATH_LX = 2 * 10;
+TierMeter.PATH_LY = 2 * 10;
+TierMeter.XBAR = 2 * 13;
+TierMeter.YPAD = 2 * 3;
 TierMeter.CAMERA_X = 15;
 TierMeter.CAMERA_Y = 15;
+TierMeter.FADE_TIME = 300; // ms
+TierMeter.FADE_OUT_DELAY = 2000; // ms
 
+
+// Update anytime the settings change.
+TierMeter.prototype.updateSettings = function(settings) {
+    var old = this.always;
+    this.always = settings.hudAlways;
+    if (old == this.always) {
+        return;
+    }
+    if (this.always) {
+        this.alpha = 1;
+    } else {
+        this.fade(this.lit);
+    }
+};
+
+// Fade ourselves in or out.
+TierMeter.prototype.fade = function(fadeIn) {
+    if (this.always) {
+        return;
+    }
+    this.lit = fadeIn;
+    var alpha = fadeIn ? 1 : 0;
+    var delay = fadeIn ? 0 : TierMeter.FADE_OUT_DELAY;
+    if (this.t) {
+        this.t.stop();
+    }
+    this.t = this.game.add.tween(this);
+    this.t.to({ alpha: alpha }, TierMeter.FADE_TIME,
+        Phaser.Easing.Sinusoidal.InOut, true, delay);
+};
 
 // Change the current tier.
 TierMeter.prototype.setTier = function(tier) {
