@@ -17,7 +17,7 @@ var Level = function(game, name) {
     // as well as one layer for each tier.
     // Tier-specific layers are only visible 
     // while a tier is currently active.
-    this.z = new ZGroup(this, [
+    this.z = new LevelZGroup(this, [
         'bg',
         'level',
         'mg',
