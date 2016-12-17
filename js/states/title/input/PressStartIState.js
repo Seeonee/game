@@ -8,9 +8,9 @@ var PressStartIState = function(handler) {
         fill: this.game.settings.colors.WHITE.s
     };
     this.text = this.game.add.text(
-        this.game.camera.width / 2, this.game.camera.height / 2,
+        this.game.camera.width / 2, this.game.camera.height / 3,
         'press start', style);
-    this.text.anchor.setTo(0.5);
+    this.text.anchor.setTo(0.5, 0.5);
     this.text.alpha = 0;
 };
 

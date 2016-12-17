@@ -42,7 +42,8 @@ PausedIState.prototype.selectRestart = function(option) {
 // User opted to exit.
 PausedIState.prototype.selectExit = function(option) {
     this.unpause();
-    this.game.state.start('TitleMenuState');
+    var palette = this.level.tier.palette;
+    this.game.state.start('TitleMenuState', true, false, palette);
 };
 
 // Unpause the game.

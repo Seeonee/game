@@ -1,8 +1,9 @@
 // Title menu.
-var TitleMenuIState = function(handler) {
+var TitleMenuIState = function(handler, color) {
     IMenuState.call(this, TitleMenuIState.NAME, handler, this);
-    this.dropCloth = false;
-    this.blurBackground = false;
+    this.dropCloth = true;
+    this.blurBackground = true;
+    this.color = color;
     this.levelNames = [
         'level1',
         'level2',
