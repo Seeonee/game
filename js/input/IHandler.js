@@ -115,6 +115,36 @@ IHandler.prototype.isActive = function(name) {
     return this.state && this.state.name == name;
 };
 
+// Propagate any settings changes.
+IHandler.prototype.updateSettings = function(settings, recurse) {
+    recurse = recurse == undefined ? false : recurse;
+    var outermost = this;
+    if (!recurse) {
+        // Tell our outermost wrapper to start the 
+        // recursive updateSettings() chain.
+        while (outermost && outermost.wrapper) {
+            outermost = outermost.wrapper;
+        }
+    }
+    if (!recurse) {
+        // It's no longer our responsibility
+        // (unless we were the outermost).
+        outermost.updateSettings(settings, true);
+    } else {
+        // Handle it now, and tell all our states and 
+        // wrapped handlers to do the same.
+        this.buttonMap = settings.buttonMap;
+        var keys = Object.keys(this.states);
+        for (var i = 0; i < keys.length; i++) {
+            var istate = this.states[keys[i]];
+            istate.updateSettings(settings);
+        }
+        if (this.wrapped) {
+            this.wrapped.updateSettings(settings, true);
+        }
+    }
+};
+
 
 // An input handling state (base class).
 // Takes in a unique name and an IHandler.
@@ -178,3 +208,8 @@ IState.prototype.activated = function(prev) {};
 // If defined, next is the state that is 
 // becoming active.
 IState.prototype.deactivated = function(next) {};
+
+// Propagate any settings changes.
+IState.prototype.updateSettings = function(settings) {
+    this.buttonMap = settings.buttonMap;
+};
