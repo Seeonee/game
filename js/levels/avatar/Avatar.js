@@ -17,6 +17,7 @@ var Avatar = function(game, graphics, level) {
     this.level.avatar = this;
     this.snapToStartingPoint();
     this.setColor(this.tier.palette);
+    new TierMeter(this.game, this.level);
 
     this.attached = undefined;
     this.events.onAttach = new Phaser.Signal();

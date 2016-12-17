@@ -5,8 +5,29 @@ var TierMeter = function(game, level) {
     this.lowest = parseInt(this.level.tiers[0].name.substring(1));
     this.numTiers = level.tiers.length;
 
-    this.bitmap = this.game.add.bitmapData(TierMeter.W2,
-        TierMeter.H2 + (this.numTiers - 1) * TierMeter.H);
+    var w = TierMeter.PATH_LX + TierMeter.XBAR;
+    var dh = TierMeter.PATH_W + TierMeter.YPAD;
+    var h = TierMeter.PATH_LY + TierMeter.PATH_W +
+        (this.numTiers - 1) * dh;
+    this.bitmap = this.game.add.bitmapData(w, h);
+    var c = this.bitmap.context;
+    for (var i = 0; i < this.numTiers; i++) {
+        var t = this.level.tiers[this.numTiers - 1 - i];
+        var y = i * dh;
+        var xs = [0, TierMeter.PATH_LX, TierMeter.PATH_LX, 0];
+        var ys = [y + TierMeter.PATH_LY, y, y + TierMeter.PATH_W,
+            y + TierMeter.PATH_LY + TierMeter.PATH_W
+        ];
+        c.fillStyle = t.palette.c1.s;
+        c.beginPath();
+        c.moveTo(xs[0], ys[0]);
+        c.lineTo(xs[1], ys[1]);
+        c.lineTo(xs[2], ys[2]);
+        c.lineTo(xs[3], ys[3]);
+        c.lineTo(xs[0], ys[0]);
+        c.closePath();
+        c.fill();
+    }
     Phaser.Sprite.call(this, game, 0, 0, this.bitmap);
     level.z.fg.add(this);
 
@@ -21,12 +42,13 @@ TierMeter.prototype = Object.create(Phaser.Sprite.prototype);
 TierMeter.prototype.constructor = TierMeter;
 
 // Constants.
-TierMeter.W = 8;
-TierMeter.H = 8;
-TierMeter.W2 = 12;
-TierMeter.H2 = 8;
-TierMeter.CAMERA_X = 25;
-TierMeter.CAMERA_Y = 25;
+TierMeter.PATH_W = 5;
+TierMeter.PATH_LX = 10;
+TierMeter.PATH_LY = 10;
+TierMeter.XBAR = 13;
+TierMeter.YPAD = 3;
+TierMeter.CAMERA_X = 15;
+TierMeter.CAMERA_Y = 15;
 
 
 // Change the current tier.
@@ -34,19 +56,15 @@ TierMeter.prototype.setTier = function(tier) {
     var index = this.numTiers - this.lowest - 1 -
         parseInt(tier.name.substring(1));
 
-    var w = TierMeter.W;
-    var h = TierMeter.H;
-    var w2 = TierMeter.W2;
-    var h2 = TierMeter.H2;
-    var bw = this.bitmap.width;
-    var bh = this.bitmap.height;
+    var x = TierMeter.PATH_LX;
+    var dh = TierMeter.PATH_W + TierMeter.YPAD;
+    var y = index * dh;
+    var w = TierMeter.XBAR;
+    var h = TierMeter.PATH_W;
     var c = this.bitmap.context;
-    c.clearRect(0, 0, bw, bh);
+    c.clearRect(x, 0, w, this.bitmap.height);
     c.fillStyle = tier.palette.c1.s;
-    c.fillRect(0, 0, w, bh);
-    var y = index * h;
-    c.fillStyle = this.game.settings.colors.WHITE.s;
-    c.fillRect(0, y, w2, h2);
+    c.fillRect(x, y, w, h);
 
     this.bitmap.dirty = true;
 };
