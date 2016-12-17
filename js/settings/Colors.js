@@ -94,13 +94,54 @@ var Colors = function() {
     this.MENU_SELECTION = this.WHITE; // Default menu selector color.
 
     // Tier color palettes.
-    this.t0 = { c1: this.PURPLE, c2: purple2 }; // purple
-    this.t1 = { c1: this.INDIGO, c2: indigo2 }; // dark blue
-    this.t2 = { c1: this.BLUE, c2: blue2 }; // blue
-    this.t3 = { c1: this.GREEN, c2: green2 }; // green
-    this.t4 = { c1: this.YELLOW, c2: yellow2 }; // yellow
-    this.t5 = { c1: this.ORANGE, c2: orange2 }; // orange
-    this.t6 = { c1: this.RED, c2: red2 }; // red
+    this.t0 = {
+        c1: this.PURPLE,
+        c2: purple2
+    };
+    this.t1 = {
+        c1: this.INDIGO,
+        c2: indigo2
+    };
+    this.t2 = {
+        c1: this.BLUE,
+        c2: blue2
+    };
+    this.t3 = {
+        c1: this.GREEN,
+        c2: green2
+    };
+    this.t4 = {
+        c1: this.YELLOW,
+        c2: yellow2
+    };
+    this.t5 = {
+        c1: this.ORANGE,
+        c2: orange2
+    };
+    this.t6 = {
+        c1: this.RED,
+        c2: red2
+    };
+    for (var i = 0; i < 7; i++) {
+        var t = this['t' + i];
+        t.c3 = Colors.reduce(t.c1, Colors.BG_FACTOR);
+    }
+};
+
+// Even we have constants!
+Colors.BG_FACTOR = 0.15;
+
+// Restore a JSON'd Colors object.
+Colors.reduce = function(color, factor) {
+    if (color.primary) {
+        color = color.primary;
+    }
+    var r = Math.floor(color._r * factor);
+    var g = Math.floor(color._g * factor);
+    var b = Math.floor(color._b * factor);
+    var i = (r << 16) + (g << 8) + (b);
+    var s = ('000000' + i.toString(16)).slice(-6);
+    return new Color(s);
 };
 
 // Restore a JSON'd Colors object.

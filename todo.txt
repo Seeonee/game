@@ -1,5 +1,4 @@
 Add title menu
-Change tier backgrounds to colors based on palettes
 Make sure point emitters turn off while tier is inactive
 Make sure the tier that fades out still gets all its groups' visibilities disabled
 Make notifier broadcasts to all tier items when tier becomes in/active

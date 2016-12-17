@@ -129,6 +129,7 @@ Level.prototype.setTier = function(tier, pointName) {
         this.updateAvatarForNewTier(pointName);
         this.flash(increasing);
     }
+    this.game.stage.backgroundColor = this.tier.palette.c3.i;
 };
 
 // Transition a tier via fade + scaling.
