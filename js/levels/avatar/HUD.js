@@ -8,6 +8,8 @@ var TierMeter = function(game, level) {
     this.keys = {};
     this.hud = undefined;
     this.lit = false;
+    this.kbPool = new SpritePool(this.game, KeyBurst);
+    this.ckbPool = new SpritePool(this.game, CloudKeyBurst);
 
     var r1 = TierMeter.R1;
     var r2 = TierMeter.R2;
@@ -118,6 +120,8 @@ var TierMeter = function(game, level) {
     this.cloud = this.game.add.sprite(0, 0, bitmap);
     this.addChild(this.cloud);
     this.cloud.anchor.setTo(0.5, 4.7);
+    this.cloudx = -this.cloud.width * this.cloud.anchor.x;
+    this.cloudy = -this.cloud.height * this.cloud.anchor.y;
     this.fillUpCloud(0);
 
     // Finish our setup, fixing camera position and 
@@ -151,13 +155,14 @@ TierMeter.KEYPLATE_SCALE = 0.5;
 TierMeter.CLOUD_W = 6;
 TierMeter.CLOUD_PAD = 6;
 TierMeter.CLOUD_MAX = 3;
+TierMeter.BURST_Y = -13;
 TierMeter.FADE_TIME = 300; // ms
 TierMeter.FADE_OUT_DELAY = 2000; // ms
 TierMeter.TRIANGLE_TRAVEL_TIME = 500; // ms
 
 
 // Change the current tier.
-TierMeter.prototype.setTier = function(tier) {
+TierMeter.prototype.setTier = function(tier, old) {
     var actualIndex = parseInt(tier.name.substring(1));
     var index = actualIndex - this.lowest;
 
@@ -196,6 +201,16 @@ TierMeter.prototype.setTier = function(tier) {
         this.cloud.visible = true;
     } else {
         this.cloud.visible = false;
+    }
+    if (old) {
+        var oldIndex = parseInt(old.name.substring(1));
+        var up = oldIndex < actualIndex;
+        var tint = up ? tier.palette.c1.i : old.palette.c1.i;
+        var burst = up ? this.keys[tier.name] : this.keys[old.name];
+        if (burst) {
+            this.kbPool.make(this.game).burst(
+                0, TierMeter.BURST_Y, this, tint, !up);
+        }
     }
 };
 
@@ -252,6 +267,10 @@ TierMeter.prototype.fade = function(fadeIn) {
 
 // Add a key for the next tier up.
 TierMeter.prototype.addKey = function() {
+    if (this.hud == Settings.HUD_SOMETIMES && !this.list) {
+        this.alpha = 1;
+        this.fade(false);
+    }
     var currentIndex = parseInt(this.level.tier.name.substring(1));
     var actualIndex = 1 + currentIndex;
     if (actualIndex == this.numTiers) {
@@ -266,6 +285,13 @@ TierMeter.prototype.addKey = function() {
     this.keys[tier.name] = keys;
     var index = (this.numTiers - 1) - (actualIndex - this.lowest);
     this.fillUpCloud(keys);
+    var dy = TierMeter.CLOUD_W / 2;
+    var dx = dy + (keys - 1) *
+        (TierMeter.CLOUD_W + TierMeter.CLOUD_PAD);
+    this.ckbPool.make(this.game).burst(
+        this.cloudx + dx, this.cloudy + dy,
+        this, tier.palette.c1.i);
+
 };
 
 // Subtract a key for the current tier.

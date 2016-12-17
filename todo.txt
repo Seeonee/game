@@ -1,5 +1,7 @@
 add key/lock mechanics
 figure out what powers should do
+adding points deletes the portal point child sprites;
+    they probably get killed when the image is remade
 add settings submenu for key bindings
 add ability for menu items to have things other than raw text
 add editor mode for defining point properties such as portals, powers, etc
