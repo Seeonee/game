@@ -6,7 +6,9 @@
             "points": {
                 "p0": {
                     "x": 5,
-                    "y": 55
+                    "y": 55,
+                    "type": "power",
+                    "subtype": "axe"
                 },
                 "p1": {
                     "x": 205,
@@ -43,7 +45,9 @@
             "points": {
                 "p0": {
                     "x": 5,
-                    "y": 55
+                    "y": 55,
+                    "type": "power",
+                    "subtype": "might"
                 },
                 "p1": {
                     "x": 205,
@@ -83,7 +87,9 @@
             "points": {
                 "p0": {
                     "x": 5,
-                    "y": 55
+                    "y": 55,
+                    "type": "power",
+                    "subtype": "presence"
                 },
                 "p1": {
                     "x": 205,
@@ -123,7 +129,9 @@
             "points": {
                 "p0": {
                     "x": 5,
-                    "y": 55
+                    "y": 55,
+                    "type": "power",
+                    "subtype": "wit"
                 },
                 "p1": {
                     "x": 205,
@@ -163,7 +171,9 @@
             "points": {
                 "p0": {
                     "x": 5,
-                    "y": 55
+                    "y": 55,
+                    "type": "power",
+                    "subtype": "stealth"
                 },
                 "p1": {
                     "x": 205,
@@ -203,7 +213,9 @@
             "points": {
                 "p0": {
                     "x": 5,
-                    "y": 55
+                    "y": 55,
+                    "type": "power",
+                    "subtype": "shield"
                 },
                 "p1": {
                     "x": 205,
@@ -243,7 +255,9 @@
             "points": {
                 "p0": {
                     "x": 5,
-                    "y": 55
+                    "y": 55,
+                    "type": "power",
+                    "subtype": "hourglass"
                 },
                 "p1": {
                     "x": 205,
