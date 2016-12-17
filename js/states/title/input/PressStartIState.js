@@ -29,7 +29,7 @@ PressStartIState.prototype.activated = function(prev) {
     this.tween = this.game.add.tween(this.text);
     this.tween.to({ alpha: 1 }, PressStartIState.TEXT_FADE_TIME,
         Phaser.Easing.Sinusoidal.InOut, true,
-        PressStartIState.TEXT_DELAY);
+        PressStartIState.TEXT_DELAY, Number.POSITIVE_INFINITY, true);
     this.game.time.events.add(PressStartIState.BUTTON_LOCKOUT_TIME,
         function() {
             this.ready = true;

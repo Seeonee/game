@@ -29,6 +29,7 @@ TSquare.VARIANCE = 2000; // ms
 TSquare.YPAD_RATIO = 1.5;
 TSquare.XBOUNDS = 80;
 TSquare.MIN_SCALE = 0.1;
+TSquare.ROTATION = 0.6 * Math.PI; // 3 * Math.PI;
 
 
 // Horizontal flash at our position.
@@ -38,8 +39,8 @@ TSquare.prototype.cascade = function(zgroup, tint) {
     var dy = TSquare.D * scale * TSquare.YPAD_RATIO;
     this.y = this.y0 - dy;
     this.scale.setTo(scale);
-    this.rotation = Math.random() * 2 * Math.PI;
-    var dr = (Math.random() - 0.5) * 3 * Math.PI;
+    // this.rotation = Math.random() * 2 * Math.PI;
+    var dr = (Math.random() - 0.5) * TSquare.ROTATION;
     zgroup.add(this);
     this.tint = tint;
     this.visible = true;

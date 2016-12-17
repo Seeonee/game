@@ -8,7 +8,8 @@ var TitleMenuState = function(game) {};
 TitleMenuState.prototype.init = function(palette) {
     this.palette = palette;
 };
-// For now, just make a button which launches the level.
+
+// Create the title state.
 TitleMenuState.prototype.create = function() {
     if (!this.palette) {
         var i = Math.floor(Math.random() * (7 + 1)) % 7;
@@ -21,34 +22,56 @@ TitleMenuState.prototype.create = function() {
     this.z = new ZGroup(this.game, ['bg', 'mg', 'fg']);
     this.z.createSubgroup('menu', false);
 
-    // TODO: Fade in stuff prior to popping up the menu?
-    // Have a "press start" to bring up initial menu?
     this.menuhandler = new TitleMenuIHandler(
         this.game, this.gpad, this.palette.c1);
 
-    this.tsPool = new SpritePool(this.game, TSquare);
+    this.cascader = new Cascader(this.game,
+        this.z.fg, this.palette.c1.i);
 };
 
 // Update loop.
 TitleMenuState.prototype.update = function() {
-    if (Math.random() < 0.01) {
-        // TODO: Add a more uniform-rate spawner.
-        this.tsPool.make(this.game).cascade(
-            this.z.fg, this.palette.c1.i);
-    }
+    this.cascader.update();
     this.menuhandler.update();
-}
+};
 
 // Render loop.
 TitleMenuState.prototype.render = function() {
     this.menuhandler.render();
-}
+};
 
 // When clicked, start the level.
 TitleMenuState.prototype.startLevel = function(levelName) {
-    // TODO: May want to instead transition to a 
-    // 'loading level' state which pulls in any 
-    // unloaded resources, then goes to 'play level'.
     this.game.state.start('PlayLevelState', true, false,
         levelName, this.gpad);
+};
+
+
+// Sprite pool that automatically cascades squares 
+// down the screen.
+var Cascader = function(game, zgroup, color) {
+    SpritePool.call(this, game, TSquare);
+    this.zgroup = zgroup;
+    this.color = color;
+    this.time = 0;
+};
+
+Cascader.prototype = Object.create(SpritePool.prototype);
+Cascader.prototype.constructor = Cascader;
+
+// Even we get constants.
+Cascader.MIN_DELAY = 1000; // ms
+Cascader.VARIANCE = 100; // ms
+
+// Spawn squares as needed.
+Cascader.prototype.update = function() {
+    t = this.game.time.now;
+    if (t > this.time) {
+        this.make(this.game).cascade(
+            this.zgroup, this.color);
+        var chance = Math.random();
+        chance *= chance;
+        this.time = t + Cascader.MIN_DELAY +
+            chance * Cascader.VARIANCE;
+    }
 };
