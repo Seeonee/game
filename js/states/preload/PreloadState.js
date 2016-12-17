@@ -9,6 +9,7 @@ PreloadState.prototype.preload = function() {
     this.initializeLoadingBar();
 
     this.game.load.image('keyplate', 'assets/keyplate.png');
+    this.game.load.image('keyplate_outline', 'assets/keyplate_outline.png');
     this.game.load.image('keyhole_w', 'assets/keyhole_w.png');
     this.game.load.image('keyhole_c', 'assets/keyhole_c.png');
     this.game.load.image('smoke', 'assets/smoke.png');
