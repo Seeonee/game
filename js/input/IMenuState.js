@@ -73,6 +73,7 @@ var IMenuOption = function(menu, text, cancel, action, args) {
     this.index = 0;
     this.childIndex = 0;
     this.t = undefined;
+    this.events = {}; // Others can add these.
 };
 
 // Menu item, with possible nested subitems.

@@ -15,9 +15,9 @@ var Settings = function() {
 };
 
 // Even we have constants!
-Settings.HUD_SOMETIMES = 0;
-Settings.HUD_NEVER = 1;
-Settings.HUD_ALWAYS = 2;
+Settings.HUD_ALWAYS = 0;
+Settings.HUD_SOMETIMES = 1;
+Settings.HUD_NEVER = 2;
 
 // Restore a JSON'd Settings object.
 Settings.load = function(json) {
@@ -35,14 +35,33 @@ Settings.Menu = {};
 // settings menu option.
 Settings.Menu.populateSubmenu = function(settings) {
     var hud = settings.add('show HUD');
-    hud.add('sometimes', Settings.Menu.showHUD, Settings.HUD_SOMETIMES);
+    hud.selected = 0;
     hud.add('always', Settings.Menu.showHUD, Settings.HUD_ALWAYS);
+    hud.add('sometimes', Settings.Menu.showHUD, Settings.HUD_SOMETIMES);
     hud.add('never', Settings.Menu.showHUD, Settings.HUD_NEVER);
+    // This works because each HUD constant corresponds to its menu index.
+    var option = hud.options[settings.menu.game.settings.hud];
+    option.text = '✓ ' + option.text;
     hud.addCancel('back');
     settings.addCancel('back');
+    settings.events.onSettingsUpdate = new Phaser.Signal();
+    return settings;
 };
 
 // Called when the user changes the show HUD option.
-Settings.Menu.showHUD = function(option, hud) {
-    console.log(hud);
+Settings.Menu.showHUD = function(option, hudSetting) {
+    this.gpad.consumeButtonEvent();
+    var hud = option.parent;
+    if (hud.selected == option.index) {
+        return;
+    }
+    var old = hud.options[hud.selected];
+    hud.selected = option.index;
+    old.text = old.text.substring(2);
+    old.t.setText(old.text);
+    option.text = '✓ ' + option.text
+    option.t.setText(option.text);
+    this.game.settings.hud = hudSetting;
+    hud.parent.events.onSettingsUpdate.dispatch(
+        this.game.settings);
 };

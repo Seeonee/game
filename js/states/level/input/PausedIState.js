@@ -7,7 +7,8 @@ var PausedIState = function(handler, level) {
 
     this.root.text = level.name;
     this.addCancel('continue', this.selectContinue);
-    Settings.Menu.populateSubmenu(this.add('settings'));
+    var settings = Settings.Menu.populateSubmenu(this.add('settings'));
+    settings.events.onSettingsUpdate.add(this.updateSettings, this);
     this.add('restart', this.selectRestart);
     this.add('exit', this.selectExit);
 };
@@ -23,9 +24,9 @@ PausedIState.prototype.activated = function(prev) {
     IMenuState.prototype.activated.call(this, prev);
 };
 
-// Update HUD.
-PausedIState.prototype.showHUD = function(option) {
-
+// Propagate any settings changes.
+PausedIState.prototype.updateSettings = function(settings) {
+    this.level.updateSettings(settings);
 };
 
 // User opted to unpause.

@@ -147,6 +147,11 @@ Level.prototype.flash = function(increasing) {
         this.avatar.x, this.avatar.y, increasing);
 };
 
+// Propagate any settings changes.
+Level.prototype.updateSettings = function(settings) {
+    this.avatar.updateSettings(settings);
+};
+
 // Update our current tier.
 Level.prototype.update = function() {
     this.tier.update();
