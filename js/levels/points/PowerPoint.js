@@ -20,7 +20,7 @@ PowerPoint.prototype.draw = function(tier) {
         var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
         this.power = new Power(game, ap.x, ap.y,
-            this.powerType);
+            this.powerType, tier.palette);
         var rotation = this.rotation;
         if (rotation == undefined) {
             // TODO: Figure out if we overlap with a path.

@@ -1,10 +1,10 @@
 // Fancy class to represent a power-up icon.
-var Power = function(game, x, y, name, angle) {
+var Power = function(game, x, y, name, palette, angle) {
     Phaser.Sprite.call(this, game, x, y); // Superclass constructor.
 
     var colors = this.game.settings.colors;
-    this.diamondUnpowered = colors.RED.i;
-    this.diamondPowered = colors.RED.i;
+    this.diamondUnpowered = palette.c2.i;
+    this.diamondPowered = palette.c2.i;
     this.iconUnpowered = colors.WHITE.i;
     this.iconPowered = colors.WHITE.i;
 
