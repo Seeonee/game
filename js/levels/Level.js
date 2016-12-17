@@ -150,9 +150,9 @@ Level.prototype.fade = function(tier, fadeIn, increasing) {
 
 // Some sparkles for your level transition, sir.
 Level.prototype.updateAvatarForNewTier = function(pointName) {
-    this.avatar.setColor(this.tier.palette.c1);
+    this.avatar.setColor(this.tier.palette);
     var point = this.tier.pointMap[pointName];
-    point = point ? point : tier.points[0];
+    point = point ? point : this.tier.points[0];
     var gp = this.tier.translateInternalPointToGamePoint(
         point.x, point.y);
     this.avatar.tier = this.tier;

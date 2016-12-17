@@ -9,13 +9,14 @@ PreloadState.prototype.preload = function() {
     this.initializeLoadingBar();
 
     this.game.load.image('keyplate', 'assets/keyplate.png');
-    this.game.load.image('keyhole', 'assets/keyhole.png');
+    this.game.load.image('keyhole_w', 'assets/keyhole_w.png');
+    this.game.load.image('keyhole_c', 'assets/keyhole_c.png');
     this.game.load.image('smoke', 'assets/smoke.png');
 
-    this.game.load.image('herne', 'assets/mask_herne.png');
-    this.game.load.image('norwife', 'assets/mask_norwife.png');
-    this.game.load.image('ragna', 'assets/mask_ragna.png');
-    this.game.load.image('dunlevy', 'assets/mask_dunlevy.png');
+    // this.game.load.image('herne', 'assets/mask_herne.png');
+    // this.game.load.image('norwife', 'assets/mask_norwife.png');
+    // this.game.load.image('ragna', 'assets/mask_ragna.png');
+    // this.game.load.image('dunlevy', 'assets/mask_dunlevy.png');
 
     this.game.load.image('power_diamond', 'assets/powerdiamond.png');
     this.game.load.image('power_icon_crown', 'assets/power_crown.png');

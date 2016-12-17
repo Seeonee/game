@@ -64,32 +64,43 @@ Shades.load = function(json) {
 var Colors = function() {
     this.BACKGROUND = new Color('272822');
 
-    this.BLUE = new Color('2CABD9');
-    this.RED = new Color('D92C57');
     this.GREY = new Color('A4A4A4');
     this.WHITE = new Color('FFFFFF');
     this.BLACK = new Color('000000');
 
-    this.GREEN2 = new Shades(
-        ['7BEFAE', '4DE890', '26E278', '00DA5F', '00B04D']);
-    this.BLUE2 = new Shades(
+    this.PURPLE = new Shades(
+        ['BC7DEC', 'A452E3', '902DDC', '7D0CD4', '5E06A1']);
+    var purple2 = new Color('FF932B');
+    this.INDIGO = new Shades(
+        ['87A1ED', '5D7FE5', '3A63DE', '1747D5', '0C33A7']);
+    var indigo2 = purple2;
+    this.BLUE = new Shades(
         ['7ECAEB', '51B6E1', '2DA5D9', '0994D0', '046E9C']);
-    this.YELLOW2 = new Shades(
-        ['FFC483', 'FFAE54', 'FF9B2B', 'FF8700', 'F78200']);
-    this.RED2 = new Shades(
-        ['FF9D83', 'FF7854', 'FF572B', 'FF3500', 'F73300']);
+    var blue2 = new Color('ED206F');
+    this.GREEN = new Shades(
+        ['6EE9A0', '42E082', '1DD969', '00D355', '009E40']);
+    var green2 = blue2;
+    this.YELLOW = new Shades(
+        ['FFE597', 'FFDA6A', 'FFD246', 'FFC81F', 'DAA500']);
+    var yellow2 = blue2;
+    this.ORANGE = new Shades(
+        ['FFAA81', 'FF8A52', 'FF6E28', 'FF5300', 'F75000']);
+    var orange2 = new Color('04C7F5');
+    this.RED = new Shades(
+        ['FF8A81', 'FF6559', 'EA2F38', 'CB1D0F', 'A10D01']);
+    var red2 = orange2;
 
-    this.MENU_PRIMARY = this.RED; // Default menu chrome color.
+    this.MENU_PRIMARY = this.BLUE; // Default menu chrome color.
     this.MENU_SELECTION = this.WHITE; // Default menu selector color.
 
     // Tier color palettes.
-    this.t0 = { c1: this.BLUE };
-    this.t1 = { c1: this.GREEN2 };
-    this.t2 = { c1: this.RED2 };
-    this.t3 = { c1: this.YELLOW2 };
-    this.t4 = { c1: this.BLUE2.d };
-    this.t5 = { c1: this.GREEN2.d };
-    this.t6 = { c1: this.YELLOW2.d };
+    this.t0 = { c1: this.PURPLE, c2: purple2 }; // purple
+    this.t1 = { c1: this.INDIGO, c2: indigo2 }; // dark blue
+    this.t2 = { c1: this.BLUE, c2: blue2 }; // blue
+    this.t3 = { c1: this.GREEN, c2: green2 }; // green
+    this.t4 = { c1: this.YELLOW, c2: yellow2 }; // yellow
+    this.t5 = { c1: this.ORANGE, c2: orange2 }; // orange
+    this.t6 = { c1: this.RED, c2: red2 }; // red
 };
 
 // Restore a JSON'd Colors object.

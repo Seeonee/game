@@ -32,7 +32,7 @@ TitleMenuState.prototype.startLevel = function() {
     // TODO: May want to instead transition to a 
     // 'loading level' state which pulls in any 
     // unloaded resources, then goes to 'play level'.
-    var levelName = 'level1';
+    var levelName = 'level4';
     this.game.state.start('PlayLevelState', true, false,
         levelName, this.gpad);
 };

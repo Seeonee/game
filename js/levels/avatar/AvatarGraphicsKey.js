@@ -34,10 +34,12 @@ AvatarGraphicsKey.prototype.createGraphics = function(avatar) {
 };
 
 // Update our draw color.
-AvatarGraphicsKey.prototype.setColor = function(avatar, color) {
-    this.color = color;
-    avatar.keyplate.tint = this.color.i;
-    avatar.smokeEmitter.tint = this.color.i;
+AvatarGraphicsKey.prototype.setColor = function(avatar, palette) {
+    this.c1 = palette.c1;
+    this.c2 = palette.c2;
+    avatar.keyplate.tint = this.c1.i;
+    avatar.masq.tint = this.c2.i;
+    avatar.smokeEmitter.tint = this.c1.i;
     avatar.smokeEmitter.forEach(function(particle) {
         particle.tint = particle.parent.tint;
     });
@@ -49,10 +51,9 @@ AvatarGraphicsKey.prototype.setMasq = function(avatar, masq) {
         avatar.removeChild(avatar.masq);
     }
     var slide = 5;
-    avatar.masq = avatar.addChild(masq.sprite);
+    avatar.masq = avatar.addChild(masq.spriteC);
     avatar.masq.y = masq.yOffset + slide;
     avatar.masq.scale.setTo(masq.scale);
-    avatar.masq.anchor.setTo(0.5, 0.5);
     this.game.add.tween(avatar.masq).to({ y: masq.yOffset },
         300, Phaser.Easing.Cubic.Out, true);
 };
@@ -93,7 +94,10 @@ AvatarGraphicsKey.prototype.move = function(avatar) {
 // Named to avoid clashing with sprite.mask.
 var AvatarMasq = function(game, name, yOffset, scale) {
     this.name = name;
-    this.sprite = game.make.sprite(0, 0, name);
+    this.spriteC = game.make.sprite(0, 0, name + '_c');
+    this.spriteC.anchor.setTo(0.5);
+    this.spriteW = this.spriteC.addChild(game.make.sprite(0, 0, name + '_w'));
+    this.spriteW.anchor.setTo(0.5);
     this.yOffset = yOffset;
     this.scale = (scale) ? scale : 1;
 };

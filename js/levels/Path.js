@@ -13,9 +13,7 @@ var Path = function(name, p1, p2) {
     this.z = Path.Z;
     this.broken = false;
     this.renderNeeded = true;
-    if (Math.random() > 0.75) {
-        this.setBroken(true);
-    }
+    // this.setBroken(Math.random() > 0.75);
 };
 
 // Constants.
