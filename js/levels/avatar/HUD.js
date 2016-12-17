@@ -8,31 +8,63 @@ var TierMeter = function(game, level) {
     this.hud = undefined;
     this.lit = false;
 
-    var w = TierMeter.PATH_LX + TierMeter.XBAR;
-    var dh = TierMeter.PATH_W + TierMeter.YPAD;
-    var h = TierMeter.PATH_LY + TierMeter.PATH_W +
-        (this.numTiers - 1) * dh;
+    var r1 = TierMeter.R1;
+    var r2 = TierMeter.R2;
+    var x = r2 + TierMeter.PAD;
+    var y = x;
+    var w = 2 * x;
+    var h = 2 * y;
     this.bitmap = this.game.add.bitmapData(w, h);
     var c = this.bitmap.context;
+
+    // "Border" arc.
+    c.fillStyle = this.game.settings.colors.WHITE.rgba(
+        TierMeter.BORDER_ALPHA);
+    var apad = TierMeter.APAD;
+    var arc = TierMeter.ANGLE * this.numTiers + apad * (this.numTiers - 1);
+    var a0 = arc / 2;
+    var a1 = a0 + apad;
+    var a2 = a0 + (2 * Math.PI - arc) - apad;
+    var shift = Math.PI / 2;
+    var coords = this.shiftCoordsFor(x, y, a1, shift);
+    c.moveTo(coords.x, coords.y);
+    c.arc(x, y, r2, a1, a2, false);
+    coords = this.shiftCoordsFor(x, y, a2, -shift);
+    c.lineTo(coords.x, coords.y);
+    c.closePath();
+    c.fill();
+
+    // Individual tier arcs.
     for (var i = 0; i < this.numTiers; i++) {
-        var t = this.level.tiers[this.numTiers - 1 - i];
-        var y = i * dh;
-        var xs = [0, TierMeter.PATH_LX, TierMeter.PATH_LX, 0];
-        var ys = [y + TierMeter.PATH_LY, y, y + TierMeter.PATH_W,
-            y + TierMeter.PATH_LY + TierMeter.PATH_W
-        ];
+        var t = this.level.tiers[i];
+        var da = i * apad;
+        var a = i * TierMeter.ANGLE;
         c.fillStyle = t.palette.c1.s;
         c.beginPath();
-        c.moveTo(xs[0], ys[0]);
-        c.lineTo(xs[1], ys[1]);
-        c.lineTo(xs[2], ys[2]);
-        c.lineTo(xs[3], ys[3]);
-        c.lineTo(xs[0], ys[0]);
+        var a1 = a0 - da - (a + TierMeter.ANGLE);
+        var a2 = a0 - da - a;
+        coords = this.shiftCoordsFor(x, y, a1, shift);
+        c.moveTo(coords.x, coords.y);
+        c.arc(x, y, r2, a1, a2, false);
+        coords = this.shiftCoordsFor(x, y, a2, -shift);
+        c.lineTo(coords.x, coords.y);
         c.closePath();
         c.fill();
     }
+    // Clear the center.
+    Utils.clearArc(c, x, y, r1);
+
     Phaser.Sprite.call(this, game, 0, 0, this.bitmap);
     level.z.fg.add(this);
+
+    this.triangle = this.game.make.sprite(0, 0, 'smoke');
+    var scale = 0.5;
+    this.triangle.anchor.setTo(0.5, TierMeter.TRIANGLE_OFFSET -
+        TierMeter.R2 / (scale * this.triangle.height));
+    this.anchor.setTo(0.5);
+    this.triangle.scale.setTo(scale);
+    this.addChild(this.triangle);
+
     this.alpha = 0;
     this.updateSettings(this.game.settings);
 
@@ -47,16 +79,34 @@ TierMeter.prototype = Object.create(Phaser.Sprite.prototype);
 TierMeter.prototype.constructor = TierMeter;
 
 // Constants.
-TierMeter.PATH_W = 5;
-TierMeter.PATH_LX = 2 * 10;
-TierMeter.PATH_LY = 2 * 10;
-TierMeter.XBAR = 2 * 13;
-TierMeter.YPAD = 2 * 3;
-TierMeter.CAMERA_X = 15;
-TierMeter.CAMERA_Y = 15;
+TierMeter.R1 = 25;
+TierMeter.R2 = 34;
+TierMeter.ANGLE = 2 * Math.PI / 10;
+TierMeter.APAD = TierMeter.ANGLE / 5;
+TierMeter.APAD_L = TierMeter.R2 * Math.sin(TierMeter.APAD / 2);
+TierMeter.PAD = 0;
+TierMeter.BORDER_ALPHA = 0.15;
+TierMeter.CAMERA_X = 15 + TierMeter.R2;
+TierMeter.CAMERA_Y = 15 + TierMeter.R2;
 TierMeter.FADE_TIME = 300; // ms
 TierMeter.FADE_OUT_DELAY = 2000; // ms
+TierMeter.TRIANGLE_OFFSET = 0.5;
+TierMeter.SPIN_TIME = 500; // ms
 
+
+// Change the current tier.
+TierMeter.prototype.setTier = function(tier) {
+    var index =
+        (parseInt(tier.name.substring(1)) - this.lowest);
+
+    var apad = TierMeter.APAD;
+    var arc = TierMeter.ANGLE * this.numTiers + apad * (this.numTiers - 1);
+    var a0 = (arc - Math.PI - TierMeter.ANGLE) / 2;
+    var da = index * (TierMeter.ANGLE + apad);
+    var t = this.game.add.tween(this.triangle);
+    t.to({ rotation: a0 - da }, TierMeter.FADE_TIME,
+        Phaser.Easing.Sinusoidal.InOut, true);
+};
 
 // Update anytime the settings change.
 TierMeter.prototype.updateSettings = function(settings) {
@@ -89,30 +139,8 @@ TierMeter.prototype.fade = function(fadeIn) {
         this.t.stop();
     }
     this.t = this.game.add.tween(this);
-    this.t.to({ alpha: alpha }, TierMeter.FADE_TIME,
-        Phaser.Easing.Sinusoidal.InOut, true, delay);
-};
-
-// Change the current tier.
-TierMeter.prototype.setTier = function(tier) {
-    var index = (this.numTiers - 1) -
-        (parseInt(tier.name.substring(1)) - this.lowest);
-
-    var x = TierMeter.PATH_LX;
-    var dh = TierMeter.PATH_W + TierMeter.YPAD;
-    var y = index * dh;
-    var w = TierMeter.XBAR;
-    var h = TierMeter.PATH_W;
-    var r = h / 2;
-    var c = this.bitmap.context;
-    c.clearRect(x, 0, w, this.bitmap.height);
-    c.beginPath();
-    c.fillStyle = tier.palette.c1.s;
-    c.fillRect(x, y, w - r, h);
-    c.arc(x + w - r, y + r, r, 0, 2 * Math.PI, false);
-    c.fill();
-
-    this.bitmap.dirty = true;
+    this.t.to({ alpha: alpha }, TierMeter.SPIN_TIME,
+        Phaser.Easing.Cubic.Out, true, delay);
 };
 
 // Add a key for the next tier up.
@@ -147,4 +175,18 @@ TierMeter.prototype.useKey = function() {
 
     // TODO: !!!
     console.log('used a key for tier ' + tier.name);
+};
+
+// Utility for drawing better segments.
+TierMeter.prototype.shiftCoordsFor = function(x, y, angle, delta) {
+    var apadOver2 = TierMeter.APAD / 2;
+    var d = TierMeter.APAD_L;
+    var forward = Math.sign(delta) >= 0;
+    var theta = angle + (forward ? -apadOver2 : apadOver2) + delta;
+    var dx = d * Math.cos(theta);
+    var dy = d * Math.sin(theta);
+    return {
+        x: x + dx,
+        y: y + dy,
+    };
 };
