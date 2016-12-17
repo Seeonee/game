@@ -61,10 +61,14 @@ TierMeter.prototype.setTier = function(tier) {
     var y = index * dh;
     var w = TierMeter.XBAR;
     var h = TierMeter.PATH_W;
+    var r = h / 2;
     var c = this.bitmap.context;
     c.clearRect(x, 0, w, this.bitmap.height);
+    c.beginPath();
     c.fillStyle = tier.palette.c1.s;
-    c.fillRect(x, y, w, h);
+    c.fillRect(x, y, w - r, h);
+    c.arc(x + w - r, y + r, r, 0, 2 * Math.PI, false);
+    c.fill();
 
     this.bitmap.dirty = true;
 };
