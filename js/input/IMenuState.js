@@ -48,7 +48,7 @@ IMenuState.STYLE = {
     BAR_RIGHT: 2
 };
 IMenuState.ROOT_OPTION_ALPHA = 1;
-IMenuState.UNSELECTED_OPTION_ALPHA = 0.25;
+IMenuState.UNSELECTED_OPTION_ALPHA = 1; // 0.25;
 IMenuState.CHROME_ALPHA = 1;
 IMenuState.OPTION_TRANSITION_TIME = 100; // ms
 IMenuState.LEVEL_TRANSITION_TIME = 300; // ms
@@ -79,7 +79,8 @@ var IMenuOption = function(menu, text, cancel, action, args) {
 // Menu item, with possible nested subitems.
 // Each action will be passed its option when called,
 // as well as any bonus arguments.
-IMenuOption.prototype.add = function(text, action, args) {
+IMenuOption.prototype.add = function(text, action) {
+    var args = Array.prototype.slice.call(arguments, 2);
     return this._add(text, false, action, args);
 };
 
@@ -88,7 +89,8 @@ IMenuOption.prototype.add = function(text, action, args) {
 // button is pressed.
 // Each action will be passed its option when called,
 // as well as any bonus arguments.
-IMenuOption.prototype.addCancel = function(text, action, args) {
+IMenuOption.prototype.addCancel = function(text, action) {
+    var args = Array.prototype.slice.call(arguments, 2);
     return this._add(text, true, action, args);
 };
 
@@ -131,8 +133,9 @@ IMenuOption.prototype.cleanUp = function() {
 // via .add() or .addCancel().
 // Each action will be passed its option when called,
 // as well as any bonus arguments.
-IMenuState.prototype.add = function(text, action, args) {
-    return this.root.add(text, action, args);
+IMenuState.prototype.add = function(text, action) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    return this.root._add(text, false, action, args);
 };
 
 // Defines a menu option that'll invoke an associated action.
@@ -142,8 +145,9 @@ IMenuState.prototype.add = function(text, action, args) {
 // via .add() or .addCancel().
 // Each action will be passed its option when called,
 // as well as any bonus arguments.
-IMenuState.prototype.addCancel = function(text, action, args) {
-    return this.root.addCancel(text, action, args);
+IMenuState.prototype.addCancel = function(text, action) {
+    var args = Array.prototype.slice.call(arguments, 2);
+    return this.root._add(text, true, action, args);
 };
 
 // Called when the game is first paused.

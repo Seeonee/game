@@ -35,13 +35,13 @@ Settings.Menu = {};
 // settings menu option.
 Settings.Menu.populateSubmenu = function(settings) {
     var hud = settings.add('show HUD');
-    hud.selected = 0;
-    hud.add('always', Settings.Menu.showHUD, Settings.HUD_ALWAYS);
-    hud.add('sometimes', Settings.Menu.showHUD, Settings.HUD_SOMETIMES);
-    hud.add('never', Settings.Menu.showHUD, Settings.HUD_NEVER);
+    hud.add('◇ always', Settings.Menu.showHUD, Settings.HUD_ALWAYS);
+    hud.add('◇ sometimes', Settings.Menu.showHUD, Settings.HUD_SOMETIMES);
+    hud.add('◇ never', Settings.Menu.showHUD, Settings.HUD_NEVER);
     // This works because each HUD constant corresponds to its menu index.
-    var option = hud.options[settings.menu.game.settings.hud];
-    option.text = '✓ ' + option.text;
+    hud.selected = settings.menu.game.settings.hud;
+    var option = hud.options[hud.selected];
+    option.text = '◈' + option.text.substring(1);
     hud.addCancel('back');
     settings.addCancel('back');
     settings.events.onSettingsUpdate = new Phaser.Signal();
@@ -57,9 +57,9 @@ Settings.Menu.showHUD = function(option, hudSetting) {
     }
     var old = hud.options[hud.selected];
     hud.selected = option.index;
-    old.text = old.text.substring(2);
+    old.text = '◇' + old.text.substring(1);
     old.t.setText(old.text);
-    option.text = '✓ ' + option.text
+    option.text = '◈' + option.text.substring(1);
     option.t.setText(option.text);
     this.game.settings.hud = hudSetting;
     hud.parent.events.onSettingsUpdate.dispatch(

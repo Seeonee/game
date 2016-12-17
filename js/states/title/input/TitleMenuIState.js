@@ -18,6 +18,7 @@ var TitleMenuIState = function(handler, color) {
         selectLevel.add(name, this.selectLevel, name);
     }
     selectLevel.addCancel('back');
+    Settings.Menu.populateSubmenu(this.add('settings'));
     this.addCancel('exit', this.selectExit);
 };
 
