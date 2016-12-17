@@ -7,7 +7,7 @@ var PausedIState = function(handler, level) {
 
     this.root.text = level.name;
     this.addCancel('continue', this.selectContinue);
-    var settings = Settings.Menu.populateSubmenu(this.add('settings'));
+    var settings = Settings.Menu.populateSubmenu(this.root);
     settings.events.onSettingsUpdate.add(
         this.handler.updateSettings, this.handler);
     this.add('restart', this.selectRestart);

@@ -1,7 +1,6 @@
 add key/lock mechanics
 figure out what powers should do
 add settings submenu for key bindings
-add settings submenu for ps3 vs xbox controller
 add ability for menu items to have things other than raw text
 add editor mode for defining point properties such as portals, powers, etc
 add intra-level warp nodes + gfx

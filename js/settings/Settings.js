@@ -58,36 +58,49 @@ Settings.Menu = {};
 
 // Fill in a settings submenu within a root 
 // settings menu option.
-Settings.Menu.populateSubmenu = function(settings) {
-    // Controls for the heads-up display.
-    var hud = settings.add('HUD display');
-    hud.add('◇ always', Settings.Menu.changeSetting,
-        'hud', Settings.HUD_ALWAYS);
-    hud.add('◇ sometimes', Settings.Menu.changeSetting,
-        'hud', Settings.HUD_SOMETIMES);
-    hud.add('◇ never', Settings.Menu.changeSetting,
-        'hud', Settings.HUD_NEVER);
-    hud.addCancel('back');
-    // This works because each HUD constant corresponds to its menu index.
-    hud.selected = settings.menu.game.settings.hud;
-    var option = hud.options[hud.selected];
-    option.text = '◈' + option.text.substring(1);
-
-    // Controls for... controlling! Change controller button mappings.
-    var controller = settings.add('controller');
-    controller.add('◇ playstation', Settings.Menu.changeSetting,
-        'controller', Settings.CONTROLLER_PLAYSTATION);
-    controller.add('◇ xbox', Settings.Menu.changeSetting,
-        'controller', Settings.CONTROLLER_XBOX);
-    controller.addCancel('back');
-    // As above: shenanigans.
-    controller.selected = settings.menu.game.settings.controller;
-    var option = controller.options[controller.selected];
-    option.text = '◈' + option.text.substring(1);
-
-    settings.addCancel('back');
+Settings.Menu.populateSubmenu = function(parent) {
+    var settings = parent.add('settings');
     settings.events.onSettingsUpdate = new Phaser.Signal();
+    // Controls for the heads-up display.
+    Settings.Menu.createRadialSettingMenu(
+        settings, 'HUD display', 'hud', [
+            { text: 'always', value: Settings.HUD_ALWAYS },
+            { text: 'sometimes', value: Settings.HUD_SOMETIMES },
+            { text: 'never', value: Settings.HUD_NEVER }
+        ]);
+    // Controls for... controlling! Change controller button mappings.
+    Settings.Menu.createRadialSettingMenu(
+        settings, 'controller', 'controller', [
+            { text: 'playstation', value: Settings.CONTROLLER_PLAYSTATION },
+            { text: 'xbox', value: Settings.CONTROLLER_XBOX }
+        ]);
+    // Aaaaand a final "get out of here" option.
+    settings.addCancel('back');
     return settings;
+};
+
+// Creates a submenu for changing a particular setting.
+// textValuePairs should be a list of items which each have a 
+// .text (what to display) and .value (what to set the setting to).
+// This sets up a radial submenu, e.g. you can change the value to 
+// any of the possible options, and only one is shown as set at a 
+// time.
+Settings.Menu.createRadialSettingMenu = function(
+    parent, name, settingName, textValuePairs) {
+    var option = parent.add(name);
+    for (var i = 0; i < textValuePairs.length; i++) {
+        var p = textValuePairs[i];
+        option.add('◇ ' + p.text, Settings.Menu.changeSetting,
+            settingName, p.value);
+    }
+    option.addCancel('back');
+    // This works because each HUD constant corresponds to its 
+    // menu index. And yes, that means you have to maintain 
+    // them properly and in order.
+    option.selected = parent.menu.game.settings[settingName];
+    option = option.options[option.selected];
+    option.text = '◈' + option.text.substring(1);
+
 };
 
 // Called when the user changes a radial setting.
