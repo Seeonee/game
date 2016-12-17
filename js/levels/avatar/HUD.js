@@ -114,3 +114,37 @@ TierMeter.prototype.setTier = function(tier) {
 
     this.bitmap.dirty = true;
 };
+
+// Add a key for the next tier up.
+TierMeter.prototype.addKey = function() {
+    var currentIndex = parseInt(this.level.tier.name.substring(1));
+    var actualIndex = 1 + currentIndex;
+    if (actualIndex == this.numTiers) {
+        return;
+    }
+    var tier = this.level.tierMap['t' + actualIndex];
+    var keys = this.keys[tier.name] ? this.keys[tier.name] : 0;
+    if (keys == TierMeter.MAX_KEYS) {
+        return;
+    }
+    this.keys[tier.name] = keys + 1;
+    var index = (this.numTiers - 1) - (actualIndex - this.lowest);
+
+    // TODO: !!!
+    console.log('added a key for tier ' + tier.name);
+};
+
+// Subtract a key for the current tier.
+TierMeter.prototype.useKey = function() {
+    var currentIndex = parseInt(this.level.tier.name.substring(1));
+    var tier = this.level.tierMap['t' + currentIndex];
+    var keys = this.keys[tier.name] ? this.keys[tier.name] : 0;
+    if (keys <= 0) {
+        return;
+    }
+    this.keys[tier.name] = keys - 1;
+    var index = (this.numTiers - 1) - (currentIndex - this.lowest);
+
+    // TODO: !!!
+    console.log('used a key for tier ' + tier.name);
+};

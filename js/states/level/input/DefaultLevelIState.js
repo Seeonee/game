@@ -13,7 +13,6 @@ DefaultLevelIState.prototype.constructor = DefaultLevelIState;
 // Called on update.
 DefaultLevelIState.prototype.update = function() {
     var avatar = this.level.avatar;
-    // Starting an action?
     if (this.game.settings.edit) {
         if (this.gpad.justReleased(this.buttonMap.EDIT_ADD)) {
             if (avatar.path) {
@@ -29,6 +28,10 @@ DefaultLevelIState.prototype.update = function() {
             this.activate(StepUpIState.NAME);
         } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_DOWN)) {
             this.activate(StepDownIState.NAME);
+        } else if (this.gpad.justReleased(this.buttonMap.EDIT_GAIN_KEY)) {
+            this.activate(GainKeyIState.NAME);
+        } else if (this.gpad.justReleased(this.buttonMap.EDIT_LOSE_KEY)) {
+            this.activate(LoseKeyIState.NAME);
         }
     }
     if (this.isActive()) {

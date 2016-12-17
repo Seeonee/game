@@ -17,6 +17,8 @@ var ButtonMappings = function() {
     this.EDIT_ADD = Phaser.Gamepad.PS3XC_X;
     this.EDIT_FLOAT = Phaser.Gamepad.PS3XC_R2;
     this.EDIT_DELETE = Phaser.Gamepad.PS3XC_CIRCLE;
+    this.EDIT_LOSE_KEY = Phaser.Gamepad.PS3XC_DPAD_UP;
+    this.EDIT_GAIN_KEY = Phaser.Gamepad.PS3XC_DPAD_DOWN;
 };
 
 // Restore a JSON'd ButtonMappings object.

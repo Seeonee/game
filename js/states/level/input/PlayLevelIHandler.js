@@ -13,6 +13,8 @@ var PlayLevelIHandler = function(game, gpad, level) {
     new AddFromPathIState(this, this.level);
     new AddFromPointIState(this, this.level);
     new DeleteIState(this, this.level);
+    new GainKeyIState(this, this.level);
+    new LoseKeyIState(this, this.level);
 
     // Set our starting state.
     this.activate(DefaultLevelIState.NAME);
