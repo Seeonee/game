@@ -1,4 +1,6 @@
 add lock mechanics
+add "wire" paths + gfx for powering points on
+add point gfx for enabled on/off
 add "end level" gate
 figure out what powers should do
 add settings submenu for key bindings

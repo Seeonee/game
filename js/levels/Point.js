@@ -12,6 +12,8 @@ var Point = function(name, x, y, enabled) {
     this.attached = false;
     this.avatar = undefined;
     this.enabled = enabled == undefined ? true : enabled;
+
+    this.radius = Tier.PATH_WIDTH;
 };
 
 // Constants.
@@ -54,7 +56,7 @@ Point.prototype.draw = function(tier) {
         colors.GREY.s : tier.palette.c1.s;
     tier.bitmap.context.beginPath();
     tier.bitmap.context.arc(this.x, this.y,
-        Math.floor(Tier.PATH_WIDTH / 2), 0, 2 * Math.PI, false);
+        Math.floor(this.radius / 2), 0, 2 * Math.PI, false);
     tier.bitmap.context.fill();
 };
 

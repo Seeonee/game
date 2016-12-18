@@ -19,6 +19,9 @@ PreloadState.prototype.preload = function() {
     // this.game.load.image('ragna', 'assets/mask_ragna.png');
     // this.game.load.image('dunlevy', 'assets/mask_dunlevy.png');
 
+    this.game.load.image('ring_inner', 'assets/ring_inner.png');
+    this.game.load.image('ring_outer', 'assets/ring_outer.png');
+
     this.game.load.image('power_diamond', 'assets/powerdiamond.png');
     this.game.load.image('power_icon_crown', 'assets/power_crown.png');
     this.game.load.image('power_icon_hourglass', 'assets/power_hourglass.png');
