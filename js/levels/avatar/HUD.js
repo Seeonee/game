@@ -10,6 +10,7 @@ var TierMeter = function(game, level) {
     this.lit = false;
     this.kbPool = new SpritePool(this.game, KeyBurst);
     this.ckbPool = new SpritePool(this.game, CloudKeyBurst);
+    this.ksbPool = new SpritePool(this.game, KeySpendBurst);
 
     var r1 = TierMeter.R1;
     var r2 = TierMeter.R2;
@@ -278,24 +279,26 @@ TierMeter.prototype.addKey = function() {
     }
     var tier = this.level.tierMap['t' + actualIndex];
     var keys = this.keys[tier.name] ? this.keys[tier.name] : 0;
-    if (keys == TierMeter.MAX_KEYS) {
-        return;
-    }
     keys += 1;
     this.keys[tier.name] = keys;
     var index = (this.numTiers - 1) - (actualIndex - this.lowest);
     this.fillUpCloud(keys);
     var dy = TierMeter.CLOUD_W / 2;
-    var dx = dy + (keys - 1) *
+    keys = keys > TierMeter.CLOUD_MAX ?
+        (TierMeter.CLOUD_MAX - 1) / 2 : keys - 1;
+    var dx = dy + keys *
         (TierMeter.CLOUD_W + TierMeter.CLOUD_PAD);
     this.ckbPool.make(this.game).burst(
         this.cloudx + dx, this.cloudy + dy,
         this, tier.palette.c1.i);
-
 };
 
 // Subtract a key for the current tier.
 TierMeter.prototype.useKey = function() {
+    if (this.hud == Settings.HUD_SOMETIMES && !this.list) {
+        this.alpha = 1;
+        this.fade(false);
+    }
     var currentIndex = parseInt(this.level.tier.name.substring(1));
     var tier = this.level.tierMap['t' + currentIndex];
     var keys = this.keys[tier.name] ? this.keys[tier.name] : 0;
@@ -308,6 +311,7 @@ TierMeter.prototype.useKey = function() {
     this.text.setText(keys);
     this.keyEmpty.visible = keys == 0;
     this.keyFull.visible = keys > 0;
+    this.ksbPool.make(this.game).burst(0, 0, this);
 };
 
 // Utility for drawing better segments.

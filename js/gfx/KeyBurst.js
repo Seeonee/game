@@ -66,7 +66,7 @@ CloudKeyBurst.SCALE1 = 1;
 CloudKeyBurst.SCALE2 = 0.2;
 
 
-// Key-added flash.
+// Key-spent flash.
 CloudKeyBurst.prototype.burst = function(x, y, parent, tint) {
     parent.addChild(this);
     this.x = x;
@@ -88,6 +88,54 @@ CloudKeyBurst.prototype.burst = function(x, y, parent, tint) {
     t3.to({ x: CloudKeyBurst.SCALE2, y: CloudKeyBurst.SCALE2 },
         time, Phaser.Easing.Quadratic.In, true);
     t3.onComplete.add(function() {
+        this.kill();
+    }, this);
+};
+
+// Small burst to indicate that we spent a key.
+var KeySpendBurst = function(game) {
+    var r = KeySpendBurst.RADIUS;
+    var bitmap = game.add.bitmapData(3 * r, 3 * r);
+    var c = bitmap.context;
+    c.strokeStyle = game.settings.colors.WHITE.s;
+    c.lineWidth = KeySpendBurst.PATH_WIDTH;
+    c.beginPath();
+    c.arc(r * 1.5, r * 1.5, r, 0, 2 * Math.PI, false);
+    c.stroke();
+    Phaser.Sprite.call(this, game, 0, 0, bitmap);
+    this.anchor.setTo(0.5, 0.5);
+    this.visible = false;
+};
+
+KeySpendBurst.prototype = Object.create(Phaser.Sprite.prototype);
+KeySpendBurst.prototype.constructor = KeySpendBurst;
+
+// Constants.
+KeySpendBurst.RADIUS = 50;
+KeySpendBurst.PATH_WIDTH = 12;
+KeySpendBurst.DURATION = 400; // ms
+KeySpendBurst.SCALE1 = 0.1;
+KeySpendBurst.SCALE2 = 1.25;
+
+
+// Key-added flash.
+KeySpendBurst.prototype.burst = function(x, y, parent) {
+    parent.addChild(this);
+    this.x = x;
+    this.y = y;
+    this.alpha = 1;
+    this.visible = true;
+
+    this.scale.setTo(KeySpendBurst.SCALE1);
+
+    var time = KeySpendBurst.DURATION;
+    var t = this.game.add.tween(this);
+    t.to({ alpha: 0 },
+        time, Phaser.Easing.Cubic.In, true);
+    var t2 = this.game.add.tween(this.scale);
+    t2.to({ x: KeySpendBurst.SCALE2, y: KeySpendBurst.SCALE2 },
+        time, Phaser.Easing.Sinusoidal.Out, true);
+    t2.onComplete.add(function() {
         this.kill();
     }, this);
 };
