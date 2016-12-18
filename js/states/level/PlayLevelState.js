@@ -10,8 +10,8 @@ PlayLevelState.DEADZONE_EDGE_Y = 200;
 // We get passed the level asset to load.
 // This will be a .json file within the assets/levels directory.
 // It'll also be used as the load key within the cache.
-PlayLevelState.prototype.init = function(levelName, gpad) {
-    this.levelName = levelName;
+PlayLevelState.prototype.init = function(catalogLevel, gpad) {
+    this.catalogLevel = catalogLevel;
     this.gpad = gpad;
 };
 
@@ -21,13 +21,14 @@ PlayLevelState.prototype.init = function(levelName, gpad) {
 // This is probably a great place to load our 
 // Paths/Level object.
 PlayLevelState.prototype.preload = function() {
-    this.game.load.json(this.levelName,
-        'assets/levels/' + this.levelName + '.json');
+    var name = this.catalogLevel.getFullName();
+    this.game.load.json(name,
+        'assets/' + name + '.json');
 };
 
 // Setup the example
 PlayLevelState.prototype.create = function() {
-    this.level = Level.load(this.game, this.levelName);
+    this.level = Level.load(this.game, this.catalogLevel);
     new Avatar(this.game, new AvatarGraphicsKey(this.game), this.level);
     this.gpad.consumeButtonEvent();
 

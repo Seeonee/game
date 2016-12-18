@@ -2,20 +2,11 @@
 var TitleMenuIState = function(handler, color) {
     IMenuState.call(this, TitleMenuIState.NAME, handler, this);
     this.color = color;
-    this.levelNames = [
-        'level1',
-        'level2',
-        'level3',
-        'level4'
-    ];
+
 
     this.root.text = 'mero';
-    var selectLevel = this.add('select level');
-    for (var i = 0; i < this.levelNames.length; i++) {
-        var name = this.levelNames[i];
-        selectLevel.add(name, this.selectLevel, name);
-    }
-    selectLevel.addCancel('back');
+    var catalog = this.game.state.getCurrentState().catalog;
+    this.addCatalogItem(this, catalog);
     var settings = Settings.Menu.populateSubmenu(this.root);
     settings.events.onSettingsUpdate.add(
         this.handler.updateSettings, this.handler);
@@ -26,9 +17,22 @@ TitleMenuIState.NAME = 'menu';
 TitleMenuIState.prototype = Object.create(IMenuState.prototype);
 TitleMenuIState.prototype.constructor = TitleMenuIState;
 
+// Recursively add all items from the catalog.
+TitleMenuIState.prototype.addCatalogItem = function(parent, item) {
+    if (item instanceof Catalog) {
+        var option = parent.add(item.name);
+        for (var i = 0; i < item.items.length; i++) {
+            this.addCatalogItem(option, item.items[i]);
+        }
+        option.addCancel('back');
+    } else {
+        parent.add(item.name, this.selectLevel, item);
+    }
+};
+
 // Start up a selected level!
-TitleMenuIState.prototype.selectLevel = function(option, name) {
-    this.game.state.getCurrentState().startLevel(name);
+TitleMenuIState.prototype.selectLevel = function(option, catalogLevel) {
+    this.game.state.getCurrentState().startLevel(catalogLevel);
 };
 
 // User opted to exit. I guess they like the splash page?

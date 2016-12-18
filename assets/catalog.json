@@ -1,0 +1,15 @@
+{
+    "name": "levels",
+    "items": [{
+        "name": "level 1"
+    }, {
+        "name": "level 2"
+    }, {
+        "name": "challenges",
+        "items": [{
+            "name": "level 3"
+        }, {
+            "name": "level 4"
+        }]
+    }]
+}

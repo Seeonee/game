@@ -1,7 +1,9 @@
 add lock mechanics
+add quick title fade when starting a level (but not restarting?)
+    fade the tier meter in at start of level
+make sure that all stabilize tweens get killed when steppiing off point
 add "wire" paths + gfx for powering points on
 pause the warp point tween when tier fades
-add "end level" gate
 figure out what powers should do
 add settings submenu for key bindings
 add ability for menu items to have things other than raw text

@@ -1,7 +1,8 @@
 // A Level object, which contains ordered Tiers.
-var Level = function(game, name) {
+var Level = function(game, catalogLevel) {
     this.game = game;
-    this.name = name;
+    this.catalogLevel = catalogLevel;
+    this.name = catalogLevel.name;
     this.avatar = undefined;
     this.tier = undefined;
     this.tiers = [];
@@ -166,9 +167,9 @@ Level.prototype.toJSON = function() {
 // Load a JSON representation of a level.
 // The name value should correspond to an already-loaded 
 // asset's key within the game cache.
-Level.load = function(game, name) {
-    var json = game.cache.getJSON(name);
-    var level = new Level(game, name);
+Level.load = function(game, catalogLevel) {
+    var json = game.cache.getJSON(catalogLevel.getFullName());
+    var level = new Level(game, catalogLevel);
     level.start = json.start;
     var tiers = json.tiers;
     var keys = Object.keys(tiers);

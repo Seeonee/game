@@ -39,7 +39,7 @@ PausedIState.prototype.selectContinue = function(option) {
 PausedIState.prototype.selectRestart = function(option) {
     this.unpause();
     this.game.state.start('PlayLevelState', true, false,
-        this.level.name, this.gpad);
+        this.level.catalogLevel, this.gpad);
 };
 
 // User opted to exit.

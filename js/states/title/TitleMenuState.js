@@ -9,8 +9,14 @@ TitleMenuState.prototype.init = function(palette) {
     this.palette = palette;
 };
 
+// Load our catalog.
+TitleMenuState.prototype.preload = function() {
+    this.game.load.json(Catalog.NAME, 'assets/catalog.json');
+};
+
 // Create the title state.
 TitleMenuState.prototype.create = function() {
+    this.catalog = Catalog.load(this.game.cache.getJSON(Catalog.NAME));
     if (!this.palette) {
         var i = Math.floor(Math.random() * (7 + 1)) % 7;
         this.palette = this.game.settings.colors['t' + i];
@@ -40,10 +46,10 @@ TitleMenuState.prototype.render = function() {
     this.menuhandler.render();
 };
 
-// When clicked, start the level.
-TitleMenuState.prototype.startLevel = function(levelName) {
+// Start up a level from the catalog.
+TitleMenuState.prototype.startLevel = function(catalogLevel) {
     this.game.state.start('PlayLevelState', true, false,
-        levelName, this.gpad);
+        catalogLevel, this.gpad);
 };
 
 

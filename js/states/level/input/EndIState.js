@@ -63,15 +63,15 @@ EndIState.prototype.fullyCharged = function() {
 
 // User opted to play the next level.
 EndIState.prototype.selectNextLevel = function(option) {
-    var name = this.level.name; // TODO: !!!
+    var catalogLevel = this.level.catalogLevel.next();
     this.game.state.start('PlayLevelState', true, false,
-        name, this.gpad);
+        catalogLevel, this.gpad);
 };
 
 // User opted to restart.
 EndIState.prototype.selectRestart = function(option) {
     this.game.state.start('PlayLevelState', true, false,
-        this.level.name, this.gpad);
+        this.level.catalogLevel, this.gpad);
 };
 
 // User opted to exit.
