@@ -22,6 +22,8 @@ var ERing = function(game, x, y, inner, palette, index) {
     this.spin = (Math.random() >= 0.5 ? 2 : -2) * Math.PI;
     this.rotation = this.goalAngle;
 
+    this.spinTweens = [];
+    this.scaleTweens = [];
     this.enabled = true;
     this.stable = false;
     this.stabilized = false;
@@ -53,9 +55,11 @@ ERing.prototype.randomizeScale = function(tween) {
     var scale = 1 - ERing.SCALE_VARIANCE +
         Math.random() * 2 * ERing.SCALE_VARIANCE;
     if (tween) {
+        this.clearScaleTweens();
         var t = this.game.add.tween(this.scale);
         t.to({ x: scale, y: scale }, ERing.SCALE_TIME,
             Phaser.Easing.Sinusoidal.InOut, true);
+        this.scaleTweens.push(t);
     } else {
         this.scale.setTo(scale);
     }
@@ -63,18 +67,17 @@ ERing.prototype.randomizeScale = function(tween) {
 
 // Set up our rotation.
 ERing.prototype.startRotation = function() {
-    if (this.tween) {
-        this.tween.stop();
-    }
+    this.clearSpinTweens();
     this.rotation = (this.rotation + 2 * Math.PI) % (2 * Math.PI);
     var variance = ERing.TIME_VARIANCE;
     var ratio = 1 - variance + Math.random() * 2 * variance;
     var time = ERing.SPIN_TIME * ratio;
     var delay = (0.1 + Math.random()) * ERing.SPIN_TIME / 2;
-    this.tween = this.game.add.tween(this);
-    this.tween.to({ rotation: this.rotation + this.spin },
+    var t = this.game.add.tween(this);
+    t.to({ rotation: this.rotation + this.spin },
         time, Phaser.Easing.Linear.InOut, true, delay,
         Number.POSITIVE_INFINITY);
+    this.spinTweens.push(t);
 };
 
 // Set our enabled state.
@@ -92,14 +95,27 @@ ERing.prototype.setEnabled = function(enabled) {
 
 // Pause ring's rotation.
 ERing.prototype.setPaused = function(paused) {
-    if (!this.tween) {
-        return;
+    var tweens = this.spinTweens.concat(this.scaleTweens);
+    for (var i = 0; i < tweens.length; i++) {
+        var tween = tweens[i];
+        paused ? tween.pause() : tween.resume();
     }
-    if (paused) {
-        this.tween.pause();
-    } else {
-        this.tween.resume();
+};
+
+// Stop all active rotation tweens.
+ERing.prototype.clearSpinTweens = function() {
+    for (var i = 0; i < this.spinTweens.length; i++) {
+        this.spinTweens[i].stop();
     }
+    this.spinTweens = [];
+};
+
+// Stop all active size tweens.
+ERing.prototype.clearScaleTweens = function() {
+    for (var i = 0; i < this.scaleTweens.length; i++) {
+        this.scaleTweens[i].stop();
+    }
+    this.scaleTweens = [];
 };
 
 // Lock rings into their final spots.
@@ -108,52 +124,56 @@ ERing.prototype.setStable = function(stable) {
         return;
     }
     this.stable = stable;
-    if (stable) {
-        if (this.tween) {
-            this.tween.stop();
-        }
-        while (this.rotation < 0) {
-            this.rotation += 2 * Math.PI;
-        }
-        this.rotation %= 2 * Math.PI;
-        var sign = Math.sign(this.goalAngle - this.rotation);
-        if (sign != Math.sign(this.spin)) {
-            this.rotation += sign * 2 * Math.PI;
-        }
-        var variance = ERing.STABILIZE_VARIANCE;
-        var ratio = 1 - variance + Math.random() * 2 * variance;
-        var time = ERing.STABILIZE_TIME * ratio;
-        var delay = ERing.STABILIZE_TIME * (1 + variance) - time;
-        this.tween = this.game.add.tween(this);
-        this.tween.to({ rotation: this.goalAngle },
-            time, Phaser.Easing.Quadratic.Out, true);
-        var t = this.game.add.tween(this.scale);
-        t.to({ x: 1, y: 1 }, ERing.SCALE_TIME,
-            Phaser.Easing.Sinusoidal.InOut, false, delay);
-        this.tween.chain(t);
-        var turn = 2 * Math.PI * (this.inner ? 1 : -1);
-        this.tween2 = this.game.add.tween(this);
-        this.tween2.to({ rotation: this.goalAngle + turn },
-            ERing.GEAR_TIME, Phaser.Easing.Linear.InOut, false, 0,
-            Number.POSITIVE_INFINITY);
-        this.tween2.onStart.add(function() {
-            this.stabilized = true;
-            this.events.onStabilize.dispatch();
-        }, this);
-        t.chain(this.tween2);
-    } else {
-        if (this.tween2) {
-            this.tween2.stop();
-            this.tween2 = undefined;
-        }
-        this.randomizeScale(true);
-        this.startRotation();
-        this.stabilized = false;
-        this.events.onDestabilize.dispatch();
-    }
+    stable ? this.stabilize() : this.destabilize();
 };
 
-// Fade the ring in or out. 
+// Stabilize the ring.
+ERing.prototype.stabilize = function() {
+    this.clearSpinTweens();
+    this.clearScaleTweens();
+    while (this.rotation < 0) {
+        this.rotation += 2 * Math.PI;
+    }
+    this.rotation %= 2 * Math.PI;
+    var sign = Math.sign(this.goalAngle - this.rotation);
+    if (sign != Math.sign(this.spin)) {
+        this.rotation += sign * 2 * Math.PI;
+    }
+    var variance = ERing.STABILIZE_VARIANCE;
+    var ratio = 1 - variance + Math.random() * 2 * variance;
+    var time = ERing.STABILIZE_TIME * ratio;
+    var delay = ERing.STABILIZE_TIME * (1 + variance) - time;
+    var t = this.game.add.tween(this);
+    t.to({ rotation: this.goalAngle },
+        time, Phaser.Easing.Quadratic.Out, true);
+    this.spinTweens.push(t);
+    var t2 = this.game.add.tween(this.scale);
+    t2.to({ x: 1, y: 1 }, ERing.SCALE_TIME,
+        Phaser.Easing.Sinusoidal.InOut, false, delay);
+    t.chain(t2);
+    this.scaleTweens.push(t2);
+    var turn = 2 * Math.PI * (this.inner ? 1 : -1);
+    var t3 = this.game.add.tween(this);
+    t3.to({ rotation: this.goalAngle + turn },
+        ERing.GEAR_TIME, Phaser.Easing.Linear.InOut, false, 0,
+        Number.POSITIVE_INFINITY);
+    t3.onStart.add(function() {
+        this.stabilized = true;
+        this.events.onStabilize.dispatch();
+    }, this);
+    t2.chain(t3);
+    this.spinTweens.push(t3);
+};
+
+// Let the ring spin free again.
+ERing.prototype.destabilize = function() {
+    this.randomizeScale(true);
+    this.startRotation();
+    this.stabilized = false;
+    this.events.onDestabilize.dispatch();
+};
+
+// Fade the ring in or out.
 ERing.prototype.fade = function(fadeIn) {
     this.faded = !fadeIn;
     if (!this.enabled) {

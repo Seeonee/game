@@ -1,6 +1,5 @@
 add lock mechanics
 add quick title fade when starting a level (but not restarting?)
-make sure that all stabilize tweens get killed when steppiing off point
 add "wire" paths + gfx for powering points on
 pause the warp point tween when tier fades
 figure out what powers should do

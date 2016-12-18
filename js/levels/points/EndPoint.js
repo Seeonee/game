@@ -106,6 +106,16 @@ EndPoint.prototype.setEnabled = function(enabled) {
     }
 };
 
+// Sping the rings into place.
+EndPoint.prototype.notifyAttached = function(avatar, prev) {
+    Point.prototype.notifyAttached.call(this, avatar, prev);
+    if (this.enabled) {
+        for (var i = 0; i < this.rings.all.length; i++) {
+            this.rings.all[i].setStable(true);
+        }
+    }
+};
+
 // Let the rings orbit again.
 EndPoint.prototype.notifyDetached = function(avatar, next) {
     Point.prototype.notifyDetached.call(this, avatar, next);
@@ -176,16 +186,6 @@ EndPoint.prototype.portalFlash = function() {
     var t = this.game.add.tween(hflash);
     t.to({ rotation: -Math.PI / 2 }, HFlash.FLASH_TOTAL,
         Phaser.Easing.Cubic.InOut, true);
-};
-
-// Sping the rings into place.
-EndPoint.prototype.notifyAttached = function(avatar, prev) {
-    Point.prototype.notifyAttached.call(this, avatar, prev);
-    if (this.enabled) {
-        for (var i = 0; i < this.rings.all.length; i++) {
-            this.rings.all[i].setStable(true);
-        }
-    }
 };
 
 
