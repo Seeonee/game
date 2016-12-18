@@ -29,7 +29,7 @@ ERing.prototype.constructor = ERing;
 
 // Constants.
 ERing.ANGLE = Math.PI / 6;
-ERing.SPIN_TIME = 4000; // ms
+ERing.SPIN_TIME = 8000; // ms
 ERing.TIME_VARIANCE = 0.4;
 ERing.SCALE_TIME = 400; // ms
 ERing.SCALE_VARIANCE = 0.4;
@@ -61,7 +61,7 @@ ERing.prototype.startRotation = function() {
     var variance = ERing.TIME_VARIANCE;
     var ratio = 1 - variance + Math.random() * 2 * variance;
     var time = ERing.SPIN_TIME * ratio;
-    var delay = Math.random() * ERing.SPIN_TIME;
+    var delay = (0.1 + Math.random()) * ERing.SPIN_TIME / 2;
     this.tween = this.game.add.tween(this);
     this.tween.to({ rotation: this.rotation + this.spin },
         time, Phaser.Easing.Linear.InOut, true, delay,

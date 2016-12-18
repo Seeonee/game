@@ -61,7 +61,7 @@ EndPoint.prototype.draw = function(tier) {
         this.rings.all = this.rings.inner.concat(this.rings.outer);
         for (var i = 0; i < this.rings.all.length; i++) {
             // this.tier.image.addChild(this.rings.all[i]);
-            this.game.state.getCurrentState().z.bg.tier().add(
+            this.game.state.getCurrentState().z.bg.add(
                 this.rings.all[i]);
         }
     }
