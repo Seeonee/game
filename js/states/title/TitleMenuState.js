@@ -3,8 +3,7 @@
 // change settings, select levels, load/save, etc.
 var TitleMenuState = function(game) {};
 
-// We can be passed a color palette to use.
-// Otherwise, we'll choose at random.
+// The color palette to use.
 TitleMenuState.prototype.init = function(palette) {
     this.palette = palette;
 };
@@ -17,11 +16,6 @@ TitleMenuState.prototype.preload = function() {
 // Create the title state.
 TitleMenuState.prototype.create = function() {
     this.catalog = Catalog.load(this.game.cache.getJSON(Catalog.NAME));
-    if (!this.palette) {
-        var i = Math.floor(Math.random() * (7 + 1)) % 7;
-        this.palette = this.game.settings.colors['t' + i];
-    }
-    this.game.stage.backgroundColor = this.palette.c3.i;
     this.game.input.gamepad.start();
     this.gpad = new GPad(this.game, this.game.input.gamepad.pad1);
 

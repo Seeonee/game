@@ -4,6 +4,11 @@
 // load rarely-used assets on their own later.
 var PreloadState = function(game) {};
 
+// The color palette to use.
+PreloadState.prototype.init = function(palette) {
+    this.palette = palette;
+};
+
 // Load the commonly-used game assets.
 PreloadState.prototype.preload = function() {
     this.initializeLoadingBar();
@@ -37,7 +42,7 @@ PreloadState.prototype.preload = function() {
 // Set up the progress bar that tracks our asset loading.
 PreloadState.prototype.initializeLoadingBar = function() {
     var loadingBar = this.add.sprite(
-        this.game.width / 2, this.game.height / 2, 'loadingBar');
+        this.game.width / 2, this.game.height / 3, 'loadingBar');
     loadingBar.x -= loadingBar.width / 2;
     loadingBar.anchor.setTo(0, 0.5);
     this.load.setPreloadSprite(loadingBar);
@@ -45,5 +50,5 @@ PreloadState.prototype.initializeLoadingBar = function() {
 
 // Created? Moving on!
 PreloadState.prototype.create = function() {
-    this.game.state.start('TitleMenuState');
+    this.game.state.start('TitleMenuState', true, false, this.palette);
 };

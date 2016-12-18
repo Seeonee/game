@@ -14,6 +14,8 @@ BootState.prototype.preload = function() {
 BootState.prototype.create = function() {
     // this.game.stage.smoothed = false;
     this.game.settings = new Settings();
-    this.game.stage.backgroundColor = this.game.settings.colors.BACKGROUND.i;
-    this.game.state.start('PreloadState');
+    var i = Math.floor(Math.random() * (7 + 1)) % 7;
+    this.palette = this.game.settings.colors['t' + i];
+    this.game.stage.backgroundColor = this.palette.c3.i;
+    this.game.state.start('PreloadState', true, false, this.palette);
 };
