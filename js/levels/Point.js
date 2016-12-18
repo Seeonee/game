@@ -114,6 +114,12 @@ Point.prototype.notifyDetached = function(avatar, next) {
     this.disableIState();
 };
 
+// Handle various fade events.
+Point.prototype.fadingIn = function() {};
+Point.prototype.fadedIn = function() {};
+Point.prototype.fadingOut = function() {};
+Point.prototype.fadedOut = function() {};
+
 // Are we enabled?
 Point.prototype.isEnabled = function() {
     return this.enabled;

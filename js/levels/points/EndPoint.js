@@ -67,6 +67,20 @@ EndPoint.prototype.draw = function(tier) {
     }
 };
 
+// Fade the rings back in.
+EndPoint.prototype.fadingIn = function() {
+    for (var i = 0; i < this.rings.all.length; i++) {
+        this.rings.all[i].fade(true);
+    }
+};
+
+// Fade the rings out.
+EndPoint.prototype.fadingOut = function() {
+    for (var i = 0; i < this.rings.all.length; i++) {
+        this.rings.all[i].fade(false);
+    }
+};
+
 // Set our enabled state.
 EndPoint.prototype.setEnabled = function(enabled) {
     if (enabled == this.enabled) {

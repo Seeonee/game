@@ -20,6 +20,7 @@ var ERing = function(game, x, y, name, palette, index, max) {
     this.spin = (Math.random() >= 0.5 ? 2 : -2) * Math.PI;
     this.rotation = this.goalAngle;
 
+    this.enabled = true;
     this.stable = false;
     this.startRotation();
 };
@@ -70,8 +71,15 @@ ERing.prototype.startRotation = function() {
 
 // Set our enabled state.
 ERing.prototype.setEnabled = function(enabled) {
-    this.tint = enabled ? this.colorOn : this.colorOff;
-    this.alpha = enabled ? 1 : ERing.DISABLED_ALPHA;
+    if (this.enabled == enabled) {
+        return;
+    }
+    this.enabled = enabled;
+    if (!this.faded) {
+        this.tint = enabled ? this.colorOn : this.colorOff;
+        this.alpha = enabled ? 1 : ERing.DISABLED_ALPHA;
+    }
+    this.setPaused(!enabled);
 };
 
 // Pause ring's rotation.
@@ -119,4 +127,14 @@ ERing.prototype.setStable = function(stable) {
         this.randomizeScale(true);
         this.startRotation();
     }
+};
+
+// Fade the ring in or out. 
+ERing.prototype.fade = function(fadeIn) {
+    this.faded = !fadeIn;
+    if (!this.enabled) {
+        return;
+    }
+    this.alpha = fadeIn ? 1 : ERing.DISABLED_ALPHA;
+    this.tint = fadeIn ? this.colorOn : this.colorOff;
 };

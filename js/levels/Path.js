@@ -118,6 +118,12 @@ Path.prototype.notifyAttached = function(avatar, prev) {
 // Also takes the point the avatar is leaving us for.
 Path.prototype.notifyDetached = function(avatar, next) {};
 
+// Handle various fade events.
+Path.prototype.fadingIn = function() {};
+Path.prototype.fadedIn = function() {};
+Path.prototype.fadingOut = function() {};
+Path.prototype.fadedOut = function() {};
+
 // Shift our (x, y) coordinates.
 Path.prototype.shift = function(tier, dx, dy) {};
 

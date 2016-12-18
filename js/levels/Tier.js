@@ -39,6 +39,9 @@ Tier.LINE_CAP_STYLE = 'butt';
 Tier.LINE_JOIN_STYLE = 'round';
 Tier.LINE_DASH = [18, 7];
 Tier.LINE_DASH_OFFSET = 11;
+Tier.FADE_TIME = 300; // ms
+Tier.FADE_SCALE = 3; // ms
+
 
 // Return a string that can be used to name a new point.
 Tier.prototype.getNewPointName = function() {
@@ -74,6 +77,10 @@ Tier.prototype.addPoint = function(name, x, y, point2) {
 Tier.prototype._addPoint = function(point) {
     this.points.push(point);
     this.pointMap[point.name] = point;
+    this.events.onFadingIn.add(point.fadingIn, point);
+    this.events.onFadedIn.add(point.fadedIn, point);
+    this.events.onFadingOut.add(point.fadingOut, point);
+    this.events.onFadedOut.add(point.fadedOut, point);
     return point;
 };
 
@@ -91,6 +98,10 @@ Tier.prototype._addPath = function(path, point, point2) {
     point.paths.push(path);
     point2.paths.push(path);
     this.paths.push(path);
+    this.events.onFadingIn.add(path.fadingIn, path);
+    this.events.onFadedIn.add(path.fadedIn, path);
+    this.events.onFadingOut.add(path.fadingOut, path);
+    this.events.onFadedOut.add(path.fadedOut, path);
     this.pathMap[path.name] = path;
     return path;
 };
@@ -117,6 +128,10 @@ Tier.prototype.deletePoint = function(point) {
             this.deletePath(point.paths[0]);
         }
         point.delete();
+        this.events.onFadingIn.remove(point.fadingIn, point);
+        this.events.onFadedIn.remove(point.fadedIn, point);
+        this.events.onFadingOut.remove(point.fadingOut, point);
+        this.events.onFadedOut.remove(point.fadedOut, point);
         this.points.splice(index, 1);
         delete this.pointMap[point.name];
         this.renderNeeded = true;
@@ -160,6 +175,10 @@ Tier.prototype.deletePath = function(path) {
             point.paths.splice(index2, 1);
         }
         path.delete();
+        this.events.onFadingIn.remove(path.fadingIn, path);
+        this.events.onFadedIn.remove(path.fadedIn, path);
+        this.events.onFadingOut.remove(path.fadingOut, path);
+        this.events.onFadedOut.remove(path.fadedOut, path);
         this.paths.splice(index, 1);
         delete this.pathMap[path.name];
         this.renderNeeded = true;
@@ -405,8 +424,8 @@ Tier.prototype.fadeIn = function(increasing) {
     this.fading = true;
     this.events.onFadingIn.dispatch(this);
 
-    var time = 300;
-    var s = 3;
+    var time = Tier.FADE_TIME;
+    var s = Tier.FADE_SCALE;
     this.image.alpha = 0;
     var t = this.game.add.tween(this.image);
     t.to({ alpha: 1 }, time, Phaser.Easing.Cubic.Out, true);
@@ -438,8 +457,8 @@ Tier.prototype.fadeOut = function(increasing) {
     this.fading = true;
     this.events.onFadingOut.dispatch(this);
 
-    var time = 300;
-    var s = 3;
+    var time = Tier.FADE_TIME;
+    var s = Tier.FADE_SCALE;
     this.image.alpha = 1;
     var t = this.game.add.tween(this.image);
     t.to({ alpha: 0 }, time, Phaser.Easing.Cubic.Out, true);
