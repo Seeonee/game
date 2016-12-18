@@ -119,10 +119,10 @@ Path.prototype.notifyAttached = function(avatar, prev) {
 Path.prototype.notifyDetached = function(avatar, next) {};
 
 // Handle various fade events.
-Path.prototype.fadingIn = function() {};
-Path.prototype.fadedIn = function() {};
-Path.prototype.fadingOut = function() {};
-Path.prototype.fadedOut = function() {};
+Path.prototype.fadingIn = function(tier) {};
+Path.prototype.fadedIn = function(tier) {};
+Path.prototype.fadingOut = function(tier) {};
+Path.prototype.fadedOut = function(tier) {};
 
 // Shift our (x, y) coordinates.
 Path.prototype.shift = function(tier, dx, dy) {};

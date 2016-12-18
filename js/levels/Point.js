@@ -115,10 +115,10 @@ Point.prototype.notifyDetached = function(avatar, next) {
 };
 
 // Handle various fade events.
-Point.prototype.fadingIn = function() {};
-Point.prototype.fadedIn = function() {};
-Point.prototype.fadingOut = function() {};
-Point.prototype.fadedOut = function() {};
+Point.prototype.fadingIn = function(tier) {};
+Point.prototype.fadedIn = function(tier) {};
+Point.prototype.fadingOut = function(tier) {};
+Point.prototype.fadedOut = function(tier) {};
 
 // Are we enabled?
 Point.prototype.isEnabled = function() {

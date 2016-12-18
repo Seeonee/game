@@ -121,12 +121,18 @@ WarpPoint.prototype.setEnabled = function(enabled) {
 // Un/pause our tweens.
 WarpPoint.prototype.setTweensPaused = function(paused) {
     for (var i = 0; i < this.tweens.length; i++) {
-        if (paused) {
-            this.tweens[i].pause();
-        } else {
-            this.tweens[i].resume();
-        }
+        var tween = this.tweens[i];
+        paused ? tween.pause() : tween.resume();
     }
+};
+
+// Called on tier fade.
+WarpPoint.prototype.fadingIn = function(tier) {
+    this.setTweensPaused(false);
+};
+// Called on tier fade.
+WarpPoint.prototype.fadedOut = function(tier) {
+    this.setTweensPaused(true);
 };
 
 // Turn on our targeting spotlight.

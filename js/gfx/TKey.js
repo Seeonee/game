@@ -32,6 +32,8 @@ var TKey = function(game, x, y, palette) {
     t.to({ x: scale, y: scale }, TKey.GLOW_TIME,
         Phaser.Easing.Sinusoidal.InOut, true, 0,
         Number.POSITIVE_INFINITY, true);
+
+    this.pickedUp = false;
 };
 
 TKey.prototype = Object.create(Phaser.Sprite.prototype);
@@ -51,7 +53,23 @@ TKey.BURST_SCALE = 8;
 TKey.FIX = 2;
 TKey.BURST_DURATION = 500;
 
+// Pause or unpause the key's hovering.
+TKey.prototype.setPaused = function(paused) {
+    if (this.pickedUp) {
+        return;
+    }
+    for (var i = 0; i < this.tweens; i++) {
+        var tween = this.tweens[i];
+        paused ? tween.pause() : tween.resume();
+    }
+};
+
+// Called when the key is picked up.
 TKey.prototype.pickUp = function() {
+    if (this.pickedUp) {
+        return;
+    }
+    this.pickedUp = true;
     var t = this.game.add.tween(this.tkey);
     t.to({ alpha: 0 },
         TKey.BURST_DURATION, Phaser.Easing.Quadratic.Out, true);

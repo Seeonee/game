@@ -1,7 +1,6 @@
 add lock mechanics
 add quick title fade when starting a level (but not restarting?)
 add "wire" paths + gfx for powering points on
-pause the warp point tween when tier fades
 figure out what powers should do
 add settings submenu for key bindings
 add ability for menu items to have things other than raw text

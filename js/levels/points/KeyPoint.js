@@ -2,7 +2,6 @@
 var KeyPoint = function(name, x, y) {
     Point.call(this, name, x, y);
     this.tkey = undefined;
-    this.pickedUp = false;
 };
 
 KeyPoint.TYPE = 'key';
@@ -24,22 +23,23 @@ KeyPoint.prototype.draw = function(tier) {
     Point.prototype.draw.call(this, tier);
 };
 
+// Called on tier fade.
+KeyPoint.prototype.fadingIn = function(tier) {
+    this.tkey.setPaused(false);
+};
+// Called on tier fade.
+KeyPoint.prototype.fadedOut = function(tier) {
+    this.tkey.setPaused(true);
+};
+
 // Pick up the key.
 KeyPoint.prototype.notifyAttached = function(avatar, prev) {
     Point.prototype.notifyAttached.call(this, avatar, prev);
-    if (this.pickedUp) {
+    if (this.tkey.pickedUp) {
         return;
     }
     avatar.tierMeter.addKey();
     this.tkey.pickUp();
-    this.pickedUp = true;
-};
-
-// Called when the tier updates.
-KeyPoint.prototype.update = function() {
-    if (!this.pickedUp && this.tkey) {
-        this.tkey.update();
-    }
 };
 
 // Delete our key.
