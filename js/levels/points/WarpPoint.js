@@ -1,5 +1,5 @@
 // A point that allows transitioning to other tiers.
-var WarpPoint = function(name, x, y, to) {
+var WarpPoint = function(name, x, y, to, enabled) {
     Point.call(this, name, x, y);
     this.emitters = [];
     this.tweens = [];
@@ -7,6 +7,7 @@ var WarpPoint = function(name, x, y, to) {
     this.to = to;
     this.toPoint = undefined;
     this.istateName = WarpIState.NAME;
+    this.enabled = enabled == undefined ? true : enabled;
 };
 
 WarpPoint.TYPE = 'warp';
@@ -22,6 +23,7 @@ WarpPoint.PATH_RATIO = 0.6;
 WarpPoint.EMBER_RADIUS = 4;
 WarpPoint.EMBER_TIME = 1000; // ms
 WarpPoint.EMBER_DELAY = 1400; // ms
+WarpPoint.DISABLED_EMBER_ALPHA = 0.25;
 WarpPoint.CONTRAIL_LENGTH = 250;
 WarpPoint.CONTRAIL_WITHER = 4;
 WarpPoint.FLICKER_TIME = 700; // ms
@@ -101,6 +103,22 @@ WarpPoint.prototype.draw = function(tier) {
     }
 };
 
+// Set our enabled state.
+WarpPoint.prototype.setEnabled = function(enabled) {
+    if (enabled == this.enabled) {
+        return;
+    }
+    Point.prototype.setEnabled.call(this, enabled);
+    this.setTweensPaused(!this.enabled || this.attached);
+    if (!this.enabled) {
+        this.ember.alpha = WarpPoint.DISABLED_EMBER_ALPHA;
+        this.stopContrail();
+    } else if (this.attached) {
+        this.ember.alpha = 1;
+        this.startContrail();
+    }
+};
+
 // Un/pause our tweens.
 WarpPoint.prototype.setTweensPaused = function(paused) {
     for (var i = 0; i < this.tweens.length; i++) {
@@ -112,11 +130,11 @@ WarpPoint.prototype.setTweensPaused = function(paused) {
     }
 };
 
-// Light up the warp point.
-WarpPoint.prototype.notifyAttached = function(avatar, prev) {
-    Point.prototype.notifyAttached.call(this, avatar, prev);
-    this.setTweensPaused(true);
-    this.ember.alpha = 1;
+// Turn on our targeting spotlight.
+WarpPoint.prototype.startContrail = function() {
+    if (this.ctween) {
+        return;
+    }
     this.contrail.alpha = 1;
     this.ctween = this.game.add.tween(this.contrail);
     this.ctween.to({ alpha: 0.3 }, WarpPoint.FLICKER_TIME,
@@ -124,12 +142,32 @@ WarpPoint.prototype.notifyAttached = function(avatar, prev) {
         0, Number.POSITIVE_INFINITY, true);
 };
 
+// Turn off our targeting spotlight.
+WarpPoint.prototype.stopContrail = function() {
+    this.contrail.alpha = 0;
+    if (this.ctween) {
+        this.ctween.stop();
+        this.ctween = undefined;
+    }
+};
+
+// Light up the warp point.
+WarpPoint.prototype.notifyAttached = function(avatar, prev) {
+    Point.prototype.notifyAttached.call(this, avatar, prev);
+    if (this.enabled) {
+        this.setTweensPaused(true);
+        this.ember.alpha = 1;
+        this.startContrail();
+    }
+};
+
 // Lights out for the warp point.
 WarpPoint.prototype.notifyDetached = function(avatar, next) {
     Point.prototype.notifyDetached.call(this, avatar, next);
-    this.setTweensPaused(false);
-    this.contrail.alpha = 0;
-    this.ctween.stop();
+    if (this.enabled) {
+        this.setTweensPaused(false);
+        this.stopContrail();
+    }
 };
 
 
@@ -148,10 +186,12 @@ WarpPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
     result.type = WarpPoint.TYPE;
     result.to = this.to;
+    result.enabled = this.enabled;
     return result;
 };
 
 // Load a JSON representation of a warp point.
 WarpPoint.load = function(game, name, json) {
-    return new WarpPoint(name, json.x, json.y, json.to);
+    return new WarpPoint(name, json.x, json.y,
+        json.to, json.enabled);
 };

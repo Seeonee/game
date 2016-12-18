@@ -9,6 +9,8 @@ var Point = function(name, x, y) {
     // The name of the default istate for handling 
     // input while we're attached.
     this.istateName = undefined;
+    this.attached = false;
+    this.enabled = true;
 };
 
 // Constants.
@@ -89,22 +91,56 @@ Point.prototype.getPath = function(angle) {
 
 // Should the avatar "stick" briefly when passing this point?
 Point.prototype.shouldHold = function() {
-    return this.istateName;
+    return this.enabled && this.istateName;
 };
 
 // Called upon avatar attachment.
 // Also takes the previous path the avatar was attached to.
 Point.prototype.notifyAttached = function(avatar, prev) {
     console.log('attach ' + this.name, this.x, this.y);
+    this.attached = true;
+    this.enableIState();
+};
+
+// Called upon avatar detachment.
+// Also takes the path the avatar is leaving us for.
+Point.prototype.notifyDetached = function(avatar, next) {
+    this.attached = false;
+    this.disableIState();
+};
+
+// Are we enabled?
+Point.prototype.isEnabled = function() {
+    return this.enabled;
+};
+
+// Set our enabled state.
+// This mainly affects whether our custom istate 
+// can become enabled.
+Point.prototype.setEnabled = function(enabled) {
+    if (this.enabled == enabled) {
+        return;
+    }
+    this.enabled = enabled;
+    if (this.attached) {
+        if (this.enabled) {
+            this.enableIState();
+        } else {
+            this.disableIState();
+        }
+    }
+};
+
+// Turn on our custom istate, if we have one.
+Point.prototype.enableIState = function() {
     if (this.istateName) {
         var ihandler = game.state.getCurrentState().pointhandler;
         ihandler.activate(this.istateName);
     }
 };
 
-// Called upon avatar detachment.
-// Also takes the path the avatar is leaving us for.
-Point.prototype.notifyDetached = function(avatar, next) {
+// Turn off our custom istate, if we have one.
+Point.prototype.disableIState = function() {
     if (this.istateName) {
         var ihandler = game.state.getCurrentState().pointhandler;
         if (ihandler.isActive(this.istateName)) {

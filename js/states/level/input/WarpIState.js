@@ -36,7 +36,8 @@ WarpIState.prototype.update = function() {
     if (this.charging || this.recharging) {
         return;
     }
-    if (this.gpad.justReleased(this.buttonMap.WARP)) {
+    if (this.avatar.point.isEnabled() &&
+        this.gpad.justReleased(this.buttonMap.WARP)) {
         this.gpad.consumeButtonEvent();
         this.charge();
     } else {

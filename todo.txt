@@ -1,6 +1,7 @@
 add lock mechanics
 add "end level" gate
 figure out what powers should do
+add disabled modes for points
 add settings submenu for key bindings
 add ability for menu items to have things other than raw text
 add editor mode for defining point properties such as portals, powers, etc
