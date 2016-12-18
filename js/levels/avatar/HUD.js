@@ -133,6 +133,11 @@ var TierMeter = function(game, level) {
     this.cameraOffset.setTo(TierMeter.CAMERA_X, TierMeter.CAMERA_Y);
     this.level.events.onTierChange.add(this.setTier, this);
     this.setTier(this.level.tier);
+
+    if (this.hud == Settings.HUD_SOMETIMES) {
+        this.alpha = 1;
+        this.fade(false);
+    }
 };
 
 TierMeter.prototype = Object.create(Phaser.Sprite.prototype);
@@ -158,7 +163,7 @@ TierMeter.CLOUD_PAD = 6;
 TierMeter.CLOUD_MAX = 3;
 TierMeter.BURST_Y = -13;
 TierMeter.FADE_TIME = 300; // ms
-TierMeter.FADE_OUT_DELAY = 2000; // ms
+TierMeter.FADE_OUT_DELAY = 3000; // ms
 TierMeter.TRIANGLE_TRAVEL_TIME = 500; // ms
 
 
