@@ -10,6 +10,7 @@ var PointIHandler = function(game, gpad, level, ihandler) {
     // Set up all of our available states;
     // creation automatically registers them.
     new PortalIState(this, level);
+    new WarpIState(this, level);
 };
 
 PointIHandler.prototype = Object.create(IHandler.prototype);

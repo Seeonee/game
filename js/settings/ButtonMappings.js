@@ -10,6 +10,7 @@ var ButtonMappings = function() {
     this.MOVE_X = undefined;
     this.MOVE_Y = undefined;
     this.PORTAL = undefined;
+    this.WARP = undefined;
 
     // Level editor controls.
     this.EDIT_STEP_DOWN = undefined;
@@ -33,6 +34,7 @@ var ButtonMappingsPlaystation = function() {
     this.MOVE_X = Phaser.Gamepad.PS3XC_STICK_LEFT_X;
     this.MOVE_Y = Phaser.Gamepad.PS3XC_STICK_LEFT_Y;
     this.PORTAL = this.SELECT;
+    this.WARP = this.SELECT;
 
     // Level editor controls.
     this.EDIT_STEP_DOWN = Phaser.Gamepad.PS3XC_SQUARE;
@@ -56,6 +58,7 @@ var ButtonMappingsXbox = function() {
     this.MOVE_X = Phaser.Gamepad.XBOX360_STICK_LEFT_X;
     this.MOVE_Y = Phaser.Gamepad.XBOX360_STICK_LEFT_Y;
     this.PORTAL = this.SELECT;
+    this.WARP = this.SELECT;
 
     // Level editor controls.
     this.EDIT_STEP_DOWN = Phaser.Gamepad.XBOX360_X;
