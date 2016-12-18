@@ -2,8 +2,6 @@
 var PausedIState = function(handler, level) {
     IMenuState.call(this, PausedIState.NAME, handler, this);
     this.level = level;
-    this.dropCloth = true;
-    this.blurBackground = true;
 
     this.root.text = level.name;
     this.addCancel('continue', this.selectContinue);
@@ -27,7 +25,7 @@ PausedIState.prototype.activated = function(prev) {
 
 // Propagate any settings changes.
 PausedIState.prototype.updateSettings = function(settings) {
-    IState.prototype.updateSettings.call(this, settings);
+    IMenuState.prototype.updateSettings.call(this, settings);
     this.level.updateSettings(settings);
 };
 

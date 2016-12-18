@@ -22,8 +22,8 @@ var IMenuState = function(name, handler, context) {
     this.colorPrimary = this.game.settings.colors.MENU_PRIMARY;
     this.colorSelection = this.game.settings.colors.MENU_SELECTION;
     this.color = this.colorPrimary;
-    this.dropCloth = false;
-    this.blurBackground = false;
+    this.dropCloth = true;
+    this.blurBackground = true;
     this.updateDuringPause = true;
     this.inputBlocked = false;
 };

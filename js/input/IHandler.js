@@ -10,6 +10,8 @@ var IHandler = function(game, gpad) {
     this.wrapped = undefined;
     this.wrapper = undefined;
     // Turn off this.enabled to suspend input.
+    // Wrapped handlers will still be allowed 
+    // to operate.
     this.enabled = true;
 };
 
@@ -29,9 +31,9 @@ IHandler.prototype.update = function() {
             this.activate(IHandler.DEFAULT_STATE_NAME);
             handled = this.state.update();
         }
-        if (handled == false && this.wrapped) {
-            return this.wrapped.update();
-        }
+    }
+    if (handled == false && this.wrapped) {
+        return this.wrapped.update();
     }
     return handled;
 };
@@ -43,9 +45,9 @@ IHandler.prototype.pauseUpdate = function() {
         if (this.state) {
             handled = this.state.pauseUpdate();
         }
-        if (handled == false && this.wrapped) {
-            return this.wrapped.pauseUpdate();
-        }
+    }
+    if (handled == false && this.wrapped) {
+        return this.wrapped.pauseUpdate();
     }
     return handled;
 };
@@ -57,9 +59,9 @@ IHandler.prototype.render = function() {
         if (this.state) {
             handled = this.state.render();
         }
-        if (handled == false && this.wrapped) {
-            return this.wrapped.render();
-        }
+    }
+    if (handled == false && this.wrapped) {
+        return this.wrapped.render();
     }
     return handled;
 };

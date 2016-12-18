@@ -3,7 +3,8 @@ var EndPoint = function(name, x, y, enabled) {
     Point.call(this, name, x, y, enabled);
     this.z = Point.Z + 1;
     this.rings = { inner: [], outer: [] };
-    // this.istateName = EndIState.NAME;
+    this.stabilized = false;
+    this.istateName = EndIState.NAME;
 };
 
 EndPoint.TYPE = 'end';
@@ -17,14 +18,20 @@ Point.load.factory[EndPoint.TYPE] = EndPoint;
 EndPoint.INNER_RINGS = 9;
 EndPoint.OUTER_RINGS = 10;
 EndPoint.RING_RADIUS = Tier.PATH_WIDTH;
+EndPoint.AVATAR_DROP_DISTANCE = 30;
+EndPoint.AVATAR_DROP_TIME = 250; // ms
+EndPoint.DROP_FLASH_DELAY = 195; // ms
+EndPoint.CALLBACK_DELAY = 300; // ms
 
 
 // During our first draw, we create the rings.
 EndPoint.prototype.draw = function(tier) {
-    // Point.prototype.draw.call(this, tier);
     this.tier = tier;
     this.game = tier.game;
     if (!this.drawn) {
+        // We draw our own point, since we can't 
+        // size up the base point without it getting 
+        // clipped by the tier.image bounds.
         this.renderNeeded = false;
         var r = EndPoint.RING_RADIUS;
         var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
@@ -38,32 +45,37 @@ EndPoint.prototype.draw = function(tier) {
         this.image = this.game.make.sprite(ap.x, ap.y, bitmap);
         this.tier.image.addChild(this.image);
         this.image.anchor.setTo(0.5, 0.5);
-
-        // TODO: Two options here:
-        // * Translate to game point and add to bg, but 
-        //   then we don't scale/hide with the tier.
-        // * Translate to anchor point and add as tier image child, 
-        //   but then we lose control of our z ordering.
-        // var ap = tier.translateInternalPointToAnchorPoint(
-        //     this.x, this.y);
-        var ap = tier.translateInternalPointToGamePoint(
+        // Now we add the actual gfx rings.
+        // Note: these get positioned absolutely, not anchored.
+        var gp = tier.translateInternalPointToGamePoint(
             this.x, this.y);
         for (var i = 0; i < EndPoint.INNER_RINGS; i++) {
             this.rings.inner.push(new ERing(this.game,
-                ap.x, ap.y, 'ring_inner', tier.palette,
-                i, EndPoint.INNER_RINGS));
+                gp.x, gp.y, true, tier.palette, i));
         }
         for (var i = 0; i < EndPoint.OUTER_RINGS; i++) {
             this.rings.outer.push(new ERing(this.game,
-                ap.x, ap.y, 'ring_outer', tier.palette,
-                i, EndPoint.OUTER_RINGS));
+                gp.x, gp.y, false, tier.palette, i));
         }
         this.rings.all = this.rings.inner.concat(this.rings.outer);
         for (var i = 0; i < this.rings.all.length; i++) {
-            // this.tier.image.addChild(this.rings.all[i]);
             this.game.state.getCurrentState().z.bg.add(
                 this.rings.all[i]);
         }
+        var ring0 = this.rings.all[0];
+
+        // Forward events regarding stability (which 
+        // occurs in sync for all rings).
+        this.events = {
+            onStabilize: ring0.events.onStabilize,
+            onDestabilize: ring0.events.onDestabilize
+        };
+        ring0.events.onStabilize.add(function() {
+            this.stabilized = true;
+        }, this);
+        ring0.events.onDestabilize.add(function() {
+            this.stabilized = false;
+        }, this);
     }
 };
 
@@ -94,11 +106,76 @@ EndPoint.prototype.setEnabled = function(enabled) {
     }
 };
 
-// Pause rings (e.g. when tier is hidden).
-EndPoint.prototype.setPaused = function(paused) {
+// Let the rings orbit again.
+EndPoint.prototype.notifyDetached = function(avatar, next) {
+    Point.prototype.notifyDetached.call(this, avatar, next);
     for (var i = 0; i < this.rings.all.length; i++) {
-        this.rings.all[i].setPaused(paused);
+        this.rings.all[i].setStable(false);
     }
+};
+
+// Charge up the final gfx.
+// This will automatically delay until any in-progress 
+// stabilization has completed.
+EndPoint.prototype.chargeUp = function(callback, context) {
+    if (this.stabilized) {
+        this._chargeUp(callback, context);
+    } else {
+        this.events.onStabilize.add(function() {
+            this._chargeUp(callback, context);
+        }, this);
+    }
+};
+
+// Charge up the final gfx.
+EndPoint.prototype._chargeUp = function(callback, context) {
+    for (var i = 0; i < this.rings.all.length; i++) {
+        var ring = this.rings.all[i];
+        ring.blaze();
+    }
+    var gp = this.tier.translateInternalPointToGamePoint(
+        this.x, this.y);
+    var traveller = new ETraveller(this.game, gp.x, gp.y,
+        this.tier.palette);
+    traveller.events.onPortalOpen.add(function() {
+        this.dropAvatar();
+    }, this);
+    if (callback) {
+        traveller.events.onPortalClosed.add(function() {
+            this.game.time.events.add(EndPoint.CALLBACK_DELAY,
+                callback, context);
+        }, this);
+    }
+};
+
+// Lower the player avatar into the portal.
+EndPoint.prototype.dropAvatar = function() {
+    var a = this.avatar;
+    var y = a.y + EndPoint.AVATAR_DROP_DISTANCE;
+    var t = this.game.add.tween(a);
+    t.to({ y: y }, EndPoint.AVATAR_DROP_TIME,
+        Phaser.Easing.Back.In, true);
+    var t2 = this.game.add.tween(a);
+    t2.to({ alpha: 0 }, EndPoint.AVATAR_DROP_TIME,
+        Phaser.Easing.Quadratic.In, true);
+    this.game.time.events.add(EndPoint.DROP_FLASH_DELAY,
+        this.portalFlash, this);
+};
+
+// Spawn the gfx as our avatar drops through the portal.
+EndPoint.prototype.portalFlash = function() {
+    this.tier.fadeOut();
+    var gp = this.tier.translateInternalPointToGamePoint(
+        this.x, this.y);
+    var zgroup = this.game.state.getCurrentState().z.fg;
+    // Standard portal flash.
+    new PortalFlash(this.game).flash(zgroup, gp.x, gp.y);
+    // Fancy *spinning* line flash!
+    var hflash = new HFlash(this.game)
+    hflash.flash(zgroup, gp.x, gp.y);
+    var t = this.game.add.tween(hflash);
+    t.to({ rotation: -Math.PI / 2 }, HFlash.FLASH_TOTAL,
+        Phaser.Easing.Cubic.InOut, true);
 };
 
 // Sping the rings into place.
@@ -111,16 +188,8 @@ EndPoint.prototype.notifyAttached = function(avatar, prev) {
     }
 };
 
-// Let the rings orbit again.
-EndPoint.prototype.notifyDetached = function(avatar, next) {
-    Point.prototype.notifyDetached.call(this, avatar, next);
-    for (var i = 0; i < this.rings.all.length; i++) {
-        this.rings.all[i].setStable(false);
-    }
-};
 
-
-// Delete our tweens.
+// Delete our rings.
 EndPoint.prototype.delete = function() {
     for (var i = 0; i < this.rings.all.length; i++) {
         this.rings.all[i].kill();

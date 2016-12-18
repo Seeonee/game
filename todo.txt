@@ -1,12 +1,9 @@
 add lock mechanics
 add "wire" paths + gfx for powering points on
-add point gfx for enabled on/off
+pause the warp point tween when tier fades
 add "end level" gate
 figure out what powers should do
 add settings submenu for key bindings
 add ability for menu items to have things other than raw text
 add editor mode for defining point properties such as portals, powers, etc
-Make sure point emitters turn off while tier is inactive
-Make sure the tier that fades out still gets all its groups' visibilities disabled
-Make notifier broadcasts to all tier items when tier becomes in/active
 add sound fx and music

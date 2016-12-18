@@ -1,6 +1,8 @@
 // An orbiting ring fragment.
-var ERing = function(game, x, y, name, palette, index, max) {
-    Phaser.Sprite.call(this, game, x, y, name);
+var ERing = function(game, x, y, inner, palette, index) {
+    this.inner = inner;
+    this.name = inner ? 'ring_inner' : 'ring_outer';
+    Phaser.Sprite.call(this, game, x, y, this.name);
     this.anchor.setTo(0); // Top left. It's actually the default.
     this.randomizeScale();
 
@@ -9,7 +11,7 @@ var ERing = function(game, x, y, name, palette, index, max) {
     this.tint = this.colorOn;
 
     this.index = index;
-    this.max = max;
+    this.max = inner ? EndPoint.INNER_RINGS : EndPoint.OUTER_RINGS;
     this.ratio = this.index / this.max;
     this.goalAngle = this.ratio * 2 * Math.PI -
         ERing.ANGLE / 2 - Math.PI / 2;
@@ -22,6 +24,9 @@ var ERing = function(game, x, y, name, palette, index, max) {
 
     this.enabled = true;
     this.stable = false;
+    this.stabilized = false;
+    this.events.onStabilize = new Phaser.Signal();
+    this.events.onDestabilize = new Phaser.Signal();
     this.startRotation();
 };
 
@@ -31,6 +36,7 @@ ERing.prototype.constructor = ERing;
 // Constants.
 ERing.ANGLE = Math.PI / 6;
 ERing.SPIN_TIME = 8000; // ms
+ERing.GEAR_TIME = 2 * ERing.SPIN_TIME; // ms
 ERing.TIME_VARIANCE = 0.4;
 ERing.SCALE_TIME = 400; // ms
 ERing.SCALE_VARIANCE = 0.4;
@@ -38,6 +44,8 @@ ERing.SCALE_ROAM = 0.1;
 ERing.DISABLED_ALPHA = 0.25;
 ERing.STABILIZE_TIME = 1000; // ms
 ERing.STABILIZE_VARIANCE = 0.15;
+ERing.BLAZE_SCALE = 0.26;
+ERing.BLAZE_TIME = 500; // ms
 
 
 // Randomize our scale.
@@ -123,9 +131,25 @@ ERing.prototype.setStable = function(stable) {
         t.to({ x: 1, y: 1 }, ERing.SCALE_TIME,
             Phaser.Easing.Sinusoidal.InOut, false, delay);
         this.tween.chain(t);
+        var turn = 2 * Math.PI * (this.inner ? 1 : -1);
+        this.tween2 = this.game.add.tween(this);
+        this.tween2.to({ rotation: this.goalAngle + turn },
+            ERing.GEAR_TIME, Phaser.Easing.Linear.InOut, false, 0,
+            Number.POSITIVE_INFINITY);
+        this.tween2.onStart.add(function() {
+            this.stabilized = true;
+            this.events.onStabilize.dispatch();
+        }, this);
+        t.chain(this.tween2);
     } else {
+        if (this.tween2) {
+            this.tween2.stop();
+            this.tween2 = undefined;
+        }
         this.randomizeScale(true);
         this.startRotation();
+        this.stabilized = false;
+        this.events.onDestabilize.dispatch();
     }
 };
 
@@ -137,4 +161,19 @@ ERing.prototype.fade = function(fadeIn) {
     }
     this.alpha = fadeIn ? 1 : ERing.DISABLED_ALPHA;
     this.tint = fadeIn ? this.colorOn : this.colorOff;
+};
+
+// Go out in a blaze of glory.
+ERing.prototype.blaze = function() {
+    var scale = this.scale.x +
+        ERing.BLAZE_SCALE * (this.inner ? 1 : -1);
+    var t = this.game.add.tween(this.scale);
+    t.to({ x: scale, y: scale }, ERing.BLAZE_TIME,
+        Phaser.Easing.Sinusoidal.InOut, true);
+    var t2 = this.game.add.tween(this);
+    t2.to({ alpha: 0 }, ERing.BLAZE_TIME,
+        Phaser.Easing.Cubic.In, true);
+    t2.onComplete.add(function() {
+        this.kill();
+    }, this);
 };

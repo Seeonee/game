@@ -11,6 +11,7 @@ var PointIHandler = function(game, gpad, level, ihandler) {
     // creation automatically registers them.
     new PortalIState(this, level);
     new WarpIState(this, level);
+    new EndIState(this, level);
 };
 
 PointIHandler.prototype = Object.create(IHandler.prototype);
