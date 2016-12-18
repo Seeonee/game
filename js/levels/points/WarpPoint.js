@@ -1,13 +1,12 @@
 // A point that allows transitioning to other tiers.
 var WarpPoint = function(name, x, y, to, enabled) {
-    Point.call(this, name, x, y);
+    Point.call(this, name, x, y, enabled);
     this.emitters = [];
     this.tweens = [];
     this.z = Point.Z + 1;
     this.to = to;
     this.toPoint = undefined;
     this.istateName = WarpIState.NAME;
-    this.enabled = enabled == undefined ? true : enabled;
 };
 
 WarpPoint.TYPE = 'warp';
@@ -186,7 +185,9 @@ WarpPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
     result.type = WarpPoint.TYPE;
     result.to = this.to;
-    result.enabled = this.enabled;
+    if (!this.enabled) {
+        result.enabled = this.enabled;
+    }
     return result;
 };
 

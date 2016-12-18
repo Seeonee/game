@@ -1,12 +1,15 @@
 // Fancy class to represent a power-up icon.
 var Power = function(game, x, y, name, palette, angle) {
+    this.enabled = true;
+    this.selected = false;
     Phaser.Sprite.call(this, game, x, y); // Superclass constructor.
 
-    var colors = this.game.settings.colors;
-    this.diamondUnpowered = palette.c2.i;
-    this.diamondPowered = palette.c2.i;
-    this.iconUnpowered = colors.WHITE.i;
-    this.iconPowered = colors.WHITE.i;
+    this.diamondTint = palette.c2.i;
+    this.whiteTint = this.game.settings.colors.WHITE.i;
+    this.diamondUnpowered = this.diamondTint;
+    this.diamondPowered = this.diamondTint;
+    this.iconUnpowered = this.whiteTint;
+    this.iconPowered = this.whiteTint;
 
     // Create our graphics.
     this.diamond = this.addChild(game.make.sprite(
@@ -50,6 +53,7 @@ Power.ICON_POWER_UP = 400; // ms
 Power.ICON_POWER_DOWN = 200; // ms
 Power.ICON_SLIDE = 25;
 Power.ICON_POWER_DELAY = 100; // ms
+Power.DISABLED_DIAMOND_ALPHA = 0.25;
 
 // Convert a hex color int into an rgb "tuple".
 Power.rgb = function(color) {
@@ -78,6 +82,7 @@ Power.prototype.update = function() {
 
 // These are the effects triggered by mouseover.
 Power.prototype.select = function() {
+    this.selected = true;
     this.clearTweens();
     this.diamond_fade_in();
     this.icon_power_up();
@@ -88,6 +93,29 @@ Power.prototype.deselect = function() {
     this.clearTweens();
     this.diamond_fade_out();
     this.icon_power_down();
+    this.selected = false;
+};
+
+// Set our enabled state.
+Power.prototype.setEnabled = function(enabled) {
+    if (enabled == this.enabled) {
+        return;
+    }
+    this.enabled = enabled;
+    this.clearTweens();
+    this.diamond.alpha = this.enabled ?
+        1 : Power.DISABLED_DIAMOND_ALPHA;
+    this.diamondUnpowered = this.enabled ?
+        this.diamondTint : this.whiteTint;
+    this.diamondPowered = this.enabled ?
+        this.diamondTint : this.whiteTint;
+    this.diamond_rgb = Power.rgb(this.selected ?
+        this.diamondPowered : this.diamondUnpowered);
+    this.diamond.scale.setTo(this.selected ?
+        1 : Power.DIAMOND_SCALE);
+    this.icon.alpha = this.selected ? 1 : 0;
+    this.icon.y = this.selected ?
+        this.iconY : this.iconY - Power.ICON_SLIDE;
 };
 
 // Stop all currently firing tweens.
@@ -112,7 +140,10 @@ Power.prototype.diamond_fade_out = function() {
     this.tweens.push(this.game.add.tween(this.diamond_rgb).to(
         Power.rgb(this.diamondUnpowered), Power.DIAMOND_FADE_IN,
         Phaser.Easing.Cubic.Out, true));
-    this.tweens.push(this.game.add.tween(this.diamond.scale).to({ x: Power.DIAMOND_SCALE, y: Power.DIAMOND_SCALE },
+    this.tweens.push(this.game.add.tween(this.diamond.scale).to({
+            x: Power.DIAMOND_SCALE,
+            y: Power.DIAMOND_SCALE
+        },
         Power.DIAMOND_FADE_IN, Phaser.Easing.Cubic.Out, true));
 };
 
@@ -124,9 +155,10 @@ Power.prototype.icon_power_up = function() {
     this.tweens.push(this.game.add.tween(this.icon).to({ alpha: 1 },
         Power.ICON_POWER_UP, Phaser.Easing.Cubic.Out, true,
         Power.ICON_POWER_DELAY));
-    this.tweens.push(this.game.add.tween(this.icon).to({ y: this.iconY },
-        Power.ICON_POWER_UP, Phaser.Easing.Cubic.Out, true,
-        Power.ICON_POWER_DELAY));
+    this.tweens.push(this.game.add.tween(this.icon)
+        .to({ y: this.iconY },
+            Power.ICON_POWER_UP, Phaser.Easing.Cubic.Out, true,
+            Power.ICON_POWER_DELAY));
 };
 
 // Triggers our icon to fade-slide out and change tint.
@@ -136,6 +168,7 @@ Power.prototype.icon_power_down = function() {
         Phaser.Easing.Cubic.Out, true));
     this.tweens.push(this.game.add.tween(this.icon).to({ alpha: 0 },
         Power.ICON_POWER_DOWN, Phaser.Easing.Cubic.Out, true));
-    this.tweens.push(this.game.add.tween(this.icon).to({ y: this.iconY - Power.ICON_SLIDE },
-        Power.ICON_POWER_DOWN, Phaser.Easing.Cubic.Out, true));
+    this.tweens.push(this.game.add.tween(this.icon)
+        .to({ y: this.iconY - Power.ICON_SLIDE },
+            Power.ICON_POWER_DOWN, Phaser.Easing.Cubic.Out, true));
 };

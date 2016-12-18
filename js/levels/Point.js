@@ -1,5 +1,5 @@
 // A point is a juncture among one or more paths.
-var Point = function(name, x, y) {
+var Point = function(name, x, y, enabled) {
     this.name = name;
     this.x = x;
     this.y = y;
@@ -10,7 +10,8 @@ var Point = function(name, x, y) {
     // input while we're attached.
     this.istateName = undefined;
     this.attached = false;
-    this.enabled = true;
+    this.avatar = undefined;
+    this.enabled = enabled == undefined ? true : enabled;
 };
 
 // Constants.
@@ -99,6 +100,7 @@ Point.prototype.shouldHold = function() {
 Point.prototype.notifyAttached = function(avatar, prev) {
     console.log('attach ' + this.name, this.x, this.y);
     this.attached = true;
+    this.avatar = avatar;
     this.enableIState();
 };
 
@@ -106,6 +108,7 @@ Point.prototype.notifyAttached = function(avatar, prev) {
 // Also takes the path the avatar is leaving us for.
 Point.prototype.notifyDetached = function(avatar, next) {
     this.attached = false;
+    this.avatar = undefined;
     this.disableIState();
 };
 

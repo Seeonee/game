@@ -20,7 +20,8 @@ PortalIState.prototype.update = function() {
     if (time < this.reactivateTime) {
         return;
     }
-    if (this.gpad.justReleased(this.buttonMap.PORTAL)) {
+    if (this.avatar.point.isEnabled() &&
+        this.gpad.justReleased(this.buttonMap.PORTAL)) {
         this.reactivateTime = time + PortalIState.REACTIVATE_DELAY;
         this.gpad.consumeButtonEvent();
         var direction = 1;
