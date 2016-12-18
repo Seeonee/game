@@ -1,6 +1,7 @@
 // Set up one tier of a wider level.
 var Tier = function(game, name) {
     this.name = name;
+    this.index = parseInt(this.name.substring(1));
     this.game = game;
     this.level = undefined; // Set during load.
     this.x = 0;
@@ -18,6 +19,16 @@ var Tier = function(game, name) {
     this.image = undefined;
 
     this.palette = this.game.settings.colors[name];
+
+    this.visible = false;
+    this.fading = false;
+    this.fades = [];
+    this.events = {
+        onFadingIn: new Phaser.Signal(),
+        onFadedIn: new Phaser.Signal(),
+        onFadingOut: new Phaser.Signal(),
+        onFadedOut: new Phaser.Signal()
+    };
 };
 
 // Constants.
@@ -354,6 +365,98 @@ Tier.prototype.render = function() {
     if (this.isRenderNeeded()) {
         this.draw();
     }
+};
+
+// Set ourselves to inactive, with no fade.
+Tier.prototype.setInactive = function() {
+    if (!this.visible) {
+        if (this.fading) {
+            // We're fading out; stop the fade and 
+            // snap to fully invisible.
+            // We don't need to signal start-of-fade.
+            this.clearFades();
+            this.fading = false;
+        } else {
+            // Snap straight to invisible, 
+            // but also signal start-of-fade.
+            this.events.onFadingOut.dispatch(this);
+        }
+        this.events.onFadedOut.dispatch(this);
+    }
+    this.visible = false;
+};
+
+// Stop any fades in progress.
+Tier.prototype.clearFades = function() {
+    for (var i = 0; i < this.fades; i++) {
+        this.fades[i].stop();
+    }
+    this.fades = [];
+};
+
+// Transition a tier via fade + scaling.
+Tier.prototype.fadeIn = function(increasing) {
+    if (this.visible) {
+        return;
+    }
+    this.visible = true;
+    this.render();
+    this.clearFades();
+    this.fading = true;
+    this.events.onFadingIn.dispatch(this);
+
+    var time = 300;
+    var s = 3;
+    this.image.alpha = 0;
+    var t = this.game.add.tween(this.image);
+    t.to({ alpha: 1 }, time, Phaser.Easing.Cubic.Out, true);
+    t.onComplete.add(function() {
+        this.fading = false;
+        this.events.onFadedIn.dispatch(this);
+    }, this);
+    this.fades.push(t);
+    // If we're going up, the old tier's going to shrink,
+    // so the new tier needs to start huge and shrink down 
+    // to normal as well.
+    var scale = increasing ? s : 1 / s;
+    this.image.scale.setTo(scale);
+    var t2 = this.game.add.tween(this.image.scale);
+    t2.to({ x: 1, y: 1 }, time, Phaser.Easing.Quartic.Out, true);
+    this.fades.push(t2);
+};
+
+// Transition a tier via fade + scaling.
+Tier.prototype.fadeOut = function(increasing) {
+    if (!this.visible) {
+        return;
+    }
+    this.visible = false;
+    if (!this.image) {
+        return;
+    }
+    this.clearFades();
+    this.fading = true;
+    this.events.onFadingOut.dispatch(this);
+
+    var time = 300;
+    var s = 3;
+    this.image.alpha = 1;
+    var t = this.game.add.tween(this.image);
+    t.to({ alpha: 0 }, time, Phaser.Easing.Cubic.Out, true);
+    t.onComplete.add(function() {
+        this.fading = false;
+        this.events.onFadedOut.dispatch(this);
+    }, this);
+    this.fades.push(t);
+    // If we're going up, the old tier's going to shrink,
+    // so the new tier needs to start huge and shrink down 
+    // to normal as well.
+    var scale = increasing ? s : 1 / s;
+    this.image.scale.setTo(1);
+    var t2 = this.game.add.tween(this.image.scale);
+    t2.to({ x: scale, y: scale }, time,
+        Phaser.Easing.Quartic.Out, true);
+    this.fades.push(t2);
 };
 
 // JSON conversion of our points and paths.

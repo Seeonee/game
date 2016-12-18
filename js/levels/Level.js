@@ -31,6 +31,14 @@ var Level = function(game, name) {
     game.state.getCurrentState().z = this.z;
 };
 
+// Add a tier, and register for its events.
+Level.prototype.addTier = function(name, tier) {
+    this.tiers.push(tier);
+    this.tierMap[name] = tier;
+    tier.events.onFadingIn.add(this.setVisibleForTier, this);
+    tier.events.onFadedOut.add(this.setInvisibleForTier, this);
+};
+
 // Slide up one layer among our tiers.
 // Latches on to a specified point name.
 // Optionally allows you to specify how many 
@@ -70,28 +78,15 @@ Level.prototype.setTier = function(tier, pointName) {
     }
     var old = this.tier;
     this.tier = tier;
-    if (old && this.tier) {
-        var increasing = parseInt(old.name.substring(1)) <
-            parseInt(this.tier.name.substring(1));
-    } else {
-        increasing = false;
-    }
+    var increasing = old && tier ? old.index < tier.index : false;
     for (var i = 0; i < this.tiers.length; i++) {
         var t2 = this.tiers[i];
-        var visible = t2 === tier;
-        if (visible) {
-            // New tier gets faded in.
-            this.fade(t2, true, increasing);
-        }
-        if (t2 === old) {
-            // Old tier gets faded out.
-            this.fade(t2, false, !increasing);
-            // TODO: Still need to set everything else in its
-            // group to be invisible.
+        if (t2 === tier) {
+            t2.fadeIn(increasing);
+        } else if (t2 === old) {
+            t2.fadeOut(!increasing);
         } else {
-            for (var j = 0; j < this.z.layers.length; j++) {
-                this.z.layers[j].setVisibleFor(t2, visible);
-            }
+            t2.setInactive(false);
         }
     }
     this.tier.updateWorldBounds();
@@ -103,21 +98,18 @@ Level.prototype.setTier = function(tier, pointName) {
     this.events.onTierChange.dispatch(this.tier, old);
 };
 
-// Transition a tier via fade + scaling.
-Level.prototype.fade = function(tier, fadeIn, increasing) {
-    tier.render();
-    tier.image.alpha = fadeIn ? 0 : 1;
-    var t = this.game.add.tween(tier.image);
-    t.to({ alpha: fadeIn ? 1 : 0 }, 300,
-        Phaser.Easing.Cubic.Out, true);
-    // If we're going up, the old tier's going to shrink,
-    // so the new tier needs to start huge and shrink down 
-    // to normal as well.
-    var scale = increasing ? 3 : 0.3;
-    tier.image.scale.setTo(fadeIn ? scale : 1);
-    var t = this.game.add.tween(tier.image.scale);
-    t.to({ x: fadeIn ? 1 : scale, y: fadeIn ? 1 : scale },
-        300, Phaser.Easing.Quartic.Out, true);
+// Shows a tier.
+Level.prototype.setVisibleForTier = function(tier) {
+    for (var j = 0; j < this.z.layers.length; j++) {
+        this.z.layers[j].setVisibleFor(tier, true);
+    }
+};
+
+// Hides a tier.
+Level.prototype.setInvisibleForTier = function(tier) {
+    for (var j = 0; j < this.z.layers.length; j++) {
+        this.z.layers[j].setVisibleFor(tier, false);
+    }
 };
 
 // Some sparkles for your level transition, sir.
@@ -185,8 +177,7 @@ Level.load = function(game, name) {
         var tierObj = tiers[key];
         var tier = Tier.load(game, key, tierObj);
         tier.level = this;
-        level.tiers.push(tier);
-        level.tierMap[key] = tier;
+        level.addTier(key, tier);
     }
     var t = level.start.split('-')[0]
     level.setTier(level.tierMap[t]);
