@@ -49,9 +49,9 @@ PortalPoint.prototype.draw = function(tier) {
         this.tier.image.addChild(this.image);
         this.image.anchor.setTo(0.5, 0.5);
         // Triangles center weirdly; shift to look better.
-        ap.y -= Math.sign(this.direction) * 2;
-        this.image2 = this.game.make.sprite(ap.x, ap.y, 'smoke');
-        this.tier.image.addChild(this.image2);
+        dy = -Math.sign(this.direction) * 2;
+        this.image2 = this.game.make.sprite(0, dy, 'smoke');
+        this.image.addChild(this.image2);
         this.image2.anchor.setTo(0.5, 0.5);
         if (this.direction < 0) {
             this.image2.rotation = Math.PI;

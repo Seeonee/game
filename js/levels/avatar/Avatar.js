@@ -67,8 +67,10 @@ Avatar.prototype.move = function(angle, ratio) {
         }
     }
     if (hold) {
-        this.x = this.destination.x;
-        this.y = this.destination.y;
+        var gp = this.tier.translateInternalPointToGamePoint(
+            this.destination.x, this.destination.y);
+        this.x = gp.x;
+        this.y = gp.y;
     } else {
         ratio = this.adjustRatio(ratio);
         this.updateDestination(angle, ratio);

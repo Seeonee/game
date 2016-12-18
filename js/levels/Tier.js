@@ -227,6 +227,11 @@ Tier.prototype.recalculateDimensions = function() {
         for (var i = 0; i < this.paths.length; i++) {
             this.paths[i].shift(this, -dx, -dy);
         }
+        for (var i = 0; i < this.image.children.length; i++) {
+            var child = this.image.children[i];
+            child.x -= dx * 0.5; // Everyone's anchors are 0.5.
+            child.y -= dy * 0.5; // Not sure what happens if not.
+        }
     }
     this.width += Tier.PADDING;
     this.height += Tier.PADDING;
@@ -239,9 +244,11 @@ Tier.prototype.recalculateDimensions = function() {
 Tier.prototype.recreateImageAsNeeded = function() {
     var w = (this.bitmap) ? this.bitmap.width : 0;
     var h = (this.bitmap) ? this.bitmap.height : 0;
+    var children = undefined;
     if (this.width > w || this.height > h) {
         if (this.bitmap) {
-            this.image.destroy();
+            children = this.image.children.slice();
+            this.image.kill();
             this.bitmap.destroy();
             this.image = undefined;
             this.bitmap = undefined;
@@ -258,6 +265,13 @@ Tier.prototype.recreateImageAsNeeded = function() {
         this.image.anchor.setTo(0.5, 0.5);
         this.game.state.getCurrentState().z.level.tier().addAt(
             this.image, 0);
+        if (children) {
+            for (var i = 0; i < children.length; i++) {
+                var child = children[i];
+                this.image.addChild(child);
+                child.revive();
+            }
+        }
         this.updateWorldBounds();
     }
 };
