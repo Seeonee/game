@@ -80,12 +80,12 @@ ETraveller.CORONA_SCALE1 = 1.1;
 ETraveller.CORONA_SCALE2 = 0.9;
 ETraveller.CORONA_SCALE3 = 0.25;
 
-ETraveller.FADE_IN_TIME = 500; // ms
+ETraveller.FADE_IN_TIME = 400; // ms
 ETraveller.FADE_OUT_TIME = 100; // ms
-ETraveller.CORE_IN_TIME = 400; // ms
-ETraveller.CORE_CREEP_TIME = 600; // ms
+ETraveller.CORE_IN_TIME = 300; // ms
+ETraveller.CORE_CREEP_TIME = 500; // ms
 ETraveller.CORE_OUT_TIME = 200; // ms
-ETraveller.CORONA_IN_TIME = 1000; // ms
+ETraveller.CORONA_IN_TIME = 700; // ms
 ETraveller.CORONA_OUT_TIME = 300; // ms
 
 // ETraveller.FADE_OUT_DELAY = 700; // ms

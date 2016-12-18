@@ -42,10 +42,10 @@ ERing.SCALE_TIME = 400; // ms
 ERing.SCALE_VARIANCE = 0.4;
 ERing.SCALE_ROAM = 0.1;
 ERing.DISABLED_ALPHA = 0.25;
-ERing.STABILIZE_TIME = 1000; // ms
+ERing.STABILIZE_TIME = 650; // ms
 ERing.STABILIZE_VARIANCE = 0.15;
 ERing.BLAZE_SCALE = 0.26;
-ERing.BLAZE_TIME = 500; // ms
+ERing.BLAZE_TIME = 300; // ms
 
 
 // Randomize our scale.
