@@ -12,6 +12,7 @@ var Point = function(name, x, y, enabled) {
     this.attached = false;
     this.avatar = undefined;
     this.enabled = enabled == undefined ? true : enabled;
+    this.startEnabled = this.enabled;
 
     this.radius = Tier.PATH_WIDTH;
 };
@@ -175,7 +176,11 @@ Point.prototype.update = function() {};
 
 // JSON conversion of a point.
 Point.prototype.toJSON = function() {
-    return { x: this.x, y: this.y };
+    var result = { x: this.x, y: this.y };
+    if (!this.startEnabled) {
+        result.enabled = false;
+    }
+    return result;
 };
 
 // Load a JSON representation of a point.
@@ -184,7 +189,7 @@ Point.load = function(game, name, json) {
     if (type && Point.load.factory[type]) {
         return Point.load.factory[type].load(game, name, json);
     }
-    return new Point(name, json.x, json.y);
+    return new Point(name, json.x, json.y, json.enabled);
 };
 
 // This is a map of type values to Point subclasses.
