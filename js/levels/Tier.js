@@ -194,8 +194,16 @@ Tier.prototype.deletePointAndMerge = function(point) {
         for (var i = 0; i < linked.length; i++) {
             for (var j = 0; j < linked.length; j++) {
                 if (i != j) {
-                    this.addPath(this.getNewPathName(),
-                        linked[i], linked[j]);
+                    var p1 = linked[i];
+                    var p2 = linked[j];
+                    var xequal = p1.x == p2.x;
+                    var yequal = p1.y == p2.y;
+                    var diag = Math.abs(p2.x - p1.x) ==
+                        Math.abs(p2.y - p1.y);
+                    if (xequal || yequal || diag) {
+                        this.addPath(this.getNewPathName(),
+                            p1, p2);
+                    }
                 }
             }
         }

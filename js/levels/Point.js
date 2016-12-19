@@ -45,7 +45,7 @@ Point.prototype.isBroken = function() {
             return false;
         }
     }
-    return true;
+    return this.paths.length > 0;
 };
 
 // Called during the draw walk by our Paths object.

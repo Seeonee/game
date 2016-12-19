@@ -110,8 +110,3 @@ PlayLevelState.prototype.update = function() {
 PlayLevelState.prototype.pauseUpdate = function() {
     this.menuhandler.pauseUpdate();
 };
-
-// Called on shutdown. Turns editing back off.
-PlayLevelState.prototype.shutdown = function() {
-    this.game.settings.edit = false;
-};
