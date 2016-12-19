@@ -20,7 +20,7 @@ Point.load.factory[WarpPoint.TYPE] = WarpPoint;
 WarpPoint.RADIUS = 20;
 WarpPoint.PATH_RATIO = 0.6;
 WarpPoint.EMBER_RADIUS = 4;
-WarpPoint.EMBER_TIME = 1000; // ms
+WarpPoint.EMBER_FADE_TIME = 1000; // ms
 WarpPoint.EMBER_DELAY = 1400; // ms
 WarpPoint.DISABLED_EMBER_ALPHA = 0.25;
 WarpPoint.CONTRAIL_LENGTH = 250;
@@ -53,17 +53,10 @@ WarpPoint.prototype.draw = function(tier) {
         this.tier.image.addChild(this.image);
         this.image.anchor.setTo(0.5, 0.5);
 
-        r = WarpPoint.EMBER_RADIUS;
-        bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-        c = bitmap.context;
-        c.fillStyle = this.game.settings.colors.WHITE.s;
-        c.arc(r, r, r, 0, 2 * Math.PI, false);
-        c.fill();
-        this.ember = this.game.make.sprite(0, 0, bitmap);
+        this.ember = new WEmber(this.game);
         this.image.addChild(this.ember);
-        this.ember.anchor.setTo(0.5, 0.5);
-        this.ember.alpha = 0;
 
+        r = WarpPoint.EMBER_RADIUS;
         var w = WarpPoint.CONTRAIL_LENGTH;
         var h = 2 * r;
         var h2 = h * WarpPoint.CONTRAIL_WITHER;
@@ -92,13 +85,6 @@ WarpPoint.prototype.draw = function(tier) {
             this.toPoint.x, this.toPoint.y);
         angle = Math.PI / 2 - angle;
         this.contrail.rotation = angle;
-
-        var t = this.game.add.tween(this.ember);
-        t.to({ alpha: 1 }, WarpPoint.EMBER_TIME,
-            Phaser.Easing.Sinusoidal.InOut, true,
-            WarpPoint.EMBER_DELAY, Number.POSITIVE_INFINITY, true);
-        t.repeatDelay(WarpPoint.EMBER_DELAY);
-        this.tweens.push(t);
     }
 };
 
@@ -108,12 +94,11 @@ WarpPoint.prototype.setEnabled = function(enabled) {
         return;
     }
     Point.prototype.setEnabled.call(this, enabled);
+    this.ember.setEnabled(enabled);
     this.setTweensPaused(!this.enabled || this.attached);
     if (!this.enabled) {
-        this.ember.alpha = WarpPoint.DISABLED_EMBER_ALPHA;
         this.stopContrail();
     } else if (this.attached) {
-        this.ember.alpha = 1;
         this.startContrail();
     }
 };
@@ -128,10 +113,14 @@ WarpPoint.prototype.setTweensPaused = function(paused) {
 
 // Called on tier fade.
 WarpPoint.prototype.fadingIn = function(tier) {
+    this.ember.setPaused(false);
     this.setTweensPaused(false);
 };
 // Called on tier fade.
 WarpPoint.prototype.fadedOut = function(tier) {
+    if (this.ember) {
+        this.ember.setPaused(true);
+    }
     this.setTweensPaused(true);
 };
 
@@ -161,7 +150,7 @@ WarpPoint.prototype.notifyAttached = function(avatar, prev) {
     Point.prototype.notifyAttached.call(this, avatar, prev);
     if (this.enabled) {
         this.setTweensPaused(true);
-        this.ember.alpha = 1;
+        this.ember.setFlaring(true);
         this.startContrail();
     }
 };
@@ -170,6 +159,7 @@ WarpPoint.prototype.notifyAttached = function(avatar, prev) {
 WarpPoint.prototype.notifyDetached = function(avatar, next) {
     Point.prototype.notifyDetached.call(this, avatar, next);
     if (this.enabled) {
+        this.ember.setFlaring(false);
         this.setTweensPaused(false);
         this.stopContrail();
     }
