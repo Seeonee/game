@@ -84,6 +84,47 @@ Tier.prototype._addPoint = function(point) {
     return point;
 };
 
+// Tear an existing point wholly out of existence, 
+// and replace it in all ways with a new point.
+// This will update *every* reference to the old point.
+Tier.prototype.replacePoint = function(old, point) {
+    // Copy over a bunch of values.
+    point.name = old.name;
+    point.x = old.x;
+    point.y = old.y;
+    point.avatar = old.avatar;
+    point.attached = old.attached;
+    // Change all paths to link with us instead.
+    for (var i = 0; i < old.paths.length; i++) {
+        var path = old.paths[i];
+        point.paths.push(path);
+        path.p1 === old ? path.p1 = point : path.p2 = point;
+    }
+    old.paths = [];
+    // Update the tier's lists.
+    // Can't use the helpers since we've already changed 
+    // the lists ourselves.
+    var index = this.points.indexOf(old);
+    this.points[index] = point;
+    this.pointMap[point.name] = point;
+    // Fix up the listeners.
+    this.events.onFadingIn.add(point.fadingIn, point);
+    this.events.onFadedIn.add(point.fadedIn, point);
+    this.events.onFadingOut.add(point.fadingOut, point);
+    this.events.onFadedOut.add(point.fadedOut, point);
+    this.events.onFadingIn.remove(old.fadingIn, old);
+    this.events.onFadedIn.remove(old.fadedIn, old);
+    this.events.onFadingOut.remove(old.fadingOut, old);
+    this.events.onFadedOut.remove(old.fadedOut, old);
+    old.delete();
+    // If we're connected, let them know.
+    if (point.avatar) {
+        point.avatar.point = point;
+        point.avatar.updateAttachment();
+    }
+    this.renderNeeded = true;
+};
+
 // Connect two points.
 Tier.prototype.addPath = function(name, point, point2) {
     if (!point.isConnectedTo(point2)) {
