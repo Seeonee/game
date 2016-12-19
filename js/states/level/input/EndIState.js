@@ -71,7 +71,7 @@ EndIState.prototype.selectNextLevel = function(option) {
 // User opted to restart.
 EndIState.prototype.selectRestart = function(option) {
     this.game.state.start('PlayLevelState', true, false,
-        this.level.catalogLevel, this.gpad);
+        this.level.catalogLevel, this.gpad, true);
 };
 
 // User opted to exit.

@@ -1,5 +1,7 @@
 add lock mechanics
-add quick title fade when starting a level (but not restarting?)
+split out gfx from warp istate/point
+    make warp core tween resume intelligently on detach
+move hud to gfx
 add "wire" paths + gfx for powering points on
 figure out what powers should do
 add settings submenu for key bindings
