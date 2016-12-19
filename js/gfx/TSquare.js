@@ -1,16 +1,16 @@
 // Falling squares for the (T)itle menu screen.
 var TSquare = function(game) {
     this.game = game;
-    if (TSquare.BITMAP == undefined) {
+    if (TSquare.CACHED_BITMAP == undefined) {
         var d = TSquare.D;
         var bitmap = this.game.add.bitmapData(d, d);
         var c = bitmap.context;
         c.fillStyle = this.game.settings.colors.WHITE.s;
         c.beginPath();
         c.fillRect(0, 0, d, d);
-        TSquare.BITMAP = bitmap;
+        TSquare.CACHED_BITMAP = bitmap;
     }
-    Phaser.Sprite.call(this, game, 0, 0, TSquare.BITMAP);
+    Phaser.Sprite.call(this, game, 0, 0, TSquare.CACHED_BITMAP);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
 
@@ -38,7 +38,6 @@ TSquare.YPAD_RATIO = 1.5;
 TSquare.XBOUNDS = 80;
 TSquare.MIN_SCALE = 0.1;
 TSquare.ROTATION = 0.6 * Math.PI; // 3 * Math.PI;
-TSquare.BITMAP = undefined;
 TSquare.CASCADE_UP = true;
 
 

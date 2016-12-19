@@ -29,7 +29,6 @@ WEmber.RADIUS = 4;
 WEmber.EMBER_FADE_TIME = 1000; // ms
 WEmber.EMBER_DELAY = 1400; // ms
 WEmber.DISABLED_ALPHA = 0.25;
-WEmber.CACHED_BITMAP = undefined;
 
 
 // Start our slow burn.

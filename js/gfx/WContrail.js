@@ -46,7 +46,6 @@ WContrail.W1 = 4;
 WContrail.LENGTH = 250;
 WContrail.WITHER = 4;
 WContrail.FLICKER_TIME = 700; // ms
-WContrail.CACHED_BITMAP = undefined;
 
 
 // Turn on or off the spotlight.

@@ -1,6 +1,4 @@
 add lock mechanics
-split out gfx from warp istate/point
-    make warp core tween resume intelligently on detach
 move hud to gfx
 add "wire" paths + gfx for powering points on
 figure out what powers should do
