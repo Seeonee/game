@@ -56,7 +56,7 @@ FloatIState.prototype.update = function() {
             this.snapToStartingValues();
         }
         this.avatar.scale.setTo(1);
-        this.activate(DefaultLevelIState.NAME);
+        this.activate(EditOverlayIState.NAME);
         return;
     }
 }

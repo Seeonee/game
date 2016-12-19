@@ -1,77 +1,60 @@
 // This state encapsulates all the logic 
 // needed to edit a loaded level.
-var EditLevelState = function(game) {};
-
-// A few constants, for now at least.
-EditLevelState.FPS_DISPLAY = false;
-EditLevelState.DEADZONE_EDGE_X = 200;
-EditLevelState.DEADZONE_EDGE_Y = 200;
-
-// We get passed the level asset to load.
-// This will be a .json file within the assets/levels directory.
-// It'll also be used as the load key within the cache.
-EditLevelState.prototype.init = function(catalogLevel, gpad, restart) {
-    this.catalogLevel = catalogLevel;
-    this.gpad = gpad;
-    this.restart = restart;
+var EditLevelState = function(game) {
+    PlayLevelState.call(this, game);
 };
 
-// Load any custom assets that our level requires, 
-// but which aren't generic enough to have been 
-// loaded already.
-// This is probably a great place to load our 
-// Paths/Level object.
+EditLevelState.prototype = Object.create(PlayLevelState.prototype);
+EditLevelState.prototype.constructor = EditLevelState;
+
+// Constants, sort of.
+EditLevelState.DEFAULT_STARTING_LEVEL = {
+    tiers: {
+        t3: {
+            points: {
+                p0: { x: 5, y: 5, type: 'start' },
+                p1: { x: 105, y: 5 }
+            },
+            paths: { a0: { p1: 'p0', p2: 'p1' } }
+        }
+    }
+};
+
+// Override preload; we may not have a catalog level.
 EditLevelState.prototype.preload = function() {
-    var name = this.catalogLevel.getFullName();
-    this.game.load.json(name,
-        'assets/' + name + '.json');
-};
-
-// Setup the example
-EditLevelState.prototype.create = function() {
-    this.level = Level.load(this.game, this.catalogLevel);
-    new Avatar(this.game, new AvatarGraphicsKey(this.game), this.level);
-    this.gpad.consumeButtonEvent();
-
-    this.ihandler = new PlayLevelIHandler(
-        this.game, this.gpad, this.level);
-    this.pointhandler = new PointIHandler(
-        this.game, this.gpad, this.level, this.ihandler);
-    this.menuhandler = new PlayLevelMenuIHandler(
-        this.game, this.gpad, this.level, this.pointhandler);
-
-    if (EditLevelState.FPS_DISPLAY) {
-        this.game.time.advancedTiming = true; // For FPS tracking.
+    if (this.catalogLevel) {
+        PlayLevelState.prototype.preload.call(this);
     }
-    this.game.camera.follow(this.level.avatar);
-    this.game.camera.deadzone = new Phaser.Rectangle(
-        EditLevelState.DEADZONE_EDGE_X, EditLevelState.DEADZONE_EDGE_Y,
-        this.game.width - (2 * EditLevelState.DEADZONE_EDGE_X),
-        this.game.height - (2 * EditLevelState.DEADZONE_EDGE_Y));
+    this.name = 'my level';
+};
 
-    if (!this.restart) {
-        new TextBanner(this.game).splash(
-            this.catalogLevel.name, this.z.fg);
+// Create the level.
+EditLevelState.prototype.createLevel = function() {
+    if (this.params.json) {
+        var json = this.params.json;
+    } else if (this.catalogLevel) {
+        var json = game.cache.getJSON(this.catalogLevel.getFullName());
+    } else {
+        var json = EditLevelState.DEFAULT_STARTING_LEVEL;
     }
+    this.level = Level.load(this.game, this.name, json);
 };
 
-// Render loop.
-EditLevelState.prototype.render = function() {
-    if (EditLevelState.FPS_DISPLAY) {
-        this.game.debug.text(this.game.time.fps,
-            2, 14, this.game.settings.colors.RED.s);
-    };
-    this.level.render();
-    this.menuhandler.render();
+// Create the menu handler, wrapping an earlier handler.
+// We also wrap on an inner edit action handler.
+EditLevelState.prototype.createMenuHandler = function(ihandler) {
+    this.edithandler = this.createEditHandler(ihandler);
+    return PlayLevelState.prototype.createMenuHandler.call(
+        this, this.edithandler);
 };
 
-// Update loop.
-EditLevelState.prototype.update = function() {
-    this.level.update();
-    this.menuhandler.update();
+// Create the menu handler, wrapping an earlier handler.
+// We also wrap on an inner edit action handler.
+EditLevelState.prototype.createEditHandler = function(ihandler) {
+    return new EditIHandler(this.game, this.gpad, this.level, ihandler);
 };
 
-// Update loop while paused.
-EditLevelState.prototype.pauseUpdate = function() {
-    this.menuhandler.pauseUpdate();
+// Called on shutdown. Turns editing back off.
+EditLevelState.prototype.shutdown = function() {
+    this.game.settings.edit = false;
 };

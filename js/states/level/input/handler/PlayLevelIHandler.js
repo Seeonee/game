@@ -5,23 +5,11 @@ var PlayLevelIHandler = function(game, gpad, level) {
 
     // Set up all of our available states;
     // creation automatically registers them.
-    new DefaultLevelIState(this, this.level);
-    new PortalIState(this, this.level);
-
-    // The rest are for editing only.
-    // For now, we still add them here so that 
-    // it's easy to enable edit mode and debug.
-    new StepUpIState(this, this.level);
-    new StepDownIState(this, this.level);
-    new FloatIState(this, this.level);
-    new AddFromPathIState(this, this.level);
-    new AddFromPointIState(this, this.level);
-    new DeleteIState(this, this.level);
-    // new GainKeyIState(this, this.level);
-    // new LoseKeyIState(this, this.level);
+    // Aaaaand... we actually have only one state.
+    new MoveIState(this, this.level);
 
     // Set our starting state.
-    this.activate(DefaultLevelIState.NAME);
+    this.activate(MoveIState.NAME);
 };
 
 PlayLevelIHandler.prototype = Object.create(IHandler.prototype);

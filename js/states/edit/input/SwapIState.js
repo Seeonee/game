@@ -14,7 +14,7 @@ StepUpIState.prototype.constructor = StepUpIState;
 StepUpIState.prototype.update = function() {
     this.gpad.consumeButtonEvent();
     this.level.advanceTierUp('p0');
-    this.activate(DefaultLevelIState.NAME);
+    this.activate(EditOverlayIState.NAME);
 };
 
 // Handle tier retreats.
@@ -33,5 +33,5 @@ StepDownIState.prototype.constructor = StepDownIState;
 StepDownIState.prototype.update = function() {
     this.gpad.consumeButtonEvent();
     this.level.advanceTierDown('p0');
-    this.activate(DefaultLevelIState.NAME);
+    this.activate(EditOverlayIState.NAME);
 };
