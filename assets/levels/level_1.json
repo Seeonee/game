@@ -1,6 +1,4 @@
 {
-    "name": "level1",
-    "start": "t1-p0",
     "tiers": {
         "t0": {
             "points": {
@@ -135,7 +133,8 @@
             "points": {
                 "p0": {
                     "x": 5,
-                    "y": 55
+                    "y": 55,
+                    "type": "start"
                 },
                 "p1": {
                     "x": 55,

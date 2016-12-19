@@ -158,8 +158,6 @@ Level.prototype.render = function() {
 // Push out a JSON version of our tiers.
 Level.prototype.toJSON = function() {
     return {
-        name: this.name,
-        start: this.start,
         tiers: this.tierMap
     };
 };
@@ -170,7 +168,6 @@ Level.prototype.toJSON = function() {
 Level.load = function(game, catalogLevel) {
     var json = game.cache.getJSON(catalogLevel.getFullName());
     var level = new Level(game, catalogLevel);
-    level.start = json.start;
     var tiers = json.tiers;
     var keys = Object.keys(tiers);
     for (var i = 0; i < keys.length; i++) {
@@ -180,7 +177,16 @@ Level.load = function(game, catalogLevel) {
         tier.level = this;
         level.addTier(key, tier);
     }
-    var t = level.start.split('-')[0]
-    level.setTier(level.tierMap[t]);
+    OUTER: for (var i = 0; i < level.tiers.length; i++) {
+        var tier = level.tiers[i];
+        for (var j = 0; j < tier.points.length; j++) {
+            var point = tier.points[j];
+            if (point instanceof StartPoint) {
+                level.start = tier.name + '-' + point.name;
+                level.setTier(tier);
+                break OUTER;
+            }
+        }
+    }
     return level;
 };

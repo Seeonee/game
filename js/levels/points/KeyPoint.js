@@ -29,7 +29,9 @@ KeyPoint.prototype.fadingIn = function(tier) {
 };
 // Called on tier fade.
 KeyPoint.prototype.fadedOut = function(tier) {
-    this.tkey.setPaused(true);
+    if (this.tkey) {
+        this.tkey.setPaused(true);
+    }
 };
 
 // Pick up the key.

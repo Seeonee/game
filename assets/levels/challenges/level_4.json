@@ -1,6 +1,4 @@
 {
-    "name": "level4",
-    "start": "t3-p0",
     "tiers": {
         "t0": {
             "points": {
@@ -157,12 +155,13 @@
                 "p0": {
                     "x": 5,
                     "y": 55,
-                    "type": "power",
-                    "subtype": "wit"
+                    "type": "start"
                 },
                 "p1": {
                     "x": 205,
-                    "y": 55
+                    "y": 55,
+                    "type": "power",
+                    "subtype": "wit"
                 },
                 "p2": {
                     "x": 255,

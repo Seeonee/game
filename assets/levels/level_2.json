@@ -1,12 +1,11 @@
 {
-    "name": "level2",
-    "start": "t3-p0",
     "tiers": {
         "t3": {
             "points": {
                 "p0": {
                     "x": 5,
-                    "y": 305
+                    "y": 305,
+                    "type": "start"
                 },
                 "p1": {
                     "x": 105,
