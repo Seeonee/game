@@ -163,6 +163,9 @@ Tier.prototype.addPointToPathAtCoords = function(path, x, y) {
 // Delete an existing point.
 // Return the deleted point, or undefined if it wasn't deleted.
 Tier.prototype.deletePoint = function(point) {
+    if (this.points.length == 1) {
+        return undefined;
+    }
     var index = this.points.indexOf(point);
     if (index >= 0) {
         while (point.paths.length) {
@@ -185,6 +188,9 @@ Tier.prototype.deletePoint = function(point) {
 // connected points to the others.
 // Return the deleted point, or undefined if it wasn't deleted.
 Tier.prototype.deletePointAndMerge = function(point) {
+    if (this.points.length == 1) {
+        return undefined;
+    }
     var index = this.points.indexOf(point);
     if (index >= 0) {
         var linked = [];

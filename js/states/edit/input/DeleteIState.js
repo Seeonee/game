@@ -73,14 +73,17 @@ DeleteIState.prototype.update = function() {
     var ratio = elapsed / DeleteIState.THRESHOLD;
     if (this.gpad.justReleased(this.buttonMap.EDIT_DELETE)) {
         if (this.avatar.point) {
+            var success = false;
             if (ratio < 1) {
                 // Delete the point and its paths.
-                this.tier.deletePoint(this.avatar.point);
+                success = this.tier.deletePoint(this.avatar.point);
             } else {
                 // Delete the point, merge its paths.
-                this.tier.deletePointAndMerge(this.avatar.point);
+                success = this.tier.deletePointAndMerge(this.avatar.point);
             }
-            this.avatar.point = undefined;
+            if (success) {
+                this.avatar.point = undefined;
+            }
         } else if (this.avatar.path) {
             this.tier.deletePath(this.avatar.path);
             this.avatar.path = undefined;
