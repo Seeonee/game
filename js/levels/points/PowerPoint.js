@@ -76,6 +76,7 @@ PowerPoint.prototype.delete = function() {
 PowerPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
     result.type = PowerPoint.TYPE;
+    result.subtype = this.powerType;
     result.direction = this.direction;
     if (this.rotation) {
         result.rotation = this.rotation;
