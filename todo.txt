@@ -1,5 +1,4 @@
 add lock mechanics
-move hud to gfx
 add "wire" paths + gfx for powering points on
 figure out what powers should do
 add settings submenu for key bindings
