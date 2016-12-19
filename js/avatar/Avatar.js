@@ -211,6 +211,9 @@ Avatar.prototype.roundVelocity = function(velocity) {
 // the avatar, the previously attached object, and the newly 
 // attached object.
 Avatar.prototype.updateAttachment = function() {
+    if (this.game.settings.edit) {
+        return;
+    }
     var old = this.attached;
     this.attached = this.point ? this.point : this.path;
     if (this.attached === old) {
