@@ -64,7 +64,8 @@ EndIState.prototype.fullyCharged = function() {
 // User opted to play the next level.
 EndIState.prototype.selectNextLevel = function(option) {
     var params = new LevelStateParams(this.gpad);
-    params.catalogLevel = this.level.catalogLevel.next();
+    params.catalogLevel = this.game.state.getCurrentState()
+        .catalogLevel.next();
     this.game.state.start('PlayLevelState', true, false, params);
 };
 

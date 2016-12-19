@@ -22,23 +22,19 @@ PlayLevelState.prototype.init = function(params) {
 // This is probably a great place to load our 
 // Paths/Level object.
 PlayLevelState.prototype.preload = function() {
-    var name = this.catalogLevel.getFullName();
-    this.game.load.json(name,
-        'assets/' + name + '.json');
+    this.name = this.catalogLevel.name;
+    var full = this.catalogLevel.getFullName();
+    this.game.load.json(full, 'assets/' + full + '.json');
 };
 
-// Setup the example
+// Set up the level.
 PlayLevelState.prototype.create = function() {
-    this.level = Level.load(this.game, this.catalogLevel);
-    new Avatar(this.game, new AvatarGraphicsKey(this.game), this.level);
+    var json = game.cache.getJSON(this.catalogLevel.getFullName());
+    this.level = this.createLevel();
+    this.createAvatar();
     this.gpad.consumeButtonEvent();
 
-    this.ihandler = new PlayLevelIHandler(
-        this.game, this.gpad, this.level);
-    this.pointhandler = new PointIHandler(
-        this.game, this.gpad, this.level, this.ihandler);
-    this.menuhandler = new PlayLevelMenuIHandler(
-        this.game, this.gpad, this.level, this.pointhandler);
+    this.createIHandlers();
 
     if (PlayLevelState.FPS_DISPLAY) {
         this.game.time.advancedTiming = true; // For FPS tracking.
@@ -50,10 +46,49 @@ PlayLevelState.prototype.create = function() {
         this.game.height - (2 * PlayLevelState.DEADZONE_EDGE_Y));
 
     if (!this.params.restart) {
-        new TextBanner(this.game).splash(
-            this.catalogLevel.name, this.z.fg);
+        this.createStartBanner(this.name);
     }
 };
+
+// Create the level.
+PlayLevelState.prototype.createLevel = function() {
+    var json = game.cache.getJSON(this.catalogLevel.getFullName());
+    return Level.load(this.game, this.name, json);
+};
+
+// Create the avatar (it gets stored into level.avatar).
+PlayLevelState.prototype.createAvatar = function() {
+    new Avatar(this.game, new AvatarGraphicsKey(this.game), this.level);
+};
+
+// Create input handlers.
+PlayLevelState.prototype.createIHandlers = function() {
+    this.ihandler = this.createLevelHandler();
+    this.pointhandler = this.createPointHandler(this.ihandler);
+    this.menuhandler = this.createMenuHandler(this.pointhandler);
+};
+
+// Create the base level handler.
+PlayLevelState.prototype.createLevelHandler = function() {
+    return new PlayLevelIHandler(this.game, this.gpad, this.level);
+};
+
+// Create the point handler, wrapping an earlier handler.
+PlayLevelState.prototype.createPointHandler = function(ihandler) {
+    return new PointIHandler(this.game, this.gpad, this.level, ihandler);
+};
+
+// Create the menu handler, wrapping an earlier handler.
+PlayLevelState.prototype.createMenuHandler = function(ihandler) {
+    return new PlayLevelMenuIHandler(this.game, this.gpad, this.level, ihandler);
+};
+
+// Create the splash text when a level first starts.
+PlayLevelState.prototype.createStartBanner = function(text) {
+    new TextBanner(this.game).splash(text, this.z.fg);
+};
+
+
 
 // Render loop.
 PlayLevelState.prototype.render = function() {

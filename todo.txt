@@ -1,5 +1,7 @@
 add lock mechanics
 add "knob" for start point to match end point
+delete + merge should only preserve right angles
+delete last point in tier should fail
 add editor mode for defining point properties such as portals, powers, etc
 add "wire" paths + gfx for powering points on
 figure out what powers should do
