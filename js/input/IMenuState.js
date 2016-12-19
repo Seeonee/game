@@ -427,7 +427,7 @@ IMenuState.prototype.show = function() {
 };
 
 
-// User opted to unpause.
+// Update which item in the current list is selected.
 IMenuState.prototype.setSelected = function(index) {
     if (this.selectedIndex == index) {
         return;

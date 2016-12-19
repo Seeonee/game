@@ -21,5 +21,5 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     this.activate(EditOverlayIState.NAME);
 };
 
-PlayLevelIHandler.prototype = Object.create(IHandler.prototype);
-PlayLevelIHandler.prototype.constructor = PlayLevelIHandler;
+EditLevelIHandler.prototype = Object.create(IHandler.prototype);
+EditLevelIHandler.prototype.constructor = EditLevelIHandler;

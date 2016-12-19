@@ -26,6 +26,7 @@ EditLevelState.prototype.preload = function() {
         PlayLevelState.prototype.preload.call(this);
     }
     this.name = 'my level';
+    this.game.settings.edit = true;
 };
 
 // Create the level.
@@ -37,7 +38,7 @@ EditLevelState.prototype.createLevel = function() {
     } else {
         var json = EditLevelState.DEFAULT_STARTING_LEVEL;
     }
-    this.level = Level.load(this.game, this.name, json);
+    return Level.load(this.game, this.name, json);
 };
 
 // Create the menu handler, wrapping an earlier handler.
@@ -51,7 +52,7 @@ EditLevelState.prototype.createMenuHandler = function(ihandler) {
 // Create the menu handler, wrapping an earlier handler.
 // We also wrap on an inner edit action handler.
 EditLevelState.prototype.createEditHandler = function(ihandler) {
-    return new EditIHandler(this.game, this.gpad, this.level, ihandler);
+    return new EditLevelIHandler(this.game, this.gpad, this.level, ihandler);
 };
 
 // Called on shutdown. Turns editing back off.

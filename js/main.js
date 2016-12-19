@@ -5,4 +5,5 @@ game.state.add('BootState', BootState);
 game.state.add('PreloadState', PreloadState);
 game.state.add('TitleMenuState', TitleMenuState);
 game.state.add('PlayLevelState', PlayLevelState);
+game.state.add('EditLevelState', EditLevelState);
 game.state.start('BootState');

@@ -29,7 +29,6 @@ PlayLevelState.prototype.preload = function() {
 
 // Set up the level.
 PlayLevelState.prototype.create = function() {
-    var json = game.cache.getJSON(this.catalogLevel.getFullName());
     this.level = this.createLevel();
     this.createAvatar();
     this.gpad.consumeButtonEvent();
