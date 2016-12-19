@@ -40,12 +40,6 @@ TitleMenuState.prototype.render = function() {
     this.menuhandler.render();
 };
 
-// Start up a level from the catalog.
-TitleMenuState.prototype.startLevel = function(catalogLevel) {
-    this.game.state.start('PlayLevelState', true, false,
-        catalogLevel, this.gpad);
-};
-
 
 // Sprite pool that automatically cascades squares 
 // down the screen.

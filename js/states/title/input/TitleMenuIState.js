@@ -32,7 +32,9 @@ TitleMenuIState.prototype.addCatalogItem = function(parent, item) {
 
 // Start up a selected level!
 TitleMenuIState.prototype.selectLevel = function(option, catalogLevel) {
-    this.game.state.getCurrentState().startLevel(catalogLevel);
+    var params = new LevelStateParams(this.gpad);
+    params.catalogLevel = catalogLevel;
+    this.game.state.start('PlayLevelState', true, false, params);
 };
 
 // User opted to exit. I guess they like the splash page?

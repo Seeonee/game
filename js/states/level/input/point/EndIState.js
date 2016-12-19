@@ -63,15 +63,16 @@ EndIState.prototype.fullyCharged = function() {
 
 // User opted to play the next level.
 EndIState.prototype.selectNextLevel = function(option) {
-    var catalogLevel = this.level.catalogLevel.next();
-    this.game.state.start('PlayLevelState', true, false,
-        catalogLevel, this.gpad);
+    var params = new LevelStateParams(this.gpad);
+    params.catalogLevel = this.level.catalogLevel.next();
+    this.game.state.start('PlayLevelState', true, false, params);
 };
 
 // User opted to restart.
 EndIState.prototype.selectRestart = function(option) {
-    this.game.state.start('PlayLevelState', true, false,
-        this.level.catalogLevel, this.gpad, true);
+    var params = this.game.state.getCurrentState().params;
+    params.restart = true;
+    this.game.state.start('PlayLevelState', true, false, params);
 };
 
 // User opted to exit.

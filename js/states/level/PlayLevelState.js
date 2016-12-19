@@ -10,10 +10,10 @@ PlayLevelState.DEADZONE_EDGE_Y = 200;
 // We get passed the level asset to load.
 // This will be a .json file within the assets/levels directory.
 // It'll also be used as the load key within the cache.
-PlayLevelState.prototype.init = function(catalogLevel, gpad, restart) {
-    this.catalogLevel = catalogLevel;
-    this.gpad = gpad;
-    this.restart = restart;
+PlayLevelState.prototype.init = function(params) {
+    this.params = params;
+    this.catalogLevel = params.catalogLevel;
+    this.gpad = params.gpad;
 };
 
 // Load any custom assets that our level requires, 
@@ -49,7 +49,7 @@ PlayLevelState.prototype.create = function() {
         this.game.width - (2 * PlayLevelState.DEADZONE_EDGE_X),
         this.game.height - (2 * PlayLevelState.DEADZONE_EDGE_Y));
 
-    if (!this.restart) {
+    if (!this.params.restart) {
         new TextBanner(this.game).splash(
             this.catalogLevel.name, this.z.fg);
     }
@@ -74,4 +74,9 @@ PlayLevelState.prototype.update = function() {
 // Update loop while paused.
 PlayLevelState.prototype.pauseUpdate = function() {
     this.menuhandler.pauseUpdate();
+};
+
+// Called on shutdown. Turns editing back off.
+PlayLevelState.prototype.shutdown = function() {
+    this.game.settings.edit = false;
 };
