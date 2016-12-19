@@ -17,8 +17,6 @@ Point.load.factory[PortalPoint.TYPE] = PortalPoint;
 
 // Some more constants.
 PortalPoint.RADIUS = 35;
-PortalPoint.DISABLED_TRIANGLE_ALPHA = 0.25;
-PortalPoint.DISABLED_TRIANGLE_SCALE = 0.7;
 PortalPoint.PARTICLE_COUNT = 15;
 PortalPoint.PARTICLE_GRAVITY = -150;
 PortalPoint.PARTICLE_SPEED = -75;
@@ -32,38 +30,27 @@ PortalPoint.prototype.draw = function(tier) {
     this.renderNeeded = false;
     this.tier = tier;
     this.game = tier.game;
-    var c = tier.bitmap.context;
-    var r = PortalPoint.RADIUS;
-    var x = this.x - r / 2;
-    var y = this.y - r / 2;
-    Utils.clearArc(c, this.x, this.y, r / 2);
+    this.wipePoint(tier.bitmap.context);
     if (!this.drawn) {
-        this.b = this.game.add.bitmapData(2 * r, 2 * r);
-        var c2 = this.b.context;
-        c2.strokeStyle = c.strokeStyle;
-        c2.lineWidth = Tier.PATH_WIDTH;
-        c2.beginPath();
-        c2.arc(r, r, r / 2, 0, 2 * Math.PI, false);
-        c2.stroke();
+        this.drawn = true;
         var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
-        this.image = this.game.make.sprite(ap.x, ap.y, this.b);
-        this.tier.image.addChild(this.image);
-        this.image.anchor.setTo(0.5, 0.5);
-        // Triangles center weirdly; shift to look better.
-        dy = -Math.sign(this.direction) * 2;
-        this.triangle = this.game.make.sprite(0, dy, 'smoke');
-        this.image.addChild(this.triangle);
-        this.triangle.anchor.setTo(0.5, 0.5);
-        if (this.direction < 0) {
-            this.triangle.rotation = Math.PI;
-        }
-        this.drawn = true;
+        this.gate = new PGate(this.game, ap.x, ap.y,
+            tier.palette, this.direction);
+        this.tier.image.addChild(this.gate);
         var gp = tier.translateInternalPointToGamePoint(
             this.x, this.y);
         gp.y -= Math.sign(this.direction) * 2;
         this.emitters.push(this.createEmitter(tier, gp.x, gp.y));
     }
+};
+
+// Wipe a spot on the tier bitmap.
+PortalPoint.prototype.wipePoint = function(c) {
+    var r = PortalPoint.RADIUS;
+    var x = this.x - r / 2;
+    var y = this.y - r / 2;
+    Utils.clearArc(c, this.x, this.y, r / 2);
 };
 
 // Create an emitter.
@@ -101,14 +88,7 @@ PortalPoint.prototype.setEnabled = function(enabled) {
         this.setEmitting(this.enabled);
         this.avatar.tierMeter.fade(this.enabled);
     }
-    if (!this.enabled) {
-        this.triangle.alpha = PortalPoint.DISABLED_TRIANGLE_ALPHA;
-        this.triangle.scale.setTo(
-            PortalPoint.DISABLED_TRIANGLE_SCALE);
-    } else {
-        this.triangle.alpha = 1;
-        this.triangle.scale.setTo(1);
-    }
+    this.gate.setEnabled(enabled);
 };
 
 // Turn on/off our particle shower.
