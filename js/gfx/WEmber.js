@@ -1,13 +1,16 @@
 // Ember smoldering in the center of a warp point.
 var WEmber = function(game) {
     this.game = game;
-    var r = WEmber.RADIUS;
-    var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-    c = bitmap.context;
-    c.fillStyle = this.game.settings.colors.WHITE.s;
-    c.arc(r, r, r, 0, 2 * Math.PI, false);
-    c.fill();
-    Phaser.Sprite.call(this, game, 0, 0, bitmap);
+    if (WEmber.CACHED_BITMAP == undefined) {
+        var r = WEmber.RADIUS;
+        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
+        c = bitmap.context;
+        c.fillStyle = this.game.settings.colors.WHITE.s;
+        c.arc(r, r, r, 0, 2 * Math.PI, false);
+        c.fill();
+        WEmber.CACHED_BITMAP = bitmap;
+    }
+    Phaser.Sprite.call(this, game, 0, 0, WEmber.CACHED_BITMAP);
     this.anchor.setTo(0.5, 0.5);
     this.alpha = 1;
 
@@ -26,6 +29,7 @@ WEmber.RADIUS = 4;
 WEmber.EMBER_FADE_TIME = 1000; // ms
 WEmber.EMBER_DELAY = 1400; // ms
 WEmber.DISABLED_ALPHA = 0.25;
+WEmber.CACHED_BITMAP = undefined;
 
 
 // Start our slow burn.
@@ -60,7 +64,7 @@ WEmber.prototype.setEnabled = function(enabled) {
     this.updateEffects();
 };
 
-// Set our enabled state.
+// Avatar is here! Stay lit.
 WEmber.prototype.setFlaring = function(flaring) {
     if (flaring == this.flaring) {
         return;

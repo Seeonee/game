@@ -2,7 +2,6 @@
 var WarpPoint = function(name, x, y, to, enabled) {
     Point.call(this, name, x, y, enabled);
     this.emitters = [];
-    this.tweens = [];
     this.z = Point.Z + 1;
     this.to = to;
     this.toPoint = undefined;
@@ -19,13 +18,6 @@ Point.load.factory[WarpPoint.TYPE] = WarpPoint;
 // Some more constants.
 WarpPoint.RADIUS = 20;
 WarpPoint.PATH_RATIO = 0.6;
-WarpPoint.EMBER_RADIUS = 4;
-WarpPoint.EMBER_FADE_TIME = 1000; // ms
-WarpPoint.EMBER_DELAY = 1400; // ms
-WarpPoint.DISABLED_EMBER_ALPHA = 0.25;
-WarpPoint.CONTRAIL_LENGTH = 250;
-WarpPoint.CONTRAIL_WITHER = 4;
-WarpPoint.FLICKER_TIME = 700; // ms
 
 
 // During our first draw, we create the emitters.
@@ -39,6 +31,7 @@ WarpPoint.prototype.draw = function(tier) {
     var y = this.y - r / 2;
     Utils.clearArc(c, this.x, this.y, r / 2);
     if (!this.drawn) {
+        // Draw our ring.
         this.toPoint = tier.pointMap[this.to];
         var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
         var c = bitmap.context;
@@ -53,38 +46,13 @@ WarpPoint.prototype.draw = function(tier) {
         this.tier.image.addChild(this.image);
         this.image.anchor.setTo(0.5, 0.5);
 
+        // Graphical elements.
         this.ember = new WEmber(this.game);
         this.image.addChild(this.ember);
-
-        r = WarpPoint.EMBER_RADIUS;
-        var w = WarpPoint.CONTRAIL_LENGTH;
-        var h = 2 * r;
-        var h2 = h * WarpPoint.CONTRAIL_WITHER;
-        var maxh = Math.max(h, h2);
-        var dy = (maxh - h) / 2;
-        var dh = (maxh - h2) / 2;
-        bitmap = this.game.add.bitmapData(w, maxh);
-        c = bitmap.context;
-        var gradient = c.createLinearGradient(0, 0, w, h);
-        gradient.addColorStop(0, this.game.settings.colors.WHITE.s);
-        gradient.addColorStop(0.95, this.game.settings.colors.WHITE.rgba(0));
-        c.fillStyle = gradient;
-        c.beginPath();
-        c.moveTo(0, dy);
-        c.lineTo(w, dh);
-        c.lineTo(w, maxh - dh);
-        c.lineTo(0, maxh - dy);
-        c.lineTo(0, 0);
-        c.closePath();
-        c.fill();
-        this.contrail = this.game.make.sprite(0, 0, bitmap);
-        this.image.addChild(this.contrail);
-        this.contrail.anchor.setTo(0, 0.5);
-        this.contrail.alpha = 0;
         var angle = Utils.angleBetweenPoints(this.x, this.y,
             this.toPoint.x, this.toPoint.y);
-        angle = Math.PI / 2 - angle;
-        this.contrail.rotation = angle;
+        this.contrail = new WContrail(this.game, angle);
+        this.image.addChild(this.contrail);
     }
 };
 
@@ -95,53 +63,22 @@ WarpPoint.prototype.setEnabled = function(enabled) {
     }
     Point.prototype.setEnabled.call(this, enabled);
     this.ember.setEnabled(enabled);
-    this.setTweensPaused(!this.enabled || this.attached);
     if (!this.enabled) {
-        this.stopContrail();
+        this.contrail.setShining(false);
     } else if (this.attached) {
-        this.startContrail();
-    }
-};
-
-// Un/pause our tweens.
-WarpPoint.prototype.setTweensPaused = function(paused) {
-    for (var i = 0; i < this.tweens.length; i++) {
-        var tween = this.tweens[i];
-        paused ? tween.pause() : tween.resume();
+        this.contrail.setShining(true);
     }
 };
 
 // Called on tier fade.
 WarpPoint.prototype.fadingIn = function(tier) {
     this.ember.setPaused(false);
-    this.setTweensPaused(false);
 };
+
 // Called on tier fade.
 WarpPoint.prototype.fadedOut = function(tier) {
     if (this.ember) {
         this.ember.setPaused(true);
-    }
-    this.setTweensPaused(true);
-};
-
-// Turn on our targeting spotlight.
-WarpPoint.prototype.startContrail = function() {
-    if (this.ctween) {
-        return;
-    }
-    this.contrail.alpha = 1;
-    this.ctween = this.game.add.tween(this.contrail);
-    this.ctween.to({ alpha: 0.3 }, WarpPoint.FLICKER_TIME,
-        Phaser.Easing.Bounce.InOut, true,
-        0, Number.POSITIVE_INFINITY, true);
-};
-
-// Turn off our targeting spotlight.
-WarpPoint.prototype.stopContrail = function() {
-    this.contrail.alpha = 0;
-    if (this.ctween) {
-        this.ctween.stop();
-        this.ctween = undefined;
     }
 };
 
@@ -149,9 +86,8 @@ WarpPoint.prototype.stopContrail = function() {
 WarpPoint.prototype.notifyAttached = function(avatar, prev) {
     Point.prototype.notifyAttached.call(this, avatar, prev);
     if (this.enabled) {
-        this.setTweensPaused(true);
         this.ember.setFlaring(true);
-        this.startContrail();
+        this.contrail.setShining(true);
     }
 };
 
@@ -160,20 +96,15 @@ WarpPoint.prototype.notifyDetached = function(avatar, next) {
     Point.prototype.notifyDetached.call(this, avatar, next);
     if (this.enabled) {
         this.ember.setFlaring(false);
-        this.setTweensPaused(false);
-        this.stopContrail();
+        this.contrail.setShining(false);
     }
 };
 
 
-// Delete our tweens.
+// Delete our children.
 WarpPoint.prototype.delete = function() {
-    if (this.ctween) {
-        this.ctween.stop();
-    }
-    for (var i = 0; i < this.tweens.length; i++) {
-        this.tweens[i].stop();
-    }
+    this.ember.kill();
+    this.contrail.kill();
 };
 
 // JSON conversion of a warp point.
