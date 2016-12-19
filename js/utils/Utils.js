@@ -3,23 +3,39 @@ var Utils = function() {
     // Initialize constants here.
 };
 
+// Let's fix string a little bit.
+String.prototype.replaceAll = function(search, replace) {
+    if (replace === undefined) {
+        return this.toString();
+    }
+    return this.replace(new RegExp('[' + search + ']', 'g'), replace);
+};
+
 // Global methods.
+
+// Spit out an object's JSON to a new tab.
+Utils.writeJSONToNewTab = function(obj) {
+    var s = JSON.stringify(obj, null, '  ');
+    s = s.replaceAll('\n', '<br />\n');
+    var newWindow = window.open();
+    newWindow.document.write(s);
+};
 
 // Basic angle function.
 Utils.angleBetweenPoints = function(x1, y1, x2, y2) {
     return Math.atan2(x2 - x1, y2 - y1);
-}
+};
 
 // Basic distance function.
 Utils.distanceBetweenPoints = function(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-}
+};
 
 // Get the angle between two angles, restricted to 
 // the range [0, Math.PI].
 Utils.getBoundedAngleDifference = function(a1, a2) {
     return Math.abs(((a1 - a2 + (3 * Math.PI)) % (2 * Math.PI)) - Math.PI);
-}
+};
 
 // Construct a class. You can pass one or more arguments 
 // after the class, and they'll be supplied to the constructor.
@@ -86,4 +102,4 @@ SpritePool.prototype.getFirstDead = function() {
         i += 1;
     }
     return null;
-}
+};
