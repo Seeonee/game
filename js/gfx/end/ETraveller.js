@@ -8,19 +8,22 @@ var ETraveller = function(game, x, y, palette) {
     this.events.onPortalOpen = new Phaser.Signal();
     this.events.onPortalClosed = new Phaser.Signal();
 
-    var r = ETraveller.RADIUS;
-    var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-    var c = bitmap.context;
-    c.fillStyle = this.game.settings.colors.WHITE.s;
-    c.arc(r, r, r, 0, Math.PI * 2, false);
-    c.fill();
-    this.corona = this.game.add.sprite(0, 0, bitmap);
+    if (ETraveller.CACHED_BITMAP == undefined) {
+        var r = ETraveller.RADIUS;
+        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
+        var c = bitmap.context;
+        c.fillStyle = this.game.settings.colors.WHITE.s;
+        c.arc(r, r, r, 0, Math.PI * 2, false);
+        c.fill();
+        ETraveller.CACHED_BITMAP = bitmap;
+    }
+    this.corona = this.game.add.sprite(0, 0, ETraveller.CACHED_BITMAP);
     this.addChild(this.corona);
     this.corona.anchor.setTo(0.5);
     this.corona.tint = palette.c2.i;
     this.corona.scale.setTo(ETraveller.CORONA_SCALE1);
 
-    this.core = this.game.add.sprite(0, 0, bitmap);
+    this.core = this.game.add.sprite(0, 0, ETraveller.CACHED_BITMAP);
     this.addChild(this.core);
     this.core.anchor.setTo(0.5);
     this.core.scale.setTo(ETraveller.CORE_SCALE1);

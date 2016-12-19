@@ -4,14 +4,17 @@ var TKey = function(game, x, y, palette) {
     Phaser.Sprite.call(this, game, x, y - dy);
     this.anchor.setTo(0.5);
 
-    var r = TKey.RADIUS;
-    r *= TKey.FIX;
-    var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-    var c = bitmap.context;
-    c.fillStyle = game.settings.colors.WHITE.s;
-    c.arc(r, r, r, 0, 2 * Math.PI, false);
-    c.fill();
-    this.glow = this.addChild(this.game.add.sprite(0, 0, bitmap));
+    if (TKey.CACHED_BITMAP == undefined) {
+        var r = TKey.RADIUS;
+        r *= TKey.FIX;
+        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
+        var c = bitmap.context;
+        c.fillStyle = game.settings.colors.WHITE.s;
+        c.arc(r, r, r, 0, 2 * Math.PI, false);
+        c.fill();
+        TKey.CACHED_BITMAP = bitmap;
+    }
+    this.glow = this.addChild(this.game.add.sprite(0, 0, TKey.CACHED_BITMAP));
     this.glow.scale.setTo(1 / TKey.FIX);
     this.glow.anchor.setTo(0.5);
 

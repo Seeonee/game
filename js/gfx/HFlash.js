@@ -1,13 +1,16 @@
 // A horizontal flash.
 var HFlash = function(game) {
     this.game = game;
-    var d = HFlash.FLASH_DIMENSION;
-    var bitmap = this.game.add.bitmapData(d, d);
-    var c = bitmap.context;
-    c.fillStyle = HFlash.FLASH_COLOR;
-    c.beginPath();
-    c.fillRect(0, 0, d, d);
-    Phaser.Sprite.call(this, game, 0, 0, bitmap);
+    if (HFlash.CACHED_BITMAP == undefined) {
+        var d = HFlash.FLASH_DIMENSION;
+        var bitmap = this.game.add.bitmapData(d, d);
+        var c = bitmap.context;
+        c.fillStyle = HFlash.FLASH_COLOR;
+        c.beginPath();
+        c.fillRect(0, 0, d, d);
+        HFlash.CACHED_BITMAP = bitmap;
+    }
+    Phaser.Sprite.call(this, game, 0, 0, HFlash.CACHED_BITMAP);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
 };
@@ -52,11 +55,10 @@ HFlash.prototype.flash = function(zgroup, x, y, rotation) {
         HFlash.FLASH_HOLD);
     t.chain(t2);
     var t3 = this.game.add.tween(this.scale);
-    t3.flash = this;
     t3.to({ x: HFlash.X_SCALE2 },
         HFlash.FLASH_TOTAL,
         Phaser.Easing.Cubic.Out, true, delay);
     t3.onComplete.add(function(a, tween) {
-        tween.flash.kill();
-    });
+        this.kill();
+    }, this);
 };

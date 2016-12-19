@@ -42,14 +42,23 @@ KeyBurst.prototype.burst = function(x, y, parent, tint, up) {
 };
 
 // Small blip for when we gain a key in the cloud.
+// Note: the "cloud" is the little area in the tier meter
+// which displays the keys you've got for the *next* tier up
+// from your current tier. It's called the cloud because it 
+// floats *above* the primary key display (which tracks keys 
+// for your current tier). Make sense?
 var CloudKeyBurst = function(game) {
-    var w = CloudKeyBurst.W;
-    var h = w;
-    var bitmap = game.add.bitmapData(w, h);
-    var c = bitmap.context;
-    c.fillStyle = game.settings.colors.WHITE.s;
-    c.fillRect(0, 0, w, h);
-    Phaser.Sprite.call(this, game, 0, 0, bitmap);
+    this.game = game;
+    if (CloudKeyBurst.CACHED_BITMAP == undefined) {
+        var w = CloudKeyBurst.W;
+        var h = w;
+        var bitmap = this.game.add.bitmapData(w, h);
+        var c = bitmap.context;
+        c.fillStyle = game.settings.colors.WHITE.s;
+        c.fillRect(0, 0, w, h);
+        CloudKeyBurst.CACHED_BITMAP = bitmap;
+    }
+    Phaser.Sprite.call(this, game, 0, 0, CloudKeyBurst.CACHED_BITMAP);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
 };
@@ -66,7 +75,7 @@ CloudKeyBurst.SCALE1 = 1;
 CloudKeyBurst.SCALE2 = 0.2;
 
 
-// Key-spent flash.
+// Key-added flash.
 CloudKeyBurst.prototype.burst = function(x, y, parent, tint) {
     parent.addChild(this);
     this.x = x;
@@ -94,15 +103,19 @@ CloudKeyBurst.prototype.burst = function(x, y, parent, tint) {
 
 // Small burst to indicate that we spent a key.
 var KeySpendBurst = function(game) {
-    var r = KeySpendBurst.RADIUS;
-    var bitmap = game.add.bitmapData(3 * r, 3 * r);
-    var c = bitmap.context;
-    c.strokeStyle = game.settings.colors.WHITE.s;
-    c.lineWidth = KeySpendBurst.PATH_WIDTH;
-    c.beginPath();
-    c.arc(r * 1.5, r * 1.5, r, 0, 2 * Math.PI, false);
-    c.stroke();
-    Phaser.Sprite.call(this, game, 0, 0, bitmap);
+    this.game = game;
+    if (KeySpendBurst.CACHED_BITMAP == undefined) {
+        var r = KeySpendBurst.RADIUS;
+        var bitmap = this.game.add.bitmapData(3 * r, 3 * r);
+        var c = bitmap.context;
+        c.strokeStyle = game.settings.colors.WHITE.s;
+        c.lineWidth = KeySpendBurst.PATH_WIDTH;
+        c.beginPath();
+        c.arc(r * 1.5, r * 1.5, r, 0, 2 * Math.PI, false);
+        c.stroke();
+        KeySpendBurst.CACHED_BITMAP = bitmap;
+    }
+    Phaser.Sprite.call(this, game, 0, 0, KeySpendBurst.CACHED_BITMAP);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
 };
@@ -118,7 +131,7 @@ KeySpendBurst.SCALE1 = 0.1;
 KeySpendBurst.SCALE2 = 1.25;
 
 
-// Key-added flash.
+// Key-spent flash.
 KeySpendBurst.prototype.burst = function(x, y, parent) {
     parent.addChild(this);
     this.x = x;

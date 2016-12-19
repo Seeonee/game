@@ -1,27 +1,30 @@
 // An orbiting ring fragment.
 var TextBanner = function(game, x, y) {
     this.game = game;
-    var w = TextBanner.WIDTH != undefined ?
-        TextBanner.WIDTH : this.game.camera.width;
-    var h = TextBanner.HEIGHT;
     x = x != undefined ? x : (this.game.camera.width / 2);
     y = y != undefined ? y : (this.game.camera.height / 3);
+    if (TextBanner.CACHED_BITMAP == undefined) {
+        var w = TextBanner.WIDTH != undefined ?
+            TextBanner.WIDTH : this.game.camera.width;
+        var h = TextBanner.HEIGHT;
 
-    // Initialize the banner.
-    var bitmap = this.game.add.bitmapData(w, h);
-    c = bitmap.context;
-    var gradient = c.createLinearGradient(0, 0, w, h);
-    var colorEdge = this.game.settings.colors.BLACK.rgba(0);
-    var colorMid = this.game.settings.colors.BLACK.rgba(
-        TextBanner.BANNER_ALPHA);
-    var e = TextBanner.BANNER_EDGE_RATIO;
-    gradient.addColorStop(0, colorEdge);
-    gradient.addColorStop(e, colorMid);
-    gradient.addColorStop(1 - e, colorMid);
-    gradient.addColorStop(1, colorEdge);
-    c.fillStyle = gradient;
-    c.fillRect(0, 0, w, h);
-    Phaser.Sprite.call(this, game, 0, 0, bitmap);
+        // Initialize the banner.
+        var bitmap = this.game.add.bitmapData(w, h);
+        c = bitmap.context;
+        var gradient = c.createLinearGradient(0, 0, w, h);
+        var colorEdge = this.game.settings.colors.BLACK.rgba(0);
+        var colorMid = this.game.settings.colors.BLACK.rgba(
+            TextBanner.BANNER_ALPHA);
+        var e = TextBanner.BANNER_EDGE_RATIO;
+        gradient.addColorStop(0, colorEdge);
+        gradient.addColorStop(e, colorMid);
+        gradient.addColorStop(1 - e, colorMid);
+        gradient.addColorStop(1, colorEdge);
+        c.fillStyle = gradient;
+        c.fillRect(0, 0, w, h);
+        TextBanner.CACHED_BITMAP = bitmap;
+    }
+    Phaser.Sprite.call(this, game, 0, 0, TextBanner.CACHED_BITMAP);
     this.anchor.setTo(0.5);
     this.alpha = 0;
     this.visible = false;

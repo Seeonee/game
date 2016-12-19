@@ -1,36 +1,38 @@
 // An expanding + spinning ring + triangle.
 var PortalFlash = function(game) {
     this.game = game;
-    var r = PortalFlash.RADIUS;
-    r *= PortalFlash.SCALE;
-    var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-    var c = bitmap.context;
-    c.strokeStyle = PortalFlash.COLOR;
-    c.fillStyle = PortalFlash.COLOR;
-    c.lineWidth = Tier.PATH_WIDTH;
-    c.lineWidth *= PortalFlash.SCALE;
+    if (PortalFlash.CACHED_BITMAP == undefined) {
+        var r = PortalFlash.RADIUS;
+        r *= PortalFlash.SCALE;
+        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
+        var c = bitmap.context;
+        c.strokeStyle = PortalFlash.COLOR;
+        c.fillStyle = PortalFlash.COLOR;
+        c.lineWidth = Tier.PATH_WIDTH;
+        c.lineWidth *= PortalFlash.SCALE;
 
-    // Draw the ring.
-    c.beginPath();
-    c.arc(r, r, r / 2, 0, 2 * Math.PI, false);
-    c.stroke();
+        // Draw the ring.
+        c.beginPath();
+        c.arc(r, r, r / 2, 0, 2 * Math.PI, false);
+        c.stroke();
 
-    // Draw the triangle.
-    var w = r * 0.6; // Size it down a bit within the ring.
-    var h = w * 0.87; // Ratio for equilateral triangle.
-    var x = r - (w / 2);
-    var y = 0.91 * (r - (h / 2)); // Slide it up slightly.
-    c.beginPath();
-    var xs = [0, w / 2, w];
-    var ys = [h, 0, h];
-    c.moveTo(x + xs[0], y + ys[0]);
-    c.lineTo(x + xs[1], y + ys[1]);
-    c.lineTo(x + xs[2], y + ys[2]);
-    c.lineTo(x + xs[0], y + ys[0]);
-    c.closePath();
-    c.fill();
-
-    Phaser.Sprite.call(this, game, 0, 0, bitmap);
+        // Draw the triangle.
+        var w = r * 0.6; // Size it down a bit within the ring.
+        var h = w * 0.87; // Ratio for equilateral triangle.
+        var x = r - (w / 2);
+        var y = 0.91 * (r - (h / 2)); // Slide it up slightly.
+        c.beginPath();
+        var xs = [0, w / 2, w];
+        var ys = [h, 0, h];
+        c.moveTo(x + xs[0], y + ys[0]);
+        c.lineTo(x + xs[1], y + ys[1]);
+        c.lineTo(x + xs[2], y + ys[2]);
+        c.lineTo(x + xs[0], y + ys[0]);
+        c.closePath();
+        c.fill();
+        PortalFlash.CACHED_BITMAP = bitmap;
+    }
+    Phaser.Sprite.call(this, game, 0, 0, PortalFlash.CACHED_BITMAP);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
 };
@@ -68,8 +70,7 @@ PortalFlash.prototype.flash = function(zgroup, x, y, pointedUp) {
     var t3 = this.game.add.tween(this.scale);
     t3.to({ x: 1, y: 1 },
         PortalFlash.DURATION, Phaser.Easing.Quadratic.Out, true);
-    t3.flash = this;
     t3.onComplete.add(function(point, tween) {
-        tween.flash.kill();
-    });
+        this.kill();
+    }, this);
 };
