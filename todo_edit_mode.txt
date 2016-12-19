@@ -1,0 +1,18 @@
+add editor mode for defining point properties such as portals, powers, etc
+    ascend/descend (snap to closest point?)
+        hold to add tier above/below
+    delete path/point
+        hold to delete and merge paths - add right-angle check
+    delete current tier
+    add point to path/add path to path
+        hold to change point to custom:
+            key
+            warp -> where?
+            portal -> direction? auto-create other end
+            start
+            end
+            (power) -> type?
+    float avatar
+    enable/disable point
+    add/remove wires between points
+    add logic for turning on/off wires

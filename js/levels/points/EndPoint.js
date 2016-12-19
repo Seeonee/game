@@ -28,23 +28,14 @@ EndPoint.CALLBACK_DELAY = 300; // ms
 EndPoint.prototype.draw = function(tier) {
     this.tier = tier;
     this.game = tier.game;
+    this.renderNeeded = false;
     if (!this.drawn) {
-        // We draw our own point, since we can't 
-        // size up the base point without it getting 
-        // clipped by the tier.image bounds.
-        this.renderNeeded = false;
-        var r = EndPoint.RING_RADIUS;
-        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-        var c = bitmap.context;
-        c.fillStyle = tier.palette.c1.s;
-        c.beginPath();
-        c.arc(r, r, r, 0, 2 * Math.PI, false);
-        c.fill();
-        var ap = tier.translateInternalPointToAnchorPoint(
+        // Add a nub.
+        var ap = this.tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
-        this.image = this.game.make.sprite(ap.x, ap.y, bitmap);
-        this.tier.image.addChild(this.image);
-        this.image.anchor.setTo(0.5, 0.5);
+        this.tier.image.addChild(new PNub(this.game,
+            ap.x, ap.y, this.tier.palette.c1.i));
+
         // Now we add the actual gfx rings.
         // Note: these get positioned absolutely, not anchored.
         var gp = tier.translateInternalPointToGamePoint(
