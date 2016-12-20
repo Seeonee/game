@@ -12,12 +12,10 @@ FloatIState.prototype.constructor = FloatIState;
 // Some constants.
 FloatIState.FLOAT_MAX_SPEED = 200;
 FloatIState.FLOAT_SNAP_DISTANCE = 15;
-FloatIState.FLOAT_POINT_ICON_SCALE = 0.9;
-FloatIState.FLOAT_PATH_ICON_SCALE = 0.7;
-FloatIState.FLOAT_ICON_SCALE = 0.5;
 
 // Called when we become the active state.
 FloatIState.prototype.activated = function(prev) {
+    this.avatar.move(0, 0);
     this.avatar.help.setText('hover');
     this.tier = this.level.tier;
     this.points = this.tier.points;
@@ -40,13 +38,10 @@ FloatIState.prototype.update = function() {
     this.point = this.findNearbyPoint();
     this.path = (this.point) ? undefined : this.findNearbyPath();
     if (this.point) {
-        this.avatar.scale.setTo(FloatIState.FLOAT_POINT_ICON_SCALE);
         this.avatar.help.setText('hover / ' + this.point.name);
     } else if (this.path) {
-        this.avatar.scale.setTo(FloatIState.FLOAT_PATH_ICON_SCALE);
         this.avatar.help.setText('hover / ' + this.path.name);
     } else {
-        this.avatar.scale.setTo(FloatIState.FLOAT_ICON_SCALE);
         this.avatar.help.setText('hover');
     }
 
@@ -59,7 +54,6 @@ FloatIState.prototype.update = function() {
         } else {
             this.snapToStartingValues();
         }
-        this.avatar.scale.setTo(1);
         this.activate(GeneralEditIState.NAME);
         return;
     }
