@@ -39,13 +39,27 @@ Level.prototype.addTier = function(name, tier) {
     tier.events.onFadedOut.add(this.setInvisibleForTier, this);
 };
 
+// Return the tier above a given one (or our current one).
+// If we're at the top, returns undefined.
+Level.prototype.getNextTierUp = function(tier) {
+    tier = tier ? tier : this.tier;
+    return this.tierMap['t' + (tier.index + 1)];
+};
+
+// Return the tier below a given one (or our current one).
+// If we're at the bottom, returns undefined.
+Level.prototype.getNextTierDown = function(tier) {
+    tier = tier ? tier : this.tier;
+    return this.tierMap['t' + (tier.index - 1)];
+};
+
 // Slide up one layer among our tiers.
 // Latches on to a specified point name.
 // Optionally allows you to specify how many 
 // layers to slide upwards.
 Level.prototype.advanceTierUp = function(pointName, howMany) {
     howMany = (howMany == undefined) ? 1 : howMany;
-    var name = 't' + (parseInt(this.tier.name.substring(1)) + howMany);
+    var name = 't' + (this.tier.index + howMany);
     return this.advanceToTier(name, pointName);
 };
 
@@ -55,7 +69,7 @@ Level.prototype.advanceTierUp = function(pointName, howMany) {
 // layers to slide downwards.
 Level.prototype.advanceTierDown = function(pointName, howMany) {
     howMany = (howMany == undefined) ? 1 : howMany;
-    var name = 't' + (parseInt(this.tier.name.substring(1)) - howMany);
+    var name = 't' + (this.tier.index - howMany);
     return this.advanceToTier(name, pointName);
 };
 

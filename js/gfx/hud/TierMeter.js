@@ -3,8 +3,8 @@ var TierMeter = function(game, level) {
     this.game = game;
     this.level = level;
     this.avatar = this.level.avatar;
-    this.lowest = parseInt(this.level.tiers[0].name.substring(1));
-    this.numTiers = level.tiers.length;
+    this.lowest = this.level.tiers[0].index;
+    this.numTiers = this.level.tiers.length;
     this.keys = {};
     this.hud = undefined;
     this.lit = false;
@@ -134,10 +134,7 @@ var TierMeter = function(game, level) {
     this.level.events.onTierChange.add(this.setTier, this);
     this.setTier(this.level.tier);
 
-    if (this.hud == Settings.HUD_SOMETIMES) {
-        this.alpha = 1;
-        this.fade(false);
-    }
+    this.showBriefly();
 };
 
 TierMeter.prototype = Object.create(Phaser.Sprite.prototype);
@@ -169,7 +166,7 @@ TierMeter.TRIANGLE_TRAVEL_TIME = 500; // ms
 
 // Change the current tier.
 TierMeter.prototype.setTier = function(tier, old) {
-    var actualIndex = parseInt(tier.name.substring(1));
+    var actualIndex = tier.index;
     var index = actualIndex - this.lowest;
 
     var apad = TierMeter.APAD;
@@ -209,7 +206,7 @@ TierMeter.prototype.setTier = function(tier, old) {
         this.cloud.visible = false;
     }
     if (old) {
-        var oldIndex = parseInt(old.name.substring(1));
+        var oldIndex = old.index;
         var up = oldIndex < actualIndex;
         var tint = up ? tier.palette.c1.i : old.palette.c1.i;
         var burst = up ? this.keys[tier.name] : this.keys[old.name];
@@ -271,13 +268,19 @@ TierMeter.prototype.fade = function(fadeIn) {
         Phaser.Easing.Cubic.Out, true, delay);
 };
 
-// Add a key for the next tier up.
-TierMeter.prototype.addKey = function() {
-    if (this.hud == Settings.HUD_SOMETIMES && !this.list) {
+// Briefly display ourselves.
+// Only fires if we're displayable and not already showing.
+TierMeter.prototype.showBriefly = function() {
+    if (!this.lit && this.hud == Settings.HUD_SOMETIMES) {
         this.alpha = 1;
         this.fade(false);
     }
-    var currentIndex = parseInt(this.level.tier.name.substring(1));
+};
+
+// Add a key for the next tier up.
+TierMeter.prototype.addKey = function() {
+    this.showBriefly();
+    var currentIndex = this.level.tier.index;
     var actualIndex = 1 + currentIndex;
     if (actualIndex == this.numTiers) {
         return;
@@ -300,11 +303,8 @@ TierMeter.prototype.addKey = function() {
 
 // Subtract a key for the current tier.
 TierMeter.prototype.useKey = function() {
-    if (this.hud == Settings.HUD_SOMETIMES && !this.list) {
-        this.alpha = 1;
-        this.fade(false);
-    }
-    var currentIndex = parseInt(this.level.tier.name.substring(1));
+    this.showBriefly();
+    var currentIndex = this.level.tier.index;
     var tier = this.level.tierMap['t' + currentIndex];
     var keys = this.keys[tier.name] ? this.keys[tier.name] : 0;
     if (keys <= 0) {
