@@ -11,12 +11,10 @@ DeleteIState.prototype.constructor = DeleteIState;
 
 // Some constants.
 DeleteIState.THRESHOLD = 700; // ms
-DeleteIState.STARTING_RADIUS = 25;
-DeleteIState.ENDING_RADIUS = 5;
-DeleteIState.PATH_WIDTH = 4;
 
 // Action for deleting nodes and paths.
 DeleteIState.prototype.activated = function(prev) {
+    this.actingOnTier = false;
     if (this.avatar.point) {
         this.avatar.help.setText('delete ' + this.avatar.point.name);
     } else {
@@ -27,75 +25,111 @@ DeleteIState.prototype.activated = function(prev) {
     this.avatar.body.velocity.x = 0;
     this.avatar.body.velocity.y = 0;
     // Initialize bitmap for rendering.
-    this.bitmap = this.game.add.bitmapData(
-        DeleteIState.STARTING_RADIUS * 4,
-        DeleteIState.STARTING_RADIUS * 4);
-    this.bitmap.context.strokeStyle = this.level.tier.palette.c2.s;
-    this.bitmap.context.fillStyle = this.level.tier.palette.c2.s;
-    this.bitmap.context.lineWidth = DeleteIState.PATH_WIDTH;
-    this.image = this.game.add.image(
-        this.avatar.x - (this.bitmap.width / 2),
-        this.avatar.y - (this.bitmap.height / 2),
-        this.bitmap);
+    this.image = new EditCharge(this.game,
+        this.avatar.x, this.avatar.y, this.level.tier.palette,
+        this.avatar.point != undefined);
     this.game.state.getCurrentState().z.mg.tier().add(this.image);
-    this.renderNeeded = true;
-}
+    if (this.image.tween) {
+        this.image.tween.onComplete.add(function() {
+            this.avatar.help.setText('delete ' +
+                this.avatar.point.name + ' /\nmerge paths');
+        }, this);
+    }
+};
 
-// Render the deletion progress indicator.
-DeleteIState.prototype.render = function() {
-    if (!this.renderNeeded) {
-        return;
-    }
-    var elapsed = Math.min(this.game.time.now - this.start,
-        DeleteIState.THRESHOLD);
-    var ratio = 1 - (elapsed / DeleteIState.THRESHOLD);
-    ratio = (this.avatar.point) ? Math.sqrt(ratio) : 0.2;
-
-    this.bitmap.context.clearRect(0, 0,
-        this.bitmap.width, this.bitmap.height);
-    this.bitmap.context.beginPath();
-    var radius = DeleteIState.ENDING_RADIUS +
-        (ratio * (DeleteIState.STARTING_RADIUS -
-            DeleteIState.ENDING_RADIUS));
-    this.bitmap.context.arc(
-        DeleteIState.STARTING_RADIUS * 2,
-        DeleteIState.STARTING_RADIUS * 2,
-        radius, 0, 2 * Math.PI, false);
-    this.bitmap.context.stroke();
-    if (ratio == 0) {
-        this.bitmap.context.fill();
-        this.avatar.help.setText('delete ' +
-            this.avatar.point.name + ' /\nmerge paths');
-    }
-    this.bitmap.dirty = true;
-    if (ratio == 0 || this.avatar.path) {
-        this.renderNeeded = false;
-    }
+// Clean up.
+DeleteIState.prototype.deactivated = function(next) {
+    this.image.destroy();
 };
 
 // Handle an update while holding the button.
 DeleteIState.prototype.update = function() {
+    if (!this.actingOnTier) {
+        return this.updateForPointsAndPaths();
+    } else {
+        return this.updateForTier();
+    }
+};
+
+// Handle an update while holding the button.
+DeleteIState.prototype.updateForPointsAndPaths = function() {
     var elapsed = Math.min(this.game.time.now - this.start,
         DeleteIState.THRESHOLD);
     var ratio = elapsed / DeleteIState.THRESHOLD;
     if (this.gpad.justReleased(this.buttonMap.EDIT_DELETE)) {
+        this.gpad.consumeButtonEvent();
         if (this.avatar.point) {
-            var success = false;
-            if (ratio < 1) {
-                // Delete the point and its paths.
-                success = this.tier.deletePoint(this.avatar.point);
-            } else {
-                // Delete the point, merge its paths.
-                success = this.tier.deletePointAndMerge(this.avatar.point);
-            }
-            if (success) {
-                this.avatar.point = undefined;
+            if (!this.deletePoint(this.avatar.point, ratio >= 1)) {
+                this.avatar.help.setText('delete failed', true);
             }
         } else if (this.avatar.path) {
             this.tier.deletePath(this.avatar.path);
             this.avatar.path = undefined;
         }
+        if (!this.actingOnTier) {
+            this.image.destroy();
+            this.activate(GeneralEditIState.NAME);
+        }
+    }
+};
+
+// Handle an update while prompting about the tier.
+DeleteIState.prototype.updateForTier = function() {
+    if (this.gpad.justReleased(this.buttonMap.SELECT)) {
+        this.gpad.consumeButtonEvent();
+        this.deleteTier();
+        this.image.destroy();
+        this.activate(GeneralEditIState.NAME);
+    } else if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
+        this.gpad.consumeButtonEvent();
         this.image.destroy();
         this.activate(GeneralEditIState.NAME);
     }
+};
+
+// Attempt to delete a point. Returns success/fail.
+// May also set the "we're now looking to delete the tier"
+// flag.
+DeleteIState.prototype.deletePoint = function(point, merge) {
+    if (point instanceof StartPoint ||
+        point instanceof EndPoint) {
+        if (this.tier.points.length > 1) {
+            return false;
+        }
+    }
+    var success = false;
+    if (merge) {
+        // Delete the point, merge its paths.
+        success = this.tier.deletePointAndMerge(point);
+    } else {
+        // Delete the point and its paths.
+        success = this.tier.deletePoint(point);
+    }
+    if (!success) {
+        // This is the last point in the tier.
+        // Prompt the user.
+        this.actingOnTier = true;
+        this.image.finish();
+        this.avatar.help.setText('delete tier ' +
+            this.level.tier.name + '?');
+    } else {
+        if (point instanceof PortalPoint) {
+            this.cleanUpPortalPoint(point);
+        }
+        this.avatar.point = undefined;
+    }
+    return true;
+};
+
+// If it's a portal, "normalize" the other end.
+DeleteIState.prototype.cleanUpPortalPoint = function(point) {
+    // TODO: !!!
+    console.log('!!! cleaning other end of portal');
+};
+
+// Delete this entire tier, and snap to an adjacent 
+// (lower?) one.
+DeleteIState.prototype.deleteTier = function(point) {
+    // TODO: !!!
+    console.log('!!! deleting tier');
 };

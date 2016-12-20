@@ -27,6 +27,7 @@ EditHelp.prototype.constructor = EditHelp;
 // Constants.
 EditHelp.X_OFFSET = 30;
 EditHelp.Y_OFFSET = -90;
+EditHelp.DEFAULT_HOLD = 1000;
 
 
 // Change the current tier.
@@ -51,6 +52,7 @@ EditHelp.prototype.setText = function(text, hold) {
 EditHelp.prototype._setText = function(text, hold) {
     Phaser.Text.prototype.setText.call(this, text);
     if (hold) {
+        hold = hold == true ? EditHelp.DEFAULT_HOLD : hold;
         this.holding = true;
         this.game.time.events.add(hold, this.holdExpired, this);
     }

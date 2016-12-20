@@ -1,5 +1,9 @@
 deleting a portal should delete its other end
-deleting a start or end should fail
+holding step while at highest/lowest should create new tier
+deleting last point should delete tier
+point logic on image resize *still* bad...
+    based on image shrinking (no resize) then growing again?
+
 adding a start or end should unset the previous one
 add lock mechanics
 add editor mode for defining point properties such as portals, powers, etc
