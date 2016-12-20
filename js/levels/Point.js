@@ -174,6 +174,11 @@ Point.prototype.delete = function() {};
 // Called when the tier updates.
 Point.prototype.update = function() {};
 
+// String version of our details, displayed during editing.
+Point.prototype.getDetails = function() {
+    return ' (' + this.x + ',' + this.y + ')';
+};
+
 // JSON conversion of a point.
 Point.prototype.toJSON = function() {
     var result = { x: this.x, y: this.y };

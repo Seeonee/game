@@ -53,6 +53,10 @@ GeneralEditIState.prototype.updateHelpText = function() {
         return;
     }
     this.attachedObj = obj;
-    obj = obj ? ' / ' + obj.name : '';
-    this.avatar.help.setText('edit' + obj);
+    var s = obj ? ' / ' + obj.name : '';
+    var more = obj.getDetails();
+    if (more) {
+        s += more;
+    }
+    this.avatar.help.setText('edit' + s);
 };

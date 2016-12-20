@@ -24,6 +24,12 @@ StartPoint.prototype.draw = function(tier) {
     }
 };
 
+// Editor details.
+StartPoint.prototype.getDetails = function() {
+    return Point.prototype.getDetails.call(this) + '\n' +
+        'start gate';
+};
+
 // Create a starting point.
 StartPoint.load = function(game, name, json) {
     return new StartPoint(name, json.x, json.y);

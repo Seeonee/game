@@ -49,6 +49,12 @@ KeyPoint.prototype.delete = function() {
     this.tkey.kill();
 };
 
+// Editor details.
+KeyPoint.prototype.getDetails = function() {
+    return Point.prototype.getDetails.call(this) + '\n' +
+        'key';
+};
+
 // JSON conversion of a key.
 KeyPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);

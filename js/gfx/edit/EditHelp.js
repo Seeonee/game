@@ -32,7 +32,7 @@ EditHelp.DEFAULT_HOLD = 1000;
 
 // Change the current tier.
 EditHelp.prototype.setTier = function(tier, old) {
-    this.tint = tier.palette.c2.i;
+    // this.tint = tier.palette.c2.i;
 };
 
 // Queue up a text change. If necessary, delays 

@@ -134,6 +134,13 @@ PortalPoint.prototype.delete = function() {
     }
 };
 
+// Editor details.
+PortalPoint.prototype.getDetails = function() {
+    return Point.prototype.getDetails.call(this) + '\n' +
+        'portal\n' + (this.direction > 0 ? 'up' : 'down') +
+        ' to ' + this.to;
+};
+
 // JSON conversion of a portal.
 PortalPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);

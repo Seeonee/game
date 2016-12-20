@@ -90,12 +90,17 @@ WarpPoint.prototype.notifyDetached = function(avatar, next) {
     }
 };
 
-
 // Delete our children.
 WarpPoint.prototype.delete = function() {
     this.socket.kill();
     this.ember.kill();
     this.contrail.kill();
+};
+
+// Editor details.
+WarpPoint.prototype.getDetails = function() {
+    return Point.prototype.getDetails.call(this) + '\n' +
+        'warp to ' + this.to;
 };
 
 // JSON conversion of a warp point.

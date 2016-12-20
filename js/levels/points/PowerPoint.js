@@ -66,10 +66,15 @@ PowerPoint.prototype.update = function() {
     }
 };
 
-
 // Delete our power.
 PowerPoint.prototype.delete = function() {
     this.power.destroy();
+};
+
+// Editor details.
+PowerPoint.prototype.getDetails = function() {
+    return Point.prototype.getDetails.call(this) + '\n' +
+        'power (' + this.powerType + ')';
 };
 
 // JSON conversion of a portal.

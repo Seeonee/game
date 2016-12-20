@@ -188,6 +188,12 @@ EndPoint.prototype.delete = function() {
     }
 };
 
+// Editor details.
+EndPoint.prototype.getDetails = function() {
+    return Point.prototype.getDetails.call(this) + '\n' +
+        'end gate';
+};
+
 // JSON conversion of an end point.
 EndPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
