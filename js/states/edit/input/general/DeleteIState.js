@@ -136,6 +136,10 @@ DeleteIState.prototype.cleanUpPortalPoint = function(point) {
 // Delete this entire tier, and snap to an adjacent 
 // (ideally lower) one.
 DeleteIState.prototype.deleteTier = function() {
+    if (this.level.tiers.length == 1) {
+        this.avatar.help.setText('delete failed', true);
+        return;
+    }
     this.cleanUpPoint(this.avatar.point);
     var tier = this.level.tier;
     var fallback = this.level.getNextTierDown();
