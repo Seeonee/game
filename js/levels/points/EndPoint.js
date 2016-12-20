@@ -30,6 +30,7 @@ EndPoint.prototype.draw = function(tier) {
     this.game = tier.game;
     this.renderNeeded = false;
     if (!this.drawn) {
+        this.drawn = true;
         // Add a nub.
         var ap = this.tier.translateInternalPointToAnchorPoint(
             this.x, this.y);

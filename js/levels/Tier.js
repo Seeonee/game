@@ -290,6 +290,8 @@ Tier.prototype.translateAnchorPointToInternalPoint = function(x, y) {
 Tier.prototype.recalculateDimensions = function() {
     var x = Tier.PADDING;
     var y = Tier.PADDING;
+    var wOld = this.width;
+    var hOld = this.height;
     this.width = Tier.PADDING;
     this.height = Tier.PADDING;
     for (var i = 0; i < this.points.length; i++) {
@@ -299,6 +301,8 @@ Tier.prototype.recalculateDimensions = function() {
         this.width = (point.x > this.width) ? point.x : this.width;
         this.height = (point.y > this.height) ? point.y : this.height;
     }
+    this.width += Tier.PADDING;
+    this.height += Tier.PADDING;
     var dx = Math.min(0, x - Tier.PADDING);
     var dy = Math.min(0, y - Tier.PADDING);
     if (dx < 0 || dy < 0) {
@@ -317,9 +321,17 @@ Tier.prototype.recalculateDimensions = function() {
             child.x -= dx * 0.5; // Everyone's anchors are 0.5.
             child.y -= dy * 0.5; // Not sure what happens if not.
         }
+    } else {
+        var dw = this.width - wOld;
+        var dh = this.height - hOld;
+        if (dw > 0 || dh > 0) {
+            for (var i = 0; i < this.image.children.length; i++) {
+                var child = this.image.children[i];
+                child.x -= dw * 0.5; // Everyone's anchors are 0.5.
+                child.y -= dh * 0.5; // Not sure what happens if not.
+            }
+        }
     }
-    this.width += Tier.PADDING;
-    this.height += Tier.PADDING;
     this.widthOver2 = this.width / 2;
     this.heightOver2 = this.height / 2;
 };
