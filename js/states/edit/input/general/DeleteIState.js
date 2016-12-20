@@ -12,12 +12,14 @@ DeleteIState.prototype.constructor = DeleteIState;
 // Some constants.
 DeleteIState.THRESHOLD = 700; // ms
 
+
 // Action for deleting nodes and paths.
 DeleteIState.prototype.activated = function(prev) {
     this.actingOnTier = false;
     this.falseStart = false;
     this.deleting = false;
     this.doneDeleting = false;
+    this.chargedTime = this.game.time.now + DeleteIState.THRESHOLD;
     this.tier = this.level.tier;
     if (this.avatar.point) {
         this.actingOnTier = this.tier.points.length == 1;
@@ -32,7 +34,6 @@ DeleteIState.prototype.activated = function(prev) {
         this.falseStart = true;
         return;
     }
-    this.start = this.game.time.now;
 
     this.image = new EditCharge(this.game,
         this.avatar.x, this.avatar.y, this.tier.palette,
@@ -64,13 +65,11 @@ DeleteIState.prototype.update = function() {
 
 // Handle an update while holding the button.
 DeleteIState.prototype.updateForPointsAndPaths = function() {
-    var elapsed = Math.min(this.game.time.now - this.start,
-        DeleteIState.THRESHOLD);
-    var ratio = elapsed / DeleteIState.THRESHOLD;
+    this.charged = this.game.time.now > this.chargedTime;
     if (this.gpad.justReleased(this.buttonMap.EDIT_DELETE)) {
         this.gpad.consumeButtonEvent();
         if (this.avatar.point) {
-            if (!this.deletePoint(this.avatar.point, ratio >= 1)) {
+            if (!this.deletePoint(this.avatar.point, this.charged)) {
                 this.avatar.help.setText('delete failed', true);
             }
         } else if (this.avatar.path) {
@@ -87,10 +86,7 @@ DeleteIState.prototype.updateForTier = function() {
     if (this.deleting && !this.doneDeleting) {
         return;
     }
-    var elapsed = Math.min(this.game.time.now - this.start,
-        DeleteIState.THRESHOLD);
-    var ratio = elapsed / DeleteIState.THRESHOLD;
-    if (ratio >= 1 && this.gpad.justReleased(this.buttonMap.CANCEL)) {
+    if (this.charged && this.gpad.justReleased(this.buttonMap.CANCEL)) {
         this.gpad.consumeButtonEvent();
         this.image.destroy();
         this.deleteTier();
