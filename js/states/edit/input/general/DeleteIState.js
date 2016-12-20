@@ -178,7 +178,8 @@ DeleteIState.prototype.finishDeletingTier = function(tier) {
         i += 1;
     }
     delete this.level.tierMap['t' + i];
-    this.level.tiers.splice(tier, 1);
+    var index = this.level.tiers.indexOf(tier);
+    this.level.tiers.splice(index, 1);
     tier.delete();
     this.avatar.tierMeter.recreate();
     this.avatar.tierMeter.setTier(this.level.tier);
