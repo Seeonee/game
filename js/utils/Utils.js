@@ -16,9 +16,13 @@ String.prototype.replaceAll = function(search, replace) {
 // Spit out an object's JSON to a new tab.
 Utils.writeJSONToNewTab = function(obj) {
     var s = JSON.stringify(obj, null, '  ');
-    s = s.replaceAll('\n', '<br />\n');
     var newWindow = window.open();
-    newWindow.document.write(s);
+    if (newWindow) {
+        s = s.replaceAll('\n', '<br />\n');
+        newWindow.document.write(s);
+    } else {
+        console.log(s);
+    }
 };
 
 // Basic angle function.

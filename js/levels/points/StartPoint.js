@@ -30,6 +30,13 @@ StartPoint.prototype.getDetails = function() {
         'start gate';
 };
 
+// JSON conversion of an end point.
+StartPoint.prototype.toJSON = function() {
+    var result = Point.prototype.toJSON.call(this);
+    result.type = 'start';
+    return result;
+};
+
 // Create a starting point.
 StartPoint.load = function(game, name, json) {
     return new StartPoint(name, json.x, json.y);
