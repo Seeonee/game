@@ -15,11 +15,13 @@ StepUpIState.prototype.update = function() {
     this.gpad.consumeButtonEvent();
     var t = this.level.getNextTierUp();
     if (!t) {
+        this.activate(GeneralEditIState.NAME);
         return;
     }
     var p = StepUpIState.findClosestPointToAvatar(
         t, this.level.avatar);
     if (!p) {
+        this.activate(GeneralEditIState.NAME);
         return;
     }
     this.level.advanceTierUp(p);
@@ -44,11 +46,13 @@ StepDownIState.prototype.update = function() {
     this.gpad.consumeButtonEvent();
     var t = this.level.getNextTierDown();
     if (!t) {
+        this.activate(GeneralEditIState.NAME);
         return;
     }
     var p = StepUpIState.findClosestPointToAvatar(
         t, this.level.avatar);
     if (!p) {
+        this.activate(GeneralEditIState.NAME);
         return;
     }
     this.level.advanceTierDown(p);
