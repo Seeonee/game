@@ -41,6 +41,12 @@ EditLevelState.prototype.createLevel = function() {
     return Level.load(this.game, this.name, json);
 };
 
+// Hook up the avatar's help text.
+EditLevelState.prototype.createAvatar = function() {
+    PlayLevelState.prototype.createAvatar.call(this);
+    new EditHelp(this.game, this.level);
+};
+
 // Create the menu handler, wrapping an earlier handler.
 // We also wrap on an inner edit action handler.
 EditLevelState.prototype.createMenuHandler = function(ihandler) {
