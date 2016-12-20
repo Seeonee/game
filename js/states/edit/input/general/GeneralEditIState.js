@@ -17,6 +17,11 @@ GeneralEditIState.prototype.activated = function(prev) {
     this.updateHelpText();
 };
 
+// Called when we deactivate.
+GeneralEditIState.prototype.deactivated = function(prev) {
+    this.avatar.move(0, 0);
+};
+
 // Handle an update.
 GeneralEditIState.prototype.update = function() {
     if (this.handler.cycle()) {

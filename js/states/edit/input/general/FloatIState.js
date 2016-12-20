@@ -15,7 +15,6 @@ FloatIState.FLOAT_SNAP_DISTANCE = 15;
 
 // Called when we become the active state.
 FloatIState.prototype.activated = function(prev) {
-    this.avatar.move(0, 0);
     this.avatar.help.setText('hover');
     this.tier = this.level.tier;
     this.points = this.tier.points;

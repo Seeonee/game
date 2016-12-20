@@ -16,6 +16,8 @@ DeleteIState.THRESHOLD = 700; // ms
 DeleteIState.prototype.activated = function(prev) {
     this.actingOnTier = false;
     this.falseStart = false;
+    this.deleting = false;
+    this.doneDeleting = false;
     if (this.avatar.point) {
         this.avatar.help.setText('delete ' + this.avatar.point.name);
     } else if (this.avatar.path) {
@@ -26,9 +28,7 @@ DeleteIState.prototype.activated = function(prev) {
     }
     this.tier = this.level.tier;
     this.start = this.game.time.now;
-    this.avatar.body.velocity.x = 0;
-    this.avatar.body.velocity.y = 0;
-    // Initialize bitmap for rendering.
+
     this.image = new EditCharge(this.game,
         this.avatar.x, this.avatar.y, this.level.tier.palette,
         this.avatar.point != undefined);
@@ -158,6 +158,7 @@ DeleteIState.prototype.deleteTier = function() {
         this.avatar.tierMeter.setTier, this.avatar.tierMeter);
 
     this.level.setTier(fallback, p);
+    this.avatar.help.setText('tier: ' + fallback.name, true, true);
     this.deleting = true;
     tier.events.onFadedOut.add(this.finishDeletingTier,
         this, tier);
