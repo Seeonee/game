@@ -1,3 +1,6 @@
+deleting a portal should delete its other end
+deleting a start or end should fail
+adding a start or end should unset the previous one
 add lock mechanics
 add editor mode for defining point properties such as portals, powers, etc
 add "wire" paths + gfx for powering points on

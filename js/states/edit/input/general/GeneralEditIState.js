@@ -13,6 +13,7 @@ GeneralEditIState.prototype.constructor = GeneralEditIState;
 
 // Called when we become the active state.
 GeneralEditIState.prototype.activated = function(prev) {
+    this.attachedObj = undefined;
     this.updateHelpText();
 };
 
@@ -48,6 +49,10 @@ GeneralEditIState.prototype.updateHelpText = function() {
         return;
     }
     var obj = this.avatar.point ? this.avatar.point : this.avatar.path;
+    if (obj === this.attachedObj) {
+        return;
+    }
+    this.attachedObj = obj;
     obj = obj ? ' / ' + obj.name : '';
     this.avatar.help.setText('edit' + obj);
 };

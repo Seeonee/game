@@ -14,6 +14,9 @@ var EditHelp = function(game, level) {
     this.avatar.addChild(this);
     this.avatar.help = this;
 
+    this.holding = false;
+    this.queue = [];
+    this.events.onHoldComplete = new Phaser.Signal();
     this.setTier(this.level.tier);
     this.level.events.onTierChange.add(this.setTier, this);
 };
@@ -29,4 +32,37 @@ EditHelp.Y_OFFSET = -90;
 // Change the current tier.
 EditHelp.prototype.setTier = function(tier, old) {
     this.tint = tier.palette.c2.i;
+};
+
+// Queue up a text change. If necessary, delays 
+// until the current hold expires.
+EditHelp.prototype.setText = function(text, hold) {
+    if (!this.holding) {
+        this._setText(text, hold);
+    } else {
+        // Queue it up.
+        this.queue.push({ t: text, h: hold });
+    }
+};
+
+// Set our text. Optionally takes a hold time;
+// further text sets will queue up until the hold 
+// time expires.
+EditHelp.prototype._setText = function(text, hold) {
+    Phaser.Text.prototype.setText.call(this, text);
+    if (hold) {
+        this.holding = true;
+        this.game.time.events.add(hold, this.holdExpired, this);
+    }
+};
+
+// Called when a hold expires.
+EditHelp.prototype.holdExpired = function() {
+    this.holding = false;
+    do {
+        var next = this.queue.shift();
+    } while (this.queue.length && next && !next.h);
+    if (next) {
+        this._setText(next.t, next.h);
+    }
 };
