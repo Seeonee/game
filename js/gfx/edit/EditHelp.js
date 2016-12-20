@@ -37,7 +37,14 @@ EditHelp.prototype.setTier = function(tier, old) {
 
 // Queue up a text change. If necessary, delays 
 // until the current hold expires.
-EditHelp.prototype.setText = function(text, hold) {
+EditHelp.prototype.setText = function(text, hold, wipe) {
+    if (wipe && this.holding) {
+        this.queue = [];
+        this.holding = false;
+        if (this.event) {
+            this.game.time.events.remove(this.event);
+        }
+    }
     if (!this.holding) {
         this._setText(text, hold);
     } else {
@@ -54,7 +61,8 @@ EditHelp.prototype._setText = function(text, hold) {
     if (hold) {
         hold = hold == true ? EditHelp.DEFAULT_HOLD : hold;
         this.holding = true;
-        this.game.time.events.add(hold, this.holdExpired, this);
+        this.event = this.game.time.events.add(
+            hold, this.holdExpired, this);
     }
 };
 
