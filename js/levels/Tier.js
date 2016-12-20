@@ -321,15 +321,14 @@ Tier.prototype.recalculateDimensions = function() {
             child.x -= dx * 0.5; // Everyone's anchors are 0.5.
             child.y -= dy * 0.5; // Not sure what happens if not.
         }
-    } else {
-        var dw = this.width - wOld;
-        var dh = this.height - hOld;
-        if (dw > 0 || dh > 0) {
-            for (var i = 0; i < this.image.children.length; i++) {
-                var child = this.image.children[i];
-                child.x -= dw * 0.5; // Everyone's anchors are 0.5.
-                child.y -= dh * 0.5; // Not sure what happens if not.
-            }
+    }
+    var dw = dx < 0 ? 0 : this.width - wOld;
+    var dh = dy < 0 ? 0 : this.height - hOld;
+    if (dw > 0 || dh > 0) {
+        for (var i = 0; i < this.image.children.length; i++) {
+            var child = this.image.children[i];
+            child.x -= dw * 0.5; // Everyone's anchors are 0.5.
+            child.y -= dh * 0.5; // Not sure what happens if not.
         }
     }
     this.widthOver2 = this.width / 2;
