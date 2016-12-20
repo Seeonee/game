@@ -91,7 +91,7 @@ SwapIState.prototype.changeTier = function(t, p) {
 
 // Can we even add?
 SwapIState.prototype.canAddTier = function() {
-    return !this.level.tierMap[this.up ? 't7' : 't0'];
+    return !this.level.tierMap[this.up ? 't6' : 't0'];
 };
 
 // Create and move to a new tier.
