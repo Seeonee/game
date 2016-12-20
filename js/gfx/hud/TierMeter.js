@@ -182,6 +182,9 @@ TierMeter.prototype.recreate = function() {
     this.keyEmpty.kill();
     this.keyFull.kill();
     this.cloud.kill();
+    while (this.children.length) {
+        this.removeChild(this.children[0]);
+    }
     this.createSelf();
 };
 
