@@ -23,7 +23,7 @@ top level: (always show indicator for current point/path name + coords)
         square to begin customizing a point
 -        R2 (hold) to float
 -        L1 to move up a tier
-         L1 (hold) to add tier below lowest
+-        L1 (hold) to add tier below lowest
 -        R1 to move down a tier
-         R1 (hold) to add tier above highest
+-        R1 (hold) to add tier above highest
 
