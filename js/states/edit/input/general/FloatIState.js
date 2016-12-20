@@ -18,6 +18,7 @@ FloatIState.FLOAT_ICON_SCALE = 0.5;
 
 // Called when we become the active state.
 FloatIState.prototype.activated = function(prev) {
+    this.avatar.help.setText('hover');
     this.tier = this.level.tier;
     this.points = this.tier.points;
     this.paths = this.tier.paths;
@@ -40,10 +41,13 @@ FloatIState.prototype.update = function() {
     this.path = (this.point) ? undefined : this.findNearbyPath();
     if (this.point) {
         this.avatar.scale.setTo(FloatIState.FLOAT_POINT_ICON_SCALE);
+        this.avatar.help.setText('hover / ' + this.point.name);
     } else if (this.path) {
         this.avatar.scale.setTo(FloatIState.FLOAT_PATH_ICON_SCALE);
+        this.avatar.help.setText('hover / ' + this.path.name);
     } else {
         this.avatar.scale.setTo(FloatIState.FLOAT_ICON_SCALE);
+        this.avatar.help.setText('hover');
     }
 
     // Has the player released the button?

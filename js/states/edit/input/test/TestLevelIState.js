@@ -13,14 +13,13 @@ TestLevelIState.prototype.constructor = TestLevelIState;
 
 // Called when we become the active state.
 TestLevelIState.prototype.activated = function(prev) {
-    console.log('now testing!');
+    this.avatar.help.setText('test');
     this.game.settings.edit = false;
 };
 
 // Called when we become the active state.
 TestLevelIState.prototype.deactivated = function(next) {
     this.game.settings.edit = true;
-    console.log('back to editing!');
 };
 
 // Called on update.

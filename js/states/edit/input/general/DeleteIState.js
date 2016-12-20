@@ -17,6 +17,11 @@ DeleteIState.PATH_WIDTH = 4;
 
 // Action for deleting nodes and paths.
 DeleteIState.prototype.activated = function(prev) {
+    if (this.avatar.point) {
+        this.avatar.help.setText('delete ' + this.avatar.point.name);
+    } else {
+        this.avatar.help.setText('delete ' + this.avatar.path.name);
+    }
     this.tier = this.level.tier;
     this.start = this.game.time.now;
     this.avatar.body.velocity.x = 0;
@@ -25,8 +30,8 @@ DeleteIState.prototype.activated = function(prev) {
     this.bitmap = this.game.add.bitmapData(
         DeleteIState.STARTING_RADIUS * 4,
         DeleteIState.STARTING_RADIUS * 4);
-    this.bitmap.context.strokeStyle = this.game.settings.colors.RED.s;
-    this.bitmap.context.fillStyle = this.game.settings.colors.RED.s;
+    this.bitmap.context.strokeStyle = this.level.tier.palette.c2.s;
+    this.bitmap.context.fillStyle = this.level.tier.palette.c2.s;
     this.bitmap.context.lineWidth = DeleteIState.PATH_WIDTH;
     this.image = this.game.add.image(
         this.avatar.x - (this.bitmap.width / 2),
@@ -59,6 +64,8 @@ DeleteIState.prototype.render = function() {
     this.bitmap.context.stroke();
     if (ratio == 0) {
         this.bitmap.context.fill();
+        this.avatar.help.setText('delete ' +
+            this.avatar.point.name + ' /\nmerge paths');
     }
     this.bitmap.dirty = true;
     if (ratio == 0 || this.avatar.path) {

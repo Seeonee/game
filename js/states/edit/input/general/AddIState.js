@@ -28,11 +28,15 @@ AddFromPathIState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent(this.buttonMap.EDIT_ADD);
     // Initialize bitmap for rendering.
     this.bitmap = this.game.add.bitmapData(this.w, this.h);
-    this.bitmap.context.fillStyle = this.game.settings.colors.RED.s;
+    this.bitmap.context.fillStyle = this.level.tier.palette.c2.s;
     this.image = this.game.add.image(this.x, this.y, this.bitmap);
     this.game.state.getCurrentState().z.mg.tier().add(this.image);
     this.cacheMarks();
     this.renderNeeded = true;
+
+    var newName = this.tier.getNewPointName();
+    this.avatar.help.setText('add ' + newName + ' to ' +
+        this.path.name);
 };
 
 // Translate a game coordinate point so that it can 
@@ -153,6 +157,7 @@ AddFromPointIState.prototype.constructor = AddFromPointIState;
 
 // Action for adding new points (and paths to them) from existing ones.
 AddFromPointIState.prototype.activated = function(prev) {
+    this.avatar.help.setText('add from point');
     this.tier = this.level.tier;
     this.point = this.avatar.point;
     this.near = undefined;
@@ -170,6 +175,12 @@ AddFromPointIState.prototype.activated = function(prev) {
     this.image = this.game.add.image(this.x, this.y, this.bitmap);
     this.game.state.getCurrentState().z.mg.tier().add(this.image);
     this.renderNeeded = false;
+
+
+    var newPointName = this.tier.getNewPointName();
+    var newPathName = this.tier.getNewPathName();
+    this.avatar.help.setText('add ' + newPathName +
+        '+' + newPointName + ' to ' + this.point.name);
 };
 
 // Translate a game coordinate point so that it can 
@@ -194,8 +205,8 @@ AddFromPointIState.prototype.render = function() {
         var ip = this.translateGamePointToImagePoint(
             this.near.x, this.near.y);
         if (this.valid) {
-            this.bitmap.context.fillStyle = this.game.settings.colors.RED.s;
-            this.bitmap.context.strokeStyle = this.game.settings.colors.RED.s;
+            this.bitmap.context.fillStyle = this.level.tier.palette.c2.s;
+            this.bitmap.context.strokeStyle = this.level.tier.palette.c2.s;
         } else {
             this.bitmap.context.fillStyle = this.game.settings.colors.GREY.s;
             this.bitmap.context.strokeStyle = this.game.settings.colors.GREY.s;

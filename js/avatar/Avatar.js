@@ -22,6 +22,7 @@ var Avatar = function(game, graphics, level) {
     this.attached = undefined;
     this.events.onAttach = new Phaser.Signal();
     this.events.onDetach = new Phaser.Signal();
+    this.events.onAttachEdit = new Phaser.Signal();
 };
 
 Avatar.prototype = Object.create(Phaser.Sprite.prototype);
@@ -208,10 +209,11 @@ Avatar.prototype.roundVelocity = function(velocity) {
 // Anyone who's registered for our signals via 
 // avatar.events.onAttach.add or avatar.events.onDetach.add 
 // will also get their callbacks invoked now; they'll be passed 
-// the avatar, the previously attached object, and the newly 
+// the avatar, the newly attached object, and the previously 
 // attached object.
 Avatar.prototype.updateAttachment = function() {
     if (this.game.settings.edit) {
+        this.events.onAttachEdit.dispatch();
         return;
     }
     var old = this.attached;
@@ -225,8 +227,8 @@ Avatar.prototype.updateAttachment = function() {
     if (this.attached && this.attached.notifyAttached) {
         this.attached.notifyAttached(this, old);
     }
-    this.events.onDetach.dispatch(this, old, this.attached);
-    this.events.onAttach.dispatch(this, old, this.attached);
+    this.events.onDetach.dispatch(this, this.attached, old);
+    this.events.onAttach.dispatch(this, this.attached, old);
 };
 
 // Update our gfx color palette.
