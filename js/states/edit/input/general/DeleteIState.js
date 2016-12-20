@@ -18,22 +18,27 @@ DeleteIState.prototype.activated = function(prev) {
     this.falseStart = false;
     this.deleting = false;
     this.doneDeleting = false;
+    this.tier = this.level.tier;
     if (this.avatar.point) {
-        this.avatar.help.setText('delete ' + this.avatar.point.name);
+        this.actingOnTier = this.tier.points.length == 1;
+        if (this.actingOnTier) {
+            this.avatar.help.setText('delete tier ' + this.tier.name);
+        } else {
+            this.avatar.help.setText('delete ' + this.avatar.point.name);
+        }
     } else if (this.avatar.path) {
         this.avatar.help.setText('delete ' + this.avatar.path.name);
     } else {
         this.falseStart = true;
         return;
     }
-    this.tier = this.level.tier;
     this.start = this.game.time.now;
 
     this.image = new EditCharge(this.game,
-        this.avatar.x, this.avatar.y, this.level.tier.palette,
+        this.avatar.x, this.avatar.y, this.tier.palette,
         this.avatar.point != undefined);
     this.game.state.getCurrentState().z.mg.tier().add(this.image);
-    if (this.image.tween) {
+    if (this.image.tween && !this.actingOnTier) {
         this.image.tween.onComplete.add(function() {
             this.avatar.help.setText('delete ' +
                 this.avatar.point.name + ' /\nmerge paths');
@@ -50,10 +55,10 @@ DeleteIState.prototype.deactivated = function(next) {
 DeleteIState.prototype.update = function() {
     if (this.falseStart) {
         this.activate(GeneralEditIState.NAME);
-    } else if (!this.actingOnTier) {
-        return this.updateForPointsAndPaths();
-    } else {
+    } else if (this.actingOnTier) {
         return this.updateForTier();
+    } else {
+        return this.updateForPointsAndPaths();
     }
 };
 
@@ -72,27 +77,23 @@ DeleteIState.prototype.updateForPointsAndPaths = function() {
             this.tier.deletePath(this.avatar.path);
             this.avatar.path = undefined;
         }
-        if (!this.actingOnTier) {
-            this.image.destroy();
-            this.activate(GeneralEditIState.NAME);
-        }
+        this.image.destroy();
+        this.activate(GeneralEditIState.NAME);
     }
 };
 
 // Handle an update while prompting about the tier.
 DeleteIState.prototype.updateForTier = function() {
-    if (this.deleting) {
-        if (this.doneDeleting) {
-            this.gpad.consumeButtonEvent();
-            this.activate(GeneralEditIState.NAME);
-        }
+    if (this.deleting && !this.doneDeleting) {
         return;
-    } else if (this.gpad.justReleased(this.buttonMap.SELECT)) {
-        this.image.destroy();
-        this.deleteTier();
-    } else if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
+    }
+    var elapsed = Math.min(this.game.time.now - this.start,
+        DeleteIState.THRESHOLD);
+    var ratio = elapsed / DeleteIState.THRESHOLD;
+    if (ratio >= 1 && this.gpad.justReleased(this.buttonMap.CANCEL)) {
         this.gpad.consumeButtonEvent();
         this.image.destroy();
+        this.deleteTier();
         this.activate(GeneralEditIState.NAME);
     }
 };
@@ -105,25 +106,15 @@ DeleteIState.prototype.deletePoint = function(point, merge) {
         point instanceof EndPoint) {
         return false;
     }
-    var success = false;
     if (merge) {
         // Delete the point, merge its paths.
-        success = this.tier.deletePointAndMerge(point);
+        this.tier.deletePointAndMerge(point);
     } else {
         // Delete the point and its paths.
-        success = this.tier.deletePoint(point);
+        this.tier.deletePoint(point);
     }
-    if (!success) {
-        // This is the last point in the tier.
-        // Prompt the user.
-        this.actingOnTier = true;
-        this.image.finish();
-        this.avatar.help.setText('delete tier ' +
-            this.level.tier.name + '?');
-    } else {
-        this.cleanUpPoint(point);
-        this.avatar.point = undefined;
-    }
+    this.cleanUpPoint(point);
+    this.avatar.point = undefined;
     return true;
 };
 
