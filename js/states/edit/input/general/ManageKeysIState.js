@@ -13,7 +13,7 @@ GainKeyIState.prototype.constructor = GainKeyIState;
 GainKeyIState.prototype.update = function() {
     this.gpad.consumeButtonEvent();
     this.avatar.tierMeter.addKey();
-    this.activate(EditOverlayIState.NAME);
+    this.activate(GeneralEditIState.NAME);
 };
 
 // Spend a key for the current tier.
@@ -31,5 +31,5 @@ LoseKeyIState.prototype.constructor = LoseKeyIState;
 LoseKeyIState.prototype.update = function() {
     this.gpad.consumeButtonEvent();
     this.avatar.tierMeter.useKey();
-    this.activate(EditOverlayIState.NAME);
+    this.activate(GeneralEditIState.NAME);
 };

@@ -89,6 +89,6 @@ DeleteIState.prototype.update = function() {
             this.avatar.path = undefined;
         }
         this.image.destroy();
-        this.activate(EditOverlayIState.NAME);
+        this.activate(GeneralEditIState.NAME);
     }
 };

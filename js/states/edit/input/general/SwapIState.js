@@ -23,7 +23,7 @@ StepUpIState.prototype.update = function() {
         return;
     }
     this.level.advanceTierUp(p);
-    this.activate(EditOverlayIState.NAME);
+    this.activate(GeneralEditIState.NAME);
     this.avatar.tierMeter.showBriefly();
 };
 
@@ -52,7 +52,7 @@ StepDownIState.prototype.update = function() {
         return;
     }
     this.level.advanceTierDown(p);
-    this.activate(EditOverlayIState.NAME);
+    this.activate(GeneralEditIState.NAME);
     this.avatar.tierMeter.showBriefly();
 };
 

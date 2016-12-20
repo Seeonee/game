@@ -33,7 +33,7 @@ top level: (always show indicator for current point/path name + coords)
 * save
     currently, probably pastes our JSON to the console...
     could it open in a new tab?
-* add/delete
+* general
     enables the add/delete controls:
         X to add point along path
             O to cancel

@@ -133,7 +133,7 @@ AddFromPathIState.prototype.update = function() {
     }
     if (done) {
         this.image.destroy();
-        this.activate(EditOverlayIState.NAME);
+        this.activate(GeneralEditIState.NAME);
     }
 };
 
@@ -297,6 +297,6 @@ AddFromPointIState.prototype.update = function() {
     }
     if (done) {
         this.image.destroy();
-        this.activate(EditOverlayIState.NAME);
+        this.activate(GeneralEditIState.NAME);
     }
 };

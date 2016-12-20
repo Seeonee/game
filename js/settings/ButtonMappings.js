@@ -18,8 +18,8 @@ var ButtonMappings = function() {
     this.EDIT_ADD = undefined;
     this.EDIT_FLOAT = undefined;
     this.EDIT_DELETE = undefined;
-    this.EDIT_GAIN_KEY = undefined;
-    this.EDIT_LOSE_KEY = undefined;
+    this.EDIT_MODE_UP = undefined;
+    this.EDIT_MODE_DOWN = undefined;
 };
 
 // Mappings for PS4 controller.
@@ -42,8 +42,8 @@ var ButtonMappingsPlaystation = function() {
     this.EDIT_ADD = this.SELECT;
     this.EDIT_FLOAT = Phaser.Gamepad.PS3XC_R2;
     this.EDIT_DELETE = this.CANCEL;
-    this.EDIT_GAIN_KEY = Phaser.Gamepad.PS3XC_DPAD_UP;
-    this.EDIT_LOSE_KEY = Phaser.Gamepad.PS3XC_DPAD_DOWN;
+    this.EDIT_MODE_UP = Phaser.Gamepad.PS3XC_DPAD_UP;
+    this.EDIT_MODE_DOWN = Phaser.Gamepad.PS3XC_DPAD_DOWN;
 };
 
 // Mappings for XBOX controller. Untested!
@@ -66,8 +66,8 @@ var ButtonMappingsXbox = function() {
     this.EDIT_ADD = this.SELECT;
     this.EDIT_FLOAT = Phaser.Gamepad.XBOX360_RIGHT_TRIGGER;
     this.EDIT_DELETE = this.CANCEL;
-    this.EDIT_GAIN_KEY = Phaser.Gamepad.XBOX360_DPAD_UP;
-    this.EDIT_LOSE_KEY = Phaser.Gamepad.XBOX360_DPAD_DOWN;
+    this.EDIT_MODE_UP = Phaser.Gamepad.XBOX360_DPAD_UP;
+    this.EDIT_MODE_DOWN = Phaser.Gamepad.XBOX360_DPAD_DOWN;
 };
 
 // Restore a JSON'd ButtonMappings object.
