@@ -34,6 +34,10 @@ GeneralEditIState.prototype.update = function() {
         }
     } else if (this.gpad.justPressed(this.buttonMap.EDIT_DELETE)) {
         this.activate(DeleteIState.NAME);
+    } else if (this.gpad.justPressed(this.buttonMap.EDIT_DISABLE)) {
+        this.activate(DisablePointIState.NAME);
+        // } else if (this.gpad.justPressed(this.buttonMap.EDIT_CUSTOMIZE)) {
+        //     this.activate(CustomizePointIState.NAME);
     } else if (this.gpad.justPressed(this.buttonMap.EDIT_FLOAT)) {
         this.activate(FloatIState.NAME);
     } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_UP)) {

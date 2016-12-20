@@ -17,6 +17,7 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     new AddFromPathIState(this, this.level);
     new AddFromPointIState(this, this.level);
     new DeleteIState(this, this.level);
+    new DisablePointIState(this, this.level);
     // new CustomizePointIState(this, this.level);
 
     // Test states.

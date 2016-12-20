@@ -18,6 +18,8 @@ var ButtonMappings = function() {
     this.EDIT_ADD = undefined;
     this.EDIT_FLOAT = undefined;
     this.EDIT_DELETE = undefined;
+    this.EDIT_DISABLE = undefined;
+    this.EDIT_CUSTOMIZE = undefined;
     this.EDIT_MODE_UP = undefined;
     this.EDIT_MODE_DOWN = undefined;
 };
@@ -47,6 +49,8 @@ var ButtonMappingsPlaystation = function() {
     this.EDIT_ADD = this.SELECT;
     this.EDIT_FLOAT = Phaser.Gamepad.PS3XC_R2;
     this.EDIT_DELETE = this.CANCEL;
+    this.EDIT_DISABLE = Phaser.Gamepad.PS3XC_TRIANGLE;
+    this.EDIT_CUSTOMIZE = Phaser.Gamepad.PS3XC_SQUARE;
     this.EDIT_MODE_UP = Phaser.Gamepad.PS3XC_DPAD_UP;
     this.EDIT_MODE_DOWN = Phaser.Gamepad.PS3XC_DPAD_DOWN;
 };
@@ -71,6 +75,8 @@ var ButtonMappingsXbox = function() {
     this.EDIT_ADD = this.SELECT;
     this.EDIT_FLOAT = Phaser.Gamepad.XBOX360_RIGHT_TRIGGER;
     this.EDIT_DELETE = this.CANCEL;
+    this.EDIT_DISABLE = Phaser.Gamepad.XBOX360_Y;
+    this.EDIT_CUSTOMIZE = Phaser.Gamepad.XBOX360_X;
     this.EDIT_MODE_UP = Phaser.Gamepad.XBOX360_DPAD_UP;
     this.EDIT_MODE_DOWN = Phaser.Gamepad.XBOX360_DPAD_DOWN;
 };
