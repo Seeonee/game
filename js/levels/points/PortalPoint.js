@@ -129,6 +129,7 @@ PortalPoint.prototype.delete = function() {
     for (var i = 0; i < this.emitters.length; i++) {
         this.emitters[i].destroy();
     }
+    this.gate.delete();
 };
 
 // JSON conversion of a portal.

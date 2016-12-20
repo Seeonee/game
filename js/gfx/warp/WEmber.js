@@ -1,8 +1,34 @@
+// First, define a warp point socket for an ember.
+var WSocket = function(game, x, y, palette) {
+    this.game = game;
+    if (WSocket.CACHED_BITMAP == undefined) {
+        // Container ring.
+        var r = WSocket.RING_RADIUS;
+        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
+        var c = bitmap.context;
+        c.strokeStyle = palette.c1.s;
+        c.lineWidth = Tier.PATH_WIDTH * WarpPoint.PATH_RATIO;
+        c.beginPath();
+        c.arc(r, r, r / 2, 0, 2 * Math.PI, false);
+        c.stroke();
+        WSocket.CACHED_BITMAP = bitmap;
+    }
+    Phaser.Sprite.call(this, game, x, y, WSocket.CACHED_BITMAP);
+    this.anchor.setTo(0.5, 0.5);
+};
+
+WSocket.prototype = Object.create(Phaser.Sprite.prototype);
+WSocket.prototype.constructor = WSocket;
+
+// Constants.
+WSocket.RING_RADIUS = 20;
+
+
 // Ember smoldering in the center of a warp point.
 var WEmber = function(game) {
     this.game = game;
     if (WEmber.CACHED_BITMAP == undefined) {
-        var r = WEmber.RADIUS;
+        var r = WEmber.EMBER_RADIUS;
         var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
         c = bitmap.context;
         c.fillStyle = this.game.settings.colors.WHITE.s;
@@ -25,7 +51,7 @@ WEmber.prototype = Object.create(Phaser.Sprite.prototype);
 WEmber.prototype.constructor = WEmber;
 
 // Constants.
-WEmber.RADIUS = 4;
+WEmber.EMBER_RADIUS = 4;
 WEmber.EMBER_FADE_TIME = 1000; // ms
 WEmber.EMBER_DELAY = 1400; // ms
 WEmber.DISABLED_ALPHA = 0.25;

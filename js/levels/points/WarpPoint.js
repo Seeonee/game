@@ -31,28 +31,18 @@ WarpPoint.prototype.draw = function(tier) {
     var y = this.y - r / 2;
     Utils.clearArc(c, this.x, this.y, r / 2);
     if (!this.drawn) {
-        // Draw our ring.
         this.toPoint = tier.pointMap[this.to];
-        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-        var c = bitmap.context;
-        c.strokeStyle = tier.palette.c1.s;
-        c.lineWidth = Tier.PATH_WIDTH * WarpPoint.PATH_RATIO;
-        c.beginPath();
-        c.arc(r, r, r / 2, 0, 2 * Math.PI, false);
-        c.stroke();
+        // Graphical elements.
         var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
-        this.image = this.game.make.sprite(ap.x, ap.y, bitmap);
-        this.tier.image.addChild(this.image);
-        this.image.anchor.setTo(0.5, 0.5);
-
-        // Graphical elements.
+        this.socket = new WSocket(this.game, ap.x, ap.y, this.tier.palette);
+        this.tier.image.addChild(this.socket);
         this.ember = new WEmber(this.game);
-        this.image.addChild(this.ember);
+        this.socket.addChild(this.ember);
         var angle = Utils.angleBetweenPoints(this.x, this.y,
             this.toPoint.x, this.toPoint.y);
         this.contrail = new WContrail(this.game, angle);
-        this.image.addChild(this.contrail);
+        this.socket.addChild(this.contrail);
     }
 };
 
