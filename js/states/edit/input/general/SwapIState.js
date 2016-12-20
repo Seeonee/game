@@ -18,12 +18,8 @@ StepUpIState.prototype.update = function() {
         this.activate(GeneralEditIState.NAME);
         return;
     }
-    var p = StepUpIState.findClosestPointToAvatar(
+    var p = Utils.findClosestPointToAvatar(
         t, this.level.avatar);
-    if (!p) {
-        this.activate(GeneralEditIState.NAME);
-        return;
-    }
     this.level.advanceTierUp(p);
     this.activate(GeneralEditIState.NAME);
     this.avatar.tierMeter.showBriefly();
@@ -49,30 +45,9 @@ StepDownIState.prototype.update = function() {
         this.activate(GeneralEditIState.NAME);
         return;
     }
-    var p = StepUpIState.findClosestPointToAvatar(
+    var p = Utils.findClosestPointToAvatar(
         t, this.level.avatar);
-    if (!p) {
-        this.activate(GeneralEditIState.NAME);
-        return;
-    }
     this.level.advanceTierDown(p);
     this.activate(GeneralEditIState.NAME);
     this.avatar.tierMeter.showBriefly();
-};
-
-
-// "Utility" method for finding the closest point.
-StepUpIState.findClosestPointToAvatar = function(tier, avatar) {
-    var min = Number.POSITIVE_INFINITY;
-    var name = undefined;
-    var ip = tier.translateGamePointToInternalPoint(avatar.x, avatar.y);
-    for (var i = 0; i < tier.points.length; i++) {
-        var p = tier.points[i];
-        var d = Utils.distanceBetweenPoints(ip.x, ip.y, p.x, p.y);
-        if (d < min || !name) {
-            min = d;
-            name = p.name;
-        }
-    }
-    return name;
 };

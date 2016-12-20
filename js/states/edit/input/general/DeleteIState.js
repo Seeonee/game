@@ -15,10 +15,14 @@ DeleteIState.THRESHOLD = 700; // ms
 // Action for deleting nodes and paths.
 DeleteIState.prototype.activated = function(prev) {
     this.actingOnTier = false;
+    this.falseStart = false;
     if (this.avatar.point) {
         this.avatar.help.setText('delete ' + this.avatar.point.name);
-    } else {
+    } else if (this.avatar.path) {
         this.avatar.help.setText('delete ' + this.avatar.path.name);
+    } else {
+        this.falseStart = true;
+        return;
     }
     this.tier = this.level.tier;
     this.start = this.game.time.now;
@@ -44,7 +48,9 @@ DeleteIState.prototype.deactivated = function(next) {
 
 // Handle an update while holding the button.
 DeleteIState.prototype.update = function() {
-    if (!this.actingOnTier) {
+    if (this.falseStart) {
+        this.activate(GeneralEditIState.NAME);
+    } else if (!this.actingOnTier) {
         return this.updateForPointsAndPaths();
     } else {
         return this.updateForTier();
@@ -75,11 +81,15 @@ DeleteIState.prototype.updateForPointsAndPaths = function() {
 
 // Handle an update while prompting about the tier.
 DeleteIState.prototype.updateForTier = function() {
-    if (this.gpad.justReleased(this.buttonMap.SELECT)) {
-        this.gpad.consumeButtonEvent();
-        this.deleteTier();
+    if (this.deleting) {
+        if (this.doneDeleting) {
+            this.gpad.consumeButtonEvent();
+            this.activate(GeneralEditIState.NAME);
+        }
+        return;
+    } else if (this.gpad.justReleased(this.buttonMap.SELECT)) {
         this.image.destroy();
-        this.activate(GeneralEditIState.NAME);
+        this.deleteTier();
     } else if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
         this.gpad.consumeButtonEvent();
         this.image.destroy();
@@ -93,9 +103,7 @@ DeleteIState.prototype.updateForTier = function() {
 DeleteIState.prototype.deletePoint = function(point, merge) {
     if (point instanceof StartPoint ||
         point instanceof EndPoint) {
-        if (this.tier.points.length > 1) {
-            return false;
-        }
+        return false;
     }
     var success = false;
     if (merge) {
@@ -113,23 +121,69 @@ DeleteIState.prototype.deletePoint = function(point, merge) {
         this.avatar.help.setText('delete tier ' +
             this.level.tier.name + '?');
     } else {
-        if (point instanceof PortalPoint) {
-            this.cleanUpPortalPoint(point);
-        }
+        this.cleanUpPoint(point);
         this.avatar.point = undefined;
     }
     return true;
 };
 
+// Some points require extra care.
+DeleteIState.prototype.cleanUpPoint = function(point) {
+    if (point instanceof PortalPoint) {
+        this.cleanUpPortalPoint(point);
+    }
+};
+
 // If it's a portal, "normalize" the other end.
 DeleteIState.prototype.cleanUpPortalPoint = function(point) {
-    // TODO: !!!
-    console.log('!!! cleaning other end of portal');
+    var tier = point.direction > 0 ?
+        this.level.getNextTierUp() : this.level.getNextTierDown()
+    var other = tier.pointMap[point.to];
+    tier.replacePoint(other, new Point());
 };
 
 // Delete this entire tier, and snap to an adjacent 
-// (lower?) one.
-DeleteIState.prototype.deleteTier = function(point) {
-    // TODO: !!!
-    console.log('!!! deleting tier');
+// (ideally lower) one.
+DeleteIState.prototype.deleteTier = function() {
+    this.cleanUpPoint(this.avatar.point);
+    var tier = this.level.tier;
+    var fallback = this.level.getNextTierDown();
+    if (!fallback) {
+        fallback = this.level.getNextTierUp();
+    }
+    var p = Utils.findClosestPointToAvatar(
+        fallback, this.level.avatar);
+
+    this.level.events.onTierChange.remove(
+        this.avatar.tierMeter.setTier, this.avatar.tierMeter);
+
+    this.level.setTier(fallback, p);
+    this.deleting = true;
+    tier.events.onFadedOut.add(this.finishDeletingTier,
+        this, tier);
+};
+
+
+// Called once the old tier has fully faded.
+DeleteIState.prototype.finishDeletingTier = function(tier) {
+    var i = tier.index;
+    var t1 = tier;
+    while (this.level.tierMap['t' + (i + 1)]) {
+        var t2 = this.level.tierMap['t' + (i + 1)];
+        t1.name = t2.name;
+        t1.index = t2.index;
+        t1.palette = t2.palette;
+        this.level.tierMap[t1.name] = t2;
+        t1 = t2;
+        i += 1;
+    }
+    delete this.level.tierMap['t' + i];
+    this.level.tiers.splice(tier, 1);
+    tier.delete();
+    this.avatar.tierMeter.recreate();
+    this.avatar.tierMeter.setTier(this.level.tier);
+    this.level.events.onTierChange.add(
+        this.avatar.tierMeter.setTier, this.avatar.tierMeter);
+    this.avatar.tierMeter.showBriefly();
+    this.doneDeleting = true;
 };

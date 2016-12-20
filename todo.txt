@@ -3,6 +3,7 @@ holding step while at highest/lowest should create new tier
 deleting last point should delete tier
 point logic on image resize *still* bad...
     based on image shrinking (no resize) then growing again?
+remove hover scaling, add wobble or rocket maybe?
 
 adding a start or end should unset the previous one
 add lock mechanics

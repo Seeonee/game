@@ -67,6 +67,23 @@ Utils.clearArc = function(context, x, y, r) {
     context.globalCompositeOperation = 'source-over';
 };
 
+// Utility method for finding the closest point.
+Utils.findClosestPointToAvatar = function(tier, avatar) {
+    var min = Number.POSITIVE_INFINITY;
+    var name = undefined;
+    var ip = tier.translateGamePointToInternalPoint(avatar.x, avatar.y);
+    for (var i = 0; i < tier.points.length; i++) {
+        var p = tier.points[i];
+        var d = Utils.distanceBetweenPoints(ip.x, ip.y, p.x, p.y);
+        if (d < min || !name) {
+            min = d;
+            name = p.name;
+        }
+    }
+    return name;
+};
+
+
 // Simple factory for instantiating new sprite-based objects.
 // Main goal is that it will return a new sprite if 
 // necessary, otherwise it'll revive an earlier one.

@@ -544,6 +544,20 @@ Tier.prototype.fadeOut = function(increasing) {
     this.fades.push(t2);
 };
 
+// Delete ourself and our stuff.
+Tier.prototype.delete = function() {
+    for (var i = 0; i < this.paths.length; i++) {
+        this.paths[i].delete();
+    }
+    for (var i = 0; i < this.points.length; i++) {
+        this.points[i].delete();
+    }
+    this.events.onFadingIn.removeAll();
+    this.events.onFadedIn.removeAll();
+    this.events.onFadingOut.removeAll();
+    this.events.onFadedOut.removeAll();
+};
+
 // JSON conversion of our points and paths.
 Tier.prototype.toJSON = function() {
     return {

@@ -12,13 +12,59 @@ var TierMeter = function(game, level) {
     this.ckbPool = new SpritePool(this.game, CloudKeyBurst);
     this.ksbPool = new SpritePool(this.game, KeySpendBurst);
 
+    var d = 2 * TierMeter.R2 + TierMeter.PAD;
+    this.bitmap = this.game.add.bitmapData(d, d);
+    Phaser.Sprite.call(this, game, 0, 0, this.bitmap);
+    this.createSelf();
+    this.level.z.fg.add(this);
+
+    // Finish our setup, fixing camera position and 
+    // listening for tier change events.
+    this.alpha = 0;
+    this.updateSettings(this.game.settings);
+    this.fixedToCamera = true;
+    this.cameraOffset.setTo(TierMeter.CAMERA_X, TierMeter.CAMERA_Y);
+    this.level.events.onTierChange.add(this.setTier, this);
+    this.setTier(this.level.tier);
+
+    this.showBriefly();
+};
+
+TierMeter.prototype = Object.create(Phaser.Sprite.prototype);
+TierMeter.prototype.constructor = TierMeter;
+
+// Constants.
+TierMeter.R1 = 38;
+TierMeter.R2 = 50;
+TierMeter.ANGLE = 2 * Math.PI / 10.5;
+TierMeter.APAD = TierMeter.ANGLE / 5;
+TierMeter.APAD_L = TierMeter.R2 * Math.sin(TierMeter.APAD / 2);
+TierMeter.PAD = 0;
+TierMeter.BORDER_ALPHA = 0.15;
+TierMeter.CAMERA_X = 15 + TierMeter.R2;
+TierMeter.CAMERA_Y = 15 + TierMeter.R2;
+TierMeter.TRIANGLE_SCALE = 0.65;
+TierMeter.TRIANGLE_OFFSET = 0.5;
+TierMeter.X_STROKE_LENGTH = 14;
+TierMeter.X_STROKE_WIDTH = 2.5;
+TierMeter.KEYPLATE_SCALE = 0.5;
+TierMeter.CLOUD_W = 6;
+TierMeter.CLOUD_PAD = 6;
+TierMeter.CLOUD_MAX = 3;
+TierMeter.BURST_Y = -13;
+TierMeter.FADE_TIME = 300; // ms
+TierMeter.FADE_OUT_DELAY = 3000; // ms
+TierMeter.TRIANGLE_TRAVEL_TIME = 500; // ms
+
+
+// Draw all of our stuff!
+TierMeter.prototype.createSelf = function() {
     var r1 = TierMeter.R1;
     var r2 = TierMeter.R2;
     var x = r2 + TierMeter.PAD;
     var y = x;
     var w = 2 * x;
     var h = 2 * y;
-    this.bitmap = this.game.add.bitmapData(w, h);
     var c = this.bitmap.context;
 
     // "Border" arc.
@@ -57,9 +103,6 @@ var TierMeter = function(game, level) {
     }
     // Clear the center.
     Utils.clearArc(c, x, y, r1);
-    // Super constructor to actually build us as a sprite.
-    Phaser.Sprite.call(this, game, 0, 0, this.bitmap);
-    level.z.fg.add(this);
 
     // Triangular indicator for which tier we're on.
     this.triangle = this.game.make.sprite(0, 0, 'smoke');
@@ -124,45 +167,23 @@ var TierMeter = function(game, level) {
     this.cloudx = -this.cloud.width * this.cloud.anchor.x;
     this.cloudy = -this.cloud.height * this.cloud.anchor.y;
     this.fillUpCloud(0);
-
-    // Finish our setup, fixing camera position and 
-    // listening for tier change events.
-    this.alpha = 0;
-    this.updateSettings(this.game.settings);
-    this.fixedToCamera = true;
-    this.cameraOffset.setTo(TierMeter.CAMERA_X, TierMeter.CAMERA_Y);
-    this.level.events.onTierChange.add(this.setTier, this);
-    this.setTier(this.level.tier);
-
-    this.showBriefly();
 };
 
-TierMeter.prototype = Object.create(Phaser.Sprite.prototype);
-TierMeter.prototype.constructor = TierMeter;
-
-// Constants.
-TierMeter.R1 = 38;
-TierMeter.R2 = 50;
-TierMeter.ANGLE = 2 * Math.PI / 10.5;
-TierMeter.APAD = TierMeter.ANGLE / 5;
-TierMeter.APAD_L = TierMeter.R2 * Math.sin(TierMeter.APAD / 2);
-TierMeter.PAD = 0;
-TierMeter.BORDER_ALPHA = 0.15;
-TierMeter.CAMERA_X = 15 + TierMeter.R2;
-TierMeter.CAMERA_Y = 15 + TierMeter.R2;
-TierMeter.TRIANGLE_SCALE = 0.65;
-TierMeter.TRIANGLE_OFFSET = 0.5;
-TierMeter.X_STROKE_LENGTH = 14;
-TierMeter.X_STROKE_WIDTH = 2.5;
-TierMeter.KEYPLATE_SCALE = 0.5;
-TierMeter.CLOUD_W = 6;
-TierMeter.CLOUD_PAD = 6;
-TierMeter.CLOUD_MAX = 3;
-TierMeter.BURST_Y = -13;
-TierMeter.FADE_TIME = 300; // ms
-TierMeter.FADE_OUT_DELAY = 3000; // ms
-TierMeter.TRIANGLE_TRAVEL_TIME = 500; // ms
-
+// Clear and redraw ourself.
+TierMeter.prototype.recreate = function() {
+    this.lowest = this.level.tiers[0].index;
+    this.numTiers = this.level.tiers.length;
+    this.bitmap.context.clearRect(0, 0,
+        this.bitmap.width, this.bitmap.height);
+    this.bitmap.dirty = true;
+    this.triangle.kill();
+    this.text.kill();
+    this.textx.kill();
+    this.keyEmpty.kill();
+    this.keyFull.kill();
+    this.cloud.kill();
+    this.createSelf();
+};
 
 // Change the current tier.
 TierMeter.prototype.setTier = function(tier, old) {
