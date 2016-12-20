@@ -12,6 +12,7 @@ StepUpIState.prototype.constructor = StepUpIState;
 
 // Handle an update.
 StepUpIState.prototype.update = function() {
+    this.avatar.tierMeter.showBriefly();
     this.gpad.consumeButtonEvent();
     var t = this.level.getNextTierUp();
     if (!t) {
@@ -22,7 +23,6 @@ StepUpIState.prototype.update = function() {
         t, this.level.avatar);
     this.level.advanceTierUp(p);
     this.activate(GeneralEditIState.NAME);
-    this.avatar.tierMeter.showBriefly();
 };
 
 // Handle tier retreats.
@@ -39,6 +39,7 @@ StepDownIState.prototype.constructor = StepDownIState;
 
 // Handle an update.
 StepDownIState.prototype.update = function() {
+    this.avatar.tierMeter.showBriefly();
     this.gpad.consumeButtonEvent();
     var t = this.level.getNextTierDown();
     if (!t) {
@@ -49,5 +50,4 @@ StepDownIState.prototype.update = function() {
         t, this.level.avatar);
     this.level.advanceTierDown(p);
     this.activate(GeneralEditIState.NAME);
-    this.avatar.tierMeter.showBriefly();
 };
