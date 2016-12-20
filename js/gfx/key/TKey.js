@@ -4,6 +4,14 @@ var TKey = function(game, x, y, palette) {
     Phaser.Sprite.call(this, game, x, y - dy);
     this.anchor.setTo(0.5);
 
+    // Our (x,y) get shifted when the tier redraws.
+    // But we're tweening our y, which means the tween gets off base.
+    // Instead, create a child whose local offset from us is 
+    // (0,0), and then tween its height, so that the gfx 
+    // sprites attached to it move correctly.
+    this.gobetween = this.addChild(this.game.add.sprite(0, 0));
+    this.gobetween.anchor.setTo(0.5);
+
     if (TKey.CACHED_BITMAP == undefined) {
         var r = TKey.RADIUS;
         r *= TKey.FIX;
@@ -14,19 +22,20 @@ var TKey = function(game, x, y, palette) {
         c.fill();
         TKey.CACHED_BITMAP = bitmap;
     }
-    this.glow = this.addChild(this.game.add.sprite(0, 0, TKey.CACHED_BITMAP));
+    this.glow = this.gobetween.addChild(
+        this.game.add.sprite(0, 0, TKey.CACHED_BITMAP));
     this.glow.scale.setTo(1 / TKey.FIX);
     this.glow.anchor.setTo(0.5);
 
-    this.tkey = this.addChild(this.game.add.sprite(0, 0, 'keyplate'));
+    this.tkey = this.gobetween.addChild(
+        this.game.add.sprite(0, 0, 'keyplate'));
     this.tkey.anchor.setTo(0.5);
     this.tkey.tint = palette.c1.i;
     this.tkey.scale.setTo(TKey.SCALE);
 
     this.tweens = [];
-    var t = this.game.add.tween(this);
-    var y = this.y + TKey.HOVER_DRIFT;
-    t.to({ y: y }, TKey.HOVER_TIME,
+    var t = this.game.add.tween(this.gobetween);
+    t.to({ y: TKey.HOVER_DRIFT }, TKey.HOVER_TIME,
         Phaser.Easing.Sinusoidal.InOut, true, 0,
         Number.POSITIVE_INFINITY, true);
     this.tweens.push(t);
