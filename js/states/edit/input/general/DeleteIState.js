@@ -9,9 +9,6 @@ DeleteIState.NAME = 'delete';
 DeleteIState.prototype = Object.create(IState.prototype);
 DeleteIState.prototype.constructor = DeleteIState;
 
-// Some constants.
-DeleteIState.THRESHOLD = 700; // ms
-
 
 // Action for deleting nodes and paths.
 DeleteIState.prototype.activated = function(prev) {
@@ -29,7 +26,7 @@ DeleteIState.prototype.activated = function(prev) {
     this.falseStart = false;
     this.deleting = false;
     this.doneDeleting = false;
-    this.chargedTime = this.game.time.now + DeleteIState.THRESHOLD;
+    this.chargedTime = this.game.time.now + EditCharge.TIME;
     this.tier = this.level.tier;
     if (this.point) {
         this.actingOnTier = this.tier.points.length == 1;

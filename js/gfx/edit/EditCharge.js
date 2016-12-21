@@ -12,14 +12,15 @@ var EditCharge = function(game, x, y, palette, animate) {
     Phaser.Sprite.call(this, game, x, y, this.bitmap);
     this.anchor.setTo(0.5);
 
+
     this.animate = animate;
     if (this.animate) {
         this.ratio = 1;
         this.tween = this.game.add.tween(this);
-        this.tween.to({ ratio: 0 }, EditCharge.CHARGE_TIME,
+        this.tween.to({ ratio: 0 }, EditCharge.TIME,
             Phaser.Easing.Linear.InOut, true);
     } else {
-        this.ratio = 0.2;
+        this.ratio = EditCharge.RING_RATIO;
     }
 };
 
@@ -30,7 +31,8 @@ EditCharge.prototype.constructor = EditCharge;
 EditCharge.STARTING_RADIUS = 25;
 EditCharge.ENDING_RADIUS = 5;
 EditCharge.PATH_WIDTH = 4;
-EditCharge.CHARGE_TIME = 700; // ms
+EditCharge.TIME = 700; // ms
+EditCharge.RING_RATIO = 0.2;
 
 
 // Redraw based on ratio.
@@ -60,10 +62,35 @@ EditCharge.prototype.update = function() {
     this.bitmap.dirty = true;
 };
 
+// Update the color.
+EditCharge.prototype.setColor = function(palette) {
+    this.bitmap.context.strokeStyle = palette.c2.s;
+    this.bitmap.context.fillStyle = palette.c2.s;
+    this.oldRatio = undefined;
+};
+
 // Jump to our final scale.
-EditCharge.prototype.finish = function() {
+EditCharge.prototype.restart = function() {
+    if (this.tween) {
+        this.tween.stop();
+    }
+    this.animate = true;
+    this.ratio = 1;
+    this.tween = this.game.add.tween(this);
+    this.tween.to({ ratio: 0 }, EditCharge.TIME,
+        Phaser.Easing.Linear.InOut, true);
+};
+
+// Jump to our final scale.
+EditCharge.prototype.finishPoint = function() {
     if (this.animate) {
         this.tween.stop();
-        this.ratio = 0;
     }
+    this.ratio = 0;
+};
+
+// Jump to our final scale.
+EditCharge.prototype.finishRing = function() {
+    this.animate = false;
+    this.ratio = EditCharge.RING_RATIO;
 };

@@ -260,6 +260,37 @@ AddFromPointIState.prototype.cacheSelectedMark = function() {
     }
 };
 
+// Figure out if a mark is near the "cursor".
+AddFromPointIState.prototype.cacheSelectedMark = function(x, y) {
+    var ip = this.tier.translateGamePointToInternalPoint(x, y);
+    ip.x -= Tier.PADDING;
+    ip.y -= Tier.PADDING;
+    ip.x = Math.floor(ip.x + (25 * Math.sign(ip.x)));
+    ip.y = Math.floor(ip.y + (25 * Math.sign(ip.y)));
+    ip.x -= ip.x % 50;
+    ip.y -= ip.y % 50;
+    ip.x += Tier.PADDING;
+    ip.y += Tier.PADDING;
+    var old = this.near;
+    if (ip.x == this.point.x && ip.y == this.point.y) {
+        this.near = undefined;
+        this.valid = false;
+    } else {
+        var gp = this.tier.translateInternalPointToGamePoint(
+            ip.x, ip.y);
+        var near = { x: gp.x, y: gp.y };
+        if (!old || old.x != near.x || old.y != near.y) {
+            this.near = near;
+        }
+        var dx = Math.abs(this.point.x - ip.x);
+        var dy = Math.abs(this.point.y - ip.y);
+        this.valid = dx == dy || dx == 0 || dy == 0;
+    }
+    if (old !== this.near) {
+        this.renderNeeded = true;
+    }
+};
+
 // Handle an update while holding the button.
 AddFromPointIState.prototype.update = function() {
     // First, movement.
@@ -309,5 +340,73 @@ AddFromPointIState.prototype.update = function() {
     if (done) {
         this.image.destroy();
         this.activate(GeneralEditIState.NAME);
+    }
+};
+
+
+// Handle point addition in the vast unknown.
+var AddFromFloatIState = function(handler, level) {
+    IState.call(this, AddFromFloatIState.NAME, handler);
+    this.level = level;
+    this.avatar = this.level.avatar;
+    this.image = new EditCharge(this.game, 0, 0,
+        this.level.tiers[0].palette, true);
+    this.image.kill();
+};
+
+AddFromFloatIState.NAME = 'addFromFloat';
+AddFromFloatIState.prototype = Object.create(IState.prototype);
+AddFromFloatIState.prototype.constructor = AddFromFloatIState;
+
+// Charge up a point add in the middle of nowhere.
+AddFromFloatIState.prototype.activated = function(prev) {
+    this.gpad.consumeButtonEvent();
+    this.tier = this.level.tier;
+    // Find a mark is near the "cursor".
+    var ip = this.tier.translateGamePointToInternalPoint(
+        this.avatar.x, this.avatar.y);
+    ip.x -= Tier.PADDING;
+    ip.y -= Tier.PADDING;
+    ip.x = Math.floor(ip.x + (25 * Math.sign(ip.x)));
+    ip.y = Math.floor(ip.y + (25 * Math.sign(ip.y)));
+    ip.x -= ip.x % 50;
+    ip.y -= ip.y % 50;
+    ip.x += Tier.PADDING;
+    ip.y += Tier.PADDING;
+    this.near = ip;
+    var gp = this.tier.translateInternalPointToGamePoint(
+        ip.x, ip.y);
+    this.image.revive();
+    this.image.setColor(this.tier.palette);
+    this.game.state.getCurrentState().z.mg.tier().add(this.image);
+    this.image.x = gp.x;
+    this.image.y = gp.y;
+    this.image.restart();
+
+    this.chargeTime = this.game.time.now + EditCharge.TIME;
+    this.newPoint = this.tier.getNewPointName();
+    this.details = '(' + ip.x + ',' + ip.y + ')';
+    this.avatar.help.setText('add point ' + this.newPoint +
+        ' ' + this.details + '?');
+};
+
+// We're adding a point!
+AddFromFloatIState.prototype.update = function() {
+    var charged = this.game.time.now > this.chargeTime;
+    if (charged) {
+        this.avatar.help.setText('add point ' + this.newPoint +
+            ' ' + this.details + '?\nok');
+    }
+    if (this.gpad.justReleased(this.buttonMap.EDIT_ADD)) {
+        this.gpad.consumeButtonEvent();
+        if (charged) {
+            this.tier.addPoint(this.newPoint,
+                this.near.x, this.near.y);
+            this.avatar.help.setText('added point ' + this.newPoint +
+                ' ' + this.details, true);
+        }
+        this.image.kill();
+        this.chargeTime = -1;
+        this.activate(FloatIState.NAME);
     }
 };

@@ -42,7 +42,7 @@ FloatIState.prototype.update = function() {
     } else if (this.path) {
         this.avatar.help.setText('hover / ' + this.path.name);
     } else {
-        this.avatar.help.setText('hover');
+        this.updateHoverText();
     }
 
     // Has the player released the button?
@@ -60,6 +60,10 @@ FloatIState.prototype.update = function() {
         }
         this.activate(GeneralEditIState.NAME);
         return;
+    } else if (this.gpad.justPressed(this.buttonMap.EDIT_ADD)) {
+        if (!this.point && !this.path) {
+            this.activate(AddFromFloatIState.NAME);
+        }
     } else if (this.gpad.justPressed(this.buttonMap.EDIT_DELETE)) {
         if (this.point || this.path) {
             this.activate(DeleteIState.NAME);
@@ -154,4 +158,12 @@ FloatIState.prototype.snapToStartingValues = function() {
     this.avatar.y = this.y;
     this.avatar.body.velocity.x = 0;
     this.avatar.body.velocity.y = 0;
+};
+
+// Display our (internal) coords.
+FloatIState.prototype.updateHoverText = function() {
+    var ip = this.tier.translateGamePointToInternalPoint(
+        this.avatar.x, this.avatar.y);
+    this.avatar.help.setText('hover / (' +
+        Math.floor(ip.x) + ',' + Math.floor(ip.y) + ')');
 };

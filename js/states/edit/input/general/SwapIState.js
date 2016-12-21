@@ -13,9 +13,6 @@ var SwapIState = function(handler, level, name,
 SwapIState.prototype = Object.create(IState.prototype);
 SwapIState.prototype.constructor = SwapIState;
 
-// Constants.
-SwapIState.CHARGE_TIME = 700; // ms
-
 
 // Called when we become the active state.
 SwapIState.prototype.activated = function(prev) {
@@ -48,7 +45,7 @@ SwapIState.prototype.updateSwap = function() {
     if (!t) {
         if (this.canAddTier()) {
             this.startCharging = this.game.time.now +
-                SwapIState.CHARGE_TIME;
+                EditCharge.TIME;
             this.avatar.help.setText('adding tier ' +
                 this.word + '?');
             this.image = new EditCharge(this.game,
