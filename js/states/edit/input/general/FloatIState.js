@@ -11,10 +11,11 @@ FloatIState.prototype.constructor = FloatIState;
 
 // Some constants.
 FloatIState.FLOAT_MAX_SPEED = 200;
-FloatIState.FLOAT_SNAP_DISTANCE = 15;
+FloatIState.FLOAT_SNAP_DISTANCE = 25;
 
 // Called when we become the active state.
 FloatIState.prototype.activated = function(prev) {
+    this.gpad.consumeButtonEvent();
     this.avatar.help.setText('hover');
     this.tier = this.level.tier;
     this.points = this.tier.points;
@@ -45,16 +46,24 @@ FloatIState.prototype.update = function() {
     }
 
     // Has the player released the button?
-    if (this.gpad.justReleased(this.buttonMap.EDIT_FLOAT)) {
+    if (this.gpad.justPressed(this.buttonMap.EDIT_FLOAT)) {
+        this.gpad.consumeButtonEvent();
         if (this.point) {
             this.snapToPoint(this.point);
         } else if (this.path) {
             this.snapToPath(this.path);
-        } else {
+        } else if (this.avatar.point || this.avatar.path) {
             this.snapToStartingValues();
+        } else {
+            // Don't stop the hover.
+            return;
         }
         this.activate(GeneralEditIState.NAME);
         return;
+    } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_UP)) {
+        this.activate(StepUpIState.NAME);
+    } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_DOWN)) {
+        this.activate(StepDownIState.NAME);
     }
 }
 

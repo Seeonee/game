@@ -20,6 +20,7 @@ SwapIState.CHARGE_TIME = 700; // ms
 // Called when we become the active state.
 SwapIState.prototype.activated = function(prev) {
     this.startCharging = -1;
+    this.prev = prev;
 };
 
 // Called when we become inactive.
@@ -54,14 +55,14 @@ SwapIState.prototype.updateSwap = function() {
             this.game.state.getCurrentState().z.mg.tier().add(this.image);
             return this.updateCharging();
         } else {
-            this.activate(GeneralEditIState.NAME);
+            this.activate(this.prev.name);
             return;
         }
     }
     var p = Utils.findClosestPointToAvatar(
         t, this.level.avatar);
     this.changeTier(t, p);
-    this.activate(GeneralEditIState.NAME);
+    this.activate(this.prev.name);
 };
 
 // Handle an update.
@@ -70,7 +71,7 @@ SwapIState.prototype.updateCharging = function() {
         if (this.game.time.now > this.startCharging) {
             this.addTier();
         }
-        this.activate(GeneralEditIState.NAME);
+        this.activate(this.prev.name);
     }
 };
 

@@ -76,7 +76,7 @@ DeleteIState.prototype.updateForPointsAndPaths = function() {
             this.tier.deletePath(this.avatar.path);
             this.avatar.path = undefined;
         }
-        this.activate(GeneralEditIState.NAME);
+        this.activate(FloatIState.NAME);
     }
 };
 
