@@ -21,8 +21,8 @@ DeleteIState.prototype.activated = function(prev) {
         this.point = prev.point;
         this.path = prev.path;
     } else {
-        this.point = avatar.point;
-        this.path = avatar.path;
+        this.point = this.avatar.point;
+        this.path = this.avatar.path;
     }
 
     this.actingOnTier = false;
@@ -34,7 +34,7 @@ DeleteIState.prototype.activated = function(prev) {
     if (this.point) {
         this.actingOnTier = this.tier.points.length == 1;
         if (this.actingOnTier) {
-            this.avatar.help.setText('delete tier ' + this.tier.name);
+            this.avatar.help.setText('delete tier ' + this.tier.name + '?');
         } else {
             this.avatar.help.setText('delete ' + this.point.name);
         }
@@ -94,6 +94,10 @@ DeleteIState.prototype.updateForPointsAndPaths = function() {
 DeleteIState.prototype.updateForTier = function() {
     if (this.deleting && !this.doneDeleting) {
         return;
+    }
+    if (this.charged) {
+        this.avatar.help.setText('delete tier ' +
+            this.tier.name + '?\nok');
     }
     if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
         if (this.charged) {

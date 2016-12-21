@@ -157,7 +157,7 @@ AddFromPointIState.prototype.constructor = AddFromPointIState;
 
 // Action for adding new points (and paths to them) from existing ones.
 AddFromPointIState.prototype.activated = function(prev) {
-    this.avatar.help.setText('add from point');
+    this.avatar.help.setText('add from ' + this.avatar.point.name);
     this.tier = this.level.tier;
     this.point = this.avatar.point;
     this.near = undefined;
@@ -179,8 +179,8 @@ AddFromPointIState.prototype.activated = function(prev) {
 
     var newPointName = this.tier.getNewPointName();
     var newPathName = this.tier.getNewPathName();
-    this.avatar.help.setText('add ' + newPathName +
-        '+' + newPointName + ' to ' + this.point.name);
+    this.avatar.help.setText('add ' + newPointName +
+        ' to ' + this.point.name);
 };
 
 // Translate a game coordinate point so that it can 
