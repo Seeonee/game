@@ -24,6 +24,9 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     // Test states.
     this.modes.push(new TestLevelIState(this, this.level));
 
+    // Reset the level.
+    this.modes.push(new ResetLevelIState(this, this.level));
+
     // Save the level.
     this.modes.push(new SaveLevelIState(this, this.level));
 

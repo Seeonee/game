@@ -260,37 +260,6 @@ AddFromPointIState.prototype.cacheSelectedMark = function() {
     }
 };
 
-// Figure out if a mark is near the "cursor".
-AddFromPointIState.prototype.cacheSelectedMark = function(x, y) {
-    var ip = this.tier.translateGamePointToInternalPoint(x, y);
-    ip.x -= Tier.PADDING;
-    ip.y -= Tier.PADDING;
-    ip.x = Math.floor(ip.x + (25 * Math.sign(ip.x)));
-    ip.y = Math.floor(ip.y + (25 * Math.sign(ip.y)));
-    ip.x -= ip.x % 50;
-    ip.y -= ip.y % 50;
-    ip.x += Tier.PADDING;
-    ip.y += Tier.PADDING;
-    var old = this.near;
-    if (ip.x == this.point.x && ip.y == this.point.y) {
-        this.near = undefined;
-        this.valid = false;
-    } else {
-        var gp = this.tier.translateInternalPointToGamePoint(
-            ip.x, ip.y);
-        var near = { x: gp.x, y: gp.y };
-        if (!old || old.x != near.x || old.y != near.y) {
-            this.near = near;
-        }
-        var dx = Math.abs(this.point.x - ip.x);
-        var dy = Math.abs(this.point.y - ip.y);
-        this.valid = dx == dy || dx == 0 || dy == 0;
-    }
-    if (old !== this.near) {
-        this.renderNeeded = true;
-    }
-};
-
 // Handle an update while holding the button.
 AddFromPointIState.prototype.update = function() {
     // First, movement.

@@ -1,15 +1,14 @@
-top level: (always show indicator for current point/path name + coords)
+-top level: (always show indicator for current point/path name + coords)
 * controls
     while selected, no further inputs accepted
     however, shows an overlay with all controls for various modes
-* test
-    while selected, no further inputs accepted
-    while selected, game enables avatar presence at nodes
-* reset
-    reloads state, passing the current JSON object of the level
-* save
-    currently, probably pastes our JSON to the console...
-    could it open in a new tab?
+- test
+-   while selected, no further inputs accepted
+-   while selected, game enables avatar presence at nodes
+- reset
+-   reloads state, passing the current JSON object of the level
+- save
+-   opens JSON in new tab
 * general
     enables the add/delete controls:
 -        X to add point along path
@@ -19,7 +18,7 @@ top level: (always show indicator for current point/path name + coords)
 -        O to delete
 -        O (hold) to delete + merge paths
 -        O (last point) to delete tier (confirm)
-        triangle to toggle enabled
+-       triangle to toggle enabled
         square to begin customizing a point
 -        R2 (hold) to float
 -        L1 to move up a tier

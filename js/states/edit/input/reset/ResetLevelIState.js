@@ -1,32 +1,32 @@
-// A state where you can press X to open the 
-// level's JSON in a new window.
-var SaveLevelIState = function(handler, level) {
-    IState.call(this, SaveLevelIState.NAME, handler);
+// A state where you can press X to restart 
+// the level, using the current JSON.
+var ResetLevelIState = function(handler, level) {
+    IState.call(this, ResetLevelIState.NAME, handler);
     this.level = level;
     this.avatar = this.level.avatar;
 };
 
-SaveLevelIState.NAME = 'save level';
-SaveLevelIState.prototype = Object.create(IState.prototype);
-SaveLevelIState.prototype.constructor = SaveLevelIState;
+ResetLevelIState.NAME = 'reset level';
+ResetLevelIState.prototype = Object.create(IState.prototype);
+ResetLevelIState.prototype.constructor = ResetLevelIState;
 
 
 // Called when we become the active state.
-SaveLevelIState.prototype.activated = function(prev) {
+ResetLevelIState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
-    this.avatar.help.setText('save');
+    this.avatar.help.setText('reset');
     this.chargedTime = -1;
 };
 
 // Called when we become the active state.
-SaveLevelIState.prototype.deactivated = function(next) {
+ResetLevelIState.prototype.deactivated = function(next) {
     if (this.image) {
         this.image.destroy();
     }
 };
 
 // Called on update.
-SaveLevelIState.prototype.update = function() {
+ResetLevelIState.prototype.update = function() {
     if (this.handler.cycle()) {
         return this.handler.state.update();
     }
@@ -41,7 +41,12 @@ SaveLevelIState.prototype.update = function() {
         this.gpad.consumeButtonEvent();
         this.image.destroy();
         if (this.game.time.now > this.chargedTime) {
-            Utils.writeJSONToNewTab(this.level);
+            var json = JSON.parse(JSON.stringify(this.level));
+            var params = this.game.state.getCurrentState().params;
+            params.json = json;
+            params.restart = true;
+            var state = this.game.state.getCurrentState().key;
+            this.game.state.start(state, true, false, params);
         }
         this.chargedTime = -1;
     } else {

@@ -28,4 +28,4 @@ TestLevelIState.prototype.update = function() {
         return this.handler.state.update();
     }
     return false;
-}
+};
