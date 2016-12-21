@@ -15,21 +15,31 @@ DeleteIState.THRESHOLD = 700; // ms
 
 // Action for deleting nodes and paths.
 DeleteIState.prototype.activated = function(prev) {
+    this.prev = prev;
+
+    if (prev instanceof FloatIState) {
+        this.point = prev.point;
+        this.path = prev.path;
+    } else {
+        this.point = avatar.point;
+        this.path = avatar.path;
+    }
+
     this.actingOnTier = false;
     this.falseStart = false;
     this.deleting = false;
     this.doneDeleting = false;
     this.chargedTime = this.game.time.now + DeleteIState.THRESHOLD;
     this.tier = this.level.tier;
-    if (this.avatar.point) {
+    if (this.point) {
         this.actingOnTier = this.tier.points.length == 1;
         if (this.actingOnTier) {
             this.avatar.help.setText('delete tier ' + this.tier.name);
         } else {
-            this.avatar.help.setText('delete ' + this.avatar.point.name);
+            this.avatar.help.setText('delete ' + this.point.name);
         }
-    } else if (this.avatar.path) {
-        this.avatar.help.setText('delete ' + this.avatar.path.name);
+    } else if (this.avatar) {
+        this.avatar.help.setText('delete ' + this.avatar.name);
     } else {
         this.falseStart = true;
         return;
@@ -37,12 +47,12 @@ DeleteIState.prototype.activated = function(prev) {
 
     this.image = new EditCharge(this.game,
         this.avatar.x, this.avatar.y, this.tier.palette,
-        this.avatar.point != undefined);
+        this.point != undefined);
     this.game.state.getCurrentState().z.mg.tier().add(this.image);
     if (this.image.tween && !this.actingOnTier) {
         this.image.tween.onComplete.add(function() {
             this.avatar.help.setText('delete ' +
-                this.avatar.point.name + ' /\nmerge paths');
+                this.point.name + ' /\nmerge paths');
         }, this);
     }
 };
@@ -56,7 +66,7 @@ DeleteIState.prototype.deactivated = function(next) {
 DeleteIState.prototype.update = function() {
     this.charged = this.game.time.now > this.chargedTime;
     if (this.falseStart) {
-        this.activate(GeneralEditIState.NAME);
+        this.activate(this.prev.name);
     } else if (this.actingOnTier) {
         return this.updateForTier();
     } else {
@@ -68,12 +78,12 @@ DeleteIState.prototype.update = function() {
 DeleteIState.prototype.updateForPointsAndPaths = function() {
     if (this.gpad.justReleased(this.buttonMap.EDIT_DELETE)) {
         this.gpad.consumeButtonEvent();
-        if (this.avatar.point) {
-            if (!this.deletePoint(this.avatar.point, this.charged)) {
+        if (this.point) {
+            if (!this.deletePoint(this.point, this.charged)) {
                 this.avatar.help.setText('delete failed', true);
             }
-        } else if (this.avatar.path) {
-            this.tier.deletePath(this.avatar.path);
+        } else if (this.path) {
+            this.tier.deletePath(this.path);
             this.avatar.path = undefined;
         }
         this.activate(FloatIState.NAME);
@@ -89,9 +99,9 @@ DeleteIState.prototype.updateForTier = function() {
         if (this.charged) {
             this.gpad.consumeButtonEvent();
             this.deleteTier();
-            this.activate(GeneralEditIState.NAME);
+            this.activate(this.prev.name);
         } else {
-            this.activate(GeneralEditIState.NAME);
+            this.activate(this.prev.name);
         }
     }
 };
@@ -138,7 +148,7 @@ DeleteIState.prototype.deleteTier = function() {
         this.avatar.help.setText('delete failed', true);
         return;
     }
-    this.cleanUpPoint(this.avatar.point);
+    this.cleanUpPoint(this.point);
     var tier = this.level.tier;
     var fallback = this.level.getNextTierDown();
     if (!fallback) {

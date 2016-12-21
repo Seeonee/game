@@ -60,6 +60,10 @@ FloatIState.prototype.update = function() {
         }
         this.activate(GeneralEditIState.NAME);
         return;
+    } else if (this.gpad.justPressed(this.buttonMap.EDIT_DELETE)) {
+        if (this.point || this.path) {
+            this.activate(DeleteIState.NAME);
+        }
     } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_UP)) {
         this.activate(StepUpIState.NAME);
     } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_DOWN)) {
