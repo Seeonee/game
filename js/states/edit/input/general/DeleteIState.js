@@ -54,6 +54,7 @@ DeleteIState.prototype.deactivated = function(next) {
 
 // Handle an update while holding the button.
 DeleteIState.prototype.update = function() {
+    this.charged = this.game.time.now > this.chargedTime;
     if (this.falseStart) {
         this.activate(GeneralEditIState.NAME);
     } else if (this.actingOnTier) {
@@ -65,7 +66,6 @@ DeleteIState.prototype.update = function() {
 
 // Handle an update while holding the button.
 DeleteIState.prototype.updateForPointsAndPaths = function() {
-    this.charged = this.game.time.now > this.chargedTime;
     if (this.gpad.justReleased(this.buttonMap.EDIT_DELETE)) {
         this.gpad.consumeButtonEvent();
         if (this.avatar.point) {
@@ -76,7 +76,6 @@ DeleteIState.prototype.updateForPointsAndPaths = function() {
             this.tier.deletePath(this.avatar.path);
             this.avatar.path = undefined;
         }
-        this.image.destroy();
         this.activate(GeneralEditIState.NAME);
     }
 };
@@ -86,11 +85,14 @@ DeleteIState.prototype.updateForTier = function() {
     if (this.deleting && !this.doneDeleting) {
         return;
     }
-    if (this.charged && this.gpad.justReleased(this.buttonMap.CANCEL)) {
-        this.gpad.consumeButtonEvent();
-        this.image.destroy();
-        this.deleteTier();
-        this.activate(GeneralEditIState.NAME);
+    if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
+        if (this.charged) {
+            this.gpad.consumeButtonEvent();
+            this.deleteTier();
+            this.activate(GeneralEditIState.NAME);
+        } else {
+            this.activate(GeneralEditIState.NAME);
+        }
     }
 };
 
@@ -148,26 +150,26 @@ DeleteIState.prototype.deleteTier = function() {
     this.level.events.onTierChange.remove(
         this.avatar.tierMeter.setTier, this.avatar.tierMeter);
 
-    this.level.setTier(fallback, p);
-    this.avatar.help.setText('tier: ' + fallback.name, true, true);
-    this.deleting = true;
     tier.events.onFadedOut.add(this.finishDeletingTier,
         this, tier);
+    this.avatar.help.setText('tier: ' + fallback.name, true, true);
+    this.deleting = true;
+    this.level.setTier(fallback, p);
 };
 
 
 // Called once the old tier has fully faded.
 DeleteIState.prototype.finishDeletingTier = function(tier) {
     var i = tier.index;
-    var t1 = tier;
-    while (this.level.tierMap['t' + (i + 1)]) {
-        var t2 = this.level.tierMap['t' + (i + 1)];
-        t1.name = t2.name;
-        t1.index = t2.index;
-        t1.palette = t2.palette;
-        this.level.tierMap[t1.name] = t2;
-        t1 = t2;
-        i += 1;
+    if (i > this.level.tiers[0].index) {
+        while (this.level.tierMap['t' + (i + 1)]) {
+            var t = this.level.tierMap['t' + (i + 1)];
+            t.index -= 1;
+            t.name = 't' + t.index;
+            t.palette = this.game.settings.colors[t.name];
+            this.level.tierMap[t.name] = t;
+            i += 1;
+        }
     }
     delete this.level.tierMap['t' + i];
     var index = this.level.tiers.indexOf(tier);
