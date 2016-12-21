@@ -6,7 +6,7 @@ var WSocket = function(game, x, y, palette) {
         var r = WSocket.RING_RADIUS;
         var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
         var c = bitmap.context;
-        c.strokeStyle = palette.c1.s;
+        c.strokeStyle = this.game.settings.colors.WHITE.s;
         c.lineWidth = Tier.PATH_WIDTH * WarpPoint.PATH_RATIO;
         c.beginPath();
         c.arc(r, r, r / 2, 0, 2 * Math.PI, false);
@@ -14,6 +14,7 @@ var WSocket = function(game, x, y, palette) {
         WSocket.CACHED_BITMAP = bitmap;
     }
     Phaser.Sprite.call(this, game, x, y, WSocket.CACHED_BITMAP);
+    this.tint = palette.c1.i;
     this.anchor.setTo(0.5, 0.5);
 };
 
