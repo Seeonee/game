@@ -399,7 +399,7 @@ Tier.prototype.recreateImageAsNeeded = function() {
     var w = (this.bitmap) ? this.bitmap.width : 0;
     var h = (this.bitmap) ? this.bitmap.height : 0;
     var children = undefined;
-    if (this.width > w || this.height > h) {
+    if (this.width != w || this.height != h) {
         if (this.bitmap) {
             children = this.image.children.slice();
             this.image.kill();
