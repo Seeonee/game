@@ -2,7 +2,6 @@ get into weird territory when only one point remains in tier
 point logic on image resize *still* bad...
     based on image shrinking (no resize) then growing again?
     to recreate: edit from scratch, delete nonstart point, try to add it back
-for premade levels, make sure internal point (5,5) on all tiers maps to the same game point coords
 
 adding a start or end should unset the previous one
 add lock mechanics

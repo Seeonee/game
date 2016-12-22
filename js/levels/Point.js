@@ -3,6 +3,8 @@ var Point = function(name, x, y, enabled) {
     this.name = name;
     this.x = x;
     this.y = y;
+    this.gx = x;
+    this.gy = y;
     this.paths = [];
     this.z = Point.Z;
     this.renderNeeded = true;
@@ -176,12 +178,13 @@ Point.prototype.update = function() {};
 
 // String version of our details, displayed during editing.
 Point.prototype.getDetails = function() {
-    return ' (' + this.x + ',' + this.y + ')';
+    return ' (' + (this.gx - Tier.PADDING) +
+        ',' + (this.gy - Tier.PADDING) + ')';
 };
 
 // JSON conversion of a point.
 Point.prototype.toJSON = function() {
-    var result = { x: this.x, y: this.y };
+    var result = { x: this.gx, y: this.gy };
     if (!this.startEnabled) {
         result.enabled = false;
     }

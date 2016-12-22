@@ -31,6 +31,7 @@ WarpPoint.prototype.draw = function(tier) {
     var y = this.y - r / 2;
     Utils.clearArc(c, this.x, this.y, r / 2);
     if (!this.drawn) {
+        this.drawn = true;
         this.toPoint = tier.pointMap[this.to];
         // Graphical elements.
         var ap = tier.translateInternalPointToAnchorPoint(

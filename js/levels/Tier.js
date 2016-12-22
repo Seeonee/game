@@ -286,53 +286,111 @@ Tier.prototype.translateAnchorPointToInternalPoint = function(x, y) {
     };
 };
 
+// Slide point values and children.
+Tier.prototype.slideContents = function(minX, minY) {
+    // Shift takes a value to add. We want to subtract.
+    // So, pass in the negations.
+    for (var i = 0; i < this.points.length; i++) {
+        this.points[i].shift(this, -minX, -minY);
+    }
+    for (var i = 0; i < this.paths.length; i++) {
+        this.paths[i].shift(this, -minX, -minY);
+    }
+    if (this.image && this.image.children.length) {
+        for (var i = 0; i < this.image.children.length; i++) {
+            var child = this.image.children[i];
+            child.x -= minX;
+            child.y -= minY;
+        }
+    }
+};
+
+// When we stretch, our children's anchors need to shift.
+Tier.prototype.stretchContents = function(dw, dh) {
+    if (this.image && this.image.children.length) {
+        for (var i = 0; i < this.image.children.length; i++) {
+            var child = this.image.children[i];
+            child.x -= dw * 0.5;
+            child.y -= dh * 0.5;
+        }
+    }
+};
+
 // Update our dimensions.
 Tier.prototype.recalculateDimensions = function() {
-    var x = Tier.PADDING;
-    var y = Tier.PADDING;
-    var wOld = this.width;
-    var hOld = this.height;
-    this.width = Tier.PADDING;
-    this.height = Tier.PADDING;
+    // We can now ask any child point to calculate how far 
+    // it's moved from its desired game point. It doesn't matter 
+    // who we ask; all points have shifted the same amount.
+    var point = this.points[0];
+    var oldShiftX = point.x - point.gx;
+    var oldShiftY = point.y - point.gy;
+    // All our old measurements, stripped of things like 
+    // padding and shift.
+    var oldX = this.x + oldShiftX;
+    var oldY = this.y + oldShiftY;
+    var oldW = this.width ? this.width - 2 * Tier.PADDING : 0;
+    var oldH = this.height ? this.height - 2 * Tier.PADDING : 0;
+
+    var minX = Number.POSITIVE_INFINITY;
+    var minY = Number.POSITIVE_INFINITY;
+    var maxX = Number.NEGATIVE_INFINITY;
+    var maxY = Number.NEGATIVE_INFINITY;
     for (var i = 0; i < this.points.length; i++) {
         var point = this.points[i];
-        x = (point.x < x) ? point.x : x;
-        y = (point.y < y) ? point.y : y;
-        this.width = (point.x > this.width) ? point.x : this.width;
-        this.height = (point.y > this.height) ? point.y : this.height;
+        minX = (point.x < minX) ? point.x : minX;
+        minY = (point.y < minY) ? point.y : minY;
+        maxX = (point.x > maxX) ? point.x : maxX;
+        maxY = (point.y > maxY) ? point.y : maxY;
     }
-    this.width += Tier.PADDING;
-    this.height += Tier.PADDING;
-    var dx = Math.min(0, x - Tier.PADDING);
-    var dy = Math.min(0, y - Tier.PADDING);
-    if (dx < 0 || dy < 0) {
-        this.x += dx;
-        this.y += dy;
-        this.width -= dx;
-        this.height -= dy;
-        for (var i = 0; i < this.points.length; i++) {
-            this.points[i].shift(this, -dx, -dy);
-        }
-        for (var i = 0; i < this.paths.length; i++) {
-            this.paths[i].shift(this, -dx, -dy);
-        }
-        for (var i = 0; i < this.image.children.length; i++) {
-            var child = this.image.children[i];
-            child.x -= dx * 0.5; // Everyone's anchors are 0.5.
-            child.y -= dy * 0.5; // Not sure what happens if not.
-        }
+    // All points have the 5,5 padding in their coords.
+    // Strip it off.
+    minX -= Tier.PADDING;
+    minY -= Tier.PADDING;
+    maxX -= Tier.PADDING;
+    maxY -= Tier.PADDING;
+    var width = maxX - minX;
+    var height = maxY - minY;
+    if (minX == oldX &&
+        minY == oldY &&
+        width == oldW &&
+        height == oldH) {
+        // THANK FREAKING GOODNESS.
+        return;
     }
-    var dw = dx < 0 ? 0 : this.width - wOld;
-    var dh = dy < 0 ? 0 : this.height - hOld;
-    if (dw > 0 || dh > 0) {
-        for (var i = 0; i < this.image.children.length; i++) {
-            var child = this.image.children[i];
-            child.x -= dw * 0.5; // Everyone's anchors are 0.5.
-            child.y -= dh * 0.5; // Not sure what happens if not.
-        }
+
+    // We always want the points with the lowest X/Y
+    // to have 0 for those values.
+    // So subtract minX and minY from all points' 
+    // internal values.
+    // When we do this, we also need to shift children 
+    // by half the same amount.    
+    if (minX != 0 || minY != 0) {
+        this.slideContents(minX, minY);
     }
+
+    // If we've stretched, it moves our anchor by half that amount.
+    // Points don't care, but children need to 
+    if (width != oldW || height != oldH) {
+        this.stretchContents(width - oldW, height - oldH);
+    }
+
+    // Recompute the new shift.
+    var shiftX = point.x - point.gx;
+    var shiftY = point.y - point.gy;
+    // If the point is where it wants to be, we can still anchor 
+    // at 0,0. If the point is greater than its goal, we must 
+    // shift negative to compensate. Likewise, if the point is 
+    // negative of its goal, we'll shift positive.
+
+    // Also, don't forget that our anchor is at w/2,h/2.
+    // So we want to reset our x,y to be at those points minus 
+    // the appropriate shifts.
+    this.width = width + 2 * Tier.PADDING;
+    this.height = height + 2 * Tier.PADDING;
     this.widthOver2 = this.width / 2;
     this.heightOver2 = this.height / 2;
+    this.x -= shiftX;
+    this.y -= shiftY;
 };
 
 // Make sure our current image is big enough 
