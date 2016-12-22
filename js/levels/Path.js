@@ -111,7 +111,7 @@ Path.prototype.getPoint = function(angle, x, y) {
 // Called upon avatar attachment.
 // Also takes the previous point the avatar was attached to.
 Path.prototype.notifyAttached = function(avatar, prev) {
-    console.log('attach ' + this.name);
+    // console.log('attach ' + this.name);
 };
 
 // Called upon avatar detachment.

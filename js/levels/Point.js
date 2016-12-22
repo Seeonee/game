@@ -101,7 +101,7 @@ Point.prototype.shouldHold = function() {
 // Called upon avatar attachment.
 // Also takes the previous path the avatar was attached to.
 Point.prototype.notifyAttached = function(avatar, prev) {
-    console.log('attach ' + this.name, this.x, this.y);
+    // console.log('attach ' + this.name, this.x, this.y);
     this.attached = true;
     this.avatar = avatar;
     this.enableIState();
