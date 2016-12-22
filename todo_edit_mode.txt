@@ -2,15 +2,8 @@
 * controls
     while selected, no further inputs accepted
     however, shows an overlay with all controls for various modes
-- test
--   while selected, no further inputs accepted
--   while selected, game enables avatar presence at nodes
-- reset
--   reloads state, passing the current JSON object of the level
-- save
--   opens JSON in new tab
 * general
-    enables the add/delete controls:
+    while selected, enables the general editing controls:
 -        X to add point along path
 -            O to cancel
 -        X to add point from point
@@ -25,4 +18,12 @@
 -        L1 (hold) to add tier below lowest
 -        R1 to move down a tier
 -        R1 (hold) to add tier above highest
-
+* wires
+    while selected, enables wire drawing controls
+- test
+-   while selected, no further inputs accepted
+-   while selected, game enables avatar presence at nodes
+- reset
+-   reloads state, passing the current JSON object of the level
+- save
+-   opens JSON in new tab
