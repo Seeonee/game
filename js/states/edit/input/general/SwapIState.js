@@ -112,7 +112,7 @@ SwapIState.prototype.addTier = function() {
     var p0 = t.addPoint('p0', 5, 5);
     var p1 = t.addPoint('p1', 105, 5, p0);
     t.addPath('a0', p0, p1);
-    this.level.addTier(t.name, t, !this.up);
+    this.level.addTier(t.name, t);
     this.avatar.tierMeter.recreate();
     this.changeTier(t, 'p0');
 };

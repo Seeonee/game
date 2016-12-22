@@ -32,9 +32,12 @@ var Level = function(game, name) {
 };
 
 // Add a tier, and register for its events.
-Level.prototype.addTier = function(name, tier, atBottom) {
-    atBottom ? this.tiers.unshift(tier) : this.tiers.push(tier);
+Level.prototype.addTier = function(name, tier) {
+    this.tiers.push(tier);
     this.tierMap[name] = tier;
+    this.tiers.sort(function(a, b) {
+        return a.index - b.index;
+    });
     tier.events.onFadingIn.add(this.setVisibleForTier, this);
     tier.events.onFadedOut.add(this.setInvisibleForTier, this);
 };
