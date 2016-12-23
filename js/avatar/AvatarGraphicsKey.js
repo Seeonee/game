@@ -6,6 +6,9 @@ var AvatarGraphicsKey = function(game) {
 // Constants, for now.
 AvatarGraphicsKey.SMOKE_LIFETIME = 900; // ms
 AvatarGraphicsKey.SMOKE_RATIO_THRESHOLD = 0.75;
+AvatarGraphicsKey.BOBBLE_Y = 1.5;
+AvatarGraphicsKey.BOBBLE_TIME = 250; // ms
+
 
 // Figure out what we look like. Also enables physics.
 AvatarGraphicsKey.prototype.createGraphics = function(avatar) {
@@ -56,6 +59,37 @@ AvatarGraphicsKey.prototype.setMasq = function(avatar, masq) {
     avatar.masq.scale.setTo(masq.scale);
     this.game.add.tween(avatar.masq).to({ y: masq.yOffset },
         300, Phaser.Easing.Cubic.Out, true);
+};
+
+// Wiggle if you can press a button!
+AvatarGraphicsKey.prototype.setBobble = function(avatar, bobble) {
+    if (this.bobble == bobble) {
+        return;
+    }
+    this.bobble = bobble;
+    if (this.bobble && !this.btween) {
+        this.btween = this.game.add.tween(avatar.masq);
+        this.btween.y = avatar.masq.y;
+        this.btween.to({
+                y: this.btween.y + AvatarGraphicsKey.BOBBLE_Y
+            },
+            AvatarGraphicsKey.BOBBLE_TIME,
+            Phaser.Easing.Sinusoidal.InOut,
+            true, 0, Number.POSITIVE_INFINITY, true);
+    } else if (!this.bobble && this.btween) {
+        avatar.masq.y = this.btween.y;
+        this.btween.stop();
+        this.btween = undefined;
+    }
+};
+
+// Now press that button!
+AvatarGraphicsKey.prototype.setPressed = function(avatar, pressed) {
+    if (this.pressed == pressed) {
+        return;
+    }
+    this.pressed = pressed;
+    avatar.masq.scale.setTo(pressed ? 0.9 : 1);
 };
 
 // Create a smoke emitter. Hooray!

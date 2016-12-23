@@ -23,6 +23,13 @@ WarpIState.AVATAR_FADE_DELAY = 150; // ms
 // Called when stepped on.
 WarpIState.prototype.activated = function(prev) {
     this.pressed = false;
+    this.avatar.setBobble(true);
+};
+
+// Called when stepped off.
+WarpIState.prototype.deactivated = function(next) {
+    this.avatar.setBobble(false);
+    this.avatar.setPressed(false);
 };
 
 // Handle an update.
@@ -35,10 +42,13 @@ WarpIState.prototype.update = function() {
     }
     if (this.gpad.justPressed(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
+        this.avatar.setBobble(false);
+        this.avatar.setPressed(true);
         this.pressed = true;
     } else if (this.pressed &&
         this.gpad.released(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
+        this.avatar.setPressed(false);
         this.pressed = false;
         this.charge();
     } else {

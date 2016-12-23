@@ -18,6 +18,13 @@ PortalIState.REACTIVATE_DELAY = 100; // ms
 // Called when stepped on.
 PortalIState.prototype.activated = function(prev) {
     this.pressed = false;
+    this.avatar.setBobble(true);
+};
+
+// Called when stepped off.
+PortalIState.prototype.deactivated = function(next) {
+    this.avatar.setBobble(false);
+    this.avatar.setPressed(false);
 };
 
 // Handle an update.
@@ -30,11 +37,14 @@ PortalIState.prototype.update = function() {
         return false;
     }
     if (this.gpad.justPressed(this.buttonMap.SELECT)) {
+        this.avatar.setBobble(false);
+        this.avatar.setPressed(true);
         this.gpad.consumeButtonEvent();
         this.pressed = true;
     } else if (this.pressed &&
         this.gpad.released(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
+        this.avatar.setPressed(false);
         this.pressed = false;
         this.reactivateTime = time + PortalIState.REACTIVATE_DELAY;
         var direction = 1;

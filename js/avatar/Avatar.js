@@ -236,6 +236,16 @@ Avatar.prototype.setColor = function(palette) {
     this.graphics.setColor(this, palette);
 };
 
+// Masq bobble.
+Avatar.prototype.setBobble = function(bobble) {
+    this.graphics.setBobble(this, bobble);
+};
+
+// Masq press.
+Avatar.prototype.setPressed = function(pressed) {
+    this.graphics.setPressed(this, pressed);
+};
+
 // Optional physics debug view.
 Avatar.prototype.update = function() {
     // this.game.debug.body(this);

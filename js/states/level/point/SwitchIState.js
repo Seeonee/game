@@ -17,6 +17,7 @@ SwitchIState.REACTIVATE_DELAY = 100; // ms
 // Called on activate.
 SwitchIState.prototype.activated = function(prev) {
     this.pressed = false;
+    this.avatar.setBobble(true);
 
     this.point = this.avatar.point;
     this.switch = this.avatar.point.switch;
@@ -32,6 +33,8 @@ SwitchIState.prototype.activated = function(prev) {
 // Called on deactivate.
 SwitchIState.prototype.deactivated = function(prev) {
     this.point.setPressed(false);
+    this.avatar.setBobble(false);
+    this.avatar.setPressed(false);
     if (!this.done && this.contact) {
         this.point.flip();
     }
@@ -45,11 +48,15 @@ SwitchIState.prototype.update = function() {
     }
     if (this.gpad.justPressed(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
+        this.avatar.setBobble(false);
+        this.avatar.setPressed(true);
         this.pressed = true;
         this.switch.setPressed(true);
     } else if (this.pressed &&
         this.gpad.released(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
+        this.avatar.setBobble(true);
+        this.avatar.setPressed(false);
         this.pressed = false;
         this.point.setPressed(false);
         this.point.flip();
