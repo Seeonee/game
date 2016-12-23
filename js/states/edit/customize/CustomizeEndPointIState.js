@@ -1,6 +1,7 @@
 // Set the end gate.
 var CustomizeEndPointIState = function(handler, level) {
     BaseCustomizeIState.call(this, handler, level, EndPoint, 1);
+    this.showArrows = false;
 };
 
 CustomizeEndPointIState.prototype = Object.create(BaseCustomizeIState.prototype);

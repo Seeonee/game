@@ -1,6 +1,7 @@
 // Add a key.
 var CustomizeKeyPointIState = function(handler, level) {
     BaseCustomizeIState.call(this, handler, level, KeyPoint, 1);
+    this.showArrows = false;
 };
 
 CustomizeKeyPointIState.prototype = Object.create(BaseCustomizeIState.prototype);

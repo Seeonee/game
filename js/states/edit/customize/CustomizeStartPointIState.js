@@ -1,6 +1,7 @@
 // Set the start point.
 var CustomizeStartPointIState = function(handler, level) {
     BaseCustomizeIState.call(this, handler, level, StartPoint, 1);
+    this.showArrows = false;
 };
 
 CustomizeStartPointIState.prototype = Object.create(BaseCustomizeIState.prototype);

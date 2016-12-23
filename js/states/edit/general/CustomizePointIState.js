@@ -8,6 +8,7 @@ var BaseCustomizeIState = function(handler, level, pointClass, depth) {
     this.avatar = level.avatar;
     this.pointClass = pointClass;
     this.depth = depth ? depth : 0;
+    this.showArrows = true;
 };
 
 BaseCustomizeIState.NAME = 'customize';
@@ -50,7 +51,14 @@ BaseCustomizeIState.prototype.advance = function(pointClass) {
 
 // Update help text.
 BaseCustomizeIState.prototype.updateHelp = function() {
-    this.avatar.help.setText(this.getHelp());
+    var s = this.getHelp();
+    if (this.showArrows) {
+        s = EditLevelIHandler.addArrows(s, this.depth + 1);
+    }
+    if (s[s.length - 1] == '\n') {
+        s = s.substring(0, s.length - 1);
+    }
+    this.avatar.help.setText(s);
 };
 
 // Update help text. This will gather all of our lower-depth 
