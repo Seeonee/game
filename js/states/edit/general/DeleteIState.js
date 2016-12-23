@@ -73,7 +73,7 @@ DeleteIState.prototype.update = function() {
 
 // Handle an update while holding the button.
 DeleteIState.prototype.updateForPointsAndPaths = function() {
-    if (this.gpad.justReleased(this.buttonMap.EDIT_DELETE)) {
+    if (this.gpad.released(this.buttonMap.EDIT_DELETE)) {
         this.gpad.consumeButtonEvent();
         if (this.point) {
             if (!this.deletePoint(this.point, this.charged)) {

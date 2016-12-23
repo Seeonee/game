@@ -20,6 +20,8 @@ var ButtonMappings = function() {
     this.EDIT_CUSTOMIZE = undefined;
     this.EDIT_MODE_UP = undefined;
     this.EDIT_MODE_DOWN = undefined;
+    this.EDIT_MODE_LEFT = undefined;
+    this.EDIT_MODE_RIGHT = undefined;
 };
 
 // Get the name of a button.
@@ -49,6 +51,8 @@ var ButtonMappingsPlaystation = function() {
     this.EDIT_CUSTOMIZE = Phaser.Gamepad.PS3XC_SQUARE;
     this.EDIT_MODE_UP = Phaser.Gamepad.PS3XC_DPAD_UP;
     this.EDIT_MODE_DOWN = Phaser.Gamepad.PS3XC_DPAD_DOWN;
+    this.EDIT_MODE_LEFT = Phaser.Gamepad.PS3XC_DPAD_LEFT;
+    this.EDIT_MODE_RIGHT = Phaser.Gamepad.PS3XC_DPAD_RIGHT;
 };
 
 // Mappings for XBOX controller. Untested!
@@ -73,6 +77,8 @@ var ButtonMappingsXbox = function() {
     this.EDIT_CUSTOMIZE = Phaser.Gamepad.XBOX360_X;
     this.EDIT_MODE_UP = Phaser.Gamepad.XBOX360_DPAD_UP;
     this.EDIT_MODE_DOWN = Phaser.Gamepad.XBOX360_DPAD_DOWN;
+    this.EDIT_MODE_LEFT = Phaser.Gamepad.XBOX360_DPAD_LEFT;
+    this.EDIT_MODE_RIGHT = Phaser.Gamepad.XBOX360_DPAD_RIGHT;
 };
 
 

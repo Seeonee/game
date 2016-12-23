@@ -68,7 +68,7 @@ PowerPoint.prototype.update = function() {
 
 // Delete our power.
 PowerPoint.prototype.delete = function() {
-    this.power.destroy();
+    Utils.destroy(this.power);
 };
 
 // Editor details.

@@ -93,9 +93,9 @@ WarpPoint.prototype.notifyDetached = function(avatar, next) {
 
 // Delete our children.
 WarpPoint.prototype.delete = function() {
-    this.socket.kill();
-    this.ember.kill();
-    this.contrail.kill();
+    Utils.destroy(this.socket);
+    Utils.destroy(this.ember);
+    Utils.destroy(this.contrail);
 };
 
 // Editor details.

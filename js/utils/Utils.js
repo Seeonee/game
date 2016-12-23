@@ -87,6 +87,17 @@ Utils.findClosestPointToAvatar = function(tier, avatar) {
     return name;
 };
 
+// Utility method for finding the closest point.
+Utils.destroy = function(sprite) {
+    if (!sprite) {
+        return;
+    }
+    sprite.destroy();
+    if (sprite.parent) {
+        sprite.parent.removeChild(sprite);
+    }
+};
+
 
 // Simple factory for instantiating new sprite-based objects.
 // Main goal is that it will return a new sprite if 

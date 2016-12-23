@@ -19,7 +19,11 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     new AddFromFloatIState(this, this.level);
     new DeleteIState(this, this.level);
     new DisablePointIState(this, this.level);
-    // new CustomizePointIState(this, this.level);
+    new CustomizePointIState(this, this.level);
+
+    // Customization-specific states.
+    new CustomizeStartPointIState(this, this.level);
+    new CustomizeEndPointIState(this, this.level);
 
     // Test states.
     this.modes.push(new TestLevelIState(this, this.level));

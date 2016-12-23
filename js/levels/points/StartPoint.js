@@ -19,7 +19,7 @@ StartPoint.prototype.draw = function(tier) {
         this.drawn = true;
         var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
-        tier.image.addChild(new PNub(tier.game,
+        this.nub = tier.image.addChild(new PNub(tier.game,
             ap.x, ap.y, tier.palette.c1.i));
     }
 };
@@ -28,6 +28,11 @@ StartPoint.prototype.draw = function(tier) {
 StartPoint.prototype.getDetails = function() {
     return Point.prototype.getDetails.call(this) + '\n' +
         'start gate';
+};
+
+// Delete our nub.
+StartPoint.prototype.delete = function() {
+    Utils.destroy(this.nub);
 };
 
 // JSON conversion of an end point.

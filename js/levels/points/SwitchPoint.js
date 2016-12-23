@@ -84,7 +84,7 @@ SwitchPoint.prototype.shouldHold = function() {
 
 // Delete our gfx.
 SwitchPoint.prototype.delete = function() {
-    this.switch.kill();
+    Utils.destroy(this.switch);
 };
 
 // Editor details.

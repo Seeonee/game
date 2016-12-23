@@ -34,7 +34,7 @@ EndPoint.prototype.draw = function(tier) {
         // Add a nub.
         var ap = this.tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
-        this.tier.image.addChild(new PNub(this.game,
+        this.nub = this.tier.image.addChild(new PNub(this.game,
             ap.x, ap.y, this.tier.palette.c1.i));
 
         // Now we add the actual gfx rings.
@@ -183,8 +183,9 @@ EndPoint.prototype.portalFlash = function() {
 
 // Delete our rings.
 EndPoint.prototype.delete = function() {
+    Utils.destroy(this.nub);
     for (var i = 0; i < this.rings.all.length; i++) {
-        this.rings.all[i].kill();
+        Utils.destroy(this.rings.all[i]);
     }
 };
 

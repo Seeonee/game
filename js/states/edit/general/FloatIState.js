@@ -68,6 +68,10 @@ FloatIState.prototype.update = function() {
         if (this.point || this.path) {
             this.activate(DeleteIState.NAME);
         }
+    } else if (this.gpad.justPressed(this.buttonMap.EDIT_CUSTOMIZE)) {
+        if (this.point) {
+            this.activate(CustomizePointIState.NAME);
+        }
     } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_UP)) {
         this.activate(StepUpIState.NAME);
     } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_DOWN)) {

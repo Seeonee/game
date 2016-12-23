@@ -92,6 +92,8 @@ Tier.prototype.replacePoint = function(old, point) {
     point.name = old.name;
     point.x = old.x;
     point.y = old.y;
+    point.gx = old.gx;
+    point.gy = old.gy;
     point.avatar = old.avatar;
     point.attached = old.attached;
     // Change all paths to link with us instead.
@@ -123,6 +125,7 @@ Tier.prototype.replacePoint = function(old, point) {
         point.avatar.updateAttachment();
     }
     this.renderNeeded = true;
+    return point;
 };
 
 // Connect two points.

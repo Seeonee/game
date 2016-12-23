@@ -46,7 +46,7 @@ KeyPoint.prototype.notifyAttached = function(avatar, prev) {
 
 // Delete our key.
 KeyPoint.prototype.delete = function() {
-    this.tkey.kill();
+    Utils.destroy(this.tkey);
 };
 
 // Editor details.
