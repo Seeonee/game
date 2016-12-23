@@ -9,10 +9,30 @@ var EditHelp = function(game, level) {
         font: font.sizePx + ' ' + font.name,
         fill: this.game.settings.colors.WHITE.s
     };
-    Phaser.Text.call(this, game,
-        EditHelp.X_OFFSET, EditHelp.Y_OFFSET, '', style);
+    Phaser.Sprite.call(this, game,
+        EditHelp.X_OFFSET, EditHelp.Y_OFFSET);
     this.avatar.addChild(this);
     this.avatar.help = this;
+
+    if (EditHelp.CACHED_BITMAP == undefined) {
+        var d = EditHelp.CURTAIN_D;
+        var bitmap = this.game.add.bitmapData(d, d);
+        bitmap.context.fillRect(0, 0, d, d);
+        EditHelp.CACHED_BITMAP = bitmap;
+    }
+    this.curtain = this.addChild(this.game.add.sprite(-EditHelp.CURTAIN_PAD, -EditHelp.CURTAIN_PAD,
+        EditHelp.CACHED_BITMAP));
+    this.curtain.alpha = 0.75;
+
+    this.main = this.addChild(this.game.add.text(
+        0, 0, '', style));
+
+    style = {
+        font: (font.size + EditHelp.SUB_FONT_DELTA) + 'px ' + font.name,
+        fill: this.game.settings.colors.WHITE.s
+    };
+    this.sub = this.addChild(this.game.add.text(
+        0, EditHelp.SUB_Y_OFFSET, '', style));
 
     this.holding = false;
     this.queue = [];
@@ -21,18 +41,22 @@ var EditHelp = function(game, level) {
     this.level.events.onTierChange.add(this.setTier, this);
 };
 
-EditHelp.prototype = Object.create(Phaser.Text.prototype);
+EditHelp.prototype = Object.create(Phaser.Sprite.prototype);
 EditHelp.prototype.constructor = EditHelp;
 
 // Constants.
 EditHelp.X_OFFSET = 30;
 EditHelp.Y_OFFSET = -90;
+EditHelp.CURTAIN_D = 50;
+EditHelp.CURTAIN_PAD = 3;
+EditHelp.SUB_Y_OFFSET = 34;
+EditHelp.SUB_FONT_DELTA = -8;
 EditHelp.DEFAULT_HOLD = 1000;
 
 
 // Change the current tier.
 EditHelp.prototype.setTier = function(tier, old) {
-    // this.tint = tier.palette.c2.i;
+    this.main.tint = tier.palette.c2.i;
 };
 
 // Queue up a text change. If necessary, delays 
@@ -57,7 +81,23 @@ EditHelp.prototype.setText = function(text, hold, wipe) {
 // further text sets will queue up until the hold 
 // time expires.
 EditHelp.prototype._setText = function(text, hold) {
-    Phaser.Text.prototype.setText.call(this, text);
+    var i = text.indexOf('\n');
+    if (i >= 0) {
+        this.main.setText(text.substring(0, i));
+        this.sub.setText(text.substring(i + 1));
+        var w = 2 * EditHelp.CURTAIN_PAD +
+            Math.max(this.main.width, this.sub.width);
+        var h = 0 * EditHelp.CURTAIN_PAD +
+            this.main.height + this.sub.height;
+    } else {
+        this.main.setText(text);
+        this.sub.setText('');
+        var w = 2 * EditHelp.CURTAIN_PAD + this.main.width;
+        var h = 0 * EditHelp.CURTAIN_PAD + this.main.height;
+    }
+    this.curtain.scale.setTo(w / EditHelp.CURTAIN_D,
+        h / EditHelp.CURTAIN_D);
+
     if (hold) {
         hold = hold == true ? EditHelp.DEFAULT_HOLD : hold;
         this.holding = true;
