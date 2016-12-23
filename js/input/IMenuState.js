@@ -153,6 +153,7 @@ IMenuState.prototype.addCancel = function(text, action) {
 // Called when the game is first paused.
 IMenuState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
+    this.bdownlist = this.gpad.getButtonDownList();
     this.current = this.root;
     this.selectedIndex = 0;
 
@@ -427,6 +428,22 @@ IMenuState.prototype.show = function() {
 };
 
 
+// Input gathering.
+IMenuState.prototype.justPressed = function(buttonCode) {
+    return this.gpad.justPressed(buttonCode);
+};
+
+// Input gathering.
+IMenuState.prototype.justReleased = function(buttonCode) {
+    var result = this.gpad.justReleased(buttonCode);
+    if (result && this.bdownlist[buttonCode]) {
+        this.gpad.clearButtonDown(buttonCode);
+        this.bdownlist.splice(buttonCode, 1);
+        result = false;
+    }
+    return result;
+};
+
 // Update which item in the current list is selected.
 IMenuState.prototype.setSelected = function(index) {
     if (this.selectedIndex == index) {
@@ -651,12 +668,12 @@ IMenuState.prototype.updateSelector = function() {
     var cancelExists = this.current.parent != undefined ||
         this.current.cancelOption != undefined;
     var closeExists = this.root.cancelOption != undefined;
-    var selectDown = this.gpad.justPressed(this.buttonMap.SELECT);
-    var cancelDown = this.gpad.justPressed(this.buttonMap.CANCEL);
-    var closeDown = this.gpad.justPressed(this.buttonMap.START);
-    var selectUp = this.gpad.justReleased(this.buttonMap.SELECT);
-    var cancelUp = this.gpad.justReleased(this.buttonMap.CANCEL);
-    var closeUp = this.gpad.justReleased(this.buttonMap.START);
+    var selectDown = this.justPressed(this.buttonMap.SELECT);
+    var cancelDown = this.justPressed(this.buttonMap.CANCEL);
+    var closeDown = this.justPressed(this.buttonMap.START);
+    var selectUp = this.justReleased(this.buttonMap.SELECT);
+    var cancelUp = this.justReleased(this.buttonMap.CANCEL);
+    var closeUp = this.justReleased(this.buttonMap.START);
     if (selectDown || (cancelDown && cancelExists) ||
         (closeDown && closeExists)) {
         this.activateSelector();
@@ -730,11 +747,11 @@ IMenuState.prototype.update = function() {
     }
     var joystick = this.gpad.getAngleAndTilt();
     this.updateFromJoystick(joystick);
-    if (this.gpad.justReleased(this.buttonMap.START)) {
+    if (this.justReleased(this.buttonMap.START)) {
         this.selectClose();
-    } else if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
+    } else if (this.justReleased(this.buttonMap.CANCEL)) {
         this.selectCancel();
-    } else if (this.gpad.justReleased(this.buttonMap.SELECT)) {
+    } else if (this.justReleased(this.buttonMap.SELECT)) {
         this.selectCurrent();
     }
 };

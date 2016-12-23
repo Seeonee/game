@@ -89,4 +89,21 @@ GPad.prototype.consumeButtonEvent = function(buttonCode) {
     } else {
         this.baseTime = t;
     }
+    var button = this.pad._buttons[buttonCode];
+};
+
+// Clear the "pressed" state for a particular button.
+GPad.prototype.clearButtonDown = function(buttonCode) {
+    this.consumeButtonEvent(buttonCode);
+    this.pad._buttons[buttonCode].timeUp = 0;
+};
+
+// Return a map of all button codes that are currently down.
+GPad.prototype.getButtonDownList = function() {
+    var map = [];
+    for (i = 0; i < this.pad._buttons.length; i++) {
+        var button = this.pad._buttons[i];
+        map.push(button.isDown);
+    }
+    return map;
 };
