@@ -12,8 +12,8 @@ EditLevelState.DEFAULT_STARTING_LEVEL = {
     tiers: {
         t3: {
             points: {
-                p0: { x: 5, y: 5, type: 'start' },
-                p1: { x: 105, y: 5 }
+                p0: { x: 0, y: 0, type: 'start' },
+                p1: { x: 100, y: 0 }
             },
             paths: { a0: { p1: 'p0', p2: 'p1' } }
         }

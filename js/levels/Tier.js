@@ -6,6 +6,8 @@ var Tier = function(game, name) {
     this.level = undefined; // Set during load.
     this.x = 0;
     this.y = 0;
+    this.shiftX = Tier.PADDING;
+    this.shiftY = Tier.PADDING;
     this.renderNeeded = false;
 
     this.points = [];
@@ -75,6 +77,8 @@ Tier.prototype.addPoint = function(name, x, y, point2) {
 // Internal use only.
 // Adds an already-constructed point.
 Tier.prototype._addPoint = function(point) {
+    point.x += this.shiftX;
+    point.y += this.shiftY;
     this.points.push(point);
     this.pointMap[point.name] = point;
     this.events.onFadingIn.add(point.fadingIn, point);
@@ -321,16 +325,10 @@ Tier.prototype.stretchContents = function(dw, dh) {
 
 // Update our dimensions.
 Tier.prototype.recalculateDimensions = function() {
-    // We can now ask any child point to calculate how far 
-    // it's moved from its desired game point. It doesn't matter 
-    // who we ask; all points have shifted the same amount.
-    var point = this.points[0];
-    var oldShiftX = point.x - point.gx;
-    var oldShiftY = point.y - point.gy;
     // All our old measurements, stripped of things like 
     // padding and shift.
-    var oldX = this.x + oldShiftX;
-    var oldY = this.y + oldShiftY;
+    var oldX = this.x + this.shiftX;
+    var oldY = this.y + this.shiftY;
     var oldW = this.width ? this.width - 2 * Tier.PADDING : 0;
     var oldH = this.height ? this.height - 2 * Tier.PADDING : 0;
 
@@ -377,9 +375,10 @@ Tier.prototype.recalculateDimensions = function() {
         this.stretchContents(width - oldW, height - oldH);
     }
 
-    // Recompute the new shift.
-    var shiftX = point.x - point.gx;
-    var shiftY = point.y - point.gy;
+    // Recompute the new shift, using any point for reference.
+    var point = this.points[0];
+    this.shiftX = point.x - point.gx;
+    this.shiftY = point.y - point.gy;
     // If the point is where it wants to be, we can still anchor 
     // at 0,0. If the point is greater than its goal, we must 
     // shift negative to compensate. Likewise, if the point is 
@@ -392,8 +391,8 @@ Tier.prototype.recalculateDimensions = function() {
     this.height = height + 2 * Tier.PADDING;
     this.widthOver2 = this.width / 2;
     this.heightOver2 = this.height / 2;
-    this.x -= shiftX;
-    this.y -= shiftY;
+    this.x = -this.shiftX;
+    this.y = -this.shiftY;
 };
 
 // Make sure our current image is big enough 

@@ -125,10 +125,8 @@ AddFromPathIState.prototype.update = function() {
     } else if (this.gpad.justReleased(this.buttonMap.EDIT_ADD)) {
         // New point, coming atcha!
         if (this.near) {
-            var ip = this.tier.translateGamePointToInternalPoint(
-                this.near.x, this.near.y);
             var point = this.tier.addPointToPathAtCoords(
-                this.path, ip.x, ip.y);
+                this.path, this.near.x, this.near.y);
             this.avatar.path = undefined;
             this.avatar.point = point;
         }
@@ -299,7 +297,7 @@ AddFromPointIState.prototype.update = function() {
             } else {
                 var point = this.tier.addPoint(
                     this.tier.getNewPointName(),
-                    ip.x, ip.y, this.point);
+                    this.near.x, this.near.y, this.point);
                 this.avatar.point = point;
             }
         }
@@ -332,29 +330,22 @@ AddFromFloatIState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
     this.tier = this.level.tier;
     // Find a mark is near the "cursor".
-    var ip = this.tier.translateGamePointToInternalPoint(
-        this.avatar.x, this.avatar.y);
-    ip.x -= Tier.PADDING;
-    ip.y -= Tier.PADDING;
-    ip.x = Math.floor(ip.x + (25 * Math.sign(ip.x)));
-    ip.y = Math.floor(ip.y + (25 * Math.sign(ip.y)));
-    ip.x -= ip.x % 50;
-    ip.y -= ip.y % 50;
-    ip.x += Tier.PADDING;
-    ip.y += Tier.PADDING;
-    this.near = ip;
-    var gp = this.tier.translateInternalPointToGamePoint(
-        ip.x, ip.y);
+    var ap = { x: this.avatar.x, y: this.avatar.y };
+    ap.x = Math.floor(ap.x + (25 * Math.sign(ap.x)));
+    ap.y = Math.floor(ap.y + (25 * Math.sign(ap.y)));
+    ap.x -= ap.x % 50;
+    ap.y -= ap.y % 50;
+    this.near = ap;
     this.image.revive();
     this.image.setColor(this.tier.palette);
     this.game.state.getCurrentState().z.mg.tier().add(this.image);
-    this.image.x = gp.x;
-    this.image.y = gp.y;
+    this.image.x = ap.x;
+    this.image.y = ap.y;
     this.image.restart();
 
     this.chargeTime = this.game.time.now + EditCharge.TIME;
     this.newPoint = this.tier.getNewPointName();
-    this.details = '(' + ip.x + ',' + ip.y + ')';
+    this.details = '(' + ap.x + ',' + ap.y + ')';
     this.avatar.help.setText('add point ' + this.newPoint +
         ' ' + this.details + '?');
 };

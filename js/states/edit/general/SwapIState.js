@@ -109,8 +109,8 @@ SwapIState.prototype.addTier = function() {
     }
     var t = new Tier(this.game, 't' + index);
     t.level = this.level;
-    var p0 = t.addPoint('p0', 5, 5);
-    var p1 = t.addPoint('p1', 105, 5, p0);
+    var p0 = t.addPoint('p0', 0, 0);
+    var p1 = t.addPoint('p1', 100, 0, p0);
     t.addPath('a0', p0, p1);
     this.level.addTier(t.name, t);
     this.avatar.tierMeter.recreate();

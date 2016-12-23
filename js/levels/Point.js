@@ -178,8 +178,7 @@ Point.prototype.update = function() {};
 
 // String version of our details, displayed during editing.
 Point.prototype.getDetails = function() {
-    return ' (' + (this.gx - Tier.PADDING) +
-        ',' + (this.gy - Tier.PADDING) + ')';
+    return ' (' + this.gx + ',' + this.gy + ')';
 };
 
 // JSON conversion of a point.

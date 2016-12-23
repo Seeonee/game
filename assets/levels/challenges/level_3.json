@@ -3,21 +3,21 @@
         "t0": {
             "points": {
                 "p0": {
-                    "x": 5,
-                    "y": 5,
+                    "x": 0,
+                    "y": 0,
                     "type": "start"
                 },
                 "p1": {
-                    "x": 5,
-                    "y": -45
+                    "x": 0,
+                    "y": -50
                 },
                 "p2": {
-                    "x": 155,
-                    "y": 105,
+                    "x": 150,
+                    "y": 100,
+                    "enabled": true,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p2",
-                    "enabled": true
+                    "to": "p2"
                 }
             },
             "paths": {
@@ -34,20 +34,20 @@
         "t1": {
             "points": {
                 "p0": {
-                    "x": 5,
-                    "y": 5
+                    "x": 0,
+                    "y": 0
                 },
                 "p1": {
-                    "x": 155,
-                    "y": 5
+                    "x": 150,
+                    "y": 0
                 },
                 "p2": {
-                    "x": 155,
-                    "y": 105,
+                    "x": 150,
+                    "y": 100,
+                    "enabled": true,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p2",
-                    "enabled": true
+                    "to": "p2"
                 }
             },
             "paths": {

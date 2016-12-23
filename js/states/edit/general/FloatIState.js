@@ -166,8 +166,7 @@ FloatIState.prototype.snapToStartingValues = function() {
 
 // Display our (internal) coords.
 FloatIState.prototype.updateHoverText = function() {
-    var ip = this.tier.translateGamePointToInternalPoint(
-        this.avatar.x, this.avatar.y);
+    var gp = { x: this.avatar.x, y: this.avatar.y };
     this.avatar.help.setText('hover / (' +
-        Math.floor(ip.x) + ',' + Math.floor(ip.y) + ')');
+        Math.floor(gp.x) + ',' + Math.floor(gp.y) + ')');
 };

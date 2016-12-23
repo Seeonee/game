@@ -3,31 +3,31 @@
         "t0": {
             "points": {
                 "p0": {
-                    "x": 5,
-                    "y": 55,
+                    "x": 0,
+                    "y": 50,
+                    "enabled": true,
                     "type": "power",
-                    "subtype": "axe",
-                    "enabled": true
+                    "subtype": "axe"
                 },
                 "p1": {
-                    "x": 205,
-                    "y": 55
+                    "x": 200,
+                    "y": 50
                 },
                 "p2": {
-                    "x": 255,
-                    "y": 5,
+                    "x": 250,
+                    "y": 0,
+                    "enabled": true,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p2",
-                    "enabled": true
+                    "to": "p2"
                 },
                 "p3": {
-                    "x": 255,
-                    "y": 105
+                    "x": 250,
+                    "y": 100
                 },
                 "p4": {
-                    "x": 55,
-                    "y": 5,
+                    "x": 50,
+                    "y": 0,
                     "type": "key"
                 }
             },
@@ -53,35 +53,35 @@
         "t1": {
             "points": {
                 "p0": {
-                    "x": 5,
-                    "y": 55,
+                    "x": 0,
+                    "y": 50,
+                    "enabled": true,
                     "type": "power",
-                    "subtype": "might",
-                    "enabled": true
+                    "subtype": "might"
                 },
                 "p1": {
-                    "x": 205,
-                    "y": 55
+                    "x": 200,
+                    "y": 50
                 },
                 "p2": {
-                    "x": 255,
-                    "y": 5,
+                    "x": 250,
+                    "y": 0,
+                    "enabled": true,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p2",
-                    "enabled": true
+                    "to": "p2"
                 },
                 "p3": {
-                    "x": 255,
-                    "y": 105,
+                    "x": 250,
+                    "y": 100,
+                    "enabled": true,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p3",
-                    "enabled": true
+                    "to": "p3"
                 },
                 "p4": {
-                    "x": 55,
-                    "y": 5,
+                    "x": 50,
+                    "y": 0,
                     "type": "key"
                 }
             },
@@ -107,35 +107,35 @@
         "t2": {
             "points": {
                 "p0": {
-                    "x": 5,
-                    "y": 55,
+                    "x": 0,
+                    "y": 50,
+                    "enabled": true,
                     "type": "power",
-                    "subtype": "presence",
-                    "enabled": true
+                    "subtype": "presence"
                 },
                 "p1": {
-                    "x": 205,
-                    "y": 55
+                    "x": 200,
+                    "y": 50
                 },
                 "p2": {
-                    "x": 255,
-                    "y": 5,
+                    "x": 250,
+                    "y": 0,
+                    "enabled": true,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p2",
-                    "enabled": true
+                    "to": "p2"
                 },
                 "p3": {
-                    "x": 255,
-                    "y": 105,
+                    "x": 250,
+                    "y": 100,
+                    "enabled": true,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p3",
-                    "enabled": true
+                    "to": "p3"
                 },
                 "p4": {
-                    "x": 55,
-                    "y": 5,
+                    "x": 50,
+                    "y": 0,
                     "type": "key"
                 }
             },
@@ -161,36 +161,36 @@
         "t3": {
             "points": {
                 "p0": {
-                    "x": 5,
-                    "y": 55,
+                    "x": 0,
+                    "y": 50,
                     "type": "start"
                 },
                 "p1": {
-                    "x": 205,
-                    "y": 55,
+                    "x": 200,
+                    "y": 50,
+                    "enabled": true,
                     "type": "power",
-                    "subtype": "wit",
-                    "enabled": true
+                    "subtype": "wit"
                 },
                 "p2": {
-                    "x": 255,
-                    "y": 5,
+                    "x": 250,
+                    "y": 0,
+                    "enabled": true,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p2",
-                    "enabled": true
+                    "to": "p2"
                 },
                 "p3": {
-                    "x": 255,
-                    "y": 105,
+                    "x": 250,
+                    "y": 100,
+                    "enabled": true,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p3",
-                    "enabled": true
+                    "to": "p3"
                 },
                 "p4": {
-                    "x": 55,
-                    "y": 5,
+                    "x": 50,
+                    "y": 0,
                     "type": "key"
                 }
             },
@@ -216,35 +216,35 @@
         "t4": {
             "points": {
                 "p0": {
-                    "x": 5,
-                    "y": 55,
+                    "x": 0,
+                    "y": 50,
+                    "enabled": true,
                     "type": "power",
-                    "subtype": "stealth",
-                    "enabled": true
+                    "subtype": "stealth"
                 },
                 "p1": {
-                    "x": 205,
-                    "y": 55
+                    "x": 200,
+                    "y": 50
                 },
                 "p2": {
-                    "x": 255,
-                    "y": 5,
+                    "x": 250,
+                    "y": 0,
+                    "enabled": true,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p2",
-                    "enabled": true
+                    "to": "p2"
                 },
                 "p3": {
-                    "x": 255,
-                    "y": 105,
+                    "x": 250,
+                    "y": 100,
+                    "enabled": true,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p3",
-                    "enabled": true
+                    "to": "p3"
                 },
                 "p4": {
-                    "x": 55,
-                    "y": 5,
+                    "x": 50,
+                    "y": 0,
                     "type": "key"
                 }
             },
@@ -270,35 +270,35 @@
         "t5": {
             "points": {
                 "p0": {
-                    "x": 5,
-                    "y": 55,
+                    "x": 0,
+                    "y": 50,
+                    "enabled": true,
                     "type": "power",
-                    "subtype": "shield",
-                    "enabled": true
+                    "subtype": "shield"
                 },
                 "p1": {
-                    "x": 205,
-                    "y": 55
+                    "x": 200,
+                    "y": 50
                 },
                 "p2": {
-                    "x": 255,
-                    "y": 5,
+                    "x": 250,
+                    "y": 0,
+                    "enabled": true,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p2",
-                    "enabled": true
+                    "to": "p2"
                 },
                 "p3": {
-                    "x": 255,
-                    "y": 105,
+                    "x": 250,
+                    "y": 100,
+                    "enabled": true,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p3",
-                    "enabled": true
+                    "to": "p3"
                 },
                 "p4": {
-                    "x": 55,
-                    "y": 5,
+                    "x": 50,
+                    "y": 0,
                     "type": "key"
                 }
             },
@@ -324,31 +324,31 @@
         "t6": {
             "points": {
                 "p0": {
-                    "x": 5,
-                    "y": 55,
+                    "x": 0,
+                    "y": 50,
+                    "enabled": true,
                     "type": "power",
-                    "subtype": "hourglass",
-                    "enabled": true
+                    "subtype": "hourglass"
                 },
                 "p1": {
-                    "x": 205,
-                    "y": 55
+                    "x": 200,
+                    "y": 50
                 },
                 "p2": {
-                    "x": 255,
-                    "y": 5
+                    "x": 250,
+                    "y": 0
                 },
                 "p3": {
-                    "x": 255,
-                    "y": 105,
+                    "x": 250,
+                    "y": 100,
+                    "enabled": true,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p3",
-                    "enabled": true
+                    "to": "p3"
                 },
                 "p4": {
-                    "x": 55,
-                    "y": 5
+                    "x": 50,
+                    "y": 0
                 }
             },
             "paths": {
