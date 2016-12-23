@@ -40,7 +40,7 @@ AddFromPathIState.prototype.activated = function(prev) {
     var cancel = this.game.settings.buttonMap.buttonName(
         this.game.settings.buttonMap.CANCEL);
     this.avatar.help.setText('add ' + newName + ' to ' +
-        this.path.name + '\n' + select + ' to confirm\n' +
+        this.path.name + '\n  ' + select + ' to confirm\n  ' +
         cancel + ' to cancel');
 };
 
@@ -187,7 +187,7 @@ AddFromPointIState.prototype.activated = function(prev) {
         this.game.settings.buttonMap.CANCEL);
     this.avatar.help.setText('add ' + newPointName +
         ' to ' + this.point.name +
-        '\n' + select + ' to confirm\n' + cancel + ' to cancel');
+        '\n  ' + select + ' to confirm\n  ' + cancel + ' to cancel');
 };
 
 // Translate a game coordinate point so that it can 

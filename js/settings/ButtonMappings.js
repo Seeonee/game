@@ -86,13 +86,13 @@ var ButtonMappingsXbox = function() {
 ButtonMappingsPlaystation.prototype.buttonName = function(buttonCode) {
     switch (buttonCode) {
         case Phaser.Gamepad.PS3XC_X:
-            return 'X';
+            return '✕';
         case Phaser.Gamepad.PS3XC_CIRCLE:
-            return 'O';
+            return '⭘';
         case Phaser.Gamepad.PS3XC_SQUARE:
-            return 'Square';
+            return '☐';
         case Phaser.Gamepad.PS3XC_TRIANGLE:
-            return 'Triangle';
+            return '△';
         case Phaser.Gamepad.PS3XC_L1:
             return 'L1';
         case Phaser.Gamepad.PS3XC_R1:
@@ -102,29 +102,29 @@ ButtonMappingsPlaystation.prototype.buttonName = function(buttonCode) {
         case Phaser.Gamepad.PS3XC_R2:
             return 'R2';
         case Phaser.Gamepad.PS3XC_SELECT:
-            return 'Select';
+            return 'select';
         case Phaser.Gamepad.PS3XC_START:
-            return 'Start / Options';
+            return 'options';
         case Phaser.Gamepad.PS3XC_STICK_LEFT_BUTTON:
             return 'L3';
         case Phaser.Gamepad.PS3XC_STICK_RIGHT_BUTTON:
             return 'R3';
         case Phaser.Gamepad.PS3XC_DPAD_UP:
-            return 'D-Up';
+            return '▴';
         case Phaser.Gamepad.PS3XC_DPAD_DOWN:
-            return 'D-Down';
+            return '▾';
         case Phaser.Gamepad.PS3XC_DPAD_LEFT:
-            return 'D-Left';
+            return '◂';
         case Phaser.Gamepad.PS3XC_DPAD_RIGHT:
-            return 'D-Right';
+            return '▸';
         case Phaser.Gamepad.PS3XC_STICK_LEFT_X:
-            return 'Left stick';
+            return 'L';
         case Phaser.Gamepad.PS3XC_STICK_LEFT_Y:
-            return 'Left stick';
+            return 'L';
         case Phaser.Gamepad.PS3XC_STICK_RIGHT_X:
-            return 'Right stick';
+            return 'R';
         case Phaser.Gamepad.PS3XC_STICK_RIGHT_Y:
-            return 'Right stick';
+            return 'R';
         default:
             return 'unknown'; // Override me!
     }
@@ -150,29 +150,29 @@ ButtonMappingsXbox.prototype.buttonName = function(buttonCode) {
         case Phaser.Gamepad.XBOX360_RIGHT_TRIGGER:
             return 'RT';
         case Phaser.Gamepad.XBOX360_BACK:
-            return 'Back';
+            return 'back';
         case Phaser.Gamepad.XBOX360_START:
-            return 'Start';
+            return 'start';
         case Phaser.Gamepad.XBOX360_STICK_LEFT_BUTTON:
             return 'L3';
         case Phaser.Gamepad.XBOX360_STICK_RIGHT_BUTTON:
             return 'R3';
         case Phaser.Gamepad.XBOX360_DPAD_LEFT:
-            return 'D-Left';
+            return '◂';
         case Phaser.Gamepad.XBOX360_DPAD_RIGHT:
-            return 'D-Right';
+            return '▸';
         case Phaser.Gamepad.XBOX360_DPAD_UP:
-            return 'D-Up';
+            return '▴';
         case Phaser.Gamepad.XBOX360_DPAD_DOWN:
-            return 'D-Down';
+            return '▾';
         case Phaser.Gamepad.XBOX360_STICK_LEFT_X:
-            return 'Left stick';
+            return 'L';
         case Phaser.Gamepad.XBOX360_STICK_LEFT_Y:
-            return 'Left stick';
+            return 'L';
         case Phaser.Gamepad.XBOX360_STICK_RIGHT_X:
-            return 'Right stick';
+            return 'R';
         case Phaser.Gamepad.XBOX360_STICK_RIGHT_Y:
-            return 'Right stick';
+            return 'R';
         default:
             return 'unknown';
     }

@@ -83,6 +83,11 @@ BaseCustomizeIState.getName = function(pointClass, depth) {
 
 
 
+
+
+
+
+
 // Handle point en/dis-abling.
 var CustomizePointIState = function(handler, level) {
     BaseCustomizeIState.call(this, handler, level);
@@ -95,11 +100,28 @@ CustomizePointIState.prototype = Object.create(BaseCustomizeIState.prototype);
 CustomizePointIState.prototype.constructor = CustomizePointIState;
 
 
+// Called when activated.
+CustomizePointIState.prototype.activated = function(prev) {
+    if (!(prev.depth > this.depth)) {
+        var customize = this.game.settings.buttonMap.buttonName(
+            this.game.settings.buttonMap.EDIT_CUSTOMIZE);
+        var cancel = this.game.settings.buttonMap.buttonName(
+            this.game.settings.buttonMap.CANCEL);
+        this.info = '\n  ' + customize + ' to confirm\n  ' +
+            cancel + ' to cancel';
+    }
+    BaseCustomizeIState.prototype.activated.call(this, prev);
+};
+
 // Update help text.
 CustomizePointIState.prototype.getHelp = function() {
     // Don't bother calling our superclass's. We know we're depth 0.
-    return 'change ' + this.point.name + ' to:\n' +
+    var s = 'change ' + this.point.name + ' to:\n' +
         this.options[this.selected];
+    if (this.isActive()) {
+        s += this.info;
+    }
+    return s;
 };
 
 // Update loop.
