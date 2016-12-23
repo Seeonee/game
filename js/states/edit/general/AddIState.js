@@ -35,8 +35,13 @@ AddFromPathIState.prototype.activated = function(prev) {
     this.renderNeeded = true;
 
     var newName = this.tier.getNewPointName();
+    var select = this.game.settings.buttonMap.buttonName(
+        this.game.settings.buttonMap.SELECT);
+    var cancel = this.game.settings.buttonMap.buttonName(
+        this.game.settings.buttonMap.CANCEL);
     this.avatar.help.setText('add ' + newName + ' to ' +
-        this.path.name);
+        this.path.name + '\n' + select + ' to confirm\n' +
+        cancel + ' to cancel');
 };
 
 // Translate a game coordinate point so that it can 
@@ -155,7 +160,6 @@ AddFromPointIState.prototype.constructor = AddFromPointIState;
 
 // Action for adding new points (and paths to them) from existing ones.
 AddFromPointIState.prototype.activated = function(prev) {
-    this.avatar.help.setText('add from ' + this.avatar.point.name);
     this.tier = this.level.tier;
     this.point = this.avatar.point;
     this.near = undefined;
@@ -177,8 +181,13 @@ AddFromPointIState.prototype.activated = function(prev) {
 
     var newPointName = this.tier.getNewPointName();
     var newPathName = this.tier.getNewPathName();
+    var select = this.game.settings.buttonMap.buttonName(
+        this.game.settings.buttonMap.SELECT);
+    var cancel = this.game.settings.buttonMap.buttonName(
+        this.game.settings.buttonMap.CANCEL);
     this.avatar.help.setText('add ' + newPointName +
-        ' to ' + this.point.name);
+        ' to ' + this.point.name +
+        '\n' + select + ' to confirm\n' + cancel + ' to cancel');
 };
 
 // Translate a game coordinate point so that it can 
@@ -347,7 +356,7 @@ AddFromFloatIState.prototype.activated = function(prev) {
     this.newPoint = this.tier.getNewPointName();
     this.details = '(' + ap.x + ',' + ap.y + ')';
     this.avatar.help.setText('add point ' + this.newPoint +
-        ' ' + this.details + '?');
+        ' ' + this.details + '?' + '\nhold to confirm');
 };
 
 // We're adding a point!

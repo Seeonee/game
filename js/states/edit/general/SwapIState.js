@@ -46,8 +46,8 @@ SwapIState.prototype.updateSwap = function() {
         if (this.canAddTier()) {
             this.startCharging = this.game.time.now +
                 EditCharge.TIME;
-            this.avatar.help.setText('adding tier ' +
-                this.word + '?');
+            this.avatar.help.setText('add tier ' +
+                this.word + '?\nhold to confirm');
             this.image = new EditCharge(this.game,
                 this.avatar.x, this.avatar.y, this.level.tier.palette, true);
             this.game.state.getCurrentState().z.mg.tier().add(this.image);
@@ -67,7 +67,7 @@ SwapIState.prototype.updateSwap = function() {
 SwapIState.prototype.updateCharging = function() {
     var charged = this.game.time.now > this.startCharging;
     if (charged) {
-        this.avatar.help.setText('adding tier ' +
+        this.avatar.help.setText('add tier ' +
             this.word + '?\nok');
     }
     if (this.gpad.justReleased(this.button)) {

@@ -31,12 +31,14 @@ DeleteIState.prototype.activated = function(prev) {
     if (this.point) {
         this.actingOnTier = this.tier.points.length == 1;
         if (this.actingOnTier) {
-            this.avatar.help.setText('delete tier ' + this.tier.name + '?');
+            this.avatar.help.setText('delete tier ' + this.tier.name +
+                '?\nhold to confirm');
         } else {
-            this.avatar.help.setText('delete ' + this.point.name);
+            this.avatar.help.setText('delete ' + this.point.name +
+                '\nhold to also merge paths');
         }
     } else if (this.avatar) {
-        this.avatar.help.setText('delete ' + this.avatar.name);
+        this.avatar.help.setText('delete ' + this.path.name);
     } else {
         this.falseStart = true;
         return;
@@ -49,7 +51,7 @@ DeleteIState.prototype.activated = function(prev) {
     if (this.image.tween && !this.actingOnTier) {
         this.image.tween.onComplete.add(function() {
             this.avatar.help.setText('delete ' +
-                this.point.name + ' /\nmerge paths');
+                this.point.name + '\nmerge paths');
         }, this);
     }
 };
