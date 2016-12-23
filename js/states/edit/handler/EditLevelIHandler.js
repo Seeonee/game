@@ -46,16 +46,23 @@ EditLevelIHandler.prototype.constructor = EditLevelIHandler;
 // Checks for a mode toggle, and cycles as needed.
 // Returns true if the mode was cycled.
 EditLevelIHandler.prototype.cycle = function() {
-    if (this.gpad.justReleased(this.buttonMap.EDIT_MODE_UP)) {
+    if (this.gpad.justReleased(this.buttonMap.EDIT_MODE_RIGHT)) {
         this.gpad.consumeButtonEvent();
         this.mode = (this.mode + 1) % this.modes.length;
         this.activate(this.modes[this.mode].name);
         return true;
-    } else if (this.gpad.justReleased(this.buttonMap.EDIT_MODE_DOWN)) {
+    } else if (this.gpad.justReleased(this.buttonMap.EDIT_MODE_LEFT)) {
         this.gpad.consumeButtonEvent();
         this.mode = (this.mode + this.modes.length - 1) % this.modes.length;
         this.activate(this.modes[this.mode].name);
         return true;
     }
     return false;
+};
+
+// Add cycle arrows to a help text block.
+EditLevelIHandler.addArrows = function(s) {
+    var i = s.indexOf('\n');
+    i = i >= 0 ? i : s.length;
+    return s.substring(0, i) + ' ◂▸' + s.substring(i);
 };

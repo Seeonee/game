@@ -62,10 +62,10 @@ GeneralEditIState.prototype.updateHelpText = function() {
         return;
     }
     this.attachedObj = obj;
-    var s = obj ? ' / ' + obj.name : '';
+    var s = 'edit ' + (obj ? ' / ' + obj.name : '');
     var more = obj.getDetails();
     if (more) {
         s += more;
     }
-    this.avatar.help.setText('edit' + s);
+    this.avatar.help.setText(EditLevelIHandler.addArrows(s));
 };

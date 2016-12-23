@@ -1,4 +1,3 @@
-add masq bobble based on point istate
 add icons for edit text direction inputs, possibly with onPressed
 
 add lock mechanics

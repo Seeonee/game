@@ -14,7 +14,7 @@ ResetLevelIState.prototype.constructor = ResetLevelIState;
 // Called when we become the active state.
 ResetLevelIState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
-    this.avatar.help.setText('reset');
+    this.avatar.help.setText(EditLevelIHandler.addArrows('reset'));
     this.chargedTime = -1;
 };
 

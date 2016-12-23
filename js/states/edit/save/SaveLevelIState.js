@@ -14,7 +14,7 @@ SaveLevelIState.prototype.constructor = SaveLevelIState;
 // Called when we become the active state.
 SaveLevelIState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
-    this.avatar.help.setText('save');
+    this.avatar.help.setText(EditLevelIHandler.addArrows('save'));
     this.chargedTime = -1;
 };
 
