@@ -2,18 +2,17 @@
 // when stepped upon or toggled.
 // It's like a circuit; closed means we send a signal, 
 // open means we don't (unless you wire stuff to open).
-var SwitchPoint = function(name, x, y, /* wires, */
+var SwitchPoint = function(name, x, y, enabled, /* wires, */
     startClosed, once, contact) {
-    Point.call(this, name, x, y);
-    this.closed = startClosed;
+    Point.call(this, name, x, y, enabled);
     this.once = once;
     this.contact = contact;
     this.done = false;
 
     this.istateName = SwitchIState.NAME;
     this.events = this.events ? this.events : {};
-    this.events.onClose = new Phaser.Signal();
-    this.events.onOpen = new Phaser.Signal();
+    this.events.onEnabled = new Phaser.Signal();
+    this.events.onDisabled = new Phaser.Signal();
 };
 
 SwitchPoint.TYPE = 'switch';
@@ -32,7 +31,7 @@ SwitchPoint.prototype.draw = function(tier) {
         var ap = tier.translateInternalPointToGamePoint(
             this.x, this.y);
         this.switch = new WSwitch(game, ap.x, ap.y,
-            tier.palette, this.closed, this.contact);
+            tier.palette, this.enabled, this.contact);
         game.state.getCurrentState().z.bg.tier().add(this.switch);
     }
 };
@@ -54,22 +53,28 @@ SwitchPoint.prototype.setPressed = function(pressed) {
 
 // Toggle the plate.
 SwitchPoint.prototype.flip = function() {
-    if (this.done || !this.enabled) {
+    if (this.done) {
         return;
     }
+    this.setEnabled(!this.enabled);
+};
+
+// Toggle enabledness, aka flip the switch.
+// Do *NOT* call our super.setEnabled().
+SwitchPoint.prototype.setEnabled = function(enabled) {
     if (this.once) {
         this.done = true;
         this.switch.lock();
     }
-    this.closed = !this.closed;
+    this.enabled = enabled;
     this.switch.flip();
-    if (this.closed) {
+    if (this.enabled) {
         // Close the circuit. Typically powers most wires.
-        this.events.onClose.dispatch();
+        this.events.onEnabled.dispatch();
         // TODO: Power our closed-only wires.
     } else {
         // Open up. Typically cuts power to most wires.
-        this.events.onOpen.dispatch();
+        this.events.onDisabled.dispatch();
         // TODO: Power our open-only wires.
     }
 };
@@ -90,16 +95,13 @@ SwitchPoint.prototype.delete = function() {
 // Editor details.
 SwitchPoint.prototype.getDetails = function() {
     return Point.prototype.getDetails.call(this) + '\n' +
-        'switch plate';
+        'switch (' + (this.enabled ? 'on' : 'off') + ')';
 };
 
 // JSON conversion of a switch.
 SwitchPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
     result.type = SwitchPoint.TYPE;
-    if (this.startClosed) {
-        result.startClosed = true;
-    }
     if (this.once) {
         result.once = true;
     }
@@ -112,5 +114,5 @@ SwitchPoint.prototype.toJSON = function() {
 // Load a JSON representation of a portal.
 SwitchPoint.load = function(game, name, json) {
     return new SwitchPoint(name, json.x, json.y,
-        json.startClosed, json.once, json.contact);
+        json.enabled, json.once, json.contact);
 };

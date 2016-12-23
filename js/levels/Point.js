@@ -185,8 +185,8 @@ Point.prototype.getDetails = function() {
 // JSON conversion of a point.
 Point.prototype.toJSON = function() {
     var result = { x: this.gx, y: this.gy };
-    if (!this.startEnabled) {
-        result.enabled = false;
+    if (this.type) {
+        result.enabled = this.startEnabled;
     }
     return result;
 };

@@ -20,7 +20,6 @@ SwitchIState.prototype.activated = function(prev) {
 
     this.point = this.avatar.point;
     this.switch = this.avatar.point.switch;
-    this.closed = this.point.closed;
     this.once = this.point.once;
     this.contact = this.point.contact;
     this.done = this.point.done;
@@ -41,8 +40,7 @@ SwitchIState.prototype.deactivated = function(prev) {
 // Handle an update.
 SwitchIState.prototype.update = function() {
     var time = this.game.time.now;
-    if (this.done || this.contact || time < this.reactivateTime ||
-        !this.point.isEnabled()) {
+    if (this.done || this.contact || time < this.reactivateTime) {
         return false;
     }
     if (this.gpad.justPressed(this.buttonMap.SELECT)) {

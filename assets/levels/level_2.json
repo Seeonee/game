@@ -100,7 +100,8 @@
                     "y": 155,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p6"
+                    "to": "p6",
+                    "enabled": true
                 }
             },
             "paths": {
@@ -233,7 +234,8 @@
                     "y": 155,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p23"
+                    "to": "p23",
+                    "enabled": true
                 },
                 "p7": {
                     "x": 55,

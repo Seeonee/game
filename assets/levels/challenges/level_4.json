@@ -6,7 +6,8 @@
                     "x": 5,
                     "y": 55,
                     "type": "power",
-                    "subtype": "axe"
+                    "subtype": "axe",
+                    "enabled": true
                 },
                 "p1": {
                     "x": 205,
@@ -17,7 +18,8 @@
                     "y": 5,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p2"
+                    "to": "p2",
+                    "enabled": true
                 },
                 "p3": {
                     "x": 255,
@@ -54,7 +56,8 @@
                     "x": 5,
                     "y": 55,
                     "type": "power",
-                    "subtype": "might"
+                    "subtype": "might",
+                    "enabled": true
                 },
                 "p1": {
                     "x": 205,
@@ -65,14 +68,16 @@
                     "y": 5,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p2"
+                    "to": "p2",
+                    "enabled": true
                 },
                 "p3": {
                     "x": 255,
                     "y": 105,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p3"
+                    "to": "p3",
+                    "enabled": true
                 },
                 "p4": {
                     "x": 55,
@@ -105,7 +110,8 @@
                     "x": 5,
                     "y": 55,
                     "type": "power",
-                    "subtype": "presence"
+                    "subtype": "presence",
+                    "enabled": true
                 },
                 "p1": {
                     "x": 205,
@@ -116,14 +122,16 @@
                     "y": 5,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p2"
+                    "to": "p2",
+                    "enabled": true
                 },
                 "p3": {
                     "x": 255,
                     "y": 105,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p3"
+                    "to": "p3",
+                    "enabled": true
                 },
                 "p4": {
                     "x": 55,
@@ -161,21 +169,24 @@
                     "x": 205,
                     "y": 55,
                     "type": "power",
-                    "subtype": "wit"
+                    "subtype": "wit",
+                    "enabled": true
                 },
                 "p2": {
                     "x": 255,
                     "y": 5,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p2"
+                    "to": "p2",
+                    "enabled": true
                 },
                 "p3": {
                     "x": 255,
                     "y": 105,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p3"
+                    "to": "p3",
+                    "enabled": true
                 },
                 "p4": {
                     "x": 55,
@@ -208,7 +219,8 @@
                     "x": 5,
                     "y": 55,
                     "type": "power",
-                    "subtype": "stealth"
+                    "subtype": "stealth",
+                    "enabled": true
                 },
                 "p1": {
                     "x": 205,
@@ -219,14 +231,16 @@
                     "y": 5,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p2"
+                    "to": "p2",
+                    "enabled": true
                 },
                 "p3": {
                     "x": 255,
                     "y": 105,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p3"
+                    "to": "p3",
+                    "enabled": true
                 },
                 "p4": {
                     "x": 55,
@@ -259,7 +273,8 @@
                     "x": 5,
                     "y": 55,
                     "type": "power",
-                    "subtype": "shield"
+                    "subtype": "shield",
+                    "enabled": true
                 },
                 "p1": {
                     "x": 205,
@@ -270,14 +285,16 @@
                     "y": 5,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p2"
+                    "to": "p2",
+                    "enabled": true
                 },
                 "p3": {
                     "x": 255,
                     "y": 105,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p3"
+                    "to": "p3",
+                    "enabled": true
                 },
                 "p4": {
                     "x": 55,
@@ -310,7 +327,8 @@
                     "x": 5,
                     "y": 55,
                     "type": "power",
-                    "subtype": "hourglass"
+                    "subtype": "hourglass",
+                    "enabled": true
                 },
                 "p1": {
                     "x": 205,
@@ -325,7 +343,8 @@
                     "y": 105,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p3"
+                    "to": "p3",
+                    "enabled": true
                 },
                 "p4": {
                     "x": 55,

@@ -14,7 +14,8 @@
                     "x": 205,
                     "y": 105,
                     "type": "warp",
-                    "to": "p11"
+                    "to": "p11",
+                    "enabled": true
                 },
                 "p3": {
                     "x": 405,
@@ -33,7 +34,8 @@
                     "y": 205,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p5"
+                    "to": "p5",
+                    "enabled": true
                 },
                 "p7": {
                     "x": 355,
@@ -55,7 +57,8 @@
                     "x": 105,
                     "y": 305,
                     "type": "power",
-                    "subtype": "sword"
+                    "subtype": "sword",
+                    "enabled": true
                 },
                 "p12": {
                     "x": 205,
@@ -149,21 +152,24 @@
                     "x": 355,
                     "y": 105,
                     "type": "power",
-                    "subtype": "crown"
+                    "subtype": "crown",
+                    "enabled": true
                 },
                 "p4": {
                     "x": 455,
                     "y": 205,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p3"
+                    "to": "p3",
+                    "enabled": true
                 },
                 "p5": {
                     "x": 205,
                     "y": 205,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p6"
+                    "to": "p6",
+                    "enabled": true
                 },
                 "p6": {
                     "x": 305,
@@ -172,14 +178,16 @@
                 "p7": {
                     "x": 505,
                     "y": 155,
-                    "type": "end"
+                    "type": "end",
+                    "enabled": true
                 },
                 "p10": {
                     "x": 455,
                     "y": 5,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p7"
+                    "to": "p7",
+                    "enabled": true
                 },
                 "p8": {
                     "x": 505,
@@ -205,7 +213,8 @@
                     "x": 355,
                     "y": 255,
                     "type": "warp",
-                    "to": "p17"
+                    "to": "p17",
+                    "enabled": true
                 },
                 "p15": {
                     "x": 305,
@@ -227,7 +236,8 @@
                     "x": 205,
                     "y": 455,
                     "type": "warp",
-                    "to": "p3"
+                    "to": "p3",
+                    "enabled": true
                 },
                 "p20": {
                     "x": 105,
@@ -240,7 +250,8 @@
                 "p22": {
                     "x": 5,
                     "y": 305,
-                    "type": "switch"
+                    "type": "switch",
+                    "enabled": false
                 }
             },
             "paths": {
@@ -341,7 +352,8 @@
                     "y": 205,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p4"
+                    "to": "p4",
+                    "enabled": true
                 },
                 "p4": {
                     "x": 355,
@@ -351,7 +363,8 @@
                     "x": 255,
                     "y": 155,
                     "type": "warp",
-                    "to": "p0"
+                    "to": "p0",
+                    "enabled": true
                 },
                 "p6": {
                     "x": 55,
@@ -362,7 +375,8 @@
                     "y": 55,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p10"
+                    "to": "p10",
+                    "enabled": true
                 }
             },
             "paths": {

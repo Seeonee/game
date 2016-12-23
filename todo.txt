@@ -1,6 +1,9 @@
 add masq bobble based on point istate
 change switch to use enabledness
 add icons for edit text direction inputs, possibly with onPressed
+remove padding from all premade levels
+    don't subtract padding from point details
+    don't add padding to the Add Tier starter points
 
 add lock mechanics
 add editor mode for defining point properties such as portals, powers, etc

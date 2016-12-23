@@ -1,6 +1,6 @@
 // This is where you start out.
 var StartPoint = function(name, x, y) {
-    Point.call(this, name, x, y);
+    Point.call(this, name, x, y, true); // Always enabled.
     this.drawn = false;
 };
 
@@ -39,6 +39,7 @@ StartPoint.prototype.delete = function() {
 StartPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
     result.type = 'start';
+    delete result.enabled;
     return result;
 };
 

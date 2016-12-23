@@ -16,7 +16,8 @@
                     "y": 105,
                     "type": "portal",
                     "direction": 1,
-                    "to": "p2"
+                    "to": "p2",
+                    "enabled": true
                 }
             },
             "paths": {
@@ -45,7 +46,8 @@
                     "y": 105,
                     "type": "portal",
                     "direction": -1,
-                    "to": "p2"
+                    "to": "p2",
+                    "enabled": true
                 }
             },
             "paths": {

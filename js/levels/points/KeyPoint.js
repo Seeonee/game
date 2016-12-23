@@ -1,6 +1,6 @@
 // A point that has a key floating over it.
 var KeyPoint = function(name, x, y) {
-    Point.call(this, name, x, y);
+    Point.call(this, name, x, y, true);
     this.tkey = undefined;
 };
 
@@ -58,6 +58,7 @@ KeyPoint.prototype.getDetails = function() {
 // JSON conversion of a key.
 KeyPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
+    delete result.enabled;
     result.type = KeyPoint.TYPE;
     return result;
 };
