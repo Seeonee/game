@@ -240,7 +240,7 @@
                 "p22": {
                     "x": 5,
                     "y": 305,
-                    "type": "switch plate"
+                    "type": "switch"
                 }
             },
             "paths": {

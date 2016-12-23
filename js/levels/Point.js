@@ -194,10 +194,14 @@ Point.prototype.toJSON = function() {
 // Load a JSON representation of a point.
 Point.load = function(game, name, json) {
     var type = json.type;
-    if (type && Point.load.factory[type]) {
-        var p = Point.load.factory[type].load(game, name, json);
-        p.type = type;
-        return p;
+    if (type) {
+        if (Point.load.factory[type]) {
+            var p = Point.load.factory[type].load(game, name, json);
+            p.type = type;
+            return p;
+        } else {
+            console.error('Failed to load point class ' + type);
+        }
     }
     return new Point(name, json.x, json.y, json.enabled);
 };

@@ -12,6 +12,7 @@ var PointIHandler = function(game, gpad, level, ihandler) {
     new PortalIState(this, level);
     new WarpIState(this, level);
     new EndIState(this, level);
+    new SwitchIState(this, level);
 };
 
 PointIHandler.prototype = Object.create(IHandler.prototype);

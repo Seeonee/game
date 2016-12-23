@@ -23,9 +23,9 @@ var Power = function(game, x, y, name, palette, angle) {
     this.icon.anchor.setTo(0.5, 0.5);
 
     // Power it down by default.
-    this.diamond_rgb = Power.rgb(this.diamondUnpowered);
+    this.diamond_rgb = Color.rgb(this.diamondUnpowered);
     this.diamond.scale.setTo(Power.DIAMOND_SCALE);
-    this.icon_rgb = Power.rgb(this.iconUnpowered);
+    this.icon_rgb = Color.rgb(this.iconUnpowered);
     this.icon.alpha = 0;
     this.icon.y -= Power.ICON_SLIDE;
 
@@ -54,15 +54,6 @@ Power.ICON_POWER_DOWN = 200; // ms
 Power.ICON_SLIDE = 25;
 Power.ICON_POWER_DELAY = 100; // ms
 Power.DISABLED_DIAMOND_ALPHA = 0.25;
-
-// Convert a hex color int into an rgb "tuple".
-Power.rgb = function(color) {
-    return {
-        r: (color >> 16) & 0xFF,
-        g: (color >> 8) & 0xFF,
-        b: (color) & 0xFF
-    };
-}
 
 // Twist our rotation.
 Power.prototype.setRotation = function(angle) {
@@ -109,7 +100,7 @@ Power.prototype.setEnabled = function(enabled) {
         this.diamondTint : this.whiteTint;
     this.diamondPowered = this.enabled ?
         this.diamondTint : this.whiteTint;
-    this.diamond_rgb = Power.rgb(this.selected ?
+    this.diamond_rgb = Color.rgb(this.selected ?
         this.diamondPowered : this.diamondUnpowered);
     this.diamond.scale.setTo(this.selected ?
         1 : Power.DIAMOND_SCALE);
@@ -129,7 +120,7 @@ Power.prototype.clearTweens = function() {
 // Triggers our main diamond to scale up and change tint.
 Power.prototype.diamond_fade_in = function() {
     this.tweens.push(this.game.add.tween(this.diamond_rgb).to(
-        Power.rgb(this.diamondPowered), Power.DIAMOND_FADE_IN,
+        Color.rgb(this.diamondPowered), Power.DIAMOND_FADE_IN,
         Phaser.Easing.Cubic.Out, true));
     this.tweens.push(this.game.add.tween(this.diamond.scale).to({ x: 1, y: 1 },
         Power.DIAMOND_FADE_IN, Phaser.Easing.Cubic.Out, true));
@@ -138,7 +129,7 @@ Power.prototype.diamond_fade_in = function() {
 // Triggers our main diamond to scale down and change tint.
 Power.prototype.diamond_fade_out = function() {
     this.tweens.push(this.game.add.tween(this.diamond_rgb).to(
-        Power.rgb(this.diamondUnpowered), Power.DIAMOND_FADE_IN,
+        Color.rgb(this.diamondUnpowered), Power.DIAMOND_FADE_IN,
         Phaser.Easing.Cubic.Out, true));
     this.tweens.push(this.game.add.tween(this.diamond.scale).to({
             x: Power.DIAMOND_SCALE,
@@ -150,7 +141,7 @@ Power.prototype.diamond_fade_out = function() {
 // Triggers our icon to fade-slide in and change tint.
 Power.prototype.icon_power_up = function() {
     this.tweens.push(this.game.add.tween(this.icon_rgb).to(
-        Power.rgb(this.iconPowered), Power.ICON_POWER_UP,
+        Color.rgb(this.iconPowered), Power.ICON_POWER_UP,
         Phaser.Easing.Cubic.Out, true, Power.ICON_POWER_DELAY));
     this.tweens.push(this.game.add.tween(this.icon).to({ alpha: 1 },
         Power.ICON_POWER_UP, Phaser.Easing.Cubic.Out, true,
@@ -164,7 +155,7 @@ Power.prototype.icon_power_up = function() {
 // Triggers our icon to fade-slide out and change tint.
 Power.prototype.icon_power_down = function() {
     this.tweens.push(this.game.add.tween(this.icon_rgb).to(
-        Power.rgb(this.iconUnpowered), Power.ICON_POWER_DOWN,
+        Color.rgb(this.iconUnpowered), Power.ICON_POWER_DOWN,
         Phaser.Easing.Cubic.Out, true));
     this.tweens.push(this.game.add.tween(this.icon).to({ alpha: 0 },
         Power.ICON_POWER_DOWN, Phaser.Easing.Cubic.Out, true));

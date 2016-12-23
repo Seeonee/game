@@ -21,6 +21,15 @@ Color.prototype.rgba = function(alpha) {
         alpha + ')';
 };
 
+// Convert a hex color int into an rgb "tuple".
+Color.rgb = function(color) {
+    return {
+        r: (color >> 16) & 0xFF,
+        g: (color >> 8) & 0xFF,
+        b: (color) & 0xFF
+    };
+}
+
 // Restore a JSON'd Color object.
 Color.load = function(json) {
     var shade = json.s.substring(1);

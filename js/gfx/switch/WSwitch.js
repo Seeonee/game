@@ -1,74 +1,82 @@
-// Switch component.
-var WSwitchArc = function(game, x, y) {
-    Phaser.Sprite.call(this, game, x, y, 'switch_plate');
-    this.anchor.setTo(0.5, 1);
-};
-
-WSwitchArc.prototype = Object.create(Phaser.Sprite.prototype);
-WSwitchArc.prototype.constructor = WSwitchArc;
-
-
 // Switch for activating wires.
-var WSwitch = function(game, x, y, palette, startClosed) {
-    Phaser.Sprite.call(this, game, x, y);
+var WSwitch = function(game, x, y, palette, startClosed, contact) {
+    Phaser.Sprite.call(this, game, x, y + WSwitch.Y, 'switch_light');
     this.anchor.setTo(0.5);
     this.color1 = this.game.settings.colors.WHITE.i;
-    this.color2 = this.color1; // palette.c2.i;
+    this.color2 = palette.c2.i;
     this.closed = startClosed;
+    this.contact = contact;
 
-    var y = this.closed ? 0 : WSwitch.Y;
-    this.rotation = this.closed ? 0 : WSwitch.ANGLE;
-
-    this.arcs = [];
-    for (var i = 0; i < 3; i++) {
-        var dummy = this.addChild(this.game.add.sprite(0, 0));
-        dummy.rotation = i * 2 * Math.PI / 3;
-        var arc = dummy.addChild(new WSwitchArc(this.game, 0, y));
-        arc.alpha = WSwitch.ALPHA;
-        this.arcs.push(arc);
+    if (!this.contact) {
+        this.rotation = Math.PI / 4;
     }
-    this.arcs[0].alpha = this.closed ? 1 : WSwitch.ALPHA;
-    this.arcs[0].tint = this.closed ? this.color2 : this.color1;
+
+    this.alpha = this.closed ? 1 : WSwitch.ALPHA;
+    this.animations.add('closed', [0]);
+    this.animations.add('pressed', [1]);
+    this.animations.add('open', [2]);
+    this.animations.add('contact closed', [3]);
+    this.animations.add('contact open', [4]);
+    this.setPressed(false);
 };
 
 WSwitch.prototype = Object.create(Phaser.Sprite.prototype);
 WSwitch.prototype.constructor = WSwitch;
 
 // Constants.
+WSwitch.Y = 15;
 WSwitch.ALPHA = 0.25;
-WSwitch.TIME = 350; // ms
-WSwitch.Y = -10;
-WSwitch.ANGLE = 1 * Math.PI;
+WSwitch.LOCK_TIME = 1000; // ms
 
 
-// Expand/collapse.
+// Close the circuit.
 WSwitch.prototype.close = function() {
     if (!this.closed) {
-        this.closed = true;
-        this._resize(true);
+        this.flip();
     }
 };
 
-// Expand/collapse.
+// Break the circuit.
 WSwitch.prototype.open = function() {
     if (this.closed) {
-        this.closed = false;
-        this._resize(false);
+        this.flip();
     }
 };
 
-// Internal sizer method.
-WSwitch.prototype._resize = function(closed) {
-    var y = closed ? 0 : WSwitch.Y;
-    var rotation = closed ? 0 : WSwitch.ANGLE;
-    var easing = closed ? Phaser.Easing.Sinusoidal.Out :
-        Phaser.Easing.Sinusoidal.In;
-    this.arcs[0].alpha = closed ? 1 : WSwitch.ALPHA;
-    this.arcs[0].tint = closed ? this.color2 : this.color1;
-    for (var i = 0; i < 3; i++) {
-        this.game.add.tween(this.arcs[i]).to({ y: y },
-            WSwitch.TIME, easing, true);
+// Flip state.
+WSwitch.prototype.flip = function() {
+    this.closed = !this.closed;
+    this.alpha = this.closed ? 1 : WSwitch.ALPHA;
+    this.setPressed(false);
+};
+
+// Set whether or not we're pressed.
+WSwitch.prototype.setPressed = function(pressed) {
+    if (this.contact) {
+        this.animations.play('contact ' + (this.closed ? 'closed' : 'open'));
+    } else if (pressed) {
+        this.animations.play('pressed');
+    } else {
+        this.animations.play(this.closed ? 'closed' : 'open');
     }
-    this.game.add.tween(this).to({ rotation: rotation },
-        WSwitch.TIME, easing, true);
+};
+
+// Indicate that we can't be pressed again.
+WSwitch.prototype.lock = function() {
+    var t = this.game.add.tween(this.scale).to({ x: 0, y: 0 },
+        WSwitch.LOCK_TIME, Phaser.Easing.Quadratic.In, true);
+    t.onComplete.add(function() { this.visible = false; }, this);
+};
+
+// Called on tier fade.
+WSwitch.prototype.fadingIn = function() {
+    var alpha = this.closed ? 1 : WSwitch.ALPHA;
+    this.game.add.tween(this).to({ alpha: alpha },
+        Tier.FADE_TIME / 2, Phaser.Easing.Linear.InOut, true,
+        Tier.FADE_TIME / 2);
+};
+
+// Called on tier fade.
+WSwitch.prototype.fadingOut = function() {
+    this.alpha = 0;
 };
