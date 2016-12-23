@@ -19,14 +19,27 @@ WarpIState.HOVER_Y = 44;
 WarpIState.FADE_TIME = 250; // ms
 WarpIState.AVATAR_FADE_DELAY = 150; // ms
 
+
+// Called when stepped on.
+WarpIState.prototype.activated = function(prev) {
+    this.pressed = false;
+};
+
 // Handle an update.
 WarpIState.prototype.update = function() {
     if (this.charging || this.recharging) {
         return;
     }
-    if (this.avatar.point.isEnabled() &&
-        this.gpad.justReleased(this.buttonMap.WARP)) {
+    if (!this.avatar.point.isEnabled()) {
+        return false;
+    }
+    if (this.gpad.justPressed(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
+        this.pressed = true;
+    } else if (this.pressed &&
+        this.gpad.released(this.buttonMap.SELECT)) {
+        this.gpad.consumeButtonEvent();
+        this.pressed = false;
         this.charge();
     } else {
         return false;

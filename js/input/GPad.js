@@ -49,6 +49,16 @@ GPad.prototype.justReleased = function(buttonCode) {
         'timeUp', this.pad.justReleased);
 };
 
+// Figure out if a button is released, taking into account 
+// if we've already consumed this event.
+// This will catch scenarios where the button wasn't *just* 
+// released, but it *was* released since the last time we 
+// consumed events.
+GPad.prototype.released = function(buttonCode) {
+    var button = this.pad._buttons[buttonCode];
+    return button.timeUp >= button.timeDown;
+};
+
 // Figure out if a button was just pressed, taking into account 
 // if we've already consumed this event.
 GPad.prototype.buttonEvent = function(buttonCode, timeName, handler) {

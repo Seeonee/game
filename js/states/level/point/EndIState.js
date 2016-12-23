@@ -17,6 +17,7 @@ EndIState.prototype.constructor = EndIState;
 // Called when the player gets to the end point.
 EndIState.prototype.activated = function(prev) {
     // Don't let the menu activate yet.
+    this.pressed = false;
 };
 
 // Don't do anything while paused.
@@ -33,8 +34,15 @@ EndIState.prototype.update = function() {
         IMenuState.prototype.update.call(this);
         return;
     }
-    if (this.avatar.point.isEnabled() &&
-        this.gpad.justReleased(this.buttonMap.SELECT)) {
+    if (!this.avatar.point.isEnabled()) {
+        return false;
+    }
+    if (this.gpad.justPressed(this.buttonMap.SELECT)) {
+        this.gpad.consumeButtonEvent();
+        this.pressed = true;
+    } else if (this.pressed &&
+        this.gpad.released(this.buttonMap.SELECT)) {
+        this.gpad.consumeButtonEvent();
         this.chargeUp();
     } else {
         return false;

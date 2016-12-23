@@ -16,6 +16,8 @@ SwitchIState.REACTIVATE_DELAY = 100; // ms
 
 // Called on activate.
 SwitchIState.prototype.activated = function(prev) {
+    this.pressed = false;
+
     this.point = this.avatar.point;
     this.switch = this.avatar.point.switch;
     this.closed = this.point.closed;
@@ -45,9 +47,12 @@ SwitchIState.prototype.update = function() {
     }
     if (this.gpad.justPressed(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
+        this.pressed = true;
         this.switch.setPressed(true);
-    } else if (this.gpad.justReleased(this.buttonMap.SELECT)) {
+    } else if (this.pressed &&
+        this.gpad.released(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
+        this.pressed = false;
         this.point.setPressed(false);
         this.point.flip();
         this.reactivateTime = time + SwitchIState.REACTIVATE_DELAY;

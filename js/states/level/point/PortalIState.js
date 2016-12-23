@@ -14,16 +14,29 @@ PortalIState.prototype.constructor = PortalIState;
 // Constants.
 PortalIState.REACTIVATE_DELAY = 100; // ms
 
+
+// Called when stepped on.
+PortalIState.prototype.activated = function(prev) {
+    this.pressed = false;
+};
+
 // Handle an update.
 PortalIState.prototype.update = function() {
     var time = this.game.time.now;
     if (time < this.reactivateTime) {
         return;
     }
-    if (this.avatar.point.isEnabled() &&
-        this.gpad.justReleased(this.buttonMap.PORTAL)) {
-        this.reactivateTime = time + PortalIState.REACTIVATE_DELAY;
+    if (!this.avatar.point.isEnabled()) {
+        return false;
+    }
+    if (this.gpad.justPressed(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
+        this.pressed = true;
+    } else if (this.pressed &&
+        this.gpad.released(this.buttonMap.SELECT)) {
+        this.gpad.consumeButtonEvent();
+        this.pressed = false;
+        this.reactivateTime = time + PortalIState.REACTIVATE_DELAY;
         var direction = 1;
         var pointName = 'p0';
         if (this.avatar.point instanceof PortalPoint) {
