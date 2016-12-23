@@ -37,6 +37,7 @@ BaseCustomizeIState.prototype.finished = function(point) {
     while (prev instanceof BaseCustomizeIState) {
         prev = prev.prev;
     }
+    this.gpad.consumeButtonEvent();
     this.activate(prev.name);
 };
 
@@ -87,10 +88,10 @@ CustomizePointIState.prototype.constructor = CustomizePointIState;
 
 
 // Update help text.
-CustomizePointIState.prototype.updateHelp = function() {
+CustomizePointIState.prototype.getHelp = function() {
     // Don't bother calling our superclass's. We know we're depth 0.
-    this.avatar.help.setText('change ' + this.point.name + ' to:\n' +
-        this.options[this.selected]);
+    return 'change ' + this.point.name + ' to:\n' +
+        this.options[this.selected];
 };
 
 // Update loop.
