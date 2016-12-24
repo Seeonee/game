@@ -64,6 +64,7 @@ EditLevelIHandler.prototype.cycle = function() {
 
 // Add cycle arrows to a help text block.
 EditLevelIHandler.addArrows = function(s, line) {
+    s = s.replace(' ◂▸', '');
     line = line == undefined ? 0 : line;
     var index = -1;
     do {
