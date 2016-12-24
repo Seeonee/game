@@ -16,7 +16,7 @@ Point.load.factory[PowerPoint.TYPE] = PowerPoint;
 
 // During our first draw, we create the actual power.
 PowerPoint.prototype.draw = function(tier) {
-    if (!(this.power)) {
+    if (!this.power) {
         var game = tier.game;
         var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
@@ -32,6 +32,8 @@ PowerPoint.prototype.draw = function(tier) {
         this.power.setRotation(rotation);
         tier.image.addChild(this.power);
         this.power.setEnabled(this.enabled);
+    } else {
+        this.power.updatePalette(tier.palette);
     }
     Point.prototype.draw.call(this, tier);
 };

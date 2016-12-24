@@ -33,6 +33,8 @@ SwitchPoint.prototype.draw = function(tier) {
         this.switch = new WSwitch(game, ap.x, ap.y,
             tier.palette, this.enabled, this.contact);
         game.state.getCurrentState().z.bg.tier().add(this.switch);
+    } else {
+        this.switch.updatePalette(tier.palette);
     }
 };
 

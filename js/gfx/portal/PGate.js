@@ -40,6 +40,12 @@ PGate.RADIUS = 35 / 2;
 PGate.DISABLED_TRIANGLE_ALPHA = 0.25;
 PGate.DISABLED_TRIANGLE_SCALE = 0.7;
 
+
+// Set our colors.
+PGate.prototype.updatePalette = function(palette) {
+    this.tint = palette.c1.i;
+};
+
 // Set our enabled state.
 PGate.prototype.setEnabled = function(enabled) {
     if (enabled == this.enabled) {

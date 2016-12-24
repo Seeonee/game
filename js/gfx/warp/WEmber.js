@@ -25,6 +25,18 @@ WSocket.prototype.constructor = WSocket;
 WSocket.RING_RADIUS = 20;
 
 
+// Set our colors.
+WSocket.prototype.updatePalette = function(palette) {
+    this.tint = palette.c1.i;
+};
+
+
+
+
+
+
+
+
 // Ember smoldering in the center of a warp point.
 var WEmber = function(game) {
     this.game = game;

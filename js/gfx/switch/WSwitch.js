@@ -29,6 +29,11 @@ WSwitch.ALPHA = 0.25;
 WSwitch.LOCK_TIME = 1000; // ms
 
 
+// Set our colors.
+WSwitch.prototype.updatePalette = function(palette) {
+    this.color2 = palette.c2.i;
+};
+
 // Close the circuit.
 WSwitch.prototype.close = function() {
     if (!this.closed) {

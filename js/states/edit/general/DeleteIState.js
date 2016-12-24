@@ -182,6 +182,7 @@ DeleteIState.prototype.finishDeletingTier = function(tier) {
             t.palette = this.game.settings.colors[t.name];
             this.level.tierMap[t.name] = t;
             i += 1;
+            t.renderNeeded = true;
         }
     }
     delete this.level.tierMap['t' + i];

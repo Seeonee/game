@@ -41,6 +41,11 @@ StepRing.Y = -10;
 StepRing.ANGLE = 1 * Math.PI;
 
 
+// Set our colors.
+StepRing.prototype.updatePalette = function(palette) {
+    this.color2 = palette.c2.i;
+};
+
 // Expand/collapse.
 StepRing.prototype.close = function() {
     if (!this.closed) {

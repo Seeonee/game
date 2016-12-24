@@ -20,3 +20,9 @@ PNub.prototype.constructor = PNub;
 
 // Constants.
 PNub.RADIUS = Tier.PATH_WIDTH;
+
+
+// Set our colors.
+PNub.prototype.updatePalette = function(palette) {
+    this.tint = palette.c1.i;
+};

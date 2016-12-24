@@ -65,6 +65,12 @@ TKey.BURST_SCALE = 8;
 TKey.FIX = 2;
 TKey.BURST_DURATION = 500;
 
+
+// Set our colors.
+TKey.prototype.updatePalette = function(palette) {
+    this.tkey.tint = palette.c1.i;
+};
+
 // Pause or unpause the key's hovering.
 TKey.prototype.setPaused = function(paused) {
     if (this.pickedUp) {

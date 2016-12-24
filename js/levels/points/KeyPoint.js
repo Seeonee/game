@@ -13,12 +13,14 @@ Point.load.factory[KeyPoint.TYPE] = KeyPoint;
 
 // During our first draw, we create the actual key.
 KeyPoint.prototype.draw = function(tier) {
-    if (!(this.tkey)) {
+    if (!this.tkey) {
         var game = tier.game;
         var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
         this.tkey = new TKey(game, ap.x, ap.y, tier.palette);
         tier.image.addChild(this.tkey);
+    } else {
+        this.tkey.updatePalette(tier.palette);
     }
     Point.prototype.draw.call(this, tier);
 };

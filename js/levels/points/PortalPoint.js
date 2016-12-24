@@ -45,6 +45,8 @@ PortalPoint.prototype.draw = function(tier) {
             this.x, this.y);
         gp.y -= Math.sign(this.direction) * 2;
         this.emitters.push(this.createEmitter(tier, gp.x, gp.y));
+    } else {
+        this.gate.updatePalette(tier.palette);
     }
 };
 

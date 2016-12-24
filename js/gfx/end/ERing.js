@@ -80,6 +80,12 @@ ERing.prototype.startRotation = function() {
     this.spinTweens.push(t);
 };
 
+// Set our colors.
+ERing.prototype.updatePalette = function(palette) {
+    this.colorOn = palette.c2.i;
+    this.tint = this.enabled ? this.colorOn : this.colorOff;
+};
+
 // Set our enabled state.
 ERing.prototype.setEnabled = function(enabled) {
     if (this.enabled == enabled) {

@@ -45,6 +45,8 @@ WarpPoint.prototype.draw = function(tier) {
             this.toPoint.x, this.toPoint.y);
         this.contrail = new WContrail(this.game, angle);
         this.socket.addChild(this.contrail);
+    } else {
+        this.socket.updatePalette(tier.palette);
     }
 };
 

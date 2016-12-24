@@ -55,6 +55,19 @@ Power.ICON_SLIDE = 25;
 Power.ICON_POWER_DELAY = 100; // ms
 Power.DISABLED_DIAMOND_ALPHA = 0.25;
 
+
+// Set our colors.
+Power.prototype.updatePalette = function(palette) {
+    this.diamondTint = palette.c2.i;
+    this.diamondUnpowered = this.diamondTint;
+    this.diamondPowered = this.diamondTint;
+    this.diamond_rgb = Color.rgb(this.selected ?
+        this.diamondPowered : this.diamondUnpowered);
+    this.diamond.tint = (this.diamond_rgb.r << 16) +
+        (this.diamond_rgb.g << 8) +
+        (this.diamond_rgb.b);
+};
+
 // Twist our rotation.
 Power.prototype.setRotation = function(angle) {
     this.rotation = angle;

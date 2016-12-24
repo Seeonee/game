@@ -1,4 +1,3 @@
-delete tier = colors on remaining tiers get wonky
 add camera controls via right stick
 hover "add point" should attach to it
 delete from float should kill movement / leaving float should do so

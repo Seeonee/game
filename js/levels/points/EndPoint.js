@@ -74,6 +74,11 @@ EndPoint.prototype.draw = function(tier) {
         ring0.events.onDestabilize.add(function() {
             this.stabilized = false;
         }, this);
+    } else {
+        for (var i = 0; i < this.rings.all.length; i++) {
+            this.rings.all[i].updatePalette(tier.palette);
+        }
+        this.nub.updatePalette(tier.palette);
     }
 };
 

@@ -21,6 +21,8 @@ StartPoint.prototype.draw = function(tier) {
             this.x, this.y);
         this.nub = tier.image.addChild(new PNub(tier.game,
             ap.x, ap.y, tier.palette.c1.i));
+    } else {
+        this.nub.updatePalette(tier.palette);
     }
 };
 
