@@ -25,7 +25,7 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     new CustomizeStartPointIState(this, this.level);
     new CustomizeEndPointIState(this, this.level);
     new CustomizeKeyPointIState(this, this.level);
-    // new CustomizeSwitchPointIState(this, this.level);
+    new CustomizeSwitchPointIState(this, this.level);
     new CustomizeNormalPointIState(this, this.level);
 
     // Test states.

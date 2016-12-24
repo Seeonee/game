@@ -3,7 +3,7 @@
 // It's like a circuit; closed means we send a signal, 
 // open means we don't (unless you wire stuff to open).
 var SwitchPoint = function(name, x, y, enabled, /* wires, */
-    startClosed, once, contact) {
+    once, contact) {
     Point.call(this, name, x, y, enabled);
     this.once = once;
     this.contact = contact;
