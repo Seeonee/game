@@ -55,7 +55,7 @@ CustomizeSwitchPoint3IState.prototype.constructor = CustomizeSwitchPoint3IState;
 
 
 
-// Set the end gate.
+// Set up a switch.
 var CustomizeSwitchPoint4IState = function(handler, level) {
     BaseCustomizeIState.call(this, handler, level, SwitchPoint, 4);
     this.showArrows = false;

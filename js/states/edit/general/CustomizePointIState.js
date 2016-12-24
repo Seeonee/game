@@ -121,6 +121,11 @@ OptionGathererIState.prototype.getOptionText = function() {
     return '?'; // Override me!
 };
 
+// What option do we represent?
+OptionGathererIState.prototype.getOptionValue = function() {
+    return undefined; // Override me!
+};
+
 // Update help text. This will gather all of our lower-depth 
 // "parent" states' texts.
 OptionGathererIState.prototype.gatherOptions = function() {
