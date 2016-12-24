@@ -18,7 +18,7 @@ ResetLevelIState.prototype.activated = function(prev) {
     this.chargedTime = -1;
 };
 
-// Called when we become the active state.
+// Called when we become the inactive state.
 ResetLevelIState.prototype.deactivated = function(next) {
     if (this.image) {
         this.image.destroy();

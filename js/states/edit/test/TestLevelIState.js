@@ -20,7 +20,7 @@ TestLevelIState.prototype.activated = function(prev) {
     }
 };
 
-// Called when we become the active state.
+// Called when we become the inactive state.
 TestLevelIState.prototype.deactivated = function(next) {
     if (this.avatar.point) {
         this.avatar.point.notifyDetached(this.avatar);
