@@ -39,6 +39,7 @@ WarpPoint.prototype.draw = function(tier) {
         this.socket = new WSocket(this.game, ap.x, ap.y, this.tier.palette);
         this.tier.image.addChild(this.socket);
         this.ember = new WEmber(this.game);
+        this.ember.setEnabled(this.enabled);
         this.socket.addChild(this.ember);
         var angle = Utils.angleBetweenPoints(this.x, this.y,
             this.toPoint.x, this.toPoint.y);
