@@ -1,10 +1,11 @@
 // A point that allows transitioning to other tiers.
-var PortalPoint = function(name, x, y, direction, to, enabled) {
+var PortalPoint = function(name, x, y, direction, to, enabled, synchronize) {
     Point.call(this, name, x, y, enabled);
     this.direction = direction;
+    this.to = to;
+    this.synchronize = synchronize;
     this.emitters = [];
     this.z = Point.Z + 1;
-    this.to = to;
     this.istateName = PortalIState.NAME;
 };
 
@@ -32,6 +33,7 @@ PortalPoint.prototype.draw = function(tier) {
     this.game = tier.game;
     this.wipePoint(tier.bitmap.context);
     if (!this.drawn) {
+        this.cacheToPoint(tier);
         this.drawn = true;
         var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
@@ -44,6 +46,17 @@ PortalPoint.prototype.draw = function(tier) {
         gp.y -= Math.sign(this.direction) * 2;
         this.emitters.push(this.createEmitter(tier, gp.x, gp.y));
     }
+};
+
+// Find the point we link to.
+PortalPoint.prototype.cacheToPoint = function(tier) {
+    if (this.toPoint) {
+        return;
+    }
+    var level = tier.level;
+    var t = this.direction > 0 ? level.getNextTierUp() :
+        level.getNextTierDown();
+    this.toPoint = t.pointMap[this.to];
 };
 
 // Wipe a spot on the tier bitmap.
@@ -80,7 +93,7 @@ PortalPoint.prototype.createEmitter = function(tier, x, y) {
 };
 
 // Set our enabled state.
-PortalPoint.prototype.setEnabled = function(enabled) {
+PortalPoint.prototype.setEnabled = function(enabled, doNotSync) {
     if (enabled == this.enabled) {
         return;
     }
@@ -90,6 +103,9 @@ PortalPoint.prototype.setEnabled = function(enabled) {
         this.avatar.tierMeter.fade(this.enabled);
     }
     this.gate.setEnabled(enabled);
+    if (this.synchronize && !doNotSync && this.toPoint) {
+        this.toPoint.setEnabled(this.enabled, true);
+    }
 };
 
 // Turn on/off our particle shower.
@@ -146,8 +162,8 @@ PortalPoint.prototype.toJSON = function() {
     result.type = PortalPoint.TYPE;
     result.direction = this.direction;
     result.to = this.to;
-    if (!this.enabled) {
-        result.enabled = this.enabled;
+    if (!this.synchronize) {
+        result.synchronize = this.synchronize;
     }
     return result;
 };

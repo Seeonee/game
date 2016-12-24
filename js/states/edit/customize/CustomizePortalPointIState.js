@@ -6,6 +6,7 @@ var CustomizePortalPointIState = function(handler, level) {
         optionName, options);
     new CustomizePortalPoint2IState(handler, level);
     new CustomizePortalPoint3IState(handler, level);
+    new CustomizePortalPoint4IState(handler, level);
 };
 
 CustomizePortalPointIState.prototype = Object.create(OptionSetGathererIState.prototype);
@@ -31,8 +32,8 @@ CustomizePortalPointIState.prototype.update = function() {
 
 // Set up a portal point.
 var CustomizePortalPoint2IState = function(handler, level) {
-    var optionName = 'destination';
-    var options = [];
+    var optionName = 'synchronize';
+    var options = [true, false];
     OptionSetGathererIState.call(this, handler, level, PortalPoint, 2,
         optionName, options);
 };
@@ -41,8 +42,26 @@ CustomizePortalPoint2IState.prototype = Object.create(OptionSetGathererIState.pr
 CustomizePortalPoint2IState.prototype.constructor = CustomizePortalPoint2IState;
 
 
+
+
+
+
+
+
+// Set up a portal point.
+var CustomizePortalPoint3IState = function(handler, level) {
+    var optionName = 'destination';
+    var options = [];
+    OptionSetGathererIState.call(this, handler, level, PortalPoint, 3,
+        optionName, options);
+};
+
+CustomizePortalPoint3IState.prototype = Object.create(OptionSetGathererIState.prototype);
+CustomizePortalPoint3IState.prototype.constructor = CustomizePortalPoint3IState;
+
+
 // Called when activated.
-CustomizePortalPoint2IState.prototype.activated = function(prev) {
+CustomizePortalPoint3IState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
     this.point = this.avatar.point;
     this.coords = '(' + this.point.gx + ',' + this.point.gy + ')';
@@ -75,14 +94,14 @@ CustomizePortalPoint2IState.prototype.activated = function(prev) {
 };
 
 // Advance only if we're on a valid target.
-CustomizePortalPoint2IState.prototype.advance = function() {
+CustomizePortalPoint3IState.prototype.advance = function() {
     if (this.getOptionValue()) {
         return OptionGathererIState.prototype.advance.call(this);
     }
 };
 
 // Create an option for one direction we can go to.
-CustomizePortalPoint2IState.prototype.createOption = function(
+CustomizePortalPoint3IState.prototype.createOption = function(
     index, increment, word) {
     var option = {};
     var tier = this.level.tiers[index + increment];
@@ -109,7 +128,7 @@ CustomizePortalPoint2IState.prototype.createOption = function(
 };
 
 // Find a point we can connect to.
-CustomizePortalPoint2IState.prototype.findCounterpoint = function(tier) {
+CustomizePortalPoint3IState.prototype.findCounterpoint = function(tier) {
     var x = this.point.gx;
     var y = this.point.gy;
     for (var i = 0; i < tier.points.length; i++) {
@@ -128,17 +147,17 @@ CustomizePortalPoint2IState.prototype.findCounterpoint = function(tier) {
 
 
 // Set up a portal point.
-var CustomizePortalPoint3IState = function(handler, level) {
-    BaseCustomizeIState.call(this, handler, level, PortalPoint, 3);
+var CustomizePortalPoint4IState = function(handler, level) {
+    BaseCustomizeIState.call(this, handler, level, PortalPoint, 4);
     this.showArrows = false;
 };
 
-CustomizePortalPoint3IState.prototype = Object.create(BaseCustomizeIState.prototype);
-CustomizePortalPoint3IState.prototype.constructor = CustomizePortalPoint3IState;
+CustomizePortalPoint4IState.prototype = Object.create(BaseCustomizeIState.prototype);
+CustomizePortalPoint4IState.prototype.constructor = CustomizePortalPoint4IState;
 
 
 // Update loop.
-CustomizePortalPoint3IState.prototype.update = function() {
+CustomizePortalPoint4IState.prototype.update = function() {
     var options = this.prev.gatherOptions();
     var tier = options.destination.t;
     var p = options.destination.p;
@@ -148,12 +167,18 @@ CustomizePortalPoint3IState.prototype.update = function() {
     portal1.enabled = options['start enabled'];
     portal1.direction = options.destination.d;
     portal1.to = p;
+    portal1.synchronize = options.synchronize;
 
     // Set up the second portal.
     var portal2 = new PortalPoint();
     portal2.enabled = portal1.enabled;
     portal2.direction = -1 * portal1.direction;
     portal2.to = this.point.name;
+    portal2.synchronize = portal1.synchronize;
+
+    // Go ahead and link them.
+    portal1.toPoint = portal2;
+    portal2.toPoint = portal1;
 
     if (tier.pointMap[p]) {
         tier.replacePoint(tier.pointMap[p], portal2);

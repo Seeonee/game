@@ -3,7 +3,7 @@
     while selected, no further inputs accepted
     however, shows an overlay with all controls for various modes
 * general
-    while selected, enables the general editing controls:
+-   while selected, enables the general editing controls:
 -        X to add point along path
 -            O to cancel
 -        X to add point from point
@@ -12,7 +12,7 @@
 -        O (hold) to delete + merge paths
 -        O (last point) to delete tier (confirm)
 -       triangle to toggle enabled
-        square to begin customizing a point
+-       square to begin customizing a point
 -        R2 (hold) to float
 -        L1 to move up a tier
 -        L1 (hold) to add tier below lowest
