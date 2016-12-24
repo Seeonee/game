@@ -261,6 +261,9 @@ TierMeter.prototype.fillUpCloud = function(keys) {
 TierMeter.prototype.updateSettings = function(settings) {
     var old = this.hud;
     this.hud = settings.hud;
+    if (this.hud == Settings.HUD_SOMETIMES && settings.edit) {
+        this.hud = Settings.HUD_ALWAYS;
+    }
     if (old == this.hud) {
         return;
     }
