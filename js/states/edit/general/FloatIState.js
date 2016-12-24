@@ -29,6 +29,12 @@ FloatIState.prototype.activated = function(prev) {
     this.path = undefined;
 };
 
+// Called when we deactivate.
+FloatIState.prototype.deactivated = function(next) {
+    this.avatar.body.velocity.x = 0;
+    this.avatar.body.velocity.y = 0;
+};
+
 // Called on update.
 FloatIState.prototype.update = function() {
     // Move freely.

@@ -18,7 +18,7 @@ GeneralEditIState.prototype.activated = function(prev) {
 };
 
 // Called when we deactivate.
-GeneralEditIState.prototype.deactivated = function(prev) {
+GeneralEditIState.prototype.deactivated = function(next) {
     this.avatar.move(0, 0);
 };
 
