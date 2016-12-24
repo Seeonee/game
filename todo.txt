@@ -1,3 +1,6 @@
+camera bounds ratio should only apply when moving towards bound
+add camera acceleration
+
 add lock mechanics
 add editor mode for defining point properties such as portals, powers, etc
 add "wire" paths + gfx for powering points on
