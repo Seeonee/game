@@ -20,7 +20,7 @@ EditControlsIState.prototype.constructor = EditControlsIState;
 // Hooray for constants!
 EditControlsIState.COLUMN_X_OFFSET = 120;
 EditControlsIState.CURTAIN_W = 430;
-EditControlsIState.CURTAIN_H = 400;
+EditControlsIState.CURTAIN_H = 425;
 EditControlsIState.DEADZONE_X_OFFSET = 150;
 EditControlsIState.DEADZONE_Y_OFFSET = 150;
 
@@ -43,7 +43,8 @@ EditControlsIState.prototype.activated = function(prev) {
     s += c(bm.EDIT_STEP_DOWN) + '\n';
     s += c(bm.EDIT_STEP_UP) + ' (hold)\n';
     s += c(bm.EDIT_STEP_DOWN) + ' (hold)\n';
-    s += c(bm.EDIT_MODE_LEFT) + c(bm.EDIT_MODE_RIGHT);
+    s += c(bm.EDIT_MODE_LEFT) + c(bm.EDIT_MODE_RIGHT) + '\n';
+    s += c(bm.SELECT) + ' (hold)';
 
     var s2 = '';
     s2 += 'add point\n';
@@ -57,23 +58,18 @@ EditControlsIState.prototype.activated = function(prev) {
     s2 += 'descend tier\n';
     s2 += '(on top tier) new tier above\n';
     s2 += '(on bottom tier) new tier below\n';
-    s2 += 'cycle menu options';
+    s2 += 'cycle menu options\n';
+    s2 += 'activate certain menu options';
     this.text.visible = true;
     this.text.setText(s2);
 
     this.avatar.help.setText(EditLevelIHandler.addArrows(s));
     this.avatar.help.setCurtainDimensions(
         EditControlsIState.CURTAIN_W, EditControlsIState.CURTAIN_H);
-
-    this.deadzone = this.game.camera.deadzone;
-    this.game.camera.deadzone = new Phaser.Rectangle(
-        EditControlsIState.DEADZONE_X_OFFSET,
-        EditControlsIState.DEADZONE_Y_OFFSET, 1, 1);
 };
 
 // Called when we become the inactive state.
 EditControlsIState.prototype.deactivated = function(next) {
-    this.game.camera.deadzone = this.deadzone;
     this.text.visible = false;
 };
 

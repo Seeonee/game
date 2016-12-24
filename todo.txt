@@ -1,7 +1,3 @@
-add camera controls via right stick
-hover "add point" should attach to it
-
-
 add lock mechanics
 add editor mode for defining point properties such as portals, powers, etc
 add "wire" paths + gfx for powering points on
@@ -10,3 +6,5 @@ add settings submenu for key bindings
 add gpad version that handles keyboard input
 add ability for menu items to have things other than raw text
 add sound fx and music
+consider handling velocity internally for gameplay loop
+    may fix the overshoot bugs

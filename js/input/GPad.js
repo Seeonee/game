@@ -35,6 +35,24 @@ GPad.prototype.isTilted = function() {
     return lx != 0 || ly != 0;
 };
 
+// Updates based on the actual (second) gamepad joystick.
+// Returns an object with .angle and .tilt keys.
+GPad.prototype.getAngleAndTilt2 = function() {
+    var lx = this.pad.axis(this.game.settings.buttonMap.CAMERA_X) || 0;
+    var ly = this.pad.axis(this.game.settings.buttonMap.CAMERA_Y) || 0;
+    this.angle = Utils.angleBetweenPoints(0, 0, lx, ly);
+    this.tilt = Utils.distanceBetweenPoints(0, 0, lx, ly);
+    return { angle: this.angle, tilt: this.tilt };
+};
+
+// Returns true if any tilt (+angle) is being applied 
+// (to the second joystick).
+GPad.prototype.isTilted2 = function() {
+    var lx = this.pad.axis(this.game.settings.buttonMap.CAMERA_X) || 0;
+    var ly = this.pad.axis(this.game.settings.buttonMap.CAMERA_Y) || 0;
+    return lx != 0 || ly != 0;
+};
+
 // Figure out if a button was just pressed, taking into account 
 // if we've already consumed this event.
 GPad.prototype.justPressed = function(buttonCode) {
