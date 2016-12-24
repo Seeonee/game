@@ -18,7 +18,6 @@ EndIState.prototype.constructor = EndIState;
 EndIState.prototype.activated = function(prev) {
     // Don't let the menu activate yet.
     this.pressed = false;
-    this.avatar.setBobble(true);
 };
 
 // Called when stepped off.
@@ -42,6 +41,8 @@ EndIState.prototype.update = function() {
         return;
     }
     if (!this.avatar.point.isEnabled()) {
+        this.avatar.setBobble(false);
+        this.pressed = false;
         return false;
     }
     if (this.gpad.justPressed(this.buttonMap.SELECT)) {
@@ -55,6 +56,7 @@ EndIState.prototype.update = function() {
         this.avatar.setPressed(false);
         this.chargeUp();
     } else {
+        this.avatar.setBobble(true);
         return false;
     }
 };

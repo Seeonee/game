@@ -18,7 +18,6 @@ PortalIState.REACTIVATE_DELAY = 100; // ms
 // Called when stepped on.
 PortalIState.prototype.activated = function(prev) {
     this.pressed = false;
-    this.avatar.setBobble(true);
 };
 
 // Called when stepped off.
@@ -34,6 +33,8 @@ PortalIState.prototype.update = function() {
         return;
     }
     if (!this.avatar.point.isEnabled()) {
+        this.avatar.setBobble(false);
+        this.pressed = false;
         return false;
     }
     if (this.gpad.justPressed(this.buttonMap.SELECT)) {
@@ -55,6 +56,7 @@ PortalIState.prototype.update = function() {
         }
         this.level.advanceTierUp(pointName, direction);
     } else {
+        this.avatar.setBobble(true);
         return false;
     }
 };

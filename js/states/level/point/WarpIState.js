@@ -23,7 +23,6 @@ WarpIState.AVATAR_FADE_DELAY = 150; // ms
 // Called when stepped on.
 WarpIState.prototype.activated = function(prev) {
     this.pressed = false;
-    this.avatar.setBobble(true);
 };
 
 // Called when stepped off.
@@ -38,6 +37,8 @@ WarpIState.prototype.update = function() {
         return;
     }
     if (!this.avatar.point.isEnabled()) {
+        this.avatar.setBobble(false);
+        this.pressed = false;
         return false;
     }
     if (this.gpad.justPressed(this.buttonMap.SELECT)) {
@@ -52,6 +53,7 @@ WarpIState.prototype.update = function() {
         this.pressed = false;
         this.charge();
     } else {
+        this.avatar.setBobble(true);
         return false;
     }
 };

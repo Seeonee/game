@@ -17,7 +17,6 @@ SwitchIState.REACTIVATE_DELAY = 100; // ms
 // Called on activate.
 SwitchIState.prototype.activated = function(prev) {
     this.pressed = false;
-    this.avatar.setBobble(true);
 
     this.point = this.avatar.point;
     this.switch = this.avatar.point.switch;
@@ -44,8 +43,11 @@ SwitchIState.prototype.deactivated = function(prev) {
 SwitchIState.prototype.update = function() {
     var time = this.game.time.now;
     if (this.done || this.contact || time < this.reactivateTime) {
+        this.avatar.setBobble(false);
+        this.pressed = false;
         return false;
     }
+    this.avatar.setBobble(true);
     if (this.gpad.justPressed(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
         this.avatar.setBobble(false);
