@@ -95,8 +95,7 @@ EditHelp.prototype._setText = function(text, hold) {
         var w = 2 * EditHelp.CURTAIN_PAD + this.main.width;
         var h = 0 * EditHelp.CURTAIN_PAD + this.main.height;
     }
-    this.curtain.scale.setTo(w / EditHelp.CURTAIN_D,
-        h / EditHelp.CURTAIN_D);
+    this.setCurtainDimensions(w, h);
 
     if (hold) {
         hold = hold == true ? EditHelp.DEFAULT_HOLD : hold;
@@ -104,6 +103,12 @@ EditHelp.prototype._setText = function(text, hold) {
         this.event = this.game.time.events.add(
             hold, this.holdExpired, this);
     }
+};
+
+// Called when a hold expires.
+EditHelp.prototype.setCurtainDimensions = function(w, h) {
+    this.curtain.scale.setTo(w / EditHelp.CURTAIN_D,
+        h / EditHelp.CURTAIN_D);
 };
 
 // Called when a hold expires.

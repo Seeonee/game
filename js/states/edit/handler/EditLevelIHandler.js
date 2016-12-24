@@ -40,6 +40,9 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     // Save the level.
     this.modes.push(new SaveLevelIState(this, this.level));
 
+    // Display controls..
+    this.modes.push(new EditControlsIState(this, this.level));
+
     // Set our starting state.
     this.activate(GeneralEditIState.NAME);
 };

@@ -1,7 +1,7 @@
 -top level: (always show indicator for current point/path name + coords)
 * controls
-    while selected, no further inputs accepted
-    however, shows an overlay with all controls for various modes
+-   while selected, no further inputs accepted
+-   however, shows an overlay with all controls for various modes
 * general
 -   while selected, enables the general editing controls:
 -        X to add point along path
