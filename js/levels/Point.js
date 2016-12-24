@@ -18,6 +18,10 @@ var Point = function(name, x, y, enabled) {
     this.startEnabled = this.enabled;
 
     this.radius = Tier.PATH_WIDTH;
+
+    this.events = {};
+    this.events.onEnabled = new Phaser.Signal();
+    this.events.onDisabled = new Phaser.Signal();
 };
 
 Point.TYPE = 'point';
@@ -145,6 +149,11 @@ Point.prototype.setEnabled = function(enabled) {
         } else {
             this.disableIState();
         }
+    }
+    if (this.enabled) {
+        this.events.onEnabled.dispatch();
+    } else {
+        this.events.onDisabled.dispatch();
     }
 };
 

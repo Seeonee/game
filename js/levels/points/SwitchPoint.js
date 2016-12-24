@@ -10,9 +10,6 @@ var SwitchPoint = function(name, x, y, enabled, /* wires, */
     this.done = false;
 
     this.istateName = SwitchIState.NAME;
-    this.events = this.events ? this.events : {};
-    this.events.onEnabled = new Phaser.Signal();
-    this.events.onDisabled = new Phaser.Signal();
 };
 
 SwitchPoint.TYPE = 'switch';
@@ -64,21 +61,15 @@ SwitchPoint.prototype.flip = function() {
 // Toggle enabledness, aka flip the switch.
 // Do *NOT* call our super.setEnabled().
 SwitchPoint.prototype.setEnabled = function(enabled) {
+    if (this.enabled == enabled) {
+        return;
+    }
     if (this.once) {
         this.done = true;
         this.switch.lock();
     }
-    this.enabled = enabled;
     this.switch.flip();
-    if (this.enabled) {
-        // Close the circuit. Typically powers most wires.
-        this.events.onEnabled.dispatch();
-        // TODO: Power our closed-only wires.
-    } else {
-        // Open up. Typically cuts power to most wires.
-        this.events.onDisabled.dispatch();
-        // TODO: Power our open-only wires.
-    }
+    Point.prototype.setEnabled.call(this, enabled);
 };
 
 // Should the avatar "stick" briefly when passing this point?
