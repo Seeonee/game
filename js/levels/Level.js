@@ -189,7 +189,7 @@ Level.load = function(game, name, json) {
         var key = keys[i];
         var tierObj = tiers[key];
         var tier = Tier.load(game, key, tierObj);
-        tier.level = this;
+        tier.level = level;
         level.addTier(key, tier);
     }
     OUTER: for (var i = 0; i < level.tiers.length; i++) {
