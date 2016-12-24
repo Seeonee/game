@@ -37,6 +37,7 @@ PortalPoint.prototype.draw = function(tier) {
             this.x, this.y);
         this.gate = new PGate(this.game, ap.x, ap.y,
             tier.palette, this.direction);
+        this.gate.setEnabled(this.enabled);
         this.tier.image.addChild(this.gate);
         var gp = tier.translateInternalPointToGamePoint(
             this.x, this.y);
