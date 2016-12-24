@@ -168,7 +168,16 @@ var OptionSetGathererIState = function(handler, level,
     // Each option should have a .value and (optionally) a .text.
     // The .value is what matters; the .text is its string
     // representation, if you want something custom.
-    this.options = options;
+    // If options have neither, we wrap them and assume 
+    // they represent their own .value (and .text).
+    this.options = [];
+    for (var i = 0; i < options.length; i++) {
+        var option = options[i];
+        if (Object.keys(option).indexOf('value') == -1) {
+            option = { value: option };
+        }
+        this.options.push(option);
+    }
     this.selected = 0;
 };
 
@@ -213,11 +222,7 @@ OptionSetGathererIState.prototype.update = function() {
 
 // Handle point en/dis-abling.
 var CustomizePointIState = function(handler, level) {
-    var options = [];
-    var keys = Object.keys(Point.load.factory);
-    for (var i = 0; i < keys.length; i++) {
-        options.push({ value: keys[i] });
-    }
+    var options = Object.keys(Point.load.factory);
     options.push({ text: 'none', value: undefined });
     OptionSetGathererIState.call(this, handler, level, undefined, 0,
         '', options);

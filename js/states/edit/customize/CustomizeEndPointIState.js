@@ -1,7 +1,7 @@
 // Set the end gate.
 var CustomizeEndPointIState = function(handler, level) {
     var optionName = 'start enabled';
-    var options = [{ value: true }, { value: false }];
+    var options = [true, false];
     OptionSetGathererIState.call(this, handler, level, EndPoint, 1,
         optionName, options);
     new CustomizeEndPoint2IState(handler, level);
