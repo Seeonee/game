@@ -42,12 +42,18 @@ EndPoint.prototype.draw = function(tier) {
         var gp = tier.translateInternalPointToGamePoint(
             this.x, this.y);
         for (var i = 0; i < EndPoint.INNER_RINGS; i++) {
-            this.rings.inner.push(new ERing(this.game,
-                gp.x, gp.y, true, tier.palette, i));
+            var ring = new ERing(this.game, gp.x, gp.y,
+                true, tier.palette, i)
+            ring.setStable(!this.enabled && this.attached);
+            ring.setEnabled(this.enabled);
+            this.rings.inner.push(ring);
         }
         for (var i = 0; i < EndPoint.OUTER_RINGS; i++) {
-            this.rings.outer.push(new ERing(this.game,
-                gp.x, gp.y, false, tier.palette, i));
+            var ring = new ERing(this.game, gp.x, gp.y,
+                false, tier.palette, i);
+            ring.setStable(!this.enabled || this.attached);
+            ring.setEnabled(this.enabled);
+            this.rings.outer.push(ring);
         }
         this.rings.all = this.rings.inner.concat(this.rings.outer);
         for (var i = 0; i < this.rings.all.length; i++) {
@@ -92,9 +98,9 @@ EndPoint.prototype.setEnabled = function(enabled) {
     }
     Point.prototype.setEnabled.call(this, enabled);
     for (var i = 0; i < this.rings.all.length; i++) {
-        var ring = this.rings.all[i]
+        var ring = this.rings.all[i];
+        ring.setStable(!this.enabled || this.attached);
         ring.setEnabled(this.enabled);
-        ring.setStable(this.attached);
     }
 };
 
@@ -111,8 +117,10 @@ EndPoint.prototype.notifyAttached = function(avatar, prev) {
 // Let the rings orbit again.
 EndPoint.prototype.notifyDetached = function(avatar, next) {
     Point.prototype.notifyDetached.call(this, avatar, next);
-    for (var i = 0; i < this.rings.all.length; i++) {
-        this.rings.all[i].setStable(false);
+    if (this.enabled) {
+        for (var i = 0; i < this.rings.all.length; i++) {
+            this.rings.all[i].setStable(false);
+        }
     }
 };
 
