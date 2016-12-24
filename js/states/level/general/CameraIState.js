@@ -3,13 +3,23 @@ var CameraIState = function(handler) {
     IState.call(this, CameraIState.NAME, handler);
     this.free = false;
 
-    if (CameraIState.FREE_DEADZONE == undefined) {
-        CameraIState.FREE_DEADZONE = new Phaser.Rectangle(
-            CameraIState.DEADZONE_EDGE_X,
-            CameraIState.DEADZONE_EDGE_Y,
-            this.game.width - (2 * CameraIState.DEADZONE_EDGE_X),
-            this.game.height - (2 * CameraIState.DEADZONE_EDGE_Y));
-    }
+    this.dzFree = new Phaser.Rectangle(
+        CameraIState.DEADZONE_EDGE_X,
+        CameraIState.DEADZONE_EDGE_Y,
+        this.game.width - (2 * CameraIState.DEADZONE_EDGE_X),
+        this.game.height - (2 * CameraIState.DEADZONE_EDGE_Y));
+    this.dzSnap = {};
+    this.game.camera.deadzone.copyTo(
+        this.dzSnap);
+
+    this.xbounds = {
+        a: CameraIState.DEADZONE_EDGE_X,
+        b: PlayLevelState.DEADZONE_EDGE_X
+    };
+    this.ybounds = {
+        a: CameraIState.DEADZONE_EDGE_Y,
+        b: PlayLevelState.DEADZONE_EDGE_Y
+    };
 };
 
 CameraIState.NAME = 'camera';
@@ -18,9 +28,7 @@ CameraIState.prototype.constructor = CameraIState;
 
 // Constants.
 CameraIState.MAX_SPEED = 500;
-CameraIState.SNAP_TIME = 1500;
-CameraIState.FREE_DEADZONE = undefined;
-CameraIState.SNAP_DEADZONE = undefined;
+CameraIState.SNAP_TIME = 800;
 CameraIState.DEADZONE_EDGE_X = 50;
 CameraIState.DEADZONE_EDGE_Y = 50;
 
@@ -42,52 +50,12 @@ CameraIState.prototype.update = function() {
 // Move the camera.
 CameraIState.prototype.moveCamera = function(angle, tilt) {
     var ratio = this.game.time.elapsed / 1000;
-    var br = this.getBoundsRatio();
+    var br = this.getBoundsRatio(angle);
     var speed = ratio * tilt * CameraIState.MAX_SPEED;
     var vx = br.x * speed * Math.sin(angle);
     var vy = br.y * speed * Math.cos(angle);
     this.game.camera.x += vx;
     this.game.camera.y += vy;
-};
-
-// Compute the taper as we reach our deadzone bounds.
-CameraIState.prototype.getBoundsRatio = function() {
-    var ratio = { x: 1, y: 1 };
-    var w = this.game.camera.width;
-    var h = this.game.camera.height;
-
-    var x = this.game.camera.target.x - this.game.camera.x;
-    var bounds = {
-        a: CameraIState.DEADZONE_EDGE_X,
-        b: PlayLevelState.DEADZONE_EDGE_X
-    };
-    ratio.x = Math.min(ratio.x, this.applyBounds(x, bounds));
-    bounds = {
-        a: w - PlayLevelState.DEADZONE_EDGE_X,
-        b: w - CameraIState.DEADZONE_EDGE_X
-    };
-    ratio.x = Math.min(ratio.x, 1 - this.applyBounds(x, bounds));
-
-    var y = this.game.camera.target.y - this.game.camera.y;
-    var bounds = {
-        a: CameraIState.DEADZONE_EDGE_Y,
-        b: PlayLevelState.DEADZONE_EDGE_Y
-    };
-    ratio.y = Math.min(ratio.y, this.applyBounds(y, bounds));
-    bounds = {
-        a: h - PlayLevelState.DEADZONE_EDGE_Y,
-        b: h - CameraIState.DEADZONE_EDGE_Y
-    };
-    ratio.y = Math.min(ratio.y, 1 - this.applyBounds(y, bounds));
-
-    ratio.x = Math.sqrt(ratio.x);
-    ratio.y = Math.sqrt(ratio.y);
-    return ratio;
-};
-
-// Compute the taper as we reach our deadzone bounds.
-CameraIState.prototype.applyBounds = function(v, bounds) {
-    return (v - bounds.a) / (bounds.b - bounds.a);
 };
 
 // Loosen the deadzone.
@@ -97,12 +65,8 @@ CameraIState.prototype.freeCamera = function() {
         this.tween.stop();
         this.tween = undefined;
     }
-    if (CameraIState.SNAP_DEADZONE == undefined) {
-        CameraIState.SNAP_DEADZONE = {};
-        this.game.camera.deadzone.copyTo(
-            CameraIState.SNAP_DEADZONE);
-    }
-    this.game.camera.deadzone.copyFrom(CameraIState.FREE_DEADZONE);
+    if (this.dzSnap == undefined) {}
+    this.game.camera.deadzone.copyFrom(this.dzFree);
 };
 
 // Restrict the deadzone.
@@ -111,12 +75,69 @@ CameraIState.prototype.snapCameraBack = function() {
     if (this.tween) {
         return;
     }
-    this.tween = this.game.add.tween(this.game.camera.deadzone);
-    this.tween.to(CameraIState.SNAP_DEADZONE, CameraIState.SNAP_TIME,
+
+    var c = this.game.camera;
+    var w = c.width;
+    var h = c.height;
+    var x = c.target.x - c.x;
+    var y = c.target.y - c.y;
+    x = x > w / 2 ? w - x : x;
+    y = y > w / 2 ? h - y : y;
+    if (x < PlayLevelState.DEADZONE_EDGE_X) {
+        var delta = x - c.deadzone.x;
+        c.deadzone.x += delta;
+        c.deadzone.width -= 2 * delta;
+    }
+    if (y < PlayLevelState.DEADZONE_EDGE_Y) {
+        var delta = y - c.deadzone.y;
+        c.deadzone.y += delta;
+        c.deadzone.height -= 2 * delta;
+    }
+
+    this.tween = this.game.add.tween(c.deadzone);
+    this.tween.to(this.dzSnap, CameraIState.SNAP_TIME,
         Phaser.Easing.Sinusoidal.InOut, true);
     this.tween.onComplete.add(function() {
         this.tween = undefined;
     }, this);
+};
+
+// Compute the taper as we reach our deadzone bounds.
+CameraIState.prototype.getBoundsRatio = function(angle) {
+    var ratio = { x: 1, y: 1 };
+    var w = this.game.camera.width;
+    var h = this.game.camera.height;
+
+    var x = this.game.camera.target.x - this.game.camera.x;
+    var a = Math.PI / 2;
+    if (x > w / 2) {
+        x = w - x;
+        a += Math.PI;
+    }
+    var xangle = Utils.getBoundedAngleDifference(a, angle);
+    if (xangle < Math.PI / 2) {
+        ratio.x = this.applyBounds(x, this.xbounds);
+    }
+
+    var y = this.game.camera.target.y - this.game.camera.y;
+    var a = 0;
+    if (y > h / 2) {
+        y = h - y;
+        a += Math.PI;
+    }
+    var yangle = Utils.getBoundedAngleDifference(a, angle);
+    if (yangle < Math.PI / 2) {
+        ratio.y = this.applyBounds(y, this.ybounds);
+    }
+
+    ratio.x = Math.cbrt(ratio.x);
+    ratio.y = Math.cbrt(ratio.y);
+    return ratio;
+};
+
+// Compute the taper as we reach our deadzone bounds.
+CameraIState.prototype.applyBounds = function(v, bounds) {
+    return (v - bounds.a) / (bounds.b - bounds.a);
 };
 
 // Handle a render.
