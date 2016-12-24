@@ -1,6 +1,5 @@
 add camera controls via right stick
 hover "add point" should attach to it
-delete from float should kill movement / leaving float should do so
 
 
 add lock mechanics

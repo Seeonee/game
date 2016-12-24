@@ -145,6 +145,12 @@ AddFromPathIState.prototype.update = function() {
 };
 
 
+
+
+
+
+
+
 // Handle point + path addition to a starting point.
 var AddFromPointIState = function(handler, level) {
     IState.call(this, AddFromPointIState.NAME, handler);
@@ -320,6 +326,12 @@ AddFromPointIState.prototype.update = function() {
 };
 
 
+
+
+
+
+
+
 // Handle point addition in the vast unknown.
 var AddFromFloatIState = function(handler, level) {
     IState.call(this, AddFromFloatIState.NAME, handler);
@@ -368,14 +380,22 @@ AddFromFloatIState.prototype.update = function() {
     }
     if (this.gpad.justReleased(this.buttonMap.EDIT_ADD)) {
         this.gpad.consumeButtonEvent();
+        var prev = FloatIState.NAME;
         if (charged) {
-            this.tier.addPoint(this.newPoint,
+            var p = this.tier.addPoint(this.newPoint,
                 this.near.x, this.near.y);
             this.avatar.help.setText('added point ' + this.newPoint +
                 ' ' + this.details, true);
+            this.avatar.x = p.gx;
+            this.avatar.y = p.gy;
+            this.avatar.body.velocity.x = 0;
+            this.avatar.body.velocity.y = 0;
+            this.avatar.point = p;
+            this.avatar.path = undefined;
+            prev = GeneralEditIState.NAME;
         }
         this.image.kill();
         this.chargeTime = -1;
-        this.activate(FloatIState.NAME);
+        this.activate(prev);
     }
 };
