@@ -29,6 +29,23 @@ ButtonMappings.prototype.buttonName = function(buttonCode) {
     return 'unknown'; // Override me!
 };
 
+// Restore a JSON'd ButtonMappings object.
+ButtonMappings.load = function(json) {
+    var buttonMap = new ButtonMappings();
+    var keys = Object.keys(json);
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        buttonMap[key] = json[key];
+    }
+    return buttonMap;
+};
+
+
+
+
+
+
+
 // Mappings for PS4 controller.
 var ButtonMappingsPlaystation = function() {
     // Initialize with defaults.
@@ -54,33 +71,6 @@ var ButtonMappingsPlaystation = function() {
     this.EDIT_MODE_LEFT = Phaser.Gamepad.PS3XC_DPAD_LEFT;
     this.EDIT_MODE_RIGHT = Phaser.Gamepad.PS3XC_DPAD_RIGHT;
 };
-
-// Mappings for XBOX controller. Untested!
-var ButtonMappingsXbox = function() {
-    // Initialize with defaults.
-    // Basic menu actions.
-    this.START = Phaser.Gamepad.XBOX360_START;
-    this.SELECT = Phaser.Gamepad.XBOX360_A;
-    this.CANCEL = Phaser.Gamepad.XBOX360_B;
-
-    // Player avatar controls during a level.
-    this.MOVE_X = Phaser.Gamepad.XBOX360_STICK_LEFT_X;
-    this.MOVE_Y = Phaser.Gamepad.XBOX360_STICK_LEFT_Y;
-
-    // Level editor controls.
-    this.EDIT_STEP_DOWN = Phaser.Gamepad.XBOX360_LEFT_BUMPER;
-    this.EDIT_STEP_UP = Phaser.Gamepad.XBOX360_RIGHT_BUMPER;
-    this.EDIT_ADD = this.SELECT;
-    this.EDIT_FLOAT = Phaser.Gamepad.XBOX360_RIGHT_TRIGGER;
-    this.EDIT_DELETE = this.CANCEL;
-    this.EDIT_DISABLE = Phaser.Gamepad.XBOX360_Y;
-    this.EDIT_CUSTOMIZE = Phaser.Gamepad.XBOX360_X;
-    this.EDIT_MODE_UP = Phaser.Gamepad.XBOX360_DPAD_UP;
-    this.EDIT_MODE_DOWN = Phaser.Gamepad.XBOX360_DPAD_DOWN;
-    this.EDIT_MODE_LEFT = Phaser.Gamepad.XBOX360_DPAD_LEFT;
-    this.EDIT_MODE_RIGHT = Phaser.Gamepad.XBOX360_DPAD_RIGHT;
-};
-
 
 // Get the name of a button.
 ButtonMappingsPlaystation.prototype.buttonName = function(buttonCode) {
@@ -130,6 +120,39 @@ ButtonMappingsPlaystation.prototype.buttonName = function(buttonCode) {
     }
 };
 
+
+
+
+
+
+
+
+// Mappings for XBOX controller. Untested!
+var ButtonMappingsXbox = function() {
+    // Initialize with defaults.
+    // Basic menu actions.
+    this.START = Phaser.Gamepad.XBOX360_START;
+    this.SELECT = Phaser.Gamepad.XBOX360_A;
+    this.CANCEL = Phaser.Gamepad.XBOX360_B;
+
+    // Player avatar controls during a level.
+    this.MOVE_X = Phaser.Gamepad.XBOX360_STICK_LEFT_X;
+    this.MOVE_Y = Phaser.Gamepad.XBOX360_STICK_LEFT_Y;
+
+    // Level editor controls.
+    this.EDIT_STEP_DOWN = Phaser.Gamepad.XBOX360_LEFT_BUMPER;
+    this.EDIT_STEP_UP = Phaser.Gamepad.XBOX360_RIGHT_BUMPER;
+    this.EDIT_ADD = this.SELECT;
+    this.EDIT_FLOAT = Phaser.Gamepad.XBOX360_RIGHT_TRIGGER;
+    this.EDIT_DELETE = this.CANCEL;
+    this.EDIT_DISABLE = Phaser.Gamepad.XBOX360_Y;
+    this.EDIT_CUSTOMIZE = Phaser.Gamepad.XBOX360_X;
+    this.EDIT_MODE_UP = Phaser.Gamepad.XBOX360_DPAD_UP;
+    this.EDIT_MODE_DOWN = Phaser.Gamepad.XBOX360_DPAD_DOWN;
+    this.EDIT_MODE_LEFT = Phaser.Gamepad.XBOX360_DPAD_LEFT;
+    this.EDIT_MODE_RIGHT = Phaser.Gamepad.XBOX360_DPAD_RIGHT;
+};
+
 // Get the name of a button.
 ButtonMappingsXbox.prototype.buttonName = function(buttonCode) {
     switch (buttonCode) {
@@ -176,18 +199,4 @@ ButtonMappingsXbox.prototype.buttonName = function(buttonCode) {
         default:
             return 'unknown';
     }
-};
-
-
-
-
-// Restore a JSON'd ButtonMappings object.
-ButtonMappings.load = function(json) {
-    var buttonMap = new ButtonMappings();
-    var keys = Object.keys(json);
-    for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        buttonMap[key] = json[key];
-    }
-    return buttonMap;
 };
