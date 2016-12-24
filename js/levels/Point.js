@@ -10,6 +10,7 @@ var Point = function(name, x, y, enabled) {
     this.renderNeeded = true;
     // The name of the default istate for handling 
     // input while we're attached.
+    this.type = this.constructor.TYPE;
     this.istateName = undefined;
     this.attached = false;
     this.avatar = undefined;
@@ -18,6 +19,8 @@ var Point = function(name, x, y, enabled) {
 
     this.radius = Tier.PATH_WIDTH;
 };
+
+Point.TYPE = 'point';
 
 // Constants.
 Point.ANGLE_CATCH = Math.PI / 2.1;
@@ -195,9 +198,7 @@ Point.load = function(game, name, json) {
     var type = json.type;
     if (type) {
         if (Point.load.factory[type]) {
-            var p = Point.load.factory[type].load(game, name, json);
-            p.type = type;
-            return p;
+            return Point.load.factory[type].load(game, name, json);
         } else {
             console.error('Failed to load point class ' + type);
         }
