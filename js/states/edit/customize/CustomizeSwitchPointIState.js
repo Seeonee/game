@@ -39,7 +39,7 @@ CustomizeSwitchPoint2IState.prototype.constructor = CustomizeSwitchPoint2IState;
 
 // Set up a switch.
 var CustomizeSwitchPoint3IState = function(handler, level) {
-    var optionName = 'one flip only';
+    var optionName = 'flip only once';
     var options = [false, true];
     OptionSetGathererIState.call(this, handler, level, SwitchPoint, 3,
         optionName, options);
@@ -71,6 +71,6 @@ CustomizeSwitchPoint4IState.prototype.update = function() {
     var point = new SwitchPoint();
     point.enabled = options['start enabled'];
     point.contact = options['flip on contact'];
-    point.once = options['one flip only'];
+    point.once = options['flip only once'];
     this.finished(point); // Activates previous.
 };
