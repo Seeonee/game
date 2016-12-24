@@ -86,9 +86,6 @@ PowerPoint.prototype.toJSON = function() {
     if (this.rotation) {
         result.rotation = this.rotation;
     }
-    if (!this.enabled) {
-        result.enabled = this.enabled;
-    }
     return result;
 };
 

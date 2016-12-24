@@ -207,9 +207,6 @@ EndPoint.prototype.getDetails = function() {
 EndPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
     result.type = EndPoint.TYPE;
-    if (!this.enabled) {
-        result.enabled = this.enabled;
-    }
     return result;
 };
 

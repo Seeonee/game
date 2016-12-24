@@ -109,9 +109,6 @@ WarpPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
     result.type = WarpPoint.TYPE;
     result.to = this.to;
-    if (!this.enabled) {
-        result.enabled = this.enabled;
-    }
     return result;
 };
 
