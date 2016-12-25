@@ -24,7 +24,8 @@ Wire.ALPHA_ON_LOW = 0;
 Wire.ALPHA_OFF = 0;
 Wire.ALPHA_EDIT_ON_LOW = 0.25;
 Wire.ALPHA_EDIT_OFF = 0.1;
-Wire.SEGMENT = 15;
+Wire.SEGMENT_X = 15;
+Wire.SEGMENT_Y = Wire.SEGMENT_X / 2;
 Wire.WEIGHT_SHIFT = 9;
 
 
@@ -78,11 +79,10 @@ Wire.prototype.createBitmap = function() {
     var y2 = this.y2 - this.y;
     var dx = x2 - x1;
     var dy = y2 - y1;
-    var s = Wire.SEGMENT;
     var xsign = dx ? Math.sign(dx) : 1;
     var ysign = dy ? Math.sign(dy) : 1;
-    var xs = xsign * s;
-    var ys = ysign * s;
+    var xs = xsign * Wire.SEGMENT_X;
+    var ys = ysign * Wire.SEGMENT_Y;
 
     if (Math.abs(dx) < Wire.SEGMENT) {
         this.width += Wire.SEGMENT;
@@ -92,15 +92,15 @@ Wire.prototype.createBitmap = function() {
     }
     if (this.weight1) {
         this.width = Math.max(this.width, 2 * (
-            Wire.PAD + this.weight1 * Wire.SEGMENT));
+            Wire.PAD + this.weight1 * Wire.SEGMENT_X));
         this.height = Math.max(this.height, 2 * (
-            Wire.PAD + this.weight1 * Wire.SEGMENT));
+            Wire.PAD + this.weight1 * Wire.SEGMENT_Y));
     }
     if (this.weight2) {
         this.width = Math.max(this.width, 2 * (
-            Wire.PAD + this.weight2 * Wire.SEGMENT));
+            Wire.PAD + this.weight2 * Wire.SEGMENT_X));
         this.height = Math.max(this.height, 2 * (
-            Wire.PAD + this.weight2 * Wire.SEGMENT));
+            Wire.PAD + this.weight2 * Wire.SEGMENT_Y));
     }
 
     var x10 = x1;
@@ -109,22 +109,22 @@ Wire.prototype.createBitmap = function() {
     var y20 = y2;
     if (this.source.useOffsets) {
         x1 += xs;
-        y1 += ys / 2;
+        y1 += ys;
         if (dx) {
             dx -= xs;
         }
         if (dy) {
-            dy -= ys / 2;
+            dy -= ys;
         }
     }
     if (this.sink.useOffsets) {
         x2 -= xs;
-        y2 -= ys / 2;
+        y2 -= ys;
         if (dx) {
             dx -= xs;
         }
         if (dy) {
-            dy -= ys / 2;
+            dy -= ys;
         }
     }
 
