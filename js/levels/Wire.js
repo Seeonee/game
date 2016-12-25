@@ -13,7 +13,7 @@ Wire.WIDTH = 2;
 Wire.PAD = 4;
 Wire.ALPHA_ON = 1;
 Wire.ALPHA_ON_LOW = 0.1;
-Wire.ALPHA_OFF = 0;
+Wire.ALPHA_OFF = 0.25;
 Wire.SEGMENT = 15;
 Wire.PULSE_TIME = 1000; // ms
 Wire.PULSE_DELAY = 2500; // ms
@@ -33,22 +33,18 @@ Wire.prototype.draw = function(tier) {
         this.source.wires.push(this);
         this.sink.wires.push(this);
 
-        this.x = Math.min(this.source.gx, this.sink.gx);
-        this.y = Math.min(this.source.gy, this.sink.gy);
+        this.x1 = this.source.gx + this.source.attachmentOffsetX;
+        this.y1 = this.source.gy + this.source.attachmentOffsetY;
+        this.x2 = this.sink.gx + this.sink.attachmentOffsetX;
+        this.y2 = this.sink.gy + this.sink.attachmentOffsetY;
+        this.x = Math.min(this.x1, this.x2);
+        this.y = Math.min(this.y1, this.y2);
         this.gx = this.x;
         this.gy = this.y;
-        this.width = Math.abs(this.source.gx - this.sink.gx);
-        this.height = Math.abs(this.source.gy - this.sink.gy);
+        this.width = Math.abs(this.x1 - this.x2);
+        this.height = Math.abs(this.y1 - this.y2);
 
-        var bitmap = this.game.add.bitmapData(
-            2 * Wire.PAD + this.width,
-            2 * Wire.PAD + this.height);
-        var c = bitmap.context;
-        c.lineWidth = Wire.WIDTH;
-        c.lineCap = 'round';
-        c.strokeStyle = this.game.settings.colors.WHITE.s;
-        c.translate(Wire.PAD, Wire.PAD);
-        this.drawWires(c);
+        var bitmap = this.createBitmap();
         this.image = this.game.add.sprite(
             this.x - Wire.PAD, this.y - Wire.PAD, bitmap);
         this.game.state.getCurrentState().z.wire.tier().add(
@@ -69,11 +65,11 @@ Wire.prototype.draw = function(tier) {
 };
 
 // Finer details of wire line sketching on the bitmap context.
-Wire.prototype.drawWires = function(c) {
-    var x1 = this.source.gx - this.x;
-    var y1 = this.source.gy - this.y;
-    var x2 = this.sink.gx - this.x;
-    var y2 = this.sink.gy - this.y;
+Wire.prototype.createBitmap = function() {
+    var x1 = this.x1 - this.x;
+    var y1 = this.y1 - this.y;
+    var x2 = this.x2 - this.x;
+    var y2 = this.y2 - this.y;
     var dx = x2 - x1;
     var dy = y2 - y1;
     var s = Wire.SEGMENT;
@@ -82,14 +78,25 @@ Wire.prototype.drawWires = function(c) {
     var xs = xsign * s;
     var ys = ysign * s;
 
+    var bitmap = this.game.add.bitmapData(
+        2 * Wire.PAD + this.width,
+        2 * Wire.PAD + this.height);
+    var c = bitmap.context;
+    c.lineWidth = Wire.WIDTH;
+    c.lineCap = 'round';
+    c.strokeStyle = this.game.settings.colors.WHITE.s;
+    c.translate(Wire.PAD, Wire.PAD);
+
     // c.moveTo(x1, y1);
     c.moveTo(x1 + xs, y1 + ys / 2);
     dx -= 2 * xs;
     dy -= 2 * (ys / 2);
-    if (dx > dy) {
-        c.lineTo(x1 + xs + dy, y1 + ys / 2 + dy);
+    if (Math.abs(dx) > Math.abs(dy)) {
+        var dy2 = xsign * Math.abs(dy);
+        c.lineTo(x1 + xs + dy2, y1 + ys / 2 + dy);
     } else {
-        c.lineTo(x1 + xs + dx, y1 + ys / 2 + dx);
+        var dx2 = ysign * Math.abs(dx);
+        c.lineTo(x1 + xs + dx, y1 + ys / 2 + dx2);
     }
     c.lineTo(x2 - xs, y2 - ys / 2);
     // c.lineTo(x2, y2);
@@ -103,6 +110,8 @@ Wire.prototype.drawWires = function(c) {
     if (o2) {
         Utils.clearArc(c, x2, y2, o2);
     }
+
+    return bitmap;
 };
 
 // Lights on!

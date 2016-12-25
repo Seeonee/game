@@ -136,11 +136,11 @@
             "wires": {
                 "w0": {
                     "source": "p22",
-                    "sink": "p19"
+                    "sink": "p11"
                 },
                 "w1": {
                     "source": "p22",
-                    "sink": "p5"
+                    "sink": "p0"
                 }
             },
             "points": {

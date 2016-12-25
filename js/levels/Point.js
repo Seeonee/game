@@ -20,6 +20,8 @@ var Point = function(name, x, y, enabled) {
 
     this.radius = Tier.PATH_WIDTH;
     this.attachmentRadius = 0;
+    this.attachmentOffsetX = 0;
+    this.attachmentOffsetY = 0;
 
     this.events = {};
     this.events.onEnabled = new Phaser.Signal();

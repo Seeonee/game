@@ -1,4 +1,5 @@
 add a wire editor mode.
+verify wires that go straight up or down
 add options for wires to have "weight" or something which helps determine how their gfx bend.
 also explore gfx options for switches that emanate a lot of wires, so that they stay nicely bundled.
 add relays to carry current between tiers.
