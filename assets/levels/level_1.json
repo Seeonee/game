@@ -137,6 +137,10 @@
                 "w0": {
                     "source": "p22",
                     "sink": "p19"
+                },
+                "w1": {
+                    "source": "p22",
+                    "sink": "p5"
                 }
             },
             "points": {

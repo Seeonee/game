@@ -70,6 +70,7 @@ CustomizeSwitchPoint4IState.prototype.update = function() {
     var options = this.prev.gatherOptions();
     var point = new SwitchPoint();
     point.enabled = options['start enabled'];
+    point.startEnabled = point.enabled;
     point.contact = options['flip on contact'];
     point.once = options['flip only once'];
     this.finished(point); // Activates previous.

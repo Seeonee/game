@@ -165,6 +165,7 @@ CustomizePortalPoint4IState.prototype.update = function() {
     // Set up the first portal point.
     var portal1 = new PortalPoint();
     portal1.enabled = options['start enabled'];
+    portal1.startEnabled = portal1.enabled;
     portal1.direction = options.destination.d;
     portal1.to = p;
     portal1.synchronize = options.synchronize;
@@ -172,6 +173,7 @@ CustomizePortalPoint4IState.prototype.update = function() {
     // Set up the second portal.
     var portal2 = new PortalPoint();
     portal2.enabled = portal1.enabled;
+    portal2.startEnabled = portal1.enabled;
     portal2.direction = -1 * portal1.direction;
     portal2.to = this.point.name;
     portal2.synchronize = portal1.synchronize;

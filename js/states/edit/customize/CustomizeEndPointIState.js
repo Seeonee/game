@@ -43,5 +43,6 @@ CustomizeEndPoint2IState.prototype.update = function() {
     var options = this.prev.gatherOptions();
     var point = new EndPoint();
     point.enabled = options['start enabled'];
+    point.startEnabled = point.enabled;
     this.finished(point); // Activates previous.
 };

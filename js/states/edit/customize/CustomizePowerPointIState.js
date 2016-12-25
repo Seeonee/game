@@ -61,6 +61,7 @@ CustomizePowerPoint3IState.prototype.update = function() {
     var options = this.prev.gatherOptions();
     var point = new PowerPoint();
     point.enabled = options['start enabled'];
+    point.startEnabled = point.enabled;
     point.powerType = options['ability'];
     this.finished(point); // Activates previous.
 };

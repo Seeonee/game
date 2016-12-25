@@ -135,6 +135,7 @@ CustomizeWarpPoint3IState.prototype.update = function() {
     var options = this.prev.gatherOptions();
     var point = new WarpPoint();
     point.enabled = options['start enabled'];
+    point.startEnabled = point.enabled;
     point.to = options['destination'];
     this.finished(point); // Activates previous.
 };
