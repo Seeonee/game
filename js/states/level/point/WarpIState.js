@@ -6,7 +6,7 @@ var WarpIState = function(handler, level) {
     this.charging = false;
     this.recharging = false;
 
-    this.orb = new WOrb(this.game);
+    this.opool = new SpritePool(this.game, WOrb);
     this.hflash = new HFlash(this.game);
 };
 
@@ -63,6 +63,7 @@ WarpIState.prototype.charge = function() {
     this.charging = true;
     var gp = this.level.tier.translateInternalPointToGamePoint(
         this.avatar.point.x, this.avatar.point.y);
+    this.orb = this.opool.make(this.game);
     this.level.z.fg.tier().add(this.orb);
     this.orb.charge(gp.x, gp.y);
     this.orb.events.onCharged.add(this.warp, this);
@@ -85,11 +86,15 @@ WarpIState.prototype.warp = function() {
         this.avatar.point.x, this.avatar.point.y);
     this.hflash.flash(this.level.z.fg.tier(),
         gp.x, gp.y - WarpIState.HOVER_Y, angle);
+    this.avatar.x = point.gx;
+    this.avatar.y = point.gy;
     this.avatar.alpha = 1;
     this.avatar.updateAttachment();
 
     this.orb.fizzle();
-    this.orb.events.onFizzled.add(function() {
-        this.recharging = false;
-    }, this);
+    this.orb.events.onFizzled.addOnce(function(orb) {
+        orb.kill();
+    }, this, 1, this.orb);
+    this.orb = undefined;
+    this.recharging = false;
 };

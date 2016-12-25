@@ -6,6 +6,8 @@ also explore gfx options for switches that emanate a lot of wires, so that they 
 add relays to carry current between tiers.
 add junction boxes which can fan out a wire's signal or combine the signals from
 several wires (AND or OR).
+replacing a warp's destination breaks it
+
 
 add path x/y and gx/gy at midpoint (or configurable %)
 add path support for wires
