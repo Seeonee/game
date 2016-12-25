@@ -1,11 +1,7 @@
-add a wire editor mode.
-warp fade is slightly off
-    also, delay on warping to custom points :(
-add options for wires to have "weight" or something which helps determine how their gfx bend.
-also explore gfx options for switches that emanate a lot of wires, so that they stay nicely bundled.
-add relays to carry current between tiers.
+add a wire editor mode
+add relays to carry current between tiers
 add junction boxes which can fan out a wire's signal or combine the signals from
-several wires (AND or OR).
+several wires (AND or OR)
 
 
 add path x/y and gx/gy at midpoint (or configurable %)

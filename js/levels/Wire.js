@@ -1,11 +1,17 @@
 // A wire routes power from a source to a sink.
 // Enabledness changes in the source are propagated 
 // to the sink.
-var Wire = function(name, sourceName, sinkName) {
+var Wire = function(name, sourceName, sinkName, weight) {
     this.name = name;
     this.sourceName = sourceName;
     this.sinkName = sinkName;
     this.renderNeeded = true;
+
+    // Our weight is how much we shift over before 
+    // starting our wire's slope.
+    // Usually not needed, but can be set to 1 or 2 if 
+    // you need a few wires to un-bunch.
+    this.weight = weight ? weight : 0;
 };
 
 // Constants.
@@ -17,6 +23,7 @@ Wire.ALPHA_OFF = 0.25;
 Wire.SEGMENT = 15;
 Wire.PULSE_TIME = 1000; // ms
 Wire.PULSE_DELAY = 2500; // ms
+Wire.WEIGHT_SHIFT = 9;
 
 
 // Called during the draw walk by our tier.
@@ -100,6 +107,11 @@ Wire.prototype.createBitmap = function() {
         dy -= 2 * (ys / 2);
     }
     if (dx) {
+        if (this.weight) {
+            var shift = xsign * this.weight * Wire.WEIGHT_SHIFT;
+            c.lineTo(x1 + xs + shift, y1 + ys / 2);
+            c.translate(shift, 0);
+        }
         if (Math.abs(dx) > Math.abs(dy)) {
             var dy2 = xsign * Math.abs(dy);
             c.lineTo(x1 + xs + dy2, y1 + ys / 2 + dy);
@@ -221,13 +233,17 @@ Wire.prototype.getDetails = function() {
 
 // JSON conversion of a wire.
 Wire.prototype.toJSON = function() {
-    return {
+    var result = {
         source: this.source.name,
         sink: this.sink.name
     };
+    if (this.weight) {
+        result.weight = this.weight;
+    }
+    return result;
 };
 
 // Load a JSON representation of a wire.
 Wire.load = function(game, name, json) {
-    return new Wire(name, json.source, json.sink);
+    return new Wire(name, json.source, json.sink, json.weight);
 };
