@@ -103,6 +103,7 @@ Wire.prototype.createBitmap = function() {
             Wire.PAD + this.weight2 * Wire.SEGMENT));
     }
 
+    if (this.source.useOffsets) {
         x1 += xs;
         y1 += ys / 2;
         if (dx) {
@@ -112,6 +113,7 @@ Wire.prototype.createBitmap = function() {
             dy -= ys / 2;
         }
     }
+    if (this.sink.useOffsets) {
         x2 -= xs;
         y2 -= ys / 2;
         if (dx) {
