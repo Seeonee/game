@@ -20,8 +20,10 @@ var Wire = function(name, sourceName, sinkName,
 Wire.WIDTH = 2;
 Wire.PAD = 4;
 Wire.ALPHA_ON = 1;
-Wire.ALPHA_ON_LOW = 0; // 0.1;
-Wire.ALPHA_OFF = 0; // 0.25;
+Wire.ALPHA_ON_LOW = 0;
+Wire.ALPHA_OFF = 0;
+Wire.ALPHA_EDIT_ON_LOW = 0.25;
+Wire.ALPHA_EDIT_OFF = 0.1;
 Wire.SEGMENT = 15;
 Wire.WEIGHT_SHIFT = 9;
 
@@ -51,6 +53,10 @@ Wire.prototype.draw = function(tier) {
         this.width = Math.abs(this.x1 - this.x2);
         this.height = Math.abs(this.y1 - this.y2);
 
+        if (this.game.settings.edit) {
+            Wire.ALPHA_ON_LOW = Wire.ALPHA_EDIT_ON_LOW;
+            Wire.ALPHA_OFF = Wire.ALPHA_EDIT_OFF;
+        }
         var bitmap = this.createBitmap();
         this.image = this.game.add.sprite(
             this.x - Wire.PAD, this.y - Wire.PAD, bitmap);
