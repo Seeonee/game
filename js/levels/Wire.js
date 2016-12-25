@@ -73,11 +73,17 @@ Wire.prototype.createBitmap = function() {
     var dx = x2 - x1;
     var dy = y2 - y1;
     var s = Wire.SEGMENT;
-    var xsign = Math.sign(dx);
-    var ysign = Math.sign(dy);
+    var xsign = dx ? Math.sign(dx) : 1;
+    var ysign = dy ? Math.sign(dy) : 1;
     var xs = xsign * s;
     var ys = ysign * s;
 
+    if (Math.abs(dx) < Wire.SEGMENT) {
+        this.width += Wire.SEGMENT;
+    }
+    if (Math.abs(dy) < Wire.SEGMENT) {
+        this.height += Wire.SEGMENT;
+    }
     var bitmap = this.game.add.bitmapData(
         2 * Wire.PAD + this.width,
         2 * Wire.PAD + this.height);
@@ -86,20 +92,25 @@ Wire.prototype.createBitmap = function() {
     c.lineCap = 'round';
     c.strokeStyle = this.game.settings.colors.WHITE.s;
     c.translate(Wire.PAD, Wire.PAD);
-
-    // c.moveTo(x1, y1);
     c.moveTo(x1 + xs, y1 + ys / 2);
-    dx -= 2 * xs;
-    dy -= 2 * (ys / 2);
-    if (Math.abs(dx) > Math.abs(dy)) {
-        var dy2 = xsign * Math.abs(dy);
-        c.lineTo(x1 + xs + dy2, y1 + ys / 2 + dy);
-    } else {
-        var dx2 = ysign * Math.abs(dx);
-        c.lineTo(x1 + xs + dx, y1 + ys / 2 + dx2);
+    if (dx) {
+        dx -= 2 * xs;
     }
-    c.lineTo(x2 - xs, y2 - ys / 2);
-    // c.lineTo(x2, y2);
+    if (dy) {
+        dy -= 2 * (ys / 2);
+    }
+    if (dx) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+            var dy2 = xsign * Math.abs(dy);
+            c.lineTo(x1 + xs + dy2, y1 + ys / 2 + dy);
+        } else {
+            var dx2 = ysign * Math.abs(dx);
+            c.lineTo(x1 + xs + dx, y1 + ys / 2 + dx2);
+        }
+        c.lineTo(x2 - xs, y2 - ys / 2);
+    } else {
+        c.lineTo(x1 + xs, y2 - ys / 2);
+    }
     c.stroke();
 
     var o1 = this.source.attachmentRadius;
