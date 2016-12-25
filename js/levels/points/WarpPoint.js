@@ -4,7 +4,6 @@ var WarpPoint = function(name, x, y, to, enabled) {
     this.emitters = [];
     this.z = Point.Z + 1;
     this.to = to;
-    this.toPoint = undefined;
     this.istateName = WarpIState.NAME;
 
     this.attachmentRadius = WSocket.RING_RADIUS / 2;
@@ -34,7 +33,7 @@ WarpPoint.prototype.draw = function(tier) {
     Utils.clearArc(c, this.x, this.y, r / 2);
     if (!this.drawn) {
         this.drawn = true;
-        this.toPoint = tier.pointMap[this.to];
+        var toPoint = tier.pointMap[this.to];
         // Graphical elements.
         var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
@@ -44,7 +43,7 @@ WarpPoint.prototype.draw = function(tier) {
         this.ember.setEnabled(this.enabled);
         this.socket.addChild(this.ember);
         var angle = Utils.angleBetweenPoints(this.x, this.y,
-            this.toPoint.x, this.toPoint.y);
+            toPoint.x, toPoint.y);
         this.contrail = new WContrail(this.game, angle);
         this.socket.addChild(this.contrail);
     } else {

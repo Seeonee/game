@@ -77,7 +77,8 @@ WarpIState.prototype.charge = function() {
 WarpIState.prototype.warp = function() {
     this.charging = false;
     this.recharging = true;
-    var point = this.avatar.point.toPoint; // WarpPoint.toPoint
+    var to = this.avatar.point.to;
+    var point = this.level.tier.pointMap[to];
     var angle = Utils.angleBetweenPoints(
         this.avatar.point.x, this.avatar.point.y, point.x, point.y);
     angle = -angle;
