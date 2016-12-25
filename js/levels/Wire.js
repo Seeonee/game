@@ -90,6 +90,38 @@ Wire.prototype.createBitmap = function() {
     if (Math.abs(dy) < Wire.SEGMENT) {
         this.height += Wire.SEGMENT;
     }
+    if (this.weight1) {
+        this.width = Math.max(this.width, 2 * (
+            Wire.PAD + this.weight1 * Wire.SEGMENT));
+        this.height = Math.max(this.height, 2 * (
+            Wire.PAD + this.weight1 * Wire.SEGMENT));
+    }
+    if (this.weight2) {
+        this.width = Math.max(this.width, 2 * (
+            Wire.PAD + this.weight2 * Wire.SEGMENT));
+        this.height = Math.max(this.height, 2 * (
+            Wire.PAD + this.weight2 * Wire.SEGMENT));
+    }
+
+        x1 += xs;
+        y1 += ys / 2;
+        if (dx) {
+            dx -= xs;
+        }
+        if (dy) {
+            dy -= ys / 2;
+        }
+    }
+        x2 -= xs;
+        y2 -= ys / 2;
+        if (dx) {
+            dx -= xs;
+        }
+        if (dy) {
+            dy -= ys / 2;
+        }
+    }
+
     var bitmap = this.game.add.bitmapData(
         2 * Wire.PAD + this.width,
         2 * Wire.PAD + this.height);
@@ -98,17 +130,11 @@ Wire.prototype.createBitmap = function() {
     c.lineCap = 'round';
     c.strokeStyle = this.game.settings.colors.WHITE.s;
     c.translate(Wire.PAD, Wire.PAD);
-    c.moveTo(x1 + xs, y1 + ys / 2);
-    if (dx) {
-        dx -= 2 * xs;
-    }
-    if (dy) {
-        dy -= 2 * (ys / 2);
-    }
+    c.moveTo(x1, y1);
     if (dx) {
         if (this.weight1) {
             var shift = xsign * this.weight1 * Wire.WEIGHT_SHIFT;
-            c.lineTo(x1 + xs + shift, y1 + ys / 2);
+            c.lineTo(x1 + shift, y1);
             c.translate(shift, 0);
         }
         if (this.weight2) {
@@ -118,17 +144,17 @@ Wire.prototype.createBitmap = function() {
         }
         if (Math.abs(dx) > Math.abs(dy)) {
             var dy2 = xsign * Math.abs(dy);
-            c.lineTo(x1 + xs + dy2, y1 + ys / 2 + dy);
+            c.lineTo(x1 + dy2, y1 + dy);
         } else {
             var dx2 = ysign * Math.abs(dx);
-            c.lineTo(x1 + xs + dx, y1 + ys / 2 + dx2);
+            c.lineTo(x1 + dx, y1 + dx2);
         }
         if (this.weight2) {
-            c.lineTo(x2 - xs - xsign * shift, y2 - ys / 2 - ysign * shift);
+            c.lineTo(x2 - xsign * shift, y2 - ysign * shift);
         }
-        c.lineTo(x2 - xs, y2 - ys / 2);
+        c.lineTo(x2, y2);
     } else {
-        c.lineTo(x1 + xs, y2 - ys / 2);
+        c.lineTo(x1, y2);
     }
     c.stroke();
 

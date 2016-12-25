@@ -19,6 +19,7 @@ var Point = function(name, x, y, enabled) {
     this.startEnabled = this.enabled;
 
     this.radius = Tier.PATH_WIDTH;
+    this.useOffsets = true;
     this.attachmentRadius = 0;
     this.attachmentOffsetX = 0;
     this.attachmentOffsetY = 0;
