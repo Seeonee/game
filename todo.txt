@@ -6,8 +6,6 @@ add ability to sync switches
 
 
 add lock mechanics
-add editor mode for defining point properties such as portals, powers, etc
-add "wire" paths + gfx for powering points on
 figure out what powers should do
 add settings submenu for key bindings
 add gpad version that handles keyboard input

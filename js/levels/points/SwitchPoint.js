@@ -12,6 +12,7 @@ var SwitchPoint = function(name, x, y, enabled, /* wires, */
 
     this.istateName = SwitchIState.NAME;
     this.attachmentOffsetY = SwitchPoint.Y;
+    // this.useOffsets = false;
 };
 
 SwitchPoint.TYPE = 'switch';
