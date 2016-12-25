@@ -38,6 +38,7 @@ Wire.prototype.draw = function(tier) {
         this.sink = tier.pointMap[this.sinkName];
 
         this.enabled = this.source.enabled;
+        this.sink.setEnabled(this.enabled);
         this.source.events.onEnabled.add(this.notifyEnabled, this);
         this.source.events.onDisabled.add(this.notifyDisabled, this);
         this.source.wires.push(this);
