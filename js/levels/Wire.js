@@ -1,7 +1,8 @@
 // A wire routes power from a source to a sink.
 // Enabledness changes in the source are propagated 
 // to the sink.
-var Wire = function(name, sourceName, sinkName, weight) {
+var Wire = function(name, sourceName, sinkName,
+    weight1, weight2) {
     this.name = name;
     this.sourceName = sourceName;
     this.sinkName = sinkName;
@@ -11,7 +12,8 @@ var Wire = function(name, sourceName, sinkName, weight) {
     // starting our wire's slope.
     // Usually not needed, but can be set to 1 or 2 if 
     // you need a few wires to un-bunch.
-    this.weight = weight ? weight : 0;
+    this.weight1 = weight1 ? weight1 : 0;
+    this.weight2 = weight2 ? weight2 : 0;
 };
 
 // Constants.
@@ -107,10 +109,15 @@ Wire.prototype.createBitmap = function() {
         dy -= 2 * (ys / 2);
     }
     if (dx) {
-        if (this.weight) {
-            var shift = xsign * this.weight * Wire.WEIGHT_SHIFT;
+        if (this.weight1) {
+            var shift = xsign * this.weight1 * Wire.WEIGHT_SHIFT;
             c.lineTo(x1 + xs + shift, y1 + ys / 2);
             c.translate(shift, 0);
+        }
+        if (this.weight2) {
+            var shift = this.weight2 * Wire.WEIGHT_SHIFT;
+            dx -= xsign * shift;
+            dy -= ysign * shift;
         }
         if (Math.abs(dx) > Math.abs(dy)) {
             var dy2 = xsign * Math.abs(dy);
@@ -118,6 +125,9 @@ Wire.prototype.createBitmap = function() {
         } else {
             var dx2 = ysign * Math.abs(dx);
             c.lineTo(x1 + xs + dx, y1 + ys / 2 + dx2);
+        }
+        if (this.weight2) {
+            c.lineTo(x2 - xs - xsign * shift, y2 - ys / 2 - ysign * shift);
         }
         c.lineTo(x2 - xs, y2 - ys / 2);
     } else {
@@ -237,13 +247,17 @@ Wire.prototype.toJSON = function() {
         source: this.source.name,
         sink: this.sink.name
     };
-    if (this.weight) {
-        result.weight = this.weight;
+    if (this.weight1) {
+        result.weight1 = this.weight1;
+    }
+    if (this.weight2) {
+        result.weight2 = this.weight2;
     }
     return result;
 };
 
 // Load a JSON representation of a wire.
 Wire.load = function(game, name, json) {
-    return new Wire(name, json.source, json.sink, json.weight);
+    return new Wire(name, json.source, json.sink,
+        json.weight1, json.weight2);
 };
