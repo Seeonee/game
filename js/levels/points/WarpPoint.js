@@ -6,6 +6,8 @@ var WarpPoint = function(name, x, y, to, enabled) {
     this.to = to;
     this.toPoint = undefined;
     this.istateName = WarpIState.NAME;
+
+    this.attachmentRadius = WSocket.RING_RADIUS / 2;
 };
 
 WarpPoint.TYPE = 'warp';
@@ -96,6 +98,7 @@ WarpPoint.prototype.notifyDetached = function(avatar, next) {
 
 // Delete our children.
 WarpPoint.prototype.delete = function() {
+    Point.prototype.delete.call(this);
     Utils.destroy(this.socket);
     Utils.destroy(this.ember);
     Utils.destroy(this.contrail);

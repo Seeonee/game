@@ -70,6 +70,7 @@ PowerPoint.prototype.update = function() {
 
 // Delete our power.
 PowerPoint.prototype.delete = function() {
+    Point.prototype.delete.call(this);
     Utils.destroy(this.power);
 };
 

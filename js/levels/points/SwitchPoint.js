@@ -8,6 +8,7 @@ var SwitchPoint = function(name, x, y, enabled, /* wires, */
     this.once = once;
     this.contact = contact;
     this.done = false;
+    this.disableIStateWhileDisabled = false;
 
     this.istateName = SwitchIState.NAME;
 };
@@ -82,6 +83,7 @@ SwitchPoint.prototype.shouldHold = function() {
 
 // Delete our gfx.
 SwitchPoint.prototype.delete = function() {
+    Point.prototype.delete.call(this);
     Utils.destroy(this.switch);
 };
 

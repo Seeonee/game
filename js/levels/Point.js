@@ -12,16 +12,20 @@ var Point = function(name, x, y, enabled) {
     // input while we're attached.
     this.type = this.constructor.TYPE;
     this.istateName = undefined;
+    this.disableIStateWhileDisabled = true;
     this.attached = false;
     this.avatar = undefined;
     this.enabled = enabled == undefined ? true : enabled;
     this.startEnabled = this.enabled;
 
     this.radius = Tier.PATH_WIDTH;
+    this.attachmentRadius = 0;
 
     this.events = {};
     this.events.onEnabled = new Phaser.Signal();
     this.events.onDisabled = new Phaser.Signal();
+
+    this.wires = [];
 };
 
 Point.TYPE = 'point';
@@ -113,7 +117,9 @@ Point.prototype.notifyAttached = function(avatar, prev) {
     // console.log('attach ' + this.name, this.x, this.y);
     this.attached = true;
     this.avatar = avatar;
-    this.enableIState();
+    if (this.enabled || !this.disableIStateWhileDisabled) {
+        this.enableIState();
+    }
 };
 
 // Called upon avatar detachment.
@@ -146,7 +152,7 @@ Point.prototype.setEnabled = function(enabled) {
     if (this.attached) {
         if (this.enabled) {
             this.enableIState();
-        } else {
+        } else if (this.disableIStateWhileDisabled) {
             this.disableIState();
         }
     }
@@ -182,8 +188,12 @@ Point.prototype.shift = function(tier, dx, dy) {
 };
 
 // Called when we're being deleted.
-// Primarily for subclasses to do cleanup.
-Point.prototype.delete = function() {};
+Point.prototype.delete = function() {
+    for (var i = 0; i < this.wires.length; i++) {
+        this.wires[i].delete();
+    }
+    this.wires = [];
+};
 
 // Called when the tier updates.
 Point.prototype.update = function() {};

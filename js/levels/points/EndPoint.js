@@ -64,10 +64,8 @@ EndPoint.prototype.draw = function(tier) {
 
         // Forward events regarding stability (which 
         // occurs in sync for all rings).
-        this.events = {
-            onStabilize: ring0.events.onStabilize,
-            onDestabilize: ring0.events.onDestabilize
-        };
+        this.events.onStabilize = ring0.events.onStabilize;
+        this.events.onDestabilize = ring0.events.onDestabilize;
         ring0.events.onStabilize.add(function() {
             this.stabilized = true;
         }, this);
@@ -196,6 +194,7 @@ EndPoint.prototype.portalFlash = function() {
 
 // Delete our rings.
 EndPoint.prototype.delete = function() {
+    Point.prototype.delete.call(this);
     Utils.destroy(this.nub);
     for (var i = 0; i < this.rings.all.length; i++) {
         Utils.destroy(this.rings.all[i]);

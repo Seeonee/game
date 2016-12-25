@@ -34,6 +34,7 @@ StartPoint.prototype.getDetails = function() {
 
 // Delete our nub.
 StartPoint.prototype.delete = function() {
+    Point.prototype.delete.call(this);
     Utils.destroy(this.nub);
 };
 

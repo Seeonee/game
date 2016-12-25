@@ -48,6 +48,7 @@ KeyPoint.prototype.notifyAttached = function(avatar, prev) {
 
 // Delete our key.
 KeyPoint.prototype.delete = function() {
+    Point.prototype.delete.call(this);
     Utils.destroy(this.tkey);
 };
 

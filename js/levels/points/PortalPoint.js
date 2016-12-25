@@ -145,6 +145,7 @@ PortalPoint.prototype.notifyDetached = function(avatar, next) {
 
 // Delete our emitters.
 PortalPoint.prototype.delete = function() {
+    Point.prototype.delete.call(this);
     for (var i = 0; i < this.emitters.length; i++) {
         Utils.destroy(this.emitters[i]);
     }

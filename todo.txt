@@ -1,3 +1,6 @@
+add path x/y and gx/gy at midpoint (or configurable %)
+add path support for wires
+
 add lock mechanics
 add editor mode for defining point properties such as portals, powers, etc
 add "wire" paths + gfx for powering points on
