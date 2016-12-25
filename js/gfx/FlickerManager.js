@@ -46,7 +46,7 @@ Object.defineProperty(FlickerView.prototype, 'alpha', {
             return this._alpha;
         }
         var alpha = this.manager.alpha * this.range + this.min;
-        if (this._alpha) {
+        if (this._alpha != undefined) {
             var delta = Math.abs(this._alpha - alpha);
             if (this._free && delta < FlickerManager.TOLERANCE) {
                 this._alpha = undefined;
@@ -59,6 +59,10 @@ Object.defineProperty(FlickerView.prototype, 'alpha', {
         }
     },
     set: function(value) {
+        if (this.t) {
+            this.t.stop();
+            this.t = undefined;
+        }
         this._alpha = value;
         this._free = false;
     }

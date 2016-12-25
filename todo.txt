@@ -4,7 +4,6 @@ add junction boxes which can fan out a wire's signal or combine the signals from
 several wires (AND or OR)
 add ability to sync switches
 allow wires to be invisible?
-add glow handler / sync warp embers
 
 
 add lock mechanics

@@ -20,11 +20,9 @@ var Wire = function(name, sourceName, sinkName,
 Wire.WIDTH = 2;
 Wire.PAD = 4;
 Wire.ALPHA_ON = 1;
-Wire.ALPHA_ON_LOW = 0.1;
-Wire.ALPHA_OFF = 0.25;
+Wire.ALPHA_ON_LOW = 0; // 0.1;
+Wire.ALPHA_OFF = 0; // 0.25;
 Wire.SEGMENT = 15;
-Wire.PULSE_TIME = 1000; // ms
-Wire.PULSE_DELAY = 2500; // ms
 Wire.WEIGHT_SHIFT = 9;
 
 
@@ -156,7 +154,7 @@ Wire.prototype.notifyDisabled = function() {
         this.enabled = false;
         this.flickerview.alpha = Wire.ALPHA_ON;
         this.flickerview.tween(Wire.ALPHA_OFF,
-            Wire.PULSE_TIME, Phaser.Easing.Cubic.Out,
+            FlickerManager.TIME, Phaser.Easing.Cubic.Out,
             0);
         this.sink.setEnabled(false);
     }
