@@ -18,7 +18,7 @@ FlickerManager.TOLERANCE = 0.01;
 // Set our colors.
 FlickerManager.prototype.view = function(max, min) {
     max = max != undefined ? max : 1;
-    min = min != undefined ? min : 1;
+    min = min != undefined ? min : 0;
     return new FlickerView(this, max, min);
 }
 

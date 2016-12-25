@@ -65,15 +65,10 @@ WarpPoint.prototype.setEnabled = function(enabled) {
     }
 };
 
-// Called on tier fade.
-WarpPoint.prototype.fadingIn = function(tier) {
-    this.ember.setPaused(false);
-};
-
-// Called on tier fade.
-WarpPoint.prototype.fadedOut = function(tier) {
+// Update loop.
+WarpPoint.prototype.update = function() {
     if (this.ember) {
-        this.ember.setPaused(true);
+        this.ember.update();
     }
 };
 

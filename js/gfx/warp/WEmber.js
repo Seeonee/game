@@ -51,13 +51,10 @@ var WEmber = function(game) {
     }
     Phaser.Sprite.call(this, game, 0, 0, WEmber.CACHED_BITMAP);
     this.anchor.setTo(0.5, 0.5);
-    this.alpha = 1;
 
-    this.flicker();
-
-    this.tween.pause();
     this.enabled = true;
     this.flaring = false;
+    this.flickerview = this.game.state.getCurrentState().flicker.view();
 };
 
 WEmber.prototype = Object.create(Phaser.Sprite.prototype);
@@ -71,25 +68,15 @@ WEmber.DISABLED_ALPHA = 0.25;
 
 
 // Start our slow burn.
-WEmber.prototype.flicker = function() {
-    if (this.tween) {
-        return;
-    }
-    this.tween = this.game.add.tween(this);
-    this.tween.to({ alpha: 0 }, WEmber.EMBER_FADE_TIME,
-        Phaser.Easing.Sinusoidal.InOut, true,
-        0, Number.POSITIVE_INFINITY, true);
-    this.tween.yoyoDelay(WEmber.EMBER_DELAY);
+WEmber.prototype.update = function() {
+    this.alpha = this.flickerview.alpha;
 };
 
 // Update our effects.
 WEmber.prototype.updateEffects = function() {
-    this.alpha = this.enabled ? 1 : WEmber.DISABLED_ALPHA;
+    this.flickerview.alpha = this.enabled ? 1 : WEmber.DISABLED_ALPHA;
     if (this.enabled && !this.flaring) {
-        this.flicker();
-    } else {
-        this.tween.stop();
-        this.tween = undefined;
+        this.flickerview.free();
     }
 };
 
@@ -109,11 +96,4 @@ WEmber.prototype.setFlaring = function(flaring) {
     }
     this.flaring = flaring;
     this.updateEffects();
-};
-
-// Pause or unpause us.
-WEmber.prototype.setPaused = function(paused) {
-    if (this.tween) {
-        paused ? this.tween.pause() : this.tween.resume();
-    }
 };
