@@ -279,7 +279,7 @@ IMenuState.prototype.createSelectorTween = function(selector) {
     var tween = this.game.add.tween(selector)
     tween.to({ rotation: Math.PI / 2 },
         IMenuState.SELECTOR_QUARTER_TURN_TIME,
-        Phaser.Easing.Linear.InOut, true, 0,
+        Phaser.Easing.Linear.None, true, 0,
         Number.POSITIVE_INFINITY, false);
     return tween;
 };

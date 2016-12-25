@@ -59,7 +59,7 @@ TSquare.prototype.cascade = function(zgroup, tint) {
         Math.random() * 2 * TSquare.VARIANCE;
     var t = this.game.add.tween(this);
     t.to({ y: this.y1 - sign * dy, rotation: this.rotation + dr },
-        time, Phaser.Easing.Linear.InOut, true);
+        time, Phaser.Easing.Linear.None, true);
     t.onComplete.add(function() {
         this.kill();
     }, this);

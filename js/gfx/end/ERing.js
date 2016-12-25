@@ -75,7 +75,7 @@ ERing.prototype.startRotation = function() {
     var delay = (0.1 + Math.random()) * ERing.SPIN_TIME / 2;
     var t = this.game.add.tween(this);
     t.to({ rotation: this.rotation + this.spin },
-        time, Phaser.Easing.Linear.InOut, true, delay,
+        time, Phaser.Easing.Linear.None, true, delay,
         Number.POSITIVE_INFINITY);
     this.spinTweens.push(t);
 };
@@ -161,7 +161,7 @@ ERing.prototype.stabilize = function() {
     var turn = 2 * Math.PI * (this.inner ? 1 : -1);
     var t3 = this.game.add.tween(this);
     t3.to({ rotation: this.goalAngle + turn },
-        ERing.GEAR_TIME, Phaser.Easing.Linear.InOut, false, 0,
+        ERing.GEAR_TIME, Phaser.Easing.Linear.None, false, 0,
         Number.POSITIVE_INFINITY);
     t3.onStart.add(function() {
         this.stabilized = true;

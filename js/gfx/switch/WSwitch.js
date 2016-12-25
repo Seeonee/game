@@ -76,7 +76,7 @@ WSwitch.prototype.lock = function() {
 WSwitch.prototype.fadingIn = function() {
     var alpha = this.closed ? 1 : WSwitch.ALPHA;
     this.game.add.tween(this).to({ alpha: alpha },
-        Tier.FADE_TIME / 2, Phaser.Easing.Linear.InOut, true,
+        Tier.FADE_TIME / 2, Phaser.Easing.Linear.None, true,
         Tier.FADE_TIME / 2);
 };
 

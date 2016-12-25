@@ -18,7 +18,7 @@ var EditCharge = function(game, x, y, palette, animate) {
         this.ratio = 1;
         this.tween = this.game.add.tween(this);
         this.tween.to({ ratio: 0 }, EditCharge.TIME,
-            Phaser.Easing.Linear.InOut, true);
+            Phaser.Easing.Linear.None, true);
     } else {
         this.ratio = EditCharge.RING_RATIO;
     }
@@ -78,7 +78,7 @@ EditCharge.prototype.restart = function() {
     this.ratio = 1;
     this.tween = this.game.add.tween(this);
     this.tween.to({ ratio: 0 }, EditCharge.TIME,
-        Phaser.Easing.Linear.InOut, true);
+        Phaser.Easing.Linear.None, true);
 };
 
 // Jump to our final scale.
