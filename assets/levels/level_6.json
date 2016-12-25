@@ -138,6 +138,34 @@
                     "enabled": false,
                     "type": "warp",
                     "to": "p18"
+                },
+                "p22": {
+                    "x": 250,
+                    "y": -100,
+                    "enabled": false,
+                    "type": "warp",
+                    "to": "p23"
+                },
+                "p23": {
+                    "x": 450,
+                    "y": -100,
+                    "enabled": false,
+                    "type": "warp",
+                    "to": "p24"
+                },
+                "p24": {
+                    "x": 450,
+                    "y": 100,
+                    "enabled": false,
+                    "type": "warp",
+                    "to": "p25"
+                },
+                "p25": {
+                    "x": 250,
+                    "y": 100,
+                    "enabled": false,
+                    "type": "warp",
+                    "to": "p22"
                 }
             },
             "paths": {
@@ -258,6 +286,22 @@
                 "w11": {
                     "source": "p2",
                     "sink": "p18"
+                },
+                "w12": {
+                    "source": "p2",
+                    "sink": "p22"
+                },
+                "w13": {
+                    "source": "p2",
+                    "sink": "p23"
+                },
+                "w14": {
+                    "source": "p2",
+                    "sink": "p24"
+                },
+                "w15": {
+                    "source": "p2",
+                    "sink": "p25"
                 }
             }
         }

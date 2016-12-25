@@ -236,6 +236,9 @@ var CustomizePointIState = function(handler, level) {
 CustomizePointIState.prototype = Object.create(OptionSetGathererIState.prototype);
 CustomizePointIState.prototype.constructor = CustomizePointIState;
 
+// Constants.
+CustomizePointIState.NAME = BaseCustomizeIState.NAME;
+
 
 // Called when activated.
 CustomizePointIState.prototype.activated = function(prev) {

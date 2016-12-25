@@ -2,6 +2,10 @@ add a wire editor mode
 add relays to carry current between tiers
 add junction boxes which can fan out a wire's signal or combine the signals from
 several wires (AND or OR)
+add ability to sync switches
+allow wires to be invisible?
+customize from float got into bad state (undefined istate in edit handler)
+add glow handler / sync warp embers
 
 
 add lock mechanics
