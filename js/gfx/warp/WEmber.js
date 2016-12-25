@@ -67,15 +67,9 @@ WEmber.DISABLED_ALPHA = 0.25;
 
 // Start our slow burn.
 WEmber.prototype.update = function() {
-    this.alpha = this.flickerview.alpha;
-};
-
-// Update our effects.
-WEmber.prototype.updateEffects = function() {
-    this.flickerview.alpha = this.enabled ? 1 : WEmber.DISABLED_ALPHA;
-    if (this.enabled && !this.flaring) {
-        this.flickerview.free();
-    }
+    this.alpha = this.enabled ?
+        this.flickerview.alpha :
+        WEmber.DISABLED_ALPHA;
 };
 
 // Set our enabled state.
@@ -84,7 +78,6 @@ WEmber.prototype.setEnabled = function(enabled) {
         return;
     }
     this.enabled = enabled;
-    this.updateEffects();
 };
 
 // Avatar is here! Stay lit.
@@ -93,5 +86,10 @@ WEmber.prototype.setFlaring = function(flaring) {
         return;
     }
     this.flaring = flaring;
-    this.updateEffects();
+    if (flaring) {
+        this.flickerview.alpha = 1;
+    } else {
+        this.flickerview.tween(0, FlickerManager.TIME,
+            Phaser.Easing.Sinusoidal.InOut, 0, true);
+    }
 };
