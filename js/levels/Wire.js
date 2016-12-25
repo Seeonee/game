@@ -58,18 +58,11 @@ Wire.prototype.draw = function(tier) {
             this.x - Wire.PAD, this.y - Wire.PAD, bitmap);
         this.game.state.getCurrentState().z.wire.tier().add(
             this.image);
-        this.image.alpha = 0;
-        this.fadingIn();
 
-        if (Wire.GLOW == undefined) {
-            Wire.GLOW = { alpha: Wire.ALPHA_ON };
-            var t = this.game.add.tween(Wire.GLOW);
-            t.to({ alpha: Wire.ALPHA_ON_LOW },
-                Wire.PULSE_TIME, Phaser.Easing.Sinusoidal.InOut,
-                true, 0, Number.POSITIVE_INFINITY, true);
-            t.yoyoDelay(Wire.PULSE_DELAY);
-            Wire.GLOW.t = t;
-        }
+        this.flickerview = this.game.state.getCurrentState().flicker
+            .view(Wire.ALPHA_ON, Wire.ALPHA_ON_LOW);
+        this.flickerview.alpha = 0;
+        this.fadingIn();
     }
 };
 
@@ -151,8 +144,8 @@ Wire.prototype.createBitmap = function() {
 Wire.prototype.notifyEnabled = function() {
     if (!this.enabled) {
         this.enabled = true;
-        this.image.alpha = Wire.ALPHA_ON;
-        this.flare = true;
+        this.flickerview.alpha = Wire.ALPHA_ON;
+        this.flickerview.free();
         this.sink.setEnabled(true);
     }
 };
@@ -161,11 +154,10 @@ Wire.prototype.notifyEnabled = function() {
 Wire.prototype.notifyDisabled = function() {
     if (this.enabled) {
         this.enabled = false;
-        this.image.alpha = Wire.ALPHA_ON;
-        this.game.add.tween(this.image).to({
-                alpha: Wire.ALPHA_OFF
-            }, Wire.PULSE_TIME,
-            Phaser.Easing.Cubic.Out, true);
+        this.flickerview.alpha = Wire.ALPHA_ON;
+        this.flickerview.tween(Wire.ALPHA_OFF,
+            Wire.PULSE_TIME, Phaser.Easing.Cubic.Out,
+            0);
         this.sink.setEnabled(false);
     }
 };
@@ -177,30 +169,26 @@ Wire.prototype.isEnabled = function() {
 
 // Called when the tier updates.
 Wire.prototype.update = function() {
-    if (this.enabled && Wire.GLOW) {
-        var alpha = Wire.GLOW.alpha;
-        if (this.flare && alpha == Wire.ALPHA_ON) {
-            this.flare = false;
-        }
-        if (!this.flare) {
-            this.image.alpha = Wire.GLOW.alpha;
-        }
-    }
+    this.image.alpha = this.flickerview.alpha;
 };
 
 // Handle various fade events.
 Wire.prototype.fadingIn = function(tier) {
-    var alpha = this.enabled ? Wire.ALPHA_ON : Wire.ALPHA_OFF;
-    this.game.add.tween(this.image).to({ alpha: alpha },
-        Tier.FADE_TIME / 2, Phaser.Easing.Linear.InOut, true,
-        Tier.FADE_TIME / 2);
+    var alpha = this.enabled ? Wire.ALPHA_ON_LOW : Wire.ALPHA_OFF;
+    this.flickerview.alpha = 0;
+    this.flickerview.tween(alpha,
+        Tier.FADE_TIME / 2, Phaser.Easing.Linear.None,
+        Tier.FADE_TIME / 2, this.enabled);
 };
 
 Wire.prototype.fadedIn = function(tier) {};
 
 Wire.prototype.fadingOut = function(tier) {
+    // We stop being the active tier, so our 
+    // update() calls end. That meanns we have
+    // to tween our alpha directly.
     this.game.add.tween(this.image).to({ alpha: 0 },
-        Tier.FADE_TIME / 2, Phaser.Easing.Linear.InOut, true);
+        Tier.FADE_TIME / 2, Phaser.Easing.Linear.None, true);
 };
 
 Wire.prototype.fadedOut = function(tier) {};

@@ -133,7 +133,12 @@
             }
         },
         "t1": {
-            "wires": {},
+            "wires": {
+                "w0": {
+                    "source": "p22",
+                    "sink": "p19"
+                }
+            },
             "points": {
                 "p0": {
                     "x": 0,
@@ -236,7 +241,7 @@
                 "p19": {
                     "x": 200,
                     "y": 450,
-                    "enabled": true,
+                    "enabled": false,
                     "type": "warp",
                     "to": "p3"
                 },

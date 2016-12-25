@@ -29,6 +29,7 @@ PlayLevelState.prototype.preload = function() {
 
 // Set up the level.
 PlayLevelState.prototype.create = function() {
+    this.flicker = this.createFlickerManager();
     this.level = this.createLevel();
     this.createAvatar();
     this.gpad.consumeButtonEvent();
@@ -89,6 +90,11 @@ PlayLevelState.prototype.createCameraHandler = function(ihandler) {
 // Create the menu handler, wrapping an earlier handler.
 PlayLevelState.prototype.createMenuHandler = function(ihandler) {
     return new PlayLevelMenuIHandler(this.game, this.gpad, this.level, ihandler);
+};
+
+// Create the a flicker manager.
+PlayLevelState.prototype.createFlickerManager = function() {
+    return new FlickerManager(this.game);
 };
 
 // Create the splash text when a level first starts.
