@@ -66,7 +66,6 @@ SwitchPoint.prototype.flip = function() {
 };
 
 // Toggle enabledness, aka flip the switch.
-// Do *NOT* call our super.setEnabled().
 SwitchPoint.prototype.setEnabled = function(enabled) {
     if (this.enabled == enabled) {
         return;

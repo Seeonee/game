@@ -192,10 +192,9 @@ Point.prototype.shift = function(tier, dx, dy) {
 
 // Called when we're being deleted.
 Point.prototype.delete = function() {
-    for (var i = 0; i < this.wires.length; i++) {
-        this.wires[i].delete();
+    while (this.wires.length) {
+        this.wires[0].delete();
     }
-    this.wires = [];
 };
 
 // Called when the tier updates.

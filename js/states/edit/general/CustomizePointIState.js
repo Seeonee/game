@@ -228,7 +228,7 @@ OptionSetGathererIState.prototype.update = function() {
 // Handle point en/dis-abling.
 var CustomizePointIState = function(handler, level) {
     var options = Object.keys(Point.load.factory);
-    options.push({ text: 'none', value: undefined });
+    options.unshift({ text: 'none', value: undefined });
     OptionSetGathererIState.call(this, handler, level, undefined, 0,
         '', options);
 };
