@@ -22,6 +22,7 @@ var Level = function(game, name) {
     // while a tier is currently active.
     this.z = new LevelZGroup(this, [
         'bg',
+        'wire',
         'level',
         'mg',
         'player',

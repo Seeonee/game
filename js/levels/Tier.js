@@ -12,9 +12,11 @@ var Tier = function(game, name) {
 
     this.points = [];
     this.paths = [];
+    this.wires = [];
     this.objects = [];
     this.pointMap = {};
     this.pathMap = {};
+    this.wireMap = {};
 
     // Bitmap gets set up later.
     this.bitmap = undefined;
@@ -63,6 +65,15 @@ Tier.prototype.getNewPathName = function() {
     return 'a' + i;
 };
 
+// Return a string that can be used to name a new wire.
+Tier.prototype.getNewWireName = function() {
+    var i = 0;
+    while (this.wireMap['w' + i]) {
+        i += 1;
+    }
+    return 'w' + i;
+};
+
 // Create a new point, optionally connected to an existing one.
 // Returns the newly created point.
 Tier.prototype.addPoint = function(name, x, y, point2) {
@@ -107,6 +118,11 @@ Tier.prototype.replacePoint = function(old, point) {
         path.p1 === old ? path.p1 = point : path.p2 = point;
     }
     old.paths = [];
+    for (var i = 0; i < old.wires.length; i++) {
+        var wire = old.wires[i];
+        wire.replaceEnd(old, point);
+    }
+    old.wires = [];
     // Update the tier's lists.
     // Can't use the helpers since we've already changed 
     // the lists ourselves.
@@ -247,6 +263,42 @@ Tier.prototype.deletePath = function(path) {
         return path;
     }
     return undefined;
+};
+
+// Create a new wire and return it.
+Tier.prototype.addWire = function(name, sourceName, sinkName) {
+    var wire = new Wire(name, sourceName, sinkName);
+    this._addWire(wire);
+    return wire;
+};
+
+// Internal use only.
+// Adds an already-constructed wire.
+Tier.prototype._addWire = function(wire) {
+    this.wires.push(wire);
+    this.wireMap[wire.name] = wire;
+    this.events.onFadingIn.add(wire.fadingIn, wire);
+    this.events.onFadedIn.add(wire.fadedIn, wire);
+    this.events.onFadingOut.add(wire.fadingOut, wire);
+    this.events.onFadedOut.add(wire.fadedOut, wire);
+    return wire;
+};
+
+// Delete a wire. Returns it too, why not.
+Tier.prototype.deleteWire = function(wire) {
+    var index = this.wires.indexOf(wire);
+    if (index >= 0) {
+        wire.delete();
+        this.events.onFadingIn.remove(wire.fadingIn, wire);
+        this.events.onFadedIn.remove(wire.fadedIn, wire);
+        this.events.onFadingOut.remove(wire.fadingOut, wire);
+        this.events.onFadedOut.remove(wire.fadedOut, wire);
+        this.wires.splice(index, 1);
+        delete this.wireMap[wire.name];
+        return wire;
+    }
+    return undefined;
+
 };
 
 // Takes x and y values relative to this Tier object's 
@@ -463,7 +515,7 @@ Tier.prototype.draw = function() {
     this.bitmap.context.lineDashOffset = Tier.LINE_DASH_OFFSET;
     // this.bitmap.context.strokeRect(0, 0, this.width, this.height);
 
-    this.objects = this.paths.concat(this.points);
+    this.objects = this.paths.concat(this.points).concat(this.wires);
     this.objects.sort(function(a, b) {
         var z1 = a.z ? a.z : 10;
         var z2 = b.z ? b.z : 10;
@@ -622,7 +674,8 @@ Tier.prototype.delete = function() {
 Tier.prototype.toJSON = function() {
     return {
         points: this.pointMap,
-        paths: this.pathMap
+        paths: this.pathMap,
+        wires: this.wireMap
     };
 };
 
@@ -645,6 +698,15 @@ Tier.load = function(game, name, json) {
             var p2 = tier.pointMap[pathObj.p2];
             var path = Path.load(game, key, pathObj, p1, p2);
             tier._addPath(path, p1, p2);
+        }
+    }
+    if (json.wires) {
+        keys = Object.keys(json.wires);
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var wireObj = json.wires[key];
+            var wire = Wire.load(game, key, wireObj);
+            tier._addWire(wire);
         }
     }
     return tier;
