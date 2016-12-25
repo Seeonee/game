@@ -54,6 +54,15 @@ Path.prototype.draw = function(tier) {
     tier.bitmap.context.moveTo(this.p1.x, this.p1.y);
     tier.bitmap.context.lineTo(this.p2.x, this.p2.y);
     tier.bitmap.context.stroke();
+
+    // Recompute our coordinates.
+    var ratio = 0.5;
+    this.gx = this.p1.gx;
+    this.gy = this.p1.gy;
+    this.gx += ratio * (this.p2.gx - this.p1.gx);
+    this.gy += ratio * (this.p2.gy - this.p1.gy);
+    this.x = this.gx;
+    this.y = this.gy;
 }
 
 // Figure out which endpoint is in the direction 
