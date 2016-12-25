@@ -1,6 +1,6 @@
 // Switch for activating wires.
 var WSwitch = function(game, x, y, palette, startClosed, contact) {
-    Phaser.Sprite.call(this, game, x, y + WSwitch.Y, 'switch_light');
+    Phaser.Sprite.call(this, game, x, y, 'switch_light');
     this.anchor.setTo(0.5);
     this.color1 = this.game.settings.colors.WHITE.i;
     this.color2 = palette.c2.i;
@@ -24,7 +24,6 @@ WSwitch.prototype = Object.create(Phaser.Sprite.prototype);
 WSwitch.prototype.constructor = WSwitch;
 
 // Constants.
-WSwitch.Y = 15;
 WSwitch.ALPHA = 0.25;
 WSwitch.LOCK_TIME = 1000; // ms
 

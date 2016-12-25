@@ -20,6 +20,10 @@ SwitchPoint.prototype.constructor = SwitchPoint;
 // Set up our factory.
 Point.load.factory[SwitchPoint.TYPE] = SwitchPoint;
 
+// Constants.
+SwitchPoint.Y = 15;
+
+
 // During our first draw, we create the actual key.
 SwitchPoint.prototype.draw = function(tier) {
     Point.prototype.draw.call(this, tier);
@@ -28,7 +32,7 @@ SwitchPoint.prototype.draw = function(tier) {
         var game = tier.game;
         var ap = tier.translateInternalPointToGamePoint(
             this.x, this.y);
-        this.switch = new WSwitch(game, ap.x, ap.y,
+        this.switch = new WSwitch(game, ap.x, ap.y + SwitchPoint.Y,
             tier.palette, this.enabled, this.contact);
         game.state.getCurrentState().z.bg.tier().add(this.switch);
     } else {
