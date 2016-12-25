@@ -147,8 +147,12 @@ Path.prototype.toJSON = function() {
 // Load a JSON representation of a path.
 Path.load = function(game, name, json, p1, p2) {
     var type = json.type;
-    if (type && Point.load.factory[type]) {
-        Path.load.factory[type].load(game, name, json, p1, p2);
+    if (type) {
+        if (Path.load.factory[type]) {
+            return Path.load.factory[type].load(game, name, json, p1, p2);
+        } else {
+            console.error('Failed to load path class ' + type);
+        }
     }
     return new Path(name, p1, p2);
 };
