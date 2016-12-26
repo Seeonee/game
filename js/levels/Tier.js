@@ -48,12 +48,12 @@ Tier.LINE_CAP_STYLE = 'butt';
 Tier.LINE_JOIN_STYLE = 'round';
 Tier.LINE_DASH = [18, 7];
 Tier.LINE_DASH_OFFSET = 11;
-Tier.FADE_TIME = 1000; // ms
+Tier.FADE_TIME = 750; // ms
 Tier.FADE_SCALE = 1.75;
-Tier.FADE_ALPHA = 0.1;
+Tier.FADE_ALPHA = 0.15;
 Tier.HIDE_ALPHA = 0;
 Tier.HIDE_SCALE = Math.pow(Tier.FADE_SCALE, 2);
-Tier.BLUR = 7;
+Tier.BLUR = 15;
 
 
 // Return a string that can be used to name a new point.
@@ -502,8 +502,8 @@ Tier.prototype.recreateImageAsNeeded = function() {
         }
         var sw = this.spacer.width;
         var sh = this.spacer.height;
-        var sw2 = this.width * Tier.HIDE_SCALE;
-        var sh2 = this.height * Tier.HIDE_SCALE;
+        var sw2 = this.width * Tier.HIDE_SCALE * 2;
+        var sh2 = this.height * Tier.HIDE_SCALE * 2;
         this.spacer.x = this.x - (sw2 - this.width) / 2;
         this.spacer.y = this.y - (sh2 - this.height) / 2;
         this.spacer.scale.setTo(sw2 / sw, sh2 / sh);
