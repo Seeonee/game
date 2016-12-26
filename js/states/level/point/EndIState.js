@@ -79,14 +79,21 @@ EndIState.prototype.fullyCharged = function() {
     this.level.finish();
     // *Now* let our menu activate.
     this.color = this.level.tier.palette.c1;
+
     var state = this.game.state.getCurrentState();
-    var autoplay = !(state instanceof EditLevelState);
+    var edit = state instanceof EditLevelState;
+    var autoplay = !edit;
     var catalogLevel = this.game.state.getCurrentState()
         .catalogLevel;
     var next = catalogLevel.next();
     if (catalogLevel.parent !== next.parent) {
         this.nextLevel.text = 'continue to ' + next.parent.name;
         autoplay = false;
+    } else {
+        this.nextLevel.text = 'continue to ' + next.name;
+    }
+    if (edit) {
+        this.nextLevel.enabled = false;
     }
 
     if (autoplay) {

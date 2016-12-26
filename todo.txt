@@ -1,7 +1,5 @@
 make end point gfx actually attach to node (still behind tier.image z)
 test other junction modes
-add support for disabled menu options
-add support for changing a menu option's text
 add a wire editor mode
 add relays to carry current between tiers
 add ability to sync switches

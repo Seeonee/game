@@ -52,6 +52,7 @@ IMenuState.UNSELECTED_OPTION_ALPHA = 1; // 0.25;
 IMenuState.CHROME_ALPHA = 1;
 IMenuState.OPTION_TRANSITION_TIME = 100; // ms
 IMenuState.LEVEL_TRANSITION_TIME = 300; // ms
+IMenuState.DISABLED_OPTION_ALPHA = 0.25;
 
 
 // *************************
@@ -73,6 +74,7 @@ var IMenuOption = function(menu, text, cancel, action, args) {
     this.index = 0;
     this.childIndex = 0;
     this.t = undefined;
+    this.enabled = true;
     this.events = {}; // Others can add these.
 };
 
@@ -354,6 +356,9 @@ IMenuState.prototype.positionTextFor = function(option, level, index) {
         } else {
             option.t.alpha = IMenuState.UNSELECTED_OPTION_ALPHA;
         }
+        if (!option.enabled) {
+            option.t.alpha = IMenuState.DISABLED_OPTION_ALPHA;
+        }
     } else {
         option.t.alpha = 0;
     }
@@ -457,6 +462,9 @@ IMenuState.prototype.setSelected = function(index) {
         text.style.fill = this.colorPrimary.s;
         text.dirty = true;
         var alpha = selected ? 1 : IMenuState.UNSELECTED_OPTION_ALPHA;
+        if (!this.current.options[i].enabled) {
+            alpha = IMenuState.DISABLED_OPTION_ALPHA;
+        }
         var y = this.y + (this.height / 2) +
             this.initialDelta + (this.perItemDelta * (i - index));
         var tween = this.game.add.tween(text);
@@ -525,6 +533,9 @@ IMenuState.prototype.advanceIntoSelection = function() {
         text.style.fill = this.colorPrimary.s;
         text.dirty = true;
         var alpha = selected ? 1 : IMenuState.UNSELECTED_OPTION_ALPHA;
+        if (!this.current.options[i].enabled) {
+            alpha = IMenuState.DISABLED_OPTION_ALPHA;
+        }
         var x = this.x + (this.width / 2);
         var tween = this.game.add.tween(text);
         tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
@@ -579,6 +590,9 @@ IMenuState.prototype.retreatOutOfSelection = function() {
         var text = this.current.options[i].t;
         var selected = i == this.selectedIndex;
         var alpha = selected ? 1 : IMenuState.UNSELECTED_OPTION_ALPHA;
+        if (!this.current.options[i].enabled) {
+            alpha = IMenuState.DISABLED_OPTION_ALPHA;
+        }
         var x = this.x + (this.width / 2);
         var tween = this.game.add.tween(text);
         tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
@@ -616,14 +630,15 @@ IMenuState.prototype.selectClose = function() {
 
 // User pressed okay; fire the currently selected thing!
 IMenuState.prototype.selectCurrent = function(joystick) {
+    this.gpad.consumeButtonEvent();
     var option = this.current.options[this.selectedIndex];
-    if (option.length > 0) {
-        this.gpad.consumeButtonEvent();
+    if (!option.enabled) {
+        return;
+    } else if (option.length > 0) {
         this.advanceIntoSelection();
     } else if (option.action) {
         option.activate(this.context);
     } else if (option.cancel && option.parent) {
-        this.gpad.consumeButtonEvent();
         this.retreatOutOfSelection();
     }
 };
