@@ -89,8 +89,10 @@ EndPoint.prototype.fadingIn = function() {
 
 // Fade the rings out.
 EndPoint.prototype.fadingOut = function() {
-    for (var i = 0; i < this.rings.all.length; i++) {
-        this.rings.all[i].fade(false);
+    if (this.rings.all) {
+        for (var i = 0; i < this.rings.all.length; i++) {
+            this.rings.all[i].fade(false);
+        }
     }
 };
 

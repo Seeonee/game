@@ -78,16 +78,25 @@ EndIState.prototype.fullyCharged = function() {
     this.charged = true;
     // *Now* let our menu activate.
     this.color = this.level.tier.palette.c1;
-    IMenuState.prototype.activated.call(this);
+    var autoplay = this.game.state.getCurrentState() ===
+        this.game.state.states.PlayLevelState;
+    if (autoplay) {
+        this.selectNextLevel();
+    } else {
+        IMenuState.prototype.activated.call(this);
+    }
 };
 
 // User opted to play the next level.
 EndIState.prototype.selectNextLevel = function(option) {
     var params = new LevelStateParams(this.gpad);
-    params.catalogLevel = this.game.state.getCurrentState()
-        .catalogLevel.next();
-    var state = this.game.state.getCurrentState().key;
-    this.game.state.start(state, true, false, params);
+    var catalogLevel = this.game.state.getCurrentState()
+        .catalogLevel;
+    if (catalogLevel) {
+        params.catalogLevel = catalogLevel.next();
+        var state = this.game.state.getCurrentState().key;
+        this.game.state.start(state, true, false, params);
+    }
 };
 
 // User opted to restart.
