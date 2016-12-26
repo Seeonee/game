@@ -1,6 +1,21 @@
 {
     "name": "levels",
     "items": [{
+        "name": "tutorial",
+        "items": [{
+            "name": "lesson 1"
+        }, {
+            "name": "lesson 2"
+        }, {
+            "name": "lesson 3"
+        }, {
+            "name": "lesson 4"
+        }, {
+            "name": "lesson 5"
+        }, {
+            "name": "lesson 6"
+        }]
+    }, {
         "name": "level 1"
     }, {
         "name": "level 2"

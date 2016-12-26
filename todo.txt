@@ -2,6 +2,13 @@ add a wire editor mode
 add relays to carry current between tiers
 test other junction modes
 add ability to sync switches
+bug: replacing L1 switch with on-contact > stepping on it > breaks
+cleaning a portal doesn't redraw both ends properly
+draw each tier once at load
+explore having tiers still visible in background
+fix autoplay to not happen in edit mode
+make warp ember light up on enable until sync
+change autoplay to prompt when switching worlds (catalog level property?)
 
 
 add lock mechanics
