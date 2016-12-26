@@ -760,13 +760,6 @@ Tier.prototype.unhide = function(increasing) {
     this.clearFades();
     this.events.onUnhiding.dispatch(this);
 
-    if (false) {
-        this.image.alpha = Tier.FADE_ALPHA;
-        this.image.scale.setTo(increasing ?
-            Tier.FADE_SCALE : 1 / Tier.FADE_SCALE);
-        return;
-    }
-
     var time = Tier.FADE_TIME;
     this.image.alpha = increasing ?
         Tier.HIDE_ALPHA_UP : Tier.HIDE_ALPHA_DOWN;
@@ -804,13 +797,6 @@ Tier.prototype.hide = function(increasing) {
     }
     this.clearFades();
     this.events.onHiding.dispatch(this);
-
-    if (false) {
-        this.image.alpha = Tier.HIDE_ALPHA;
-        this.image.scale.setTo(increasing ?
-            Tier.HIDE_SCALE : 1 / Tier.HIDE_SCALE);
-        return;
-    }
 
     var time = Tier.FADE_TIME;
     this.image.alpha = increasing ?
