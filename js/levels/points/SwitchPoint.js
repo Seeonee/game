@@ -32,24 +32,14 @@ SwitchPoint.prototype.draw = function(tier) {
     if (!this.drawn) {
         this.drawn = true;
         var game = tier.game;
-        var ap = tier.translateInternalPointToGamePoint(
+        var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
         this.switch = new WSwitch(game, ap.x, ap.y + SwitchPoint.Y,
             tier.palette, this.enabled, this.contact);
-        game.state.getCurrentState().z.bg.tier().add(this.switch);
+        tier.image.addChild(this.switch);
     } else {
         this.switch.updatePalette(tier.palette);
     }
-};
-
-// Called on tier fade.
-SwitchPoint.prototype.fadingIn = function(tier) {
-    this.switch.fadingIn();
-};
-
-// Called on tier fade.
-SwitchPoint.prototype.fadingOut = function(tier) {
-    this.switch.fadingOut();
 };
 
 // Set whether or not we're pressed.
