@@ -851,6 +851,8 @@ Tier.prototype.delete = function() {
     this.events.onFadedIn.removeAll();
     this.events.onFadingOut.removeAll();
     this.events.onFadedOut.removeAll();
+    Utils.destroy(this.image);
+    Utils.destroy(this.spacer);
 };
 
 // JSON conversion of our points and paths.
