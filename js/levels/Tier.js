@@ -49,10 +49,14 @@ Tier.LINE_JOIN_STYLE = 'round';
 Tier.LINE_DASH = [18, 7];
 Tier.LINE_DASH_OFFSET = 11;
 Tier.FADE_TIME = 750; // ms
-Tier.FADE_SCALE = 1.75;
-Tier.FADE_ALPHA = 0.15;
-Tier.HIDE_ALPHA = 0;
-Tier.HIDE_SCALE = Math.pow(Tier.FADE_SCALE, 2);
+Tier.FADE_SCALE_UP = 1.75;
+Tier.FADE_SCALE_DOWN = 1.75;
+Tier.FADE_ALPHA_UP = 0.1;
+Tier.FADE_ALPHA_DOWN = 0.1;
+Tier.HIDE_SCALE_UP = Math.pow(Tier.FADE_SCALE_DOWN, 2);
+Tier.HIDE_SCALE_DOWN = Math.pow(Tier.FADE_SCALE_DOWN, 2);
+Tier.HIDE_ALPHA_UP = 0;
+Tier.HIDE_ALPHA_DOWN = 0;
 Tier.BLUR = 15;
 
 
@@ -502,8 +506,8 @@ Tier.prototype.recreateImageAsNeeded = function() {
         }
         var sw = this.spacer.width;
         var sh = this.spacer.height;
-        var sw2 = this.width * Tier.HIDE_SCALE * 2;
-        var sh2 = this.height * Tier.HIDE_SCALE * 2;
+        var sw2 = this.width * Tier.HIDE_SCALE_UP * 4;
+        var sh2 = this.height * Tier.HIDE_SCALE_UP * 4;
         this.spacer.x = this.x - (sw2 - this.width) / 2;
         this.spacer.y = this.y - (sh2 - this.height) / 2;
         this.spacer.scale.setTo(sw2 / sw, sh2 / sh);
@@ -690,8 +694,10 @@ Tier.prototype.fadeIn = function(increasing) {
     this.events.onFadingIn.dispatch(this);
 
     var time = Tier.FADE_TIME;
-    var s = Tier.FADE_SCALE;
-    this.image.alpha = Tier.FADE_ALPHA;
+    var s = increasing ?
+        Tier.FADE_SCALE_UP : Tier.FADE_SCALE_DOWN;
+    this.image.alpha = increasing ?
+        Tier.FADE_ALPHA_UP : Tier.FADE_ALPHA_DOWN;
     var t = this.game.add.tween(this.image);
     t.to({ alpha: 1 }, time, Phaser.Easing.Cubic.Out, true);
     t.onComplete.add(function() {
@@ -722,10 +728,13 @@ Tier.prototype.fadeOut = function(increasing) {
     this.events.onFadingOut.dispatch(this);
 
     var time = Tier.FADE_TIME;
-    var s = Tier.FADE_SCALE;
+    var s = increasing ?
+        Tier.FADE_SCALE_UP : Tier.FADE_SCALE_DOWN;
+    var alpha = increasing ?
+        Tier.FADE_ALPHA_UP : Tier.FADE_ALPHA_DOWN;
     this.image.alpha = 1;
     var t = this.game.add.tween(this.image);
-    t.to({ alpha: Tier.FADE_ALPHA }, time, Phaser.Easing.Cubic.Out, true);
+    t.to({ alpha: alpha }, time, Phaser.Easing.Cubic.Out, true);
     t.onComplete.add(function() {
         this.events.onFadedOut.dispatch(this);
     }, this);
@@ -759,9 +768,12 @@ Tier.prototype.unhide = function(increasing) {
     }
 
     var time = Tier.FADE_TIME;
-    this.image.alpha = Tier.HIDE_ALPHA;
+    this.image.alpha = increasing ?
+        Tier.HIDE_ALPHA_UP : Tier.HIDE_ALPHA_DOWN;
+    var alpha = increasing ?
+        Tier.FADE_ALPHA_UP : Tier.FADE_ALPHA_DOWN;
     var t = this.game.add.tween(this.image);
-    t.to({ alpha: Tier.FADE_ALPHA }, time, Phaser.Easing.Cubic.Out, true);
+    t.to({ alpha: alpha }, time, Phaser.Easing.Cubic.Out, true);
     t.onComplete.add(function() {
         this.events.onUnhidden.dispatch(this);
     }, this);
@@ -769,10 +781,12 @@ Tier.prototype.unhide = function(increasing) {
     // If we're going up, the old tier's going to shrink,
     // so the new tier needs to start huge and shrink down 
     // to normal as well.
-    var s = Tier.HIDE_SCALE;
+    var s = increasing ?
+        Tier.HIDE_SCALE_UP : Tier.HIDE_SCALE_DOWN;
     var scale = increasing ? s : 1 / s;
     this.image.scale.setTo(scale);
-    var s = Tier.FADE_SCALE;
+    var s = increasing ?
+        Tier.FADE_SCALE_UP : Tier.FADE_SCALE_DOWN;
     var scale = increasing ? s : 1 / s;
     var t2 = this.game.add.tween(this.image.scale);
     t2.to({ x: scale, y: scale }, time, Phaser.Easing.Quartic.Out, true);
@@ -799,9 +813,12 @@ Tier.prototype.hide = function(increasing) {
     }
 
     var time = Tier.FADE_TIME;
-    this.image.alpha = Tier.FADE_ALPHA;
+    this.image.alpha = increasing ?
+        Tier.FADE_ALPHA_UP : Tier.FADE_ALPHA_DOWN;
+    var alpha = increasing ?
+        Tier.HIDE_ALPHA_UP : Tier.HIDE_ALPHA_DOWN;
     var t = this.game.add.tween(this.image);
-    t.to({ alpha: Tier.HIDE_ALPHA }, time, Phaser.Easing.Cubic.Out, true);
+    t.to({ alpha: alpha }, time, Phaser.Easing.Cubic.Out, true);
     t.onComplete.add(function() {
         this.events.onHidden.dispatch(this);
     }, this);
@@ -809,10 +826,12 @@ Tier.prototype.hide = function(increasing) {
     // If we're going up, the old tier's going to shrink,
     // so the new tier needs to start huge and shrink down 
     // to normal as well.
-    var s = Tier.FADE_SCALE;
+    var s = increasing ?
+        Tier.FADE_SCALE_UP : Tier.FADE_SCALE_DOWN;
     var scale = increasing ? s : 1 / s;
     this.image.scale.setTo(1);
-    var s = Tier.HIDE_SCALE;
+    var s = increasing ?
+        Tier.HIDE_SCALE_UP : Tier.HIDE_SCALE_DOWN;
     var scale = increasing ? s : 1 / s;
     var t2 = this.game.add.tween(this.image.scale);
     t2.to({ x: scale, y: scale }, time,
