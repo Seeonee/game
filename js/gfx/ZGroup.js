@@ -25,8 +25,8 @@ ZGroup.prototype.createSubgroup = function(name, asChild) {
 // This one adds custom logic so that each layer can 
 // spawn tier-specific sublayers.
 var LevelZGroup = function(level, layerNames) {
-    this.level = level;
-    ZGroup.call(this, this.level.game, layerNames);
+    this._level = level;
+    ZGroup.call(this, this._level.game, layerNames);
 };
 
 LevelZGroup.prototype = Object.create(ZGroup.prototype);
@@ -38,12 +38,12 @@ LevelZGroup.prototype.constructor = LevelZGroup;
 // a subgroup for the currently selected tier.
 LevelZGroup.prototype.createSubgroup = function(name, asChild) {
     var group = ZGroup.prototype.createSubgroup.call(this, name, asChild);
-    group.level = this.level;
+    group._level = this._level;
     group.tierSubs = {};
     group.tier = function() {
         var sub = this;
-        if (this.level.tier) {
-            var t = this.level.tier.name;
+        if (this._level.tier) {
+            var t = this._level.tier.name;
             sub = this.tierSubs[t];
             if (!sub) {
                 sub = this.game.add.group(this);
