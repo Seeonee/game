@@ -2,8 +2,6 @@ add a wire editor mode
 add relays to carry current between tiers
 test other junction modes
 add ability to sync switches
-cleaning a portal doesn't redraw both ends properly
-draw each tier once at load
 explore having tiers still visible in background
 change autoplay to prompt when switching worlds (catalog level property?)
 add support for disabled menu options

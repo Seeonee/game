@@ -150,6 +150,15 @@ PortalPoint.prototype.delete = function() {
         Utils.destroy(this.emitters[i]);
     }
     Utils.destroy(this.gate);
+
+    // Clear the other side, too.
+    var tier = this.direction > 0 ?
+        this.tier.getAbove() :
+        this.tier.getBelow();
+    var other = tier.pointMap[this.to];
+    if (other instanceof PortalPoint) {
+        tier.replacePoint(other, new Point());
+    }
 };
 
 // Editor details.

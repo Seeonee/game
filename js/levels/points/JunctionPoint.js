@@ -37,17 +37,15 @@ JunctionPoint.ALL_MODES = [
 
 // During our first draw, we create the actual key.
 JunctionPoint.prototype.draw = function(tier) {
-    if (this.renderNeeded) {
-        this.renderNeeded = false;
-        if (tier.game.state.getCurrentState() instanceof EditLevelState) {
-            var r = this.radius / 2;
-            tier.bitmap.context.fillStyle = tier.palette.c2.s;
-            tier.bitmap.context.beginPath();
-            tier.bitmap.context.fillRect(this.x - r, this.y - r,
-                2 * r, 2 * r);
-        }
-        this.updateEnabled();
+    this.renderNeeded = false;
+    if (tier.game.state.getCurrentState() instanceof EditLevelState) {
+        var r = this.radius / 2;
+        tier.bitmap.context.fillStyle = tier.palette.c2.s;
+        tier.bitmap.context.beginPath();
+        tier.bitmap.context.fillRect(this.x - r, this.y - r,
+            2 * r, 2 * r);
     }
+    this.updateEnabled();
 };
 
 // Notifies us to update our enabledness propagation.
