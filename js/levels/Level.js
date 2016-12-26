@@ -39,8 +39,8 @@ Level.prototype.addTier = function(name, tier) {
     this.tiers.sort(function(a, b) {
         return a.index - b.index;
     });
-    tier.events.onHidden.add(this.setVisibleForTier, this);
-    tier.events.onUnhidden.add(this.setInvisibleForTier, this);
+    tier.events.onHidden.add(this.setInvisibleForTier, this);
+    tier.events.onUnhiding.add(this.setVisibleForTier, this);
 };
 
 // Return the tier above a given one (or our current one).
