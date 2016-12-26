@@ -3,11 +3,17 @@ var TSquare = function(game) {
     this.game = game;
     if (TSquare.CACHED_BITMAP == undefined) {
         var d = TSquare.D;
+        var h = d * Math.sqrt(3 / 4);
         var bitmap = this.game.add.bitmapData(d, d);
         var c = bitmap.context;
         c.fillStyle = this.game.settings.colors.WHITE.s;
         c.beginPath();
-        c.fillRect(0, 0, d, d);
+        c.moveTo(0, h);
+        c.lineTo(d / 2, 0);
+        c.lineTo(d, h);
+        c.closePath();
+        c.fill();
+        // c.fillRect(0, 0, d, d);
         TSquare.CACHED_BITMAP = bitmap;
     }
     Phaser.Sprite.call(this, game, 0, 0, TSquare.CACHED_BITMAP);

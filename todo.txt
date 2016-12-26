@@ -1,13 +1,11 @@
-add a wire editor mode
-add relays to carry current between tiers
 test other junction modes
-add ability to sync switches
 explore having tiers still visible in background
 change autoplay to prompt when switching worlds (catalog level property?)
 add support for disabled menu options
 add support for changing a menu option's text
-try tsquares as triangles
-figure out why junction isn't always drawing in edit mode
+add a wire editor mode
+add relays to carry current between tiers
+add ability to sync switches
 
 
 add lock mechanics
