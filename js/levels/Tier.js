@@ -506,8 +506,8 @@ Tier.prototype.recreateImageAsNeeded = function() {
         }
         var sw = this.spacer.width;
         var sh = this.spacer.height;
-        var sw2 = this.width * Tier.HIDE_SCALE_UP * 4;
-        var sh2 = this.height * Tier.HIDE_SCALE_UP * 4;
+        var sw2 = 800 + this.width * Tier.HIDE_SCALE_UP * 4;
+        var sh2 = 600 + this.height * Tier.HIDE_SCALE_UP * 4;
         this.spacer.x = this.x - (sw2 - this.width) / 2;
         this.spacer.y = this.y - (sh2 - this.height) / 2;
         this.spacer.scale.setTo(sw2 / sw, sh2 / sh);
