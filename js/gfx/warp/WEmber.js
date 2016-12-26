@@ -62,7 +62,7 @@ WEmber.prototype.constructor = WEmber;
 
 // Constants.
 WEmber.EMBER_RADIUS = 4;
-WEmber.DISABLED_ALPHA = 0.25;
+WEmber.DISABLED_ALPHA = 0; // 0.25;
 
 
 // Start our slow burn.
