@@ -32,6 +32,10 @@ var Level = function(game, name) {
     game.state.getCurrentState().z = this.z;
 };
 
+// Constants.
+Level.PARALLAX_SCALE = 1 / 10;
+
+
 // Add a tier, and register for its events.
 Level.prototype.addTier = function(name, tier) {
     this.tiers.push(tier);
@@ -113,29 +117,40 @@ Level.prototype.setTier = function(tier, pointName) {
 
 // Shows a tier.
 Level.prototype.setVisibleForTier = function(tier) {
-    for (var j = 0; j < this.z.layers.length; j++) {
-        this.z.layers[j].setVisibleFor(tier, true);
+    for (var i = 0; i < this.z.layers.length; i++) {
+        this.z.layers[i].setVisibleFor(tier, true);
     }
 };
 
 // Hides a tier.
 Level.prototype.setInvisibleForTier = function(tier) {
-    for (var j = 0; j < this.z.layers.length; j++) {
-        this.z.layers[j].setVisibleFor(tier, false);
+    for (var i = 0; i < this.z.layers.length; i++) {
+        this.z.layers[i].setVisibleFor(tier, false);
+    }
+};
+
+// Fade out every tier.
+Level.prototype.hideAllTiers = function() {
+    for (var i = 0; i < this.tiers.length; i++) {
+        var tier = this.tiers[i];
+        if (!tier.hidden) {
+            this.game.add.tween(tier.image).to({ alpha: 0 },
+                Tier.FADE_TIME, Phaser.Easing.Linear.None, true);
+        }
     }
 };
 
 // Blurs a tier.
 Level.prototype.setBlurredForTier = function(tier) {
-    for (var j = 0; j < this.z.layers.length; j++) {
-        this.z.layers[j].setBlurFor(tier, true);
+    for (var i = 0; i < this.z.layers.length; i++) {
+        this.z.layers[i].setBlurFor(tier, true);
     }
 };
 
 // Clears a tier.
 Level.prototype.setUnblurredForTier = function(tier) {
-    for (var j = 0; j < this.z.layers.length; j++) {
-        this.z.layers[j].setBlurFor(tier, false);
+    for (var i = 0; i < this.z.layers.length; i++) {
+        this.z.layers[i].setBlurFor(tier, false);
     }
 };
 
@@ -173,12 +188,49 @@ Level.prototype.updateSettings = function(settings) {
 
 // Update our current tier.
 Level.prototype.update = function() {
+    this.updateTierParallax();
     this.tier.update();
 };
 
 // Render our current tier.
 Level.prototype.render = function() {
     this.tier.render();
+};
+
+// Adjust tier parallax.
+Level.prototype.updateTierParallax = function() {
+    var tier = this.tier;
+    if (!tier.image) {
+        return;
+    }
+    // Offset of the camera's center from 0,0.
+    var xc = this.game.camera.x + (this.game.camera.width / 2);
+    var yc = this.game.camera.y + (this.game.camera.height / 2);
+
+    for (var i = 0; i < this.tiers.length; i++) {
+        var t = this.tiers[i];
+        if (!t.image || t.hidden) {
+            continue;
+        }
+        var x = t.x + t.widthOver2;
+        var y = t.y + t.heightOver2;
+
+        var xo = t.widthOver2;
+        var yo = t.heightOver2;
+
+        var scale = t.image.scale.x;
+        if (scale > 1) {
+            scale -= 1;
+        } else if (scale < 1) {
+            scale = 1 / (-scale / (1 - scale));
+        } else {
+            scale = 0;
+        }
+        var dx = scale * xc * Level.PARALLAX_SCALE;
+        var dy = scale * yc * Level.PARALLAX_SCALE;
+        t.image.x = x + dx;
+        t.image.y = y + dy;
+    }
 };
 
 // Push out a JSON version of our tiers.

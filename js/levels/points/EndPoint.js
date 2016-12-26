@@ -165,6 +165,7 @@ EndPoint.prototype._chargeUp = function(callback, context) {
 
 // Lower the player avatar into the portal.
 EndPoint.prototype.dropAvatar = function() {
+    this.tier.level.hideAllTiers();
     var a = this.avatar;
     var y = a.y + EndPoint.AVATAR_DROP_DISTANCE;
     var t = this.game.add.tween(a);
@@ -179,7 +180,6 @@ EndPoint.prototype.dropAvatar = function() {
 
 // Spawn the gfx as our avatar drops through the portal.
 EndPoint.prototype.portalFlash = function() {
-    this.tier.fadeOut();
     var gp = this.tier.translateInternalPointToGamePoint(
         this.x, this.y);
     var zgroup = this.game.state.getCurrentState().z.fg;
