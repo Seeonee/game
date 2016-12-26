@@ -49,9 +49,9 @@ EditLevelState.prototype.createAvatar = function() {
 
 // Create the menu handler, wrapping an earlier handler.
 // We also wrap on an inner edit action handler.
-EditLevelState.prototype.createMenuHandler = function(ihandler) {
+EditLevelState.prototype.createCameraHandler = function(ihandler) {
     this.edithandler = this.createEditHandler(ihandler);
-    return PlayLevelState.prototype.createMenuHandler.call(
+    return PlayLevelState.prototype.createCameraHandler.call(
         this, this.edithandler);
 };
 
