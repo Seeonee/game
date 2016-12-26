@@ -67,8 +67,11 @@ Wire.prototype.draw = function(tier) {
 
         this.flickerview = this.game.state.getCurrentState().flicker
             .view(Wire.ALPHA_ON, Wire.ALPHA_ON_LOW);
+        this.image.alpha = 0;
         this.flickerview.alpha = 0;
-        this.fadingIn();
+        if (this.enabled) {
+            this.fadingIn();
+        }
     }
 };
 
