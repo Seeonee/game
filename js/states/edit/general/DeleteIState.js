@@ -181,18 +181,51 @@ DeleteIState.prototype.finishDeletingTier = function(tier) {
             t.name = 't' + t.index;
             t.palette = this.game.settings.colors[t.name];
             this.level.tierMap[t.name] = t;
+            this.updateTierZ(t);
             i += 1;
             t.renderNeeded = true;
         }
     }
+    this.deleteTierZ('t' + i);
     delete this.level.tierMap['t' + i];
     var index = this.level.tiers.indexOf(tier);
     this.level.tiers.splice(index, 1);
     tier.delete();
+
+    this.level.tier.getAbove().unhide();
+
     this.avatar.tierMeter.recreate();
     this.avatar.tierMeter.setTier(this.level.tier);
     this.level.events.onTierChange.add(
         this.avatar.tierMeter.setTier, this.avatar.tierMeter);
     this.avatar.tierMeter.showBriefly();
     this.doneDeleting = true;
+};
+
+// Copy all z-group items down a tier.
+DeleteIState.prototype.updateTierZ = function(t) {
+    for (var i = 0; i < this.level.z.layers.length; i++) {
+        var layer = this.level.z.layers[i];
+        var name1 = t.name;
+        var name2 = 't' + (t.index + 1);
+        if (layer._tierSubs[name2]) {
+            var sub1 = layer._tierSubs[name1];
+            var sub2 = layer._tierSubs[name2];
+            while (sub1.children.length) {
+                sub1.removeChildAt(0);
+            }
+            while (sub2.children.length) {
+                sub1.addChild(sub2.children[0]);
+            }
+        }
+    }
+};
+
+// Delete the (now empty) top tier's z-group.
+DeleteIState.prototype.deleteTierZ = function(tname) {
+    for (var j = 0; j < this.level.z.layers.length; j++) {
+        var layer = this.level.z.layers[j];
+        layer.removeChild(layer._tierSubs[tname]);
+        delete layer._tierSubs[tname];
+    }
 };
