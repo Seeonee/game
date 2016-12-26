@@ -104,7 +104,7 @@ Level.prototype.setTier = function(tier, pointName) {
         } else if (t2 === old) {
             t2.fadeOut(!increasing);
         } else {
-            t2.setInactive(false);
+            t2.setInactive();
         }
     }
     this.tier.updateWorldBounds();
@@ -192,6 +192,10 @@ Level.load = function(game, name, json) {
         var tier = Tier.load(game, key, tierObj);
         tier.level = level;
         level.addTier(key, tier);
+    }
+    for (var i = 0; i < level.tiers.length; i++) {
+        level.tiers[i].draw();
+        level.tiers[i].setInactive();
     }
     OUTER: for (var i = 0; i < level.tiers.length; i++) {
         var tier = level.tiers[i];

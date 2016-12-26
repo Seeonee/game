@@ -56,8 +56,8 @@ PortalPoint.prototype.cacheToPoint = function(tier) {
         return;
     }
     var level = tier.level;
-    var t = this.direction > 0 ? level.getNextTierUp() :
-        level.getNextTierDown();
+    var t = this.direction > 0 ? tier.getAbove() :
+        tier.getBelow();
     this.toPoint = t.pointMap[this.to];
 };
 

@@ -24,7 +24,7 @@ var Tier = function(game, name) {
 
     this.palette = this.game.settings.colors[name];
 
-    this.visible = false;
+    this.visible = true;
     this.fading = false;
     this.fades = [];
     this.events = {
@@ -90,6 +90,7 @@ Tier.prototype.addPoint = function(name, x, y, point2) {
 Tier.prototype._addPoint = function(point) {
     point.x += this.shiftX;
     point.y += this.shiftY;
+    point.tier = this;
     this.points.push(point);
     this.pointMap[point.name] = point;
     this.events.onFadingIn.add(point.fadingIn, point);
@@ -105,6 +106,7 @@ Tier.prototype._addPoint = function(point) {
 Tier.prototype.replacePoint = function(old, point) {
     // Copy over a bunch of values.
     point.name = old.name;
+    point.tier = old.tier;
     point.x = old.x;
     point.y = old.y;
     point.gx = old.gx;
@@ -159,6 +161,7 @@ Tier.prototype.addPath = function(name, point, point2) {
 // Internal use only.
 // Adds an already-constructed path.
 Tier.prototype._addPath = function(path, point, point2) {
+    path.tier = this;
     point.paths.push(path);
     point2.paths.push(path);
     this.paths.push(path);
@@ -298,7 +301,16 @@ Tier.prototype.deleteWire = function(wire) {
         return wire;
     }
     return undefined;
+};
 
+// Get the tier above us.
+Tier.prototype.getAbove = function() {
+    return this.level.tierMap['t' + (this.index + 1)];
+};
+
+// Get the tier below us.
+Tier.prototype.getBelow = function() {
+    return this.level.tierMap['t' + (this.index - 1)];
 };
 
 // Takes x and y values relative to this Tier object's 
@@ -566,7 +578,7 @@ Tier.prototype.render = function() {
 
 // Set ourselves to inactive, with no fade.
 Tier.prototype.setInactive = function() {
-    if (!this.visible) {
+    if (this.visible) {
         if (this.fading) {
             // We're fading out; stop the fade and 
             // snap to fully invisible.
@@ -580,6 +592,7 @@ Tier.prototype.setInactive = function() {
         }
         this.events.onFadedOut.dispatch(this);
     }
+    this.image.alpha = 0;
     this.visible = false;
 };
 

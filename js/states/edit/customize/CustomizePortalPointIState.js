@@ -65,26 +65,21 @@ CustomizePortalPoint3IState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
     this.point = this.avatar.point;
     this.coords = '(' + this.point.gx + ',' + this.point.gy + ')';
-    var minIndex = 0;
-    var maxIndex = this.level.tiers.length - 1;
-    var index = this.level.tiers.indexOf(this.level.tier);
+    var above = this.level.tier.getAbove();
+    var below = this.level.tier.getBelow();
 
     // Find a candidate in the tier above us.
     this.options = [];
-    if (this.level.tiers.indexOf(this.level.tier) < maxIndex) {
-        var increment = 1;
-        var word = 'up';
-        var option = this.createOption(index, increment, word);
+    if (above) {
+        var option = this.createOption(above, 1, 'up');
     } else {
         var option = { text: 'up (n/a)', value: undefined };
     }
     this.options.push(option);
 
     // Now find one below us.
-    if (this.level.tiers.indexOf(this.level.tier) > minIndex) {
-        var increment = -1;
-        var word = 'down';
-        var option = this.createOption(index, increment, word);
+    if (below) {
+        var option = this.createOption(below, -1, 'down');
     } else {
         var option = { text: 'down (n/a)', value: undefined };
     }
@@ -102,9 +97,8 @@ CustomizePortalPoint3IState.prototype.advance = function() {
 
 // Create an option for one direction we can go to.
 CustomizePortalPoint3IState.prototype.createOption = function(
-    index, increment, word) {
+    tier, increment, word) {
     var option = {};
-    var tier = this.level.tiers[index + increment];
     option.text = word + '\ntier: ' + tier.name + '\npoint: ';
     option.value = { d: increment, t: tier };
     var point = this.findCounterpoint(tier);
