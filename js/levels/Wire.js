@@ -65,10 +65,12 @@ Wire.prototype.draw = function(tier) {
         this.game.state.getCurrentState().z.wire.tier().add(
             this.image);
 
-        this.flickerview = this.game.state.getCurrentState().flicker
-            .view(Wire.ALPHA_ON, Wire.ALPHA_ON_LOW);
-        this.image.alpha = 0;
-        this.flickerview.alpha = 0;
+        if (!this.flickerview) {
+            this.flickerview = this.game.state.getCurrentState().flicker
+                .view(Wire.ALPHA_ON, Wire.ALPHA_ON_LOW);
+        }
+        this.image.alpha = Wire.ALPHA_OFF;
+        this.flickerview.alpha = Wire.ALPHA_OFF;
         if (this.enabled) {
             this.fadingIn();
         }
@@ -239,11 +241,6 @@ Wire.prototype.fadedOut = function(tier) {};
 // Update one of our ends.
 Wire.prototype.replaceEnd = function(old, obj) {
     this.delete();
-    if (old.name == this.sourceName) {
-        this.sourceName = obj.name;
-    } else {
-        this.sinkName = obj.name;
-    }
     this.renderNeeded = true;
 };
 

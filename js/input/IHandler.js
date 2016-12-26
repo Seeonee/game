@@ -103,6 +103,9 @@ IHandler.prototype.unwrap = function() {
 IHandler.prototype.activate = function(name) {
     var prev = this.state;
     var next = this.states[name];
+    if (next === prev) {
+        return;
+    }
     if (prev) {
         prev.deactivated(next);
     }
