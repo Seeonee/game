@@ -16,6 +16,7 @@ ZGroup.prototype.constructor = ZGroup;
 ZGroup.prototype.createSubgroup = function(name, asChild) {
     asChild = asChild == undefined ? true : asChild;
     var group = asChild ? this.game.add.group(this) : this.game.add.group();
+    group.name = name;
     this.layers.push(group);
     this[name] = group;
     return group;
