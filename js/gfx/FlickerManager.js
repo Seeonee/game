@@ -89,3 +89,24 @@ FlickerView.prototype.tween = function(to, time, easing, delay, free) {
         this.t = undefined;
     }, this);
 }
+
+
+
+
+
+
+
+
+// Add some features to sprites that'll make life easier.
+Phaser.Sprite.prototype.update = function() {
+    this.updateChildren();
+};
+
+// Method for updating all children.
+Phaser.Sprite.prototype.updateChildren = function() {
+    for (var i = 0; i < this.children.length; i++) {
+        if (this.children[i].update) {
+            this.children[i].update();
+        }
+    }
+};

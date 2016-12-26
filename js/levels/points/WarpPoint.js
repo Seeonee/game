@@ -65,13 +65,6 @@ WarpPoint.prototype.setEnabled = function(enabled) {
     }
 };
 
-// Update loop.
-WarpPoint.prototype.update = function() {
-    if (this.ember) {
-        this.ember.update();
-    }
-};
-
 // Light up the warp point.
 WarpPoint.prototype.notifyAttached = function(avatar, prev) {
     Point.prototype.notifyAttached.call(this, avatar, prev);

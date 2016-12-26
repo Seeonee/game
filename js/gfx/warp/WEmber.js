@@ -67,6 +67,7 @@ WEmber.DISABLED_ALPHA = 0; // 0.25;
 
 // Start our slow burn.
 WEmber.prototype.update = function() {
+    Phaser.Sprite.prototype.update.call(this);
     this.alpha = this.enabled ?
         this.flickerview.alpha :
         WEmber.DISABLED_ALPHA;

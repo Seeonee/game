@@ -101,6 +101,12 @@ CloudKeyBurst.prototype.burst = function(x, y, parent, tint) {
     }, this);
 };
 
+
+
+
+
+
+
 // Small burst to indicate that we spent a key.
 var KeySpendBurst = function(game) {
     this.game = game;

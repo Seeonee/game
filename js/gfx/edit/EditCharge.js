@@ -37,6 +37,7 @@ EditCharge.RING_RATIO = 0.2;
 
 // Redraw based on ratio.
 EditCharge.prototype.update = function() {
+    Phaser.Sprite.prototype.update.call(this);
     if (this.ratio == this.ratioOld) {
         return;
     }

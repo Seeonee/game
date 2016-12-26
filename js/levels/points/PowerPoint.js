@@ -61,13 +61,6 @@ PowerPoint.prototype.notifyDetached = function(avatar, next) {
     this.power.deselect();
 };
 
-// Called when the tier updates.
-PowerPoint.prototype.update = function() {
-    if (this.power) {
-        this.power.update();
-    }
-};
-
 // Delete our power.
 PowerPoint.prototype.delete = function() {
     Point.prototype.delete.call(this);

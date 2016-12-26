@@ -76,6 +76,7 @@ Power.prototype.setRotation = function(angle) {
 
 // On update, redo our tints.
 Power.prototype.update = function() {
+    Phaser.Sprite.prototype.update.call(this);
     this.icon.tint = (this.icon_rgb.r << 16) +
         (this.icon_rgb.g << 8) +
         (this.icon_rgb.b);

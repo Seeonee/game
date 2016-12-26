@@ -9,6 +9,7 @@ explore having tiers still visible in background
 change autoplay to prompt when switching worlds (catalog level property?)
 add support for disabled menu options
 add support for changing a menu option's text
+try tsquares as triangles
 
 
 add lock mechanics
