@@ -1,6 +1,4 @@
-explore having tiers still visible in background
-    add paralax
-    make end point gfx actually attach to node (still behind tier.image z)
+make end point gfx actually attach to node (still behind tier.image z)
 tier delete should clean up the z-group's tier mapping
 test other junction modes
 change autoplay to prompt when switching worlds (catalog level property?)
