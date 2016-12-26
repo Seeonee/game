@@ -78,8 +78,8 @@ EndIState.prototype.fullyCharged = function() {
     this.charged = true;
     // *Now* let our menu activate.
     this.color = this.level.tier.palette.c1;
-    var autoplay = this.game.state.getCurrentState() ===
-        this.game.state.states.PlayLevelState;
+    var state = this.game.state.getCurrentState();
+    var autoplay = !(state instanceof EditLevelState);
     if (autoplay) {
         this.selectNextLevel();
     } else {

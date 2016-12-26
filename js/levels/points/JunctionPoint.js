@@ -39,7 +39,7 @@ JunctionPoint.ALL_MODES = [
 JunctionPoint.prototype.draw = function(tier) {
     if (this.renderNeeded) {
         this.renderNeeded = false;
-        if (tier.game.settings.edit) {
+        if (tier.game.state.getCurrentState() instanceof EditLevelState) {
             var r = this.radius / 2;
             tier.bitmap.context.fillStyle = tier.palette.c2.s;
             tier.bitmap.context.beginPath();
