@@ -815,7 +815,7 @@ Tier.prototype.hide = function(increasing) {
     var s = increasing ?
         Tier.FADE_SCALE_UP : Tier.FADE_SCALE_DOWN;
     var scale = increasing ? s : 1 / s;
-    this.image.scale.setTo(1);
+    this.image.scale.setTo(scale);
     var s = increasing ?
         Tier.HIDE_SCALE_UP : Tier.HIDE_SCALE_DOWN;
     var scale = increasing ? s : 1 / s;
