@@ -1,5 +1,10 @@
-test other junction modes
 explore having tiers still visible in background
+    scale tiers at render, based on starting tier
+    add blur
+    hide all tiers but adjacent
+    add additional fade events for listeners?
+    add paralax
+test other junction modes
 change autoplay to prompt when switching worlds (catalog level property?)
 add support for disabled menu options
 add support for changing a menu option's text

@@ -145,10 +145,15 @@ PortalPoint.prototype.notifyDetached = function(avatar, next) {
 
 // Delete our emitters.
 PortalPoint.prototype.delete = function() {
+    if (this.deleted) {
+        return;
+    }
+    this.deleted = true;
     Point.prototype.delete.call(this);
     for (var i = 0; i < this.emitters.length; i++) {
         Utils.destroy(this.emitters[i]);
     }
+    this.emitters = [];
     Utils.destroy(this.gate);
 
     // Clear the other side, too.
