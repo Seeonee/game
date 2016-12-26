@@ -39,8 +39,8 @@ Level.prototype.addTier = function(name, tier) {
     this.tiers.sort(function(a, b) {
         return a.index - b.index;
     });
-    tier.events.onFadingIn.add(this.setVisibleForTier, this);
-    tier.events.onFadedOut.add(this.setInvisibleForTier, this);
+    tier.events.onHidden.add(this.setVisibleForTier, this);
+    tier.events.onUnhidden.add(this.setInvisibleForTier, this);
 };
 
 // Return the tier above a given one (or our current one).
@@ -98,14 +98,7 @@ Level.prototype.setTier = function(tier, pointName) {
     this.tier = tier;
     var increasing = old && tier ? old.index < tier.index : false;
     for (var i = 0; i < this.tiers.length; i++) {
-        var t2 = this.tiers[i];
-        if (t2 === tier) {
-            t2.fadeIn(increasing);
-        } else if (t2 === old) {
-            t2.fadeOut(!increasing);
-        } else {
-            t2.setInactive();
-        }
+        this.tiers[i].updateBasedOnChangingTiers(this.tier, old);
     }
     this.tier.updateWorldBounds();
     if (this.avatar) {
@@ -193,20 +186,24 @@ Level.load = function(game, name, json) {
         tier.level = level;
         level.addTier(key, tier);
     }
-    for (var i = 0; i < level.tiers.length; i++) {
-        level.tiers[i].draw();
-        level.tiers[i].setInactive();
-    }
     OUTER: for (var i = 0; i < level.tiers.length; i++) {
         var tier = level.tiers[i];
         for (var j = 0; j < tier.points.length; j++) {
             var point = tier.points[j];
             if (point instanceof StartPoint) {
                 level.start = tier.name + '-' + point.name;
-                level.setTier(tier);
                 break OUTER;
             }
         }
     }
+
+    for (var i = 0; i < level.tiers.length; i++) {
+        // Set our tier so that z-subgroups can be made.
+        level.tier = level.tiers[i];
+        level.tiers[i].initializeBasedOnStartingTier(tier);
+    }
+    // Unset it so that setTier won't think nothing's changed.
+    level.tier = undefined;
+    level.setTier(tier);
     return level;
 };
