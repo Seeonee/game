@@ -53,6 +53,7 @@ Tier.FADE_SCALE = 1.75;
 Tier.FADE_ALPHA = 0.1;
 Tier.HIDE_ALPHA = 0;
 Tier.HIDE_SCALE = Math.pow(Tier.FADE_SCALE, 2);
+Tier.BLUR = 7;
 
 
 // Return a string that can be used to name a new point.
@@ -493,6 +494,21 @@ Tier.prototype.recreateImageAsNeeded = function() {
         this.image.anchor.setTo(0.5, 0.5);
         this.game.state.getCurrentState().z.level.tier().addAt(
             this.image, 0);
+
+        if (!this.spacer) {
+            this.spacer = this.game.add.sprite(
+                this.x, this.y);
+            this.game.state.getCurrentState().z.level.tier().add(this.spacer);
+        }
+        var sw = this.spacer.width;
+        var sh = this.spacer.height;
+        var sw2 = this.width * Tier.HIDE_SCALE;
+        var sh2 = this.height * Tier.HIDE_SCALE;
+        this.spacer.x = this.x - (sw2 - this.width) / 2;
+        this.spacer.y = this.y - (sh2 - this.height) / 2;
+        this.spacer.scale.setTo(sw2 / sw, sh2 / sh);
+
+
         if (children) {
             for (var i = 0; i < children.length; i++) {
                 var child = children[i];

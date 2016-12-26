@@ -39,23 +39,49 @@ LevelZGroup.prototype.constructor = LevelZGroup;
 LevelZGroup.prototype.createSubgroup = function(name, asChild) {
     var group = ZGroup.prototype.createSubgroup.call(this, name, asChild);
     group._level = this._level;
-    group.tierSubs = {};
+    group._tierSubs = {};
     group.tier = function() {
         var sub = this;
         if (this._level.tier) {
             var t = this._level.tier.name;
-            sub = this.tierSubs[t];
+            sub = this._tierSubs[t];
             if (!sub) {
                 sub = this.game.add.group(this);
-                this.tierSubs[t] = sub;
+                this._tierSubs[t] = sub;
             }
         }
         return sub;
     };
     group.setVisibleFor = function(tier, visible) {
-        var sub = this.tierSubs[tier.name];
+        var sub = this._tierSubs[tier.name];
         if (sub) {
             sub.visible = visible;
+        }
+    };
+    group.setBlurFor = function(tier, blurred) {
+        var sub = this._tierSubs[tier.name];
+        if (!sub || blurred == sub._blurred) {
+            return;
+        }
+        sub._blurred = blurred;
+        if (sub.tween) {
+            sub.tween.stop();
+        }
+        if (sub.filters == null) {
+            var filter = new PIXI.BlurFilter();
+            sub.filters = [filter];
+        } else {
+            var filter = sub.filters[0];
+        }
+        var blur = blurred ? Tier.BLUR : 0;
+        sub.tween = this.game.add.tween(filter);
+        sub.tween.to({ blur: blur }, Tier.FADE_TIME,
+            Phaser.Easing.Cubic.Out, true);
+        if (!blurred) {
+            sub.tween.sub = sub;
+            sub.tween.onComplete.add(function() {
+                this.filters = null;
+            }, sub);
         }
     };
     return group;

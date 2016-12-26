@@ -39,6 +39,8 @@ Level.prototype.addTier = function(name, tier) {
     this.tiers.sort(function(a, b) {
         return a.index - b.index;
     });
+    tier.events.onFadingOut.add(this.setBlurredForTier, this);
+    tier.events.onFadingIn.add(this.setUnblurredForTier, this);
     tier.events.onHidden.add(this.setInvisibleForTier, this);
     tier.events.onUnhiding.add(this.setVisibleForTier, this);
 };
@@ -120,6 +122,20 @@ Level.prototype.setVisibleForTier = function(tier) {
 Level.prototype.setInvisibleForTier = function(tier) {
     for (var j = 0; j < this.z.layers.length; j++) {
         this.z.layers[j].setVisibleFor(tier, false);
+    }
+};
+
+// Blurs a tier.
+Level.prototype.setBlurredForTier = function(tier) {
+    for (var j = 0; j < this.z.layers.length; j++) {
+        this.z.layers[j].setBlurFor(tier, true);
+    }
+};
+
+// Clears a tier.
+Level.prototype.setUnblurredForTier = function(tier) {
+    for (var j = 0; j < this.z.layers.length; j++) {
+        this.z.layers[j].setBlurFor(tier, false);
     }
 };
 

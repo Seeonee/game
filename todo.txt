@@ -1,10 +1,7 @@
 explore having tiers still visible in background
-    scale tiers at render, based on starting tier
-    add blur
-    hide all tiers but adjacent
-    add additional fade events for listeners?
     add paralax
     make end point gfx actually attach to node (still behind tier.image z)
+tier delete should clean up the z-group's tier mapping
 test other junction modes
 change autoplay to prompt when switching worlds (catalog level property?)
 add support for disabled menu options
