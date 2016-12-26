@@ -78,6 +78,10 @@ WEmber.prototype.setEnabled = function(enabled) {
         return;
     }
     this.enabled = enabled;
+    if (this.enabled) {
+        this.flickerview.alpha = 1;
+        this.flickerview.free();
+    }
 };
 
 // Avatar is here! Stay lit.
