@@ -188,6 +188,9 @@ Level.prototype.updateSettings = function(settings) {
 
 // Update our current tier.
 Level.prototype.update = function() {
+    if (this.done) {
+        return;
+    }
     this.updateTierParallax();
     this.tier.update();
 };
@@ -195,6 +198,14 @@ Level.prototype.update = function() {
 // Render our current tier.
 Level.prototype.render = function() {
     this.tier.render();
+};
+
+// Hide everything.
+Level.prototype.finish = function() {
+    this.z.visible = false;
+    this.game.state.getCurrentState().flicker.stop();
+    this.update();
+    this.done = true;
 };
 
 // Adjust tier parallax.

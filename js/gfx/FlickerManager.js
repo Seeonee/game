@@ -22,6 +22,12 @@ FlickerManager.prototype.view = function(max, min) {
     return new FlickerView(this, max, min);
 }
 
+// Shut down.
+FlickerManager.prototype.stop = function() {
+    this.tween.stop();
+    this.alpha = 0;
+};
+
 
 
 

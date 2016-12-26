@@ -5,7 +5,7 @@ var EndIState = function(handler, level) {
     this.avatar = this.level.avatar;
 
     this.root.text = level.name + ' complete';
-    this.add('next level', this.selectNextLevel);
+    this.nextLevel = this.add('next level', this.selectNextLevel);
     this.add('restart', this.selectRestart);
     this.add('exit', this.selectExit);
 };
@@ -76,10 +76,19 @@ EndIState.prototype.chargeUp = function() {
 EndIState.prototype.fullyCharged = function() {
     this.charging = false;
     this.charged = true;
+    this.level.finish();
     // *Now* let our menu activate.
     this.color = this.level.tier.palette.c1;
     var state = this.game.state.getCurrentState();
     var autoplay = !(state instanceof EditLevelState);
+    var catalogLevel = this.game.state.getCurrentState()
+        .catalogLevel;
+    var next = catalogLevel.next();
+    if (catalogLevel.parent !== next.parent) {
+        this.nextLevel.text = 'continue to ' + next.parent.name;
+        autoplay = false;
+    }
+
     if (autoplay) {
         this.selectNextLevel();
     } else {
