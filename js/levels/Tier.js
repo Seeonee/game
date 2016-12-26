@@ -24,7 +24,7 @@ var Tier = function(game, name) {
 
     this.palette = this.game.settings.colors[name];
 
-    this.unfaded = true;
+    this.faded = false;
     this.hidden = false;
     this.fading = false;
     this.fades = [];
@@ -621,7 +621,8 @@ Tier.prototype.updateBasedOnChangingTiers = function(tier, old) {
 
 // Faded tiers are "current adjacent".
 Tier.prototype.setFaded = function() {
-    if (this.unfaded) {
+    this.clearFades();
+    if (!this.faded) {
         this.events.onFadingOut.dispatch(this);
         this.events.onFadedOut.dispatch(this);
     } else if (this.hidden) {
@@ -629,14 +630,15 @@ Tier.prototype.setFaded = function() {
         this.events.onHidden.dispatch(this);
     }
     this.image.alpha = Tier.FADE_ALPHA;
-    this.unfaded = false;
+    this.faded = true;
     this.hidden = false;
 };
 
 // Set ourselves to completely hidden.
 Tier.prototype.setHidden = function() {
+    this.clearFades();
     if (!this.hidden) {
-        if (this.unfaded) {
+        if (!this.faded) {
             this.events.onFadingOut.dispatch(this);
             this.events.onFadedOut.dispatch(this);
         }
@@ -644,24 +646,28 @@ Tier.prototype.setHidden = function() {
         this.events.onHidden.dispatch(this);
     }
     this.image.alpha = Tier.HIDE_ALPHA;
-    this.unfaded = false;
+    this.faded = true;
     this.hidden = true;
 };
 
 // Stop any fades in progress.
 Tier.prototype.clearFades = function() {
-    for (var i = 0; i < this.fades; i++) {
-        this.fades[i].stop();
+    for (var i = 0; i < this.fades.length; i++) {
+        var fade = this.fades[i];
+        if (fade.isRunning) {
+            fade.onComplete.dispatch();
+            fade.stop();
+        }
     }
     this.fades = [];
 };
 
 // Transition a tier via fade + scaling.
 Tier.prototype.fadeIn = function(increasing) {
-    if (this.unfaded) {
+    if (!this.faded) {
         return;
     }
-    this.unfaded = true;
+    this.faded = false;
     this.hidden = false;
     this.render();
     this.clearFades();
@@ -688,10 +694,10 @@ Tier.prototype.fadeIn = function(increasing) {
 
 // Transition a tier via fade + scaling.
 Tier.prototype.fadeOut = function(increasing) {
-    if (!this.unfaded && !this.hidden) {
+    if (this.faded && !this.hidden) {
         return;
     }
-    this.unfaded = false;
+    this.faded = true;
     this.hidden = false;
     if (!this.image) {
         return;
@@ -718,23 +724,6 @@ Tier.prototype.fadeOut = function(increasing) {
         Phaser.Easing.Quartic.Out, true);
     this.fades.push(t2);
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Transition a tier via fade + scaling.
 Tier.prototype.unhide = function(increasing) {
@@ -814,42 +803,6 @@ Tier.prototype.hide = function(increasing) {
         Phaser.Easing.Quartic.Out, true);
     this.fades.push(t2);
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Delete ourself and our stuff.
 Tier.prototype.delete = function() {
