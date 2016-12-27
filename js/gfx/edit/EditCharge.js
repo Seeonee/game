@@ -1,15 +1,17 @@
 // A crude timer for editing.
-var EditCharge = function(game, x, y, palette, animate) {
+var EditCharge = function(game, x, y, palette, animate, time) {
     this.game = game;
+    this.time = time != undefined ? time : EditCharge.TIME;
     // Can't cache this particular bitmap.
     this._r = EditCharge.STARTING_RADIUS * 4;
     this.bitmap = this.game.add.bitmapData(
         this._r, this._r);
     var c = this.bitmap.context;
-    c.strokeStyle = palette.c2.s;
-    c.fillStyle = palette.c2.s;
+    c.strokeStyle = this.game.settings.colors.WHITE.s;
+    c.fillStyle = this.game.settings.colors.WHITE.s;
     c.lineWidth = EditCharge.PATH_WIDTH;
     Phaser.Sprite.call(this, game, x, y, this.bitmap);
+    this.tint = palette.c2.i;
     this.anchor.setTo(0.5);
 
 
@@ -17,7 +19,7 @@ var EditCharge = function(game, x, y, palette, animate) {
     if (this.animate) {
         this.ratio = 1;
         this.tween = this.game.add.tween(this);
-        this.tween.to({ ratio: 0 }, EditCharge.TIME,
+        this.tween.to({ ratio: 0 }, this.time,
             Phaser.Easing.Linear.None, true);
     } else {
         this.ratio = EditCharge.RING_RATIO;
@@ -65,9 +67,7 @@ EditCharge.prototype.update = function() {
 
 // Update the color.
 EditCharge.prototype.setColor = function(palette) {
-    this.bitmap.context.strokeStyle = palette.c2.s;
-    this.bitmap.context.fillStyle = palette.c2.s;
-    this.oldRatio = undefined;
+    this.tint = palette.c2.i;
 };
 
 // Jump to our final scale.
@@ -78,7 +78,7 @@ EditCharge.prototype.restart = function() {
     this.animate = true;
     this.ratio = 1;
     this.tween = this.game.add.tween(this);
-    this.tween.to({ ratio: 0 }, EditCharge.TIME,
+    this.tween.to({ ratio: 0 }, this.time,
         Phaser.Easing.Linear.None, true);
 };
 
