@@ -16,7 +16,7 @@
                     "x": 300,
                     "y": 200,
                     "type": "junction",
-                    "mode": 1
+                    "mode": 2
                 },
                 "p3": {
                     "x": 450,
@@ -145,19 +145,20 @@
             },
             "wires": {
                 "w0": {
-                    "source": "p6",
-                    "sink": "p2",
-                    "weight1": 1
-                },
-                "w1": {
                     "source": "p2",
                     "sink": "p3",
                     "weight2": 2
                 },
-                "w2": {
+                "w1": {
                     "source": "p10",
                     "sink": "p2",
-                    "weight1": 2
+                    "weight1": 2,
+                    "weight2": 2
+                },
+                "w2": {
+                    "source": "p6",
+                    "sink": "p2",
+                    "weight2": 2
                 }
             }
         }

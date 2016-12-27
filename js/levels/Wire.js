@@ -24,6 +24,8 @@ Wire.PAD = 4;
 Wire.ALPHA_ON = 0.5;
 Wire.ALPHA_ON_LOW = 0;
 Wire.ALPHA_OFF = 0;
+Wire.ALPHA_BASE_ON_LOW = 0;
+Wire.ALPHA_BASE_OFF = 0;
 Wire.ALPHA_EDIT_ON_LOW = 0.25;
 Wire.ALPHA_EDIT_OFF = 0.1;
 Wire.SEGMENT_X = 15;
@@ -60,6 +62,9 @@ Wire.prototype.draw = function(tier) {
         if (this.game.settings.edit) {
             Wire.ALPHA_ON_LOW = Wire.ALPHA_EDIT_ON_LOW;
             Wire.ALPHA_OFF = Wire.ALPHA_EDIT_OFF;
+        } else {
+            Wire.ALPHA_ON_LOW = Wire.ALPHA_BASE_ON_LOW;
+            Wire.ALPHA_OFF = Wire.ALPHA_BASE_OFF;
         }
         var bitmap = this.createBitmap();
         this.image = this.game.add.sprite(

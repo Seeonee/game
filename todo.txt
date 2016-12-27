@@ -1,4 +1,3 @@
-wire delete should highlight as you cycle through
 make end point gfx actually attach to node (still behind tier.image z)
 add relays to carry current between tiers
 add ability to sync switches

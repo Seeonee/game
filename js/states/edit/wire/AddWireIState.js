@@ -57,21 +57,9 @@ AddWire2IState.prototype.activated = function(prev) {
     this.tier = this.level.tier;
     OptionGathererIState.prototype.activated.call(this, prev);
 
-    this.image1 = new EditCharge(this.game,
-        this.point.gx, this.point.gy, this.level.tier.palette);
-    this.game.state.getCurrentState().z.mg.tier().add(this.image1);
-
-    this.image2 = new EditCharge(this.game,
-        this.point.gx, this.point.gy, this.level.tier.palette);
-    this.game.state.getCurrentState().z.mg.tier().add(this.image2);
-    this.image2.visible = false;
-};
-
-// Called when deactivated.
-AddWire2IState.prototype.deactivated = function(next) {
-    this.image1.kill();
-    this.image2.kill();
-    OptionGathererIState.prototype.deactivated.call(this, next);
+    if (prev instanceof AddWireIState) {
+        this.wire = undefined;
+    }
 };
 
 // Called on update.
@@ -88,11 +76,9 @@ AddWire2IState.prototype.update = function() {
         this.target = target;
         if (!this.target || this.target == this.point ||
             !this.canWireTo(target)) {
-            this.image2.visible = false;
+            this.deleteWire();
         } else {
-            this.image2.x = this.target.gx;
-            this.image2.y = this.target.gy;
-            this.image2.visible = true;
+            this.updateWire();
         }
         this.updateHelp();
     }
@@ -120,6 +106,15 @@ AddWire2IState.prototype.advance = function() {
     }
 };
 
+// Cancel out.
+AddWire2IState.prototype.cancel = function() {
+    if (this.wire) {
+        this.tier.deleteWire(this.wire);
+        this.wire = undefined;
+    }
+    OptionGathererIState.prototype.cancel.call(this);
+};
+
 // Return a nearby point, or undefined if none are found.
 AddWire2IState.prototype.findNearbyPoint = function() {
     var ip = this.tier.translateGamePointToInternalPoint(
@@ -145,11 +140,36 @@ AddWire2IState.prototype.canWireTo = function(target) {
     }
     for (var i = 0; i < this.point.wires.length; i++) {
         var w = this.point.wires[i];
+        if (w == this.wire) {
+            continue;
+        }
         if (w.sourceName == target.name || w.sinkName == target.name) {
             return false;
         }
     }
     return true;
+};
+
+// Draws/redraw our wire.
+AddWire2IState.prototype.updateWire = function() {
+    if (this.wire) {
+        this.wire.sinkName = this.target.name;
+        this.wire.replaceEnd();
+    } else {
+        var name = this.tier.getNewWireName();
+        this.wire = this.tier.addWire(
+            name, this.point.name, this.target.name);
+    }
+    this.wire.draw(this.tier);
+    this.wire.setHighlight(this.tier.palette);
+};
+
+// Kill our wire.
+AddWire2IState.prototype.deleteWire = function() {
+    if (this.wire) {
+        this.tier.deleteWire(this.wire);
+        this.wire = undefined;
+    }
 };
 
 
@@ -176,22 +196,12 @@ AddWire3IState.prototype.constructor = AddWire3IState;
 AddWire3IState.prototype.activated = function(prev) {
     if (prev instanceof AddWire2IState) {
         this.tier = this.level.tier;
-        this.point = this.avatar.point;
-        this.target = prev.target;
-        var name = this.tier.getNewWireName();
-        this.wire = this.tier.addWire(
-            name, this.point.name, this.target.name);
-        this.wire.draw(this.tier);
-        this.wire.setHighlight(this.tier.palette);
+        this.wire = prev.wire;
+        if (this.selected != 0) {
+            this.updateWeight(this.options[this.selected].value);
+        }
     }
     OptionSetGathererIState.prototype.activated.call(this, prev);
-};
-
-// Called as the user cycles through weights.
-AddWire3IState.prototype.cancel = function() {
-    this.tier.deleteWire(this.wire);
-    this.wire = undefined;
-    OptionSetGathererIState.prototype.cancel.call(this);
 };
 
 // Called as the user cycles through weights.
@@ -200,7 +210,12 @@ AddWire3IState.prototype.setSelected = function(option, old) {
     if (!this.wire || !option) {
         return;
     }
-    this.wire.weight1 = option.value;
+    this.updateWeight(option.value);
+};
+
+// Update wire weight.
+AddWire3IState.prototype.updateWeight = function(weight) {
+    this.wire.weight1 = weight;
     this.wire.replaceEnd();
     this.wire.draw(this.tier);
     this.wire.setHighlight(this.tier.palette);
@@ -231,6 +246,9 @@ AddWire4IState.prototype.activated = function(prev) {
     if (prev instanceof AddWire3IState) {
         this.tier = this.level.tier;
         this.wire = prev.wire;
+        if (this.selected != 0) {
+            this.updateWeight(this.options[this.selected].value);
+        }
     }
     OptionSetGathererIState.prototype.activated.call(this, prev);
 };
@@ -241,7 +259,12 @@ AddWire4IState.prototype.setSelected = function(option, old) {
     if (!this.wire || !option) {
         return;
     }
-    this.wire.weight2 = option.value;
+    this.updateWeight(option.value);
+};
+
+// Update wire weight.
+AddWire4IState.prototype.updateWeight = function(weight) {
+    this.wire.weight2 = weight;
     this.wire.replaceEnd();
     this.wire.draw(this.tier);
     this.wire.setHighlight(this.tier.palette);
