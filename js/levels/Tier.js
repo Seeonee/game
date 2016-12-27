@@ -88,6 +88,19 @@ Tier.prototype.getNewWireName = function() {
     return 'w' + i;
 };
 
+// Track a coordinate we've occupied.
+Tier.prototype.trackCoords = function(coords) {
+    if (this.coords[coords]) {
+        console.log('adding ' + coords + ' a second time!!!');
+    }
+    this.coords[coords] = true;
+};
+
+// Forget a coordinate we've occupied.
+Tier.prototype.trackCoords = function(coords) {
+    delete this.coords[coords];
+};
+
 // Create a new point, optionally connected to an existing one.
 // Returns the newly created point.
 Tier.prototype.addPoint = function(name, x, y, point2) {
@@ -112,7 +125,7 @@ Tier.prototype._addPoint = function(point) {
     this.events.onFadingOut.add(point.fadingOut, point);
     this.events.onFadedOut.add(point.fadedOut, point);
     if (this.game.settings.edit) {
-        this.coords[point.coords()] = true;
+        this.trackCoords(point.coords());
     }
     return point;
 };
@@ -189,7 +202,7 @@ Tier.prototype._addPath = function(path, point, point2) {
     if (this.game.settings.edit) {
         var coords = path.coords();
         for (var i = 0; i < coords.length; i++) {
-            this.coords[coords[i]] = true;
+            this.trackCoords(coords[i]);
         }
     }
     return path;
@@ -231,7 +244,7 @@ Tier.prototype.deletePoint = function(point) {
         delete this.pointMap[point.name];
         this.renderNeeded = true;
         if (this.game.settings.edit) {
-            delete this.coords[point.coords()];
+            this.forgetCoords(point.coords());
         }
         return point;
     }
@@ -294,7 +307,7 @@ Tier.prototype.deletePath = function(path) {
         if (this.game.settings.edit) {
             var coords = path.coords();
             for (var i = 0; i < coords.length; i++) {
-                this.coords[coords[i]] = true;
+                this.forgetCoords(coords[i]);
             }
         }
         return path;
