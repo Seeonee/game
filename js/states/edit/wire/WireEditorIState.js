@@ -56,6 +56,7 @@ WireEditorIState.prototype.updateHelpText = function() {
     }
     var obj = this.avatar.point;
     if (!obj) {
+        this.avatar.help.setText(EditLevelIHandler.addArrows('wires'));
         return;
     }
     var s = 'wires ' + ' / ' + obj.name;
