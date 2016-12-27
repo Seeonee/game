@@ -13,7 +13,6 @@ WireEditorIState.prototype.constructor = WireEditorIState;
 
 // Called when we become the active state.
 WireEditorIState.prototype.activated = function(prev) {
-    this.attachedObj = undefined;
     this.updateHelpText();
 };
 
@@ -43,6 +42,7 @@ WireEditorIState.prototype.update = function() {
         this.activate(StepDownIState.NAME);
     }
     if (this.isActive()) {
+        this.updateHelpText();
         return false;
     } else {
         return this.handler.state.update();
@@ -54,15 +54,13 @@ WireEditorIState.prototype.updateHelpText = function() {
     if (!this.isActive()) {
         return;
     }
-    var obj = this.avatar.point ? this.avatar.point : this.avatar.path;
-    if (obj === this.attachedObj) {
+    var obj = this.avatar.point;
+    if (!obj) {
         return;
     }
-    this.attachedObj = obj;
     var s = 'wires ' + ' / ' + obj.name;
-    if (obj.wires) {
-        s += '\n' + obj.wires.length + ' wire' +
-            (obj.wires.length != 1 ? 's' : '');
-    }
+    var num = obj.wires ? obj.wires.length : 0;
+    s += '\n' + num + ' wire' +
+        (num != 1 ? 's' : '');
     this.avatar.help.setText(EditLevelIHandler.addArrows(s));
 };

@@ -14,20 +14,16 @@ AddWireIState.prototype.constructor = AddWireIState;
 
 // Activate/deactivate.
 AddWireIState.prototype.activated = function(prev) {
-    if (this.myPrev == undefined) {
-        this.myPrev = prev;
-    } else {
-        this.myPrev = undefined;
-    }
+    this.canceled = prev.depth && prev.depth > this.depth;
     BaseCustomizeIState.prototype.activated.call(this, prev);
 };
 
 // Called on update.
 AddWireIState.prototype.update = function() {
-    if (this.myPrev) {
-        this.advance();
-    } else {
+    if (this.canceled) {
         this.activate(this.prev.name);
+    } else {
+        this.advance();
     }
 };
 
