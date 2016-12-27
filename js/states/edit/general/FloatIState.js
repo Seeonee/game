@@ -15,12 +15,10 @@ FloatIState.FLOAT_SNAP_DISTANCE = 25;
 
 // Called when we become the active state.
 FloatIState.prototype.activated = function(prev) {
-    if (prev instanceof GeneralEditIState ||
-        prev instanceof WireEditorIState) {
+    if (prev instanceof WireEditorIState) {
         this.prev = prev;
-    } else if (prev instanceof DeleteIState &&
-        !(this.prev instanceof WireEditorIState)) {
-        this.prev = prev.prev;
+    } else {
+        this.prev = this.handler.states[GeneralEditIState.NAME];
     }
     this.gpad.consumeButtonEvent();
     var attach = this.game.settings.buttonMap.buttonName(

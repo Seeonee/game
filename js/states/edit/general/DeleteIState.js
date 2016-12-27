@@ -13,7 +13,6 @@ DeleteIState.prototype.constructor = DeleteIState;
 // Action for deleting nodes and paths.
 DeleteIState.prototype.activated = function(prev) {
     this.prev = prev;
-
     if (prev instanceof FloatIState) {
         this.point = prev.point;
         this.path = prev.path;
@@ -21,73 +20,140 @@ DeleteIState.prototype.activated = function(prev) {
         this.point = this.avatar.point;
         this.path = this.avatar.path;
     }
-
-    this.actingOnTier = false;
-    this.falseStart = false;
-    this.deleting = false;
-    this.doneDeleting = false;
-    this.chargedTime = this.game.time.now + EditCharge.TIME;
-    this.tier = this.level.tier;
-    if (this.point) {
-        this.actingOnTier = this.tier.points.length == 1;
-        if (this.actingOnTier) {
-            this.avatar.help.setText('delete tier ' + this.tier.name +
-                '?\nhold to confirm');
-        } else {
-            this.avatar.help.setText('delete ' + this.point.name +
-                '\nhold to also merge paths');
-        }
-    } else if (this.avatar) {
-        this.avatar.help.setText('delete ' + this.path.name);
-    } else {
+    if (!this.point && !this.path) {
         this.falseStart = true;
         return;
     }
 
+    this.tier = this.level.tier;
+    this.deletingTier = false;
+    this.deletingPoint = false;
+    this.deletingPath = false;
+    this.timeToCharge = undefined;
+
+    if (this.point) {
+        if (this.tier.points.length != 1) {
+            this.deletingPoint = true;
+            this.timeToCharge = EditCharge.TIME / 2;
+            this.deleteCharged = false;
+            this.avatar.help.setText('delete ' + this.point.name + '?');
+        } else {
+            this.deletingTier = true;
+            this.timeToCharge = EditCharge.TIME;
+            this.avatar.help.setText('delete tier ' + this.tier.name +
+                '?\nhold to confirm');
+        }
+    } else if (this.path) {
+        this.deletingPath = true;
+        this.timeToCharge = EditCharge.TIME / 2;
+        this.avatar.help.setText('delete ' + this.path.name + '?');
+    }
+    this.eventTime = this.game.time.now + this.timeToCharge;
+
     this.image = new EditCharge(this.game,
         this.avatar.x, this.avatar.y, this.tier.palette,
-        this.point != undefined);
+        true, this.timeToCharge);
     this.game.state.getCurrentState().z.mg.tier().add(this.image);
-    if (this.image.tween && !this.actingOnTier) {
-        this.image.tween.onComplete.add(function() {
-            this.avatar.help.setText('delete ' +
-                this.point.name + '\nmerge paths');
-        }, this);
-    }
 };
 
 // Clean up.
 DeleteIState.prototype.deactivated = function(next) {
     this.image.destroy();
+    if (this.image2) {
+        this.image2.destroy();
+    }
+};
+
+// Back to where we came from.
+DeleteIState.prototype.cancel = function() {
+    this.activate(this.prev.name);
+};
+
+// After a successful delete, proceed to floating.
+DeleteIState.prototype.proceed = function() {
+    this.activate(FloatIState.NAME);
+};
+
+// Charged up!
+DeleteIState.prototype.charged = function() {
+    this.avatar.help.setText('delete ' +
+        this.point.name + '\nmerge paths');
 };
 
 // Handle an update while holding the button.
 DeleteIState.prototype.update = function() {
-    this.charged = this.game.time.now > this.chargedTime;
     if (this.falseStart) {
         this.activate(this.prev.name);
-    } else if (this.actingOnTier) {
-        return this.updateForTier();
+        return;
+    }
+    this.charged = this.game.time.now > this.eventTime;
+    if (this.deletingPoint) {
+        return this.updateForPoint();
+    } else if (this.deletingPath) {
+        return this.updateForPath();
     } else {
-        return this.updateForPointsAndPaths();
+        return this.updateForTier();
     }
 };
 
 // Handle an update while holding the button.
-DeleteIState.prototype.updateForPointsAndPaths = function() {
+DeleteIState.prototype.updateForPoint = function() {
+    if (this.charged) {
+        if (!this.deleteCharged) {
+            this.deleteCharged = true;
+            this.timeToCharge = EditCharge.TIME * 2;
+            this.charged = false;
+            this.avatar.help.setText('delete ' + this.point.name +
+                '\nhold to also merge paths');
+
+            this.image.tint = this.game.settings.colors.GREY.i;
+            this.image2 = new EditCharge(this.game,
+                this.avatar.x, this.avatar.y, this.tier.palette,
+                true, this.timeToCharge);
+            this.game.state.getCurrentState().z.mg.tier().add(this.image2);
+        } else {
+            this.avatar.help.setText('delete ' + this.point.name +
+                '\nmerge paths');
+        }
+    }
     if (this.gpad.released(this.buttonMap.EDIT_DELETE)) {
         this.gpad.consumeButtonEvent();
-        if (this.point) {
-            if (!this.deletePoint(this.point, this.charged)) {
-                this.avatar.help.setText('delete failed', true);
-            }
-        } else if (this.path) {
-            this.tier.deletePath(this.path);
-            this.avatar.path = undefined;
+        if (!this.charged && !this.deleteCharged) {
+            this.cancel();
+            return;
         }
-        this.activate(FloatIState.NAME);
+        var readyToMerge = this.charged;
+        if (!this.deletePoint(this.point, this.readyToMerge)) {
+            this.avatar.help.setText('delete failed', true);
+        }
+        this.proceed();
     }
 };
+
+
+
+
+
+// Handle an update while holding the button.
+DeleteIState.prototype.updateForPath = function() {
+    if (this.charged) {
+        this.avatar.help.setText('delete ' + this.path.name);
+    }
+    if (this.gpad.released(this.buttonMap.EDIT_DELETE)) {
+        this.gpad.consumeButtonEvent();
+        if (!this.charged) {
+            this.cancel();
+            return;
+        }
+        this.tier.deletePath(this.path);
+        this.avatar.path = undefined;
+        this.proceed();
+    }
+};
+
+
+
+
 
 // Handle an update while prompting about the tier.
 DeleteIState.prototype.updateForTier = function() {
@@ -99,19 +165,21 @@ DeleteIState.prototype.updateForTier = function() {
             this.tier.name + '?\nok');
     }
     if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
-        if (this.charged) {
-            this.gpad.consumeButtonEvent();
-            this.deleteTier();
-            this.activate(this.prev.name);
-        } else {
-            this.activate(this.prev.name);
+        this.gpad.consumeButtonEvent();
+        if (!this.charged) {
+            this.cancel();
+            return;
         }
+        this.deleteTier();
+        this.proceed();
     }
 };
 
+
+
+
+
 // Attempt to delete a point. Returns success/fail.
-// May also set the "we're now looking to delete the tier"
-// flag.
 DeleteIState.prototype.deletePoint = function(point, merge) {
     if (point instanceof StartPoint ||
         point instanceof EndPoint) {
@@ -124,7 +192,7 @@ DeleteIState.prototype.deletePoint = function(point, merge) {
         // Delete the point and its paths.
         this.tier.deletePoint(point);
     }
-    this.cleanUpPoint(point);
+    // this.cleanUpPoint(point);
     this.avatar.point = undefined;
     return true;
 };
@@ -143,6 +211,10 @@ DeleteIState.prototype.cleanUpPortalPoint = function(point) {
     var other = tier.pointMap[point.to];
     tier.replacePoint(other, new Point());
 };
+
+
+
+
 
 // Delete this entire tier, and snap to an adjacent 
 // (ideally lower) one.
@@ -192,7 +264,10 @@ DeleteIState.prototype.finishDeletingTier = function(tier) {
     this.level.tiers.splice(index, 1);
     tier.delete();
 
-    this.level.tier.getAbove().unhide();
+    var above = this.level.tier.getAbove();
+    if (above) {
+        above.unhide();
+    }
 
     this.avatar.tierMeter.recreate();
     this.avatar.tierMeter.setTier(this.level.tier);
