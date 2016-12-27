@@ -21,7 +21,7 @@ Wire.TYPE = 'wire'; // Helps with editing.
 // Constants.
 Wire.WIDTH = 2;
 Wire.PAD = 4;
-Wire.ALPHA_ON = 1;
+Wire.ALPHA_ON = 0.5;
 Wire.ALPHA_ON_LOW = 0;
 Wire.ALPHA_OFF = 0;
 Wire.ALPHA_EDIT_ON_LOW = 0.25;
@@ -219,6 +219,22 @@ Wire.prototype.isEnabled = function() {
 // Called when the tier updates.
 Wire.prototype.update = function() {
     this.image.alpha = this.flickerview.alpha;
+};
+
+// Highlight the wire.
+Wire.prototype.setHighlight = function(palette) {
+    this.image.tint = palette.c2.i;
+    this.flickerview.alpha = 1;
+};
+
+// Unhighlight the wire.
+Wire.prototype.cancelHighlight = function() {
+    var alpha = this.enabled ?
+        Wire.ALPHA_ON_LOW : Wire.ALPHA_OFF;
+    this.image.alpha = alpha;
+    this.flickerview.alpha = alpha;
+    this.flickerview.free();
+    this.image.tint = this.game.settings.colors.WHITE.i;
 };
 
 // Handle various fade events.

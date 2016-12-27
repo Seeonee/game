@@ -139,6 +139,11 @@ OptionGathererIState.prototype.gatherOptions = function() {
     return result;
 };
 
+// Cancel out.
+OptionGathererIState.prototype.cancel = function() {
+    this.activate(this.prev.name);
+};
+
 // Update loop.
 OptionGathererIState.prototype.update = function() {
     if (this.gpad.justPressed(this.buttonMap.EDIT_CUSTOMIZE)) {
@@ -155,7 +160,7 @@ OptionGathererIState.prototype.update = function() {
         this.cancelPressed = true;
     } else if (this.cancelPressed &&
         this.gpad.justReleased(this.buttonMap.CANCEL)) {
-        this.activate(this.prev.name);
+        this.cancel();
     }
 };
 
@@ -198,6 +203,7 @@ OptionSetGathererIState.prototype.setOptions = function(options) {
         this.options.push(option);
     }
     this.selected = 0;
+    this.setSelected(this.options[this.selected]);
 };
 
 // What option do we display?
@@ -212,16 +218,31 @@ OptionSetGathererIState.prototype.getOptionValue = function() {
     return option.value;
 };
 
+// Cancel out.
+OptionSetGathererIState.prototype.cancel = function() {
+    this.setSelected(undefined, this.options[this.selected]);
+    OptionGathererIState.prototype.cancel.call(this);
+};
+
+// Subclass can override for additional behavior on select.
+OptionSetGathererIState.prototype.setSelected = function(option, old) {
+    // Noop.
+};
+
 // Update loop.
 OptionSetGathererIState.prototype.update = function() {
     if (this.gpad.justReleased(this.buttonMap.EDIT_MODE_RIGHT)) {
         this.gpad.consumeButtonEvent();
+        var old = this.options[this.selected];
         this.selected = (this.selected + 1) % this.options.length;
+        this.setSelected(this.options[this.selected], old);
         this.updateHelp();
     } else if (this.gpad.justReleased(this.buttonMap.EDIT_MODE_LEFT)) {
         this.gpad.consumeButtonEvent();
+        var old = this.options[this.selected];
         this.selected = (this.selected + this.options.length - 1) %
             this.options.length;
+        this.setSelected(this.options[this.selected], old);
         this.updateHelp();
     } else {
         return OptionGathererIState.prototype.update.call(this);

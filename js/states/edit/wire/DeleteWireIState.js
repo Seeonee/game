@@ -52,12 +52,23 @@ DeleteWire2IState.prototype.constructor = DeleteWire2IState;
 // Set up our options.
 DeleteWire2IState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
+    this.tier = this.level.tier;
     var options = [];
     for (var i = 0; i < this.avatar.point.wires.length; i++) {
         options.push(this.avatar.point.wires[i].name);
     }
     this.setOptions(options);
     OptionSetGathererIState.prototype.activated.call(this, prev);
+};
+
+// Called as the user cycles through wires to cut.
+DeleteWire2IState.prototype.setSelected = function(option, old) {
+    if (option) {
+        this.tier.wireMap[option.value].setHighlight(this.tier.palette);
+    }
+    if (old) {
+        this.tier.wireMap[old.value].cancelHighlight();
+    }
 };
 
 
