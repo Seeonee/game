@@ -69,6 +69,7 @@ DeleteWire2IState.prototype.setSelected = function(option, old) {
     if (old) {
         this.tier.wireMap[old.value].cancelHighlight();
     }
+    OptionSetGathererIState.prototype.setSelected.call(this, option, old);
 };
 
 

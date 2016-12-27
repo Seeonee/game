@@ -172,6 +172,42 @@ var AddWire3IState = function(handler, level) {
 AddWire3IState.prototype = Object.create(OptionSetGathererIState.prototype);
 AddWire3IState.prototype.constructor = AddWire3IState;
 
+// Called on activate.
+AddWire3IState.prototype.activated = function(prev) {
+    if (prev instanceof AddWire2IState) {
+        this.tier = this.level.tier;
+        this.point = this.avatar.point;
+        this.target = prev.target;
+        var name = this.tier.getNewWireName();
+        this.wire = this.tier.addWire(
+            name, this.point.name, this.target.name);
+        this.wire.draw(this.tier);
+        this.wire.setHighlight(this.tier.palette);
+    }
+    OptionSetGathererIState.prototype.activated.call(this, prev);
+};
+
+// Called as the user cycles through weights.
+AddWire3IState.prototype.cancel = function() {
+    this.tier.deleteWire(this.wire);
+    this.wire = undefined;
+    OptionSetGathererIState.prototype.cancel.call(this);
+};
+
+// Called as the user cycles through weights.
+AddWire3IState.prototype.setSelected = function(option, old) {
+    OptionSetGathererIState.prototype.setSelected.call(this, option, old);
+    if (!this.wire || !option) {
+        return;
+    }
+    this.wire.weight1 = option.value;
+    this.wire.replaceEnd();
+    this.wire.draw(this.tier);
+    this.wire.setHighlight(this.tier.palette);
+};
+
+
+
 
 
 
@@ -190,6 +226,27 @@ var AddWire4IState = function(handler, level) {
 AddWire4IState.prototype = Object.create(OptionSetGathererIState.prototype);
 AddWire4IState.prototype.constructor = AddWire4IState;
 
+// Called on activate.
+AddWire4IState.prototype.activated = function(prev) {
+    if (prev instanceof AddWire3IState) {
+        this.tier = this.level.tier;
+        this.wire = prev.wire;
+    }
+    OptionSetGathererIState.prototype.activated.call(this, prev);
+};
+
+// Called as the user cycles through weights.
+AddWire4IState.prototype.setSelected = function(option, old) {
+    OptionSetGathererIState.prototype.setSelected.call(this, option, old);
+    if (!this.wire || !option) {
+        return;
+    }
+    this.wire.weight2 = option.value;
+    this.wire.replaceEnd();
+    this.wire.draw(this.tier);
+    this.wire.setHighlight(this.tier.palette);
+};
+
 
 
 
@@ -207,15 +264,16 @@ AddWire5IState.prototype = Object.create(BaseCustomizeIState.prototype);
 AddWire5IState.prototype.constructor = AddWire5IState;
 
 
+// Called on activate.
+AddWire5IState.prototype.activated = function(prev) {
+    if (prev instanceof AddWire4IState) {
+        this.wire = prev.wire;
+    }
+    OptionSetGathererIState.prototype.activated.call(this, prev);
+};
+
 // Update loop.
 AddWire5IState.prototype.update = function() {
-    var tier = this.level.tier;
-    var options = this.prev.gatherOptions();
-    var name = tier.getNewWireName();
-    var source = this.point.name;
-    var sink = options['destination'];
-    var wire = tier.addWire(name, source, sink);
-    wire.weight1 = options['starting weight'];
-    wire.weight2 = options['ending weight'];
+    this.wire.cancelHighlight();
     this.finished(); // Activates previous.
 };
