@@ -15,6 +15,10 @@ FloatIState.FLOAT_SNAP_DISTANCE = 25;
 
 // Called when we become the active state.
 FloatIState.prototype.activated = function(prev) {
+    if (prev instanceof GeneralEditIState ||
+        prev instanceof WireEditorIState) {
+        this.prev = prev;
+    }
     this.gpad.consumeButtonEvent();
     var attach = this.game.settings.buttonMap.buttonName(
         this.game.settings.buttonMap.EDIT_FLOAT);
@@ -69,24 +73,26 @@ FloatIState.prototype.update = function() {
             // Don't stop the hover.
             return;
         }
-        this.activate(GeneralEditIState.NAME);
+        this.activate(this.prev.name);
         return;
-    } else if (this.gpad.justPressed(this.buttonMap.EDIT_ADD)) {
-        if (!this.point && !this.path) {
-            this.activate(AddFromFloatIState.NAME);
-        }
-    } else if (this.gpad.justPressed(this.buttonMap.EDIT_DELETE)) {
-        if (this.point || this.path) {
-            this.activate(DeleteIState.NAME);
-        }
-    } else if (this.gpad.justPressed(this.buttonMap.EDIT_CUSTOMIZE)) {
-        if (this.point) {
-            this.activate(CustomizePointIState.NAME);
-        }
     } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_UP)) {
         this.activate(StepUpIState.NAME);
     } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_DOWN)) {
         this.activate(StepDownIState.NAME);
+    } else if (this.prev instanceof GeneralEditIState) {
+        if (this.gpad.justPressed(this.buttonMap.EDIT_ADD)) {
+            if (!this.point && !this.path) {
+                this.activate(AddFromFloatIState.NAME);
+            }
+        } else if (this.gpad.justPressed(this.buttonMap.EDIT_DELETE)) {
+            if (this.point || this.path) {
+                this.activate(DeleteIState.NAME);
+            }
+        } else if (this.gpad.justPressed(this.buttonMap.EDIT_CUSTOMIZE)) {
+            if (this.point) {
+                this.activate(CustomizePointIState.NAME);
+            }
+        }
     }
 }
 

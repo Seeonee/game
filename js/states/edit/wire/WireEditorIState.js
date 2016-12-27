@@ -35,12 +35,12 @@ WireEditorIState.prototype.update = function() {
         if (this.avatar.point && this.avatar.point.wires.length > 0) {
             this.activate(DeleteWireIState.NAME);
         }
-        // } else if (this.gpad.justPressed(this.buttonMap.EDIT_FLOAT)) {
-        //     this.activate(FloatIState.NAME);
-        // } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_UP)) {
-        //     this.activate(StepUpIState.NAME);
-        // } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_DOWN)) {
-        //     this.activate(StepDownIState.NAME);
+    } else if (this.gpad.justPressed(this.buttonMap.EDIT_FLOAT)) {
+        this.activate(FloatIState.NAME);
+    } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_UP)) {
+        this.activate(StepUpIState.NAME);
+    } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_DOWN)) {
+        this.activate(StepDownIState.NAME);
     }
     if (this.isActive()) {
         return false;
