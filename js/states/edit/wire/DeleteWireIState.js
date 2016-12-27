@@ -86,7 +86,7 @@ DeleteWire3IState.prototype.update = function() {
     var tier = this.level.tier;
     var options = this.prev.gatherOptions();
     var name = options.cut;
-    tier.wireMap[name].delete();
+    tier.delete(tier.wireMap[name]);
     this.avatar.help.setText('cut wire ' + name, true);
     this.finished(); // Activates previous.
 };

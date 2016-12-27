@@ -209,6 +209,9 @@ Tier.prototype.deletePoint = function(point) {
         while (point.paths.length) {
             this.deletePath(point.paths[0]);
         }
+        while (point.wires.length) {
+            this.deleteWire(point.wires[0]);
+        }
         point.delete();
         this.events.onFadingIn.remove(point.fadingIn, point);
         this.events.onFadedIn.remove(point.fadedIn, point);
