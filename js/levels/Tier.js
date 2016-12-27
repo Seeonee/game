@@ -17,6 +17,7 @@ var Tier = function(game, name) {
     this.pointMap = {};
     this.pathMap = {};
     this.wireMap = {};
+    this.coords = {};
 
     // Bitmap gets set up later.
     this.bitmap = undefined;
@@ -110,6 +111,9 @@ Tier.prototype._addPoint = function(point) {
     this.events.onFadedIn.add(point.fadedIn, point);
     this.events.onFadingOut.add(point.fadingOut, point);
     this.events.onFadedOut.add(point.fadedOut, point);
+    if (this.game.settings.edit) {
+        this.coords[point.coords()] = true;
+    }
     return point;
 };
 
@@ -182,6 +186,12 @@ Tier.prototype._addPath = function(path, point, point2) {
     this.events.onFadingOut.add(path.fadingOut, path);
     this.events.onFadedOut.add(path.fadedOut, path);
     this.pathMap[path.name] = path;
+    if (this.game.settings.edit) {
+        var coords = path.coords();
+        for (var i = 0; i < coords.length; i++) {
+            this.coords[coords[i]] = true;
+        }
+    }
     return path;
 };
 
@@ -220,6 +230,9 @@ Tier.prototype.deletePoint = function(point) {
         this.points.splice(index, 1);
         delete this.pointMap[point.name];
         this.renderNeeded = true;
+        if (this.game.settings.edit) {
+            delete this.coords[point.coords()];
+        }
         return point;
     }
     return undefined;
@@ -278,6 +291,12 @@ Tier.prototype.deletePath = function(path) {
         this.paths.splice(index, 1);
         delete this.pathMap[path.name];
         this.renderNeeded = true;
+        if (this.game.settings.edit) {
+            var coords = path.coords();
+            for (var i = 0; i < coords.length; i++) {
+                this.coords[coords[i]] = true;
+            }
+        }
         return path;
     }
     return undefined;

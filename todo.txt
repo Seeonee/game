@@ -1,3 +1,9 @@
+prevent point adds on top of existing points/paths
+prevent path adds atop existing points/paths
+attempt to prevent crossed paths
+add slight charge-up when deleting
+add much longer charge-up on delete+merge
+
 make end point gfx actually attach to node (still behind tier.image z)
 add relays to carry current between tiers
 add ability to sync switches

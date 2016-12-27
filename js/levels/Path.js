@@ -26,6 +26,34 @@ Path.prototype.asKey = function() {
     return 'x' + this.p1.x + 'y' + this.p1.y + 'x' + this.p2.x + 'y' + this.p2.y;
 };
 
+// Returns a list of string representations of our game coords.
+// These are taken every *half* unit along our length, 
+// excluding our ends.
+Path.prototype.coords = function() {
+    return Path.coords(
+        this.p1.gx, this.p1.gy,
+        this.p2.gx, this.p2.gy);
+};
+
+// Returns a list of string representations of our game coords.
+// These are taken every *half* unit along our length, 
+// excluding our ends.
+Path.coords = function(x1, y1, x2, y2) {
+    var coords = [];
+    var xlen = x2 - x1;
+    var ylen = y2 - y1;
+    var dx = Math.sign(xlen) * (50 / 2);
+    var dy = Math.sign(ylen) * (50 / 2);
+    var x = x1 + dx;
+    var y = y1 + dy;
+    while (x != x2 || y != y2) {
+        coords.push(Point.coords(x, y));
+        x += dx;
+        y += dy;
+    }
+    return coords;
+};
+
 // Given one of our endpoints, return the other.
 Path.prototype.getCounterpoint = function(point) {
     return (this.p1.x == point.x && this.p1.y == point.y) ? this.p2 : this.p1;

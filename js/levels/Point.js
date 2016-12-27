@@ -43,6 +43,16 @@ Point.prototype.asKey = function() {
     return 'x' + this.x + 'y' + this.y;
 };
 
+// Convenient string representation of our *game* coords.
+Point.prototype.coords = function() {
+    return Point.coords(this.gx, this.gy)
+};
+
+// Static method for obtaining coords.
+Point.coords = function(x, y) {
+    return x + ':' + y;
+}
+
 // Check if we're directly connected to another point.
 Point.prototype.isConnectedTo = function(point) {
     for (var i = 0; i < this.paths.length; i++) {
