@@ -1,10 +1,6 @@
-add slight charge-up when deleting
-add much longer charge-up on delete+merge
-
 make end point gfx actually attach to node (still behind tier.image z)
 add relays to carry current between tiers
 add ability to sync switches
-add editor safeguards against overlapping/duplicate points/paths/wires
 add lock mechanics
 figure out what powers should do
 add settings submenu for key bindings
