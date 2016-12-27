@@ -185,5 +185,5 @@ JunctionPoint.prototype.toJSON = function() {
 // Load our JSON representation.
 JunctionPoint.load = function(game, name, json) {
     return new JunctionPoint(name, json.x, json.y,
-        json.enabled, json.once, json.contact);
+        json.mode);
 };

@@ -17,7 +17,7 @@ CustomizePortalPointIState.prototype.update = function() {
     if (this.level.tiers.length == 1) {
         this.avatar.help.setText('create portal failed\n' +
             'add tiers first', true);
-        this.finish();
+        this.finished();
         return;
     }
     return OptionSetGathererIState.prototype.update.call(this);
