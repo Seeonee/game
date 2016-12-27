@@ -133,9 +133,8 @@ Tier.prototype.replacePoint = function(old, point) {
         path.p1 === old ? path.p1 = point : path.p2 = point;
     }
     old.paths = [];
-    for (var i = 0; i < old.wires.length; i++) {
-        var wire = old.wires[i];
-        wire.replaceEnd(old, point);
+    while (old.wires.length) {
+        old.wires[0].replaceEnd(old, point);
     }
     old.wires = [];
     // Update the tier's lists.
