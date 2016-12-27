@@ -92,25 +92,6 @@ Wire.prototype.createBitmap = function() {
     var xs = xsign * Wire.SEGMENT_X;
     var ys = ysign * Wire.SEGMENT_Y;
 
-    if (Math.abs(dx) < Wire.SEGMENT) {
-        this.width += Wire.SEGMENT;
-    }
-    if (Math.abs(dy) < Wire.SEGMENT) {
-        this.height += Wire.SEGMENT;
-    }
-    if (this.weight1) {
-        this.width = Math.max(this.width, 2 * (
-            Wire.PAD + this.weight1 * Wire.SEGMENT_X));
-        this.height = Math.max(this.height, 2 * (
-            Wire.PAD + this.weight1 * Wire.SEGMENT_Y));
-    }
-    if (this.weight2) {
-        this.width = Math.max(this.width, 2 * (
-            Wire.PAD + this.weight2 * Wire.SEGMENT_X));
-        this.height = Math.max(this.height, 2 * (
-            Wire.PAD + this.weight2 * Wire.SEGMENT_Y));
-    }
-
     var x10 = x1;
     var y10 = y1;
     var x20 = x2;
@@ -136,22 +117,17 @@ Wire.prototype.createBitmap = function() {
         }
     }
 
-    var bitmap = this.game.add.bitmapData(
-        2 * Wire.PAD + this.width,
-        2 * Wire.PAD + this.height);
-    var c = bitmap.context;
-    c.lineWidth = Wire.WIDTH;
-    c.lineCap = 'round';
-    c.strokeStyle = this.game.settings.colors.WHITE.s;
-    c.translate(Wire.PAD, Wire.PAD);
-    // c.moveTo(x10, y10);
-    // c.lineTo(x1, y1);
-    c.moveTo(x1, y1);
+    var points = [];
+    var xbase = Wire.PAD;
+    var ybase = Wire.PAD;
+    points.push({ x: xbase + x1, y: ybase + y1 });
     if (dx) {
         if (this.weight1) {
             var shift = xsign * this.weight1 * Wire.WEIGHT_SHIFT;
-            c.lineTo(x1 + shift, y1);
-            c.translate(shift, 0);
+            points.push({ x: xbase + x1 + shift, y: ybase + y1 });
+            xbase += shift;
+            x2 -= shift;
+            dx -= shift;
         }
         if (this.weight2) {
             var shift = this.weight2 * Wire.WEIGHT_SHIFT;
@@ -160,28 +136,54 @@ Wire.prototype.createBitmap = function() {
         }
         if (Math.abs(dx) > Math.abs(dy)) {
             var dy2 = xsign * Math.abs(dy);
-            c.lineTo(x1 + dy2, y1 + dy);
+            points.push({ x: xbase + x1 + dy2, y: ybase + y1 + dy });
         } else {
             var dx2 = ysign * Math.abs(dx);
-            c.lineTo(x1 + dx, y1 + dx2);
+            points.push({ x: xbase + x1 + dx, y: ybase + y1 + dx2 });
         }
         if (this.weight2) {
-            c.lineTo(x2 - xsign * shift, y2 - ysign * shift);
+            points.push({
+                x: xbase + x2 - xsign * shift,
+                y: ybase + y2 - ysign * shift
+            });
         }
-        c.lineTo(x2, y2);
+        points.push({ x: xbase + x2, y: ybase + y2 });
     } else {
-        c.lineTo(x1, y2);
+        points.push({ x: xbase + x1, y: ybase + y2 });
     }
-    // c.lineTo(x20, y20);
+
+    var w = 0;
+    var h = 0;
+    for (var i = 0; i < points.length; i++) {
+        var p = points[i];
+        w = Math.max(w, Math.abs(p.x));
+        h = Math.max(h, Math.abs(p.y));
+    }
+    w += Wire.PAD;
+    h += Wire.PAD;
+
+    var bitmap = this.game.add.bitmapData(w, h);
+    var c = bitmap.context;
+    c.lineWidth = Wire.WIDTH;
+    c.lineCap = 'round';
+    c.strokeStyle = this.game.settings.colors.WHITE.s;
+    for (var i = 0; i < points.length; i++) {
+        var p = points[i];
+        if (i == 0) {
+            c.moveTo(p.x, p.y);
+        } else {
+            c.lineTo(p.x, p.y);
+        }
+    }
     c.stroke();
 
     var o1 = this.source.attachmentRadius;
     var o2 = this.sink.attachmentRadius;
     if (o1) {
-        Utils.clearArc(c, x10, y10, o1);
+        Utils.clearArc(c, xbase + x10, ybase + y10, o1);
     }
     if (o2) {
-        Utils.clearArc(c, x20, y20, o2);
+        Utils.clearArc(c, xbase + x20, ybase + y20, o2);
     }
 
     return bitmap;
