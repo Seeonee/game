@@ -62,5 +62,14 @@ WireEditorIState.prototype.updateHelpText = function() {
     var num = obj.wires ? obj.wires.length : 0;
     s += '\n' + num + ' wire' +
         (num != 1 ? 's' : '');
+    if (num > 0) {
+        s += ': ';
+        for (var i = 0; i < num; i++) {
+            if (i > 0) {
+                s += ', '
+            }
+            s += obj.wires[i].name;
+        }
+    }
     this.avatar.help.setText(EditLevelIHandler.addArrows(s));
 };
