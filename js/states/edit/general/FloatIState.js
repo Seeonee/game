@@ -18,6 +18,9 @@ FloatIState.prototype.activated = function(prev) {
     if (prev instanceof GeneralEditIState ||
         prev instanceof WireEditorIState) {
         this.prev = prev;
+    } else if (prev instanceof DeleteIState &&
+        !(this.prev instanceof WireEditorIState)) {
+        this.prev = prev.prev;
     }
     this.gpad.consumeButtonEvent();
     var attach = this.game.settings.buttonMap.buttonName(
