@@ -19,6 +19,7 @@ BaseCustomizeIState.prototype.constructor = BaseCustomizeIState;
 BaseCustomizeIState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
     this.pressed = false;
+    this.cancelPressed = false;
     if (!(prev.depth > this.depth)) {
         this.prev = prev;
         this.point = this.avatar.point;
@@ -149,7 +150,11 @@ OptionGathererIState.prototype.update = function() {
         this.gpad.consumeButtonEvent();
         this.pressed = false;
         this.advance();
-    } else if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
+    } else if (this.gpad.justPressed(this.buttonMap.CANCEL)) {
+        this.gpad.consumeButtonEvent();
+        this.cancelPressed = true;
+    } else if (this.cancelPressed &&
+        this.gpad.justReleased(this.buttonMap.CANCEL)) {
         this.activate(this.prev.name);
     }
 };
@@ -175,6 +180,15 @@ var OptionSetGathererIState = function(handler, level,
     // representation, if you want something custom.
     // If options have neither, we wrap them and assume 
     // they represent their own .value (and .text).
+    this.setOptions(options);
+};
+
+OptionSetGathererIState.prototype = Object.create(OptionGathererIState.prototype);
+OptionSetGathererIState.prototype.constructor = OptionSetGathererIState;
+
+
+// Update our list of options.
+OptionSetGathererIState.prototype.setOptions = function(options) {
     this.options = [];
     for (var i = 0; i < options.length; i++) {
         var option = options[i];
@@ -185,10 +199,6 @@ var OptionSetGathererIState = function(handler, level,
     }
     this.selected = 0;
 };
-
-OptionSetGathererIState.prototype = Object.create(OptionGathererIState.prototype);
-OptionSetGathererIState.prototype.constructor = OptionSetGathererIState;
-
 
 // What option do we display?
 OptionSetGathererIState.prototype.getOptionText = function() {

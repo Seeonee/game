@@ -31,10 +31,10 @@ WireEditorIState.prototype.update = function() {
         if (this.avatar.point && this.avatar.point.type != Point.TYPE) {
             this.activate(AddWireIState.NAME);
         }
-        // } else if (this.gpad.justPressed(this.buttonMap.EDIT_DELETE)) {
-        //     if (this.avatar.point) {
-        //         this.activate(DeleteWireIState.NAME);
-        //     }
+    } else if (this.gpad.justPressed(this.buttonMap.EDIT_DELETE)) {
+        if (this.avatar.point && this.avatar.point.wires.length > 0) {
+            this.activate(DeleteWireIState.NAME);
+        }
         // } else if (this.gpad.justPressed(this.buttonMap.EDIT_FLOAT)) {
         //     this.activate(FloatIState.NAME);
         // } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_UP)) {

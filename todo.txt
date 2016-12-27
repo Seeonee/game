@@ -1,6 +1,7 @@
-make end point gfx actually attach to node (still behind tier.image z)
 test other junction modes
 add a wire editor mode
+replacing a junction kills the signal transmit...
+make end point gfx actually attach to node (still behind tier.image z)
 add relays to carry current between tiers
 add ability to sync switches
 

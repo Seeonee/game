@@ -38,6 +38,7 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     // Wires.
     this.modes.push(new WireEditorIState(this, this.level));
     new AddWireIState(this, this.level);
+    new DeleteWireIState(this, this.level);
 
     // Reset the level.
     this.modes.push(new ResetLevelIState(this, this.level));
