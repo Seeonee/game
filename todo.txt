@@ -4,6 +4,8 @@ add a wire editor mode
 add relays to carry current between tiers
 add ability to sync switches
 
+add editor safeguards against overlapping/duplicate points/paths/wires
+
 
 add lock mechanics
 figure out what powers should do

@@ -16,6 +16,8 @@ var Wire = function(name, sourceName, sinkName,
     this.weight2 = weight2 ? weight2 : 0;
 };
 
+Wire.TYPE = 'wire'; // Helps with editing.
+
 // Constants.
 Wire.WIDTH = 2;
 Wire.PAD = 4;

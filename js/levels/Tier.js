@@ -297,6 +297,7 @@ Tier.prototype._addWire = function(wire) {
     this.events.onFadedIn.add(wire.fadedIn, wire);
     this.events.onFadingOut.add(wire.fadingOut, wire);
     this.events.onFadedOut.add(wire.fadedOut, wire);
+    this.renderNeeded = true;
     return wire;
 };
 
