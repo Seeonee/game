@@ -1,6 +1,3 @@
-prevent point adds on top of existing points/paths
-prevent path adds atop existing points/paths
-attempt to prevent crossed paths
 add slight charge-up when deleting
 add much longer charge-up on delete+merge
 

@@ -191,9 +191,9 @@ AddFromPointIState.prototype.activated = function(prev) {
         this.game.settings.buttonMap.SELECT);
     var cancel = this.game.settings.buttonMap.buttonName(
         this.game.settings.buttonMap.CANCEL);
-    this.avatar.help.setText('add ' + newPointName +
-        ' to ' + this.point.name +
-        '\n  ' + select + ' to confirm\n  ' + cancel + ' to cancel');
+    this.helptext = 'add ' + newPointName + ' to ' + this.point.name +
+        '\n  ' + select + ' to confirm\n  ' + cancel + ' to cancel';
+    this.avatar.help.setText(this.helptext);
 };
 
 // Translate a game coordinate point so that it can 
@@ -287,10 +287,11 @@ AddFromPointIState.prototype.update = function() {
 
     var done = false;
     if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
+        this.gpad.consumeButtonEvent();
         // Just finish; don't add any paths.
         done = true;
-        this.gpad.consumeButtonEvent(this.buttonMap.CANCEL);
     } else if (this.gpad.justReleased(this.buttonMap.EDIT_ADD)) {
+        this.gpad.consumeButtonEvent();
         // New point, coming atcha!
         if (this.near && this.valid) {
             // Find out if a point already exists at these coordinates.
@@ -303,6 +304,13 @@ AddFromPointIState.prototype.update = function() {
                     existing = point;
                     break;
                 }
+            }
+            // Make sure we're not overlapping earlier stuff.
+            if (this.isOverlapping(existing)) {
+                this.avatar.help.setText(
+                    'failed to add (overlap)', true);
+                this.avatar.help.setText(this.helptext);
+                return;
             }
             if (existing) {
                 this.tier.addPath(
@@ -323,6 +331,25 @@ AddFromPointIState.prototype.update = function() {
         this.image.destroy();
         this.activate(GeneralEditIState.NAME);
     }
+};
+
+// Are any existing points already occupying spots that our new 
+// path and/or point will want?
+AddFromPointIState.prototype.isOverlapping = function(existing) {
+    var x1 = this.avatar.point.gx;
+    var y1 = this.avatar.point.gy;
+    var x2 = this.near.x;
+    var y2 = this.near.y;
+    var coords = Path.coords(x1, y1, x2, y2);
+    if (!existing) {
+        coords.push(Point.coords(x2, y2));
+    }
+    for (var i = 0; i < coords.length; i++) {
+        if (this.level.tier.coords[coords[i]]) {
+            return true;
+        }
+    }
+    return false;
 };
 
 
@@ -382,20 +409,32 @@ AddFromFloatIState.prototype.update = function() {
         this.gpad.consumeButtonEvent();
         var prev = FloatIState.NAME;
         if (charged) {
-            var p = this.tier.addPoint(this.newPoint,
-                this.near.x, this.near.y);
-            this.avatar.help.setText('added point ' + this.newPoint +
-                ' ' + this.details, true);
-            this.avatar.x = p.gx;
-            this.avatar.y = p.gy;
-            this.avatar.body.velocity.x = 0;
-            this.avatar.body.velocity.y = 0;
-            this.avatar.point = p;
-            this.avatar.path = undefined;
-            prev = GeneralEditIState.NAME;
+            // Make sure we're not overlapping earlier stuff.
+            if (this.isOverlapping()) {
+                this.avatar.help.setText(
+                    'failed to add (overlap)', true);
+            } else {
+                var p = this.tier.addPoint(this.newPoint,
+                    this.near.x, this.near.y);
+                this.avatar.help.setText('added point ' + this.newPoint +
+                    ' ' + this.details, true);
+                this.avatar.x = p.gx;
+                this.avatar.y = p.gy;
+                this.avatar.body.velocity.x = 0;
+                this.avatar.body.velocity.y = 0;
+                this.avatar.point = p;
+                this.avatar.path = undefined;
+                prev = GeneralEditIState.NAME;
+            }
         }
         this.image.kill();
         this.chargeTime = -1;
         this.activate(prev);
     }
+};
+
+// Does our point clobber any existing ones (or paths)?
+AddFromFloatIState.prototype.isOverlapping = function() {
+    var coords = Point.coords(this.near.x, this.near.y);
+    return this.level.tier.coords[coords];
 };

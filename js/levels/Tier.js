@@ -90,14 +90,11 @@ Tier.prototype.getNewWireName = function() {
 
 // Track a coordinate we've occupied.
 Tier.prototype.trackCoords = function(coords) {
-    if (this.coords[coords]) {
-        console.log('adding ' + coords + ' a second time!!!');
-    }
     this.coords[coords] = true;
 };
 
 // Forget a coordinate we've occupied.
-Tier.prototype.trackCoords = function(coords) {
+Tier.prototype.forgetCoords = function(coords) {
     delete this.coords[coords];
 };
 
