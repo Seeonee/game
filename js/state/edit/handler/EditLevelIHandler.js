@@ -46,11 +46,11 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     new CreateItemIState(this, this.level);
     new CreateDoorIState(this, this.level);
 
-    // Reset the level.
-    this.modes.push(new ResetLevelIState(this, this.level));
-
     // Save the level.
     this.modes.push(new SaveLevelIState(this, this.level));
+
+    // Reset the level.
+    this.modes.push(new ResetLevelIState(this, this.level));
 
     // Display controls..
     this.modes.push(new EditControlsIState(this, this.level));

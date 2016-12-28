@@ -1,6 +1,4 @@
-leaving object edit mode should snap back to points/paths
 add enemies
-change shards to picked-up items
 figure out what powers should do
 
 

@@ -38,6 +38,14 @@ ObstacleEditorIState.prototype.deactivated = function(next) {
 ObstacleEditorIState.prototype.update = function() {
     if (this.handler.cycle()) {
         // We're no longer active; it's k.
+        // Go ahead and snap back onto the paths.
+        var p = Utils.findClosestPointToAvatar(
+            this.tier, this.avatar);
+        var point = this.tier.pointMap[p];
+        this.avatar.point = point;
+        this.avatar.x = point.gx;
+        this.avatar.y = point.gy;
+        this.avatar.updateAttachment();
     } else {
         // Move freely.
         var joystick = this.gpad.getAngleAndTilt();
