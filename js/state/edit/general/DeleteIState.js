@@ -74,12 +74,6 @@ DeleteIState.prototype.proceed = function() {
     this.activate(FloatIState.NAME);
 };
 
-// Charged up!
-DeleteIState.prototype.charged = function() {
-    this.avatar.help.setText('delete ' +
-        this.point.name + '\nmerge paths');
-};
-
 // Handle an update while holding the button.
 DeleteIState.prototype.update = function() {
     if (this.falseStart) {
