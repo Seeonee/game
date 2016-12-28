@@ -1,6 +1,5 @@
 add enemies
-add doors
-add actual keys (not skill points)
+add system for picking up and holding items
 add general held items
 figure out what powers should do
 

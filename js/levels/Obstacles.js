@@ -51,21 +51,59 @@ Obstacles.prototype._overlap = function(avatar, obstacle) {
 
 
 
+
 // Obstacle sprite parent class.
-var Obstacle = function(game, x, y, arg) {
+var ObstacleSprite = function(game, x, y, arg) {
     Phaser.Sprite.call(this, game, x, y, arg);
     this.obstacles = this.game.state.getCurrentState().obstacles;
     this.obstacles.add(this);
     this.game.physics.enable(this, Phaser.Physics.ARCADE);
 };
 
-Obstacle.prototype = Object.create(Phaser.Sprite.prototype);
-Obstacle.prototype.constructor = Obstacle;
+ObstacleSprite.prototype = Object.create(Phaser.Sprite.prototype);
+ObstacleSprite.prototype.constructor = ObstacleSprite;
 
 
 // Make us un-collidable.
-Obstacle.prototype.removeCollision = function() {
+ObstacleSprite.prototype.removeCollision = function() {
     this.obstacles.remove(this);
     this.body.enable = false;
     this.body = null;
 };
+
+
+
+
+
+
+
+// Obstacle "wrapper" base class.
+// This should almost certainly make use of 
+// ObstacleSprites for in-game physics.
+var Obstacle = function(game, type) {
+    this.type = type;
+    this.renderNeeded = true;
+};
+
+// Draw loop. Gives us a chance to render.
+Obstacle.prototype.draw = function(tier) {
+    this.renderNeeded = false; // Extend me!
+}
+
+// JSON conversion of an obstacle.
+Obstacle.prototype.toJSON = function() {
+    return { type: this.type }; // Extend me!
+};
+
+// Load a JSON representation of a obstacle.
+Obstacle.load = function(game, name, json) {
+    var type = json.type;
+    if (!type || !Obstacle.load.factory[type]) {
+        console.error('Failed to load obstacle class ' + type);
+        return undefined;
+    }
+    return Obstacle.load.factory[type].load(game, name, json);
+};
+
+// This is a map of type values to Obstacle subclasses.
+Obstacle.load.factory = {};

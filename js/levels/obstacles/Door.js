@@ -6,7 +6,7 @@ var Door = function(game, x, y, palette) {
     var c = bitmap.context;
     c.fillStyle = palette.c2.s;
     c.fillRect(0, 0, d, d);
-    Obstacle.call(this, game, x, y, bitmap);
+    ObstacleSprite.call(this, game, x, y, bitmap);
     this.anchor.setTo(0.5);
     this.rotation = Math.PI / 4;
 
@@ -26,7 +26,7 @@ var Door = function(game, x, y, palette) {
     this.icon.rotation = -Math.PI / 4;
 };
 
-Door.prototype = Object.create(Obstacle.prototype);
+Door.prototype = Object.create(ObstacleSprite.prototype);
 Door.prototype.constructor = Door;
 
 // Constants.
@@ -76,7 +76,7 @@ Door.prototype.obstruct = function(avatar) {
 
 // Key for passing through a door.
 var DoorKey = function(game, x, y, palette) {
-    Obstacle.call(this, game, x, y);
+    ObstacleSprite.call(this, game, x, y);
     this.anchor.setTo(0.5);
     // And our icon!
     this.icon = this.addChild(this.game.add.sprite(0, 0, 'key_icon'));
@@ -87,7 +87,7 @@ var DoorKey = function(game, x, y, palette) {
 };
 
 DoorKey.TYPE = 'key';
-DoorKey.prototype = Object.create(Obstacle.prototype);
+DoorKey.prototype = Object.create(ObstacleSprite.prototype);
 DoorKey.prototype.constructor = DoorKey;
 
 // Constants.
