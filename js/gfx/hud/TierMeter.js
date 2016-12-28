@@ -5,12 +5,12 @@ var TierMeter = function(game, level) {
     this.avatar = this.level.avatar;
     this.lowest = this.level.tiers[0].index;
     this.numTiers = this.level.tiers.length;
-    this.keys = {};
+    this.shards = {};
     this.hud = undefined;
     this.lit = false;
-    this.kbPool = new SpritePool(this.game, KeyBurst);
-    this.ckbPool = new SpritePool(this.game, CloudKeyBurst);
-    this.ksbPool = new SpritePool(this.game, KeySpendBurst);
+    this.kbPool = new SpritePool(this.game, ShardBurst);
+    this.ckbPool = new SpritePool(this.game, CloudShardBurst);
+    this.ksbPool = new SpritePool(this.game, ShardSpendBurst);
 
     var d = 2 * TierMeter.R2 + TierMeter.PAD;
     this.bitmap = this.game.add.bitmapData(d, d);
@@ -113,8 +113,8 @@ TierMeter.prototype.createSelf = function() {
     this.triangle.scale.setTo(scale);
     this.addChild(this.triangle);
 
-    // Key trackers.
-    // Text for how many current-tier keys we hold.
+    // Shard trackers.
+    // Text for how many current-tier shards we hold.
     var font = this.game.settings.font;
     var style = {
         font: font.sizePx + ' ' + font.name,
@@ -143,19 +143,19 @@ TierMeter.prototype.createSelf = function() {
     this.textx = this.game.add.sprite(0, 0, bitmap);
     this.textx.anchor.setTo(0.2, 0.5);
     this.addChild(this.textx);
-    // And now the empty/filled "key" icon.
-    this.keyEmpty = this.game.add.sprite(0, 0, 'keyplate_outline');
-    this.addChild(this.keyEmpty);
+    // And now the empty/filled "shard" icon.
+    this.shardEmpty = this.game.add.sprite(0, 0, 'keyplate_outline');
+    this.addChild(this.shardEmpty);
     scale = TierMeter.KEYPLATE_SCALE;
     var anchorx = 1.2;
-    this.keyEmpty.anchor.setTo(anchorx, 0.5);
-    this.keyEmpty.scale.setTo(scale);
-    this.keyFull = this.game.add.sprite(0, 0, 'keyplate');
-    this.addChild(this.keyFull);
-    this.keyFull.anchor.setTo(anchorx, 0.5);
-    this.keyFull.scale.setTo(scale);
-    this.keyFull.visible = false;
-    // And finally, a small tracker for keys above this tier.
+    this.shardEmpty.anchor.setTo(anchorx, 0.5);
+    this.shardEmpty.scale.setTo(scale);
+    this.shardFull = this.game.add.sprite(0, 0, 'keyplate');
+    this.addChild(this.shardFull);
+    this.shardFull.anchor.setTo(anchorx, 0.5);
+    this.shardFull.scale.setTo(scale);
+    this.shardFull.visible = false;
+    // And finally, a small tracker for shards above this tier.
     w = TierMeter.CLOUD_W;
     var pad = TierMeter.CLOUD_PAD;
     var dw = w + pad;
@@ -179,8 +179,8 @@ TierMeter.prototype.recreate = function() {
     this.triangle.kill();
     this.text.kill();
     this.textx.kill();
-    this.keyEmpty.kill();
-    this.keyFull.kill();
+    this.shardEmpty.kill();
+    this.shardFull.kill();
     this.cloud.kill();
     while (this.children.length) {
         this.removeChild(this.children[0]);
@@ -205,26 +205,26 @@ TierMeter.prototype.setTier = function(tier, old) {
     if (t0) {
         this.text.style.fill = tier.palette.c1.s;
         this.text.dirty = true;
-        var keys = this.keys[tier.name] ? this.keys[tier.name] : 0;
-        this.text.setText(keys);
+        var shards = this.shards[tier.name] ? this.shards[tier.name] : 0;
+        this.text.setText(shards);
         this.textx.tint = tier.palette.c1.i;
-        this.keyEmpty.tint = tier.palette.c1.i;
-        this.keyFull.tint = tier.palette.c1.i;
+        this.shardEmpty.tint = tier.palette.c1.i;
+        this.shardFull.tint = tier.palette.c1.i;
         this.text.visible = true;
         this.textx.visible = true;
-        this.keyEmpty.visible = keys == 0;
-        this.keyFull.visible = keys > 0;
+        this.shardEmpty.visible = shards == 0;
+        this.shardFull.visible = shards > 0;
     } else {
         this.text.visible = false;
         this.textx.visible = false;
-        this.keyEmpty.visible = false;
-        this.keyFull.visible = false;
+        this.shardEmpty.visible = false;
+        this.shardFull.visible = false;
     }
     var t2 = this.level.tierMap['t' + (actualIndex + 1)];
     if (t2) {
         this.cloud.tint = t2.palette.c1.i;
-        var keys = this.keys[t2.name];
-        this.fillUpCloud(keys ? keys : 0);
+        var shards = this.shards[t2.name];
+        this.fillUpCloud(shards ? shards : 0);
         this.cloud.visible = true;
     } else {
         this.cloud.visible = false;
@@ -233,7 +233,7 @@ TierMeter.prototype.setTier = function(tier, old) {
         var oldIndex = old.index;
         var up = oldIndex < actualIndex;
         var tint = up ? tier.palette.c1.i : old.palette.c1.i;
-        var burst = up ? this.keys[tier.name] : this.keys[old.name];
+        var burst = up ? this.shards[tier.name] : this.shards[old.name];
         if (burst) {
             this.kbPool.make(this.game).burst(
                 0, TierMeter.BURST_Y, this, tint, !up);
@@ -242,15 +242,15 @@ TierMeter.prototype.setTier = function(tier, old) {
 };
 
 // Update anytime the settings change.
-TierMeter.prototype.fillUpCloud = function(keys) {
-    keys = Math.min(keys, TierMeter.CLOUD_MAX);
+TierMeter.prototype.fillUpCloud = function(shards) {
+    shards = Math.min(shards, TierMeter.CLOUD_MAX);
     var w = TierMeter.CLOUD_W;
     var dw = w + TierMeter.CLOUD_PAD;
     var bitmap = this.cloud.key;
     var c = bitmap.context;
     c.clearRect(0, 0, bitmap.width, bitmap.height);
     for (var i = 0; i < TierMeter.CLOUD_MAX; i++) {
-        alpha = i < keys ? 1 : TierMeter.BORDER_ALPHA;
+        alpha = i < shards ? 1 : TierMeter.BORDER_ALPHA;
         c.fillStyle = this.game.settings.colors.WHITE.rgba(alpha);
         c.fillRect(i * dw, 0, w, w);
     }
@@ -304,8 +304,8 @@ TierMeter.prototype.showBriefly = function() {
     }
 };
 
-// Add a key for the next tier up.
-TierMeter.prototype.addKey = function() {
+// Add a shard for the next tier up.
+TierMeter.prototype.addShard = function() {
     this.showBriefly();
     var currentIndex = this.level.tier.index;
     var actualIndex = 1 + currentIndex;
@@ -313,36 +313,36 @@ TierMeter.prototype.addKey = function() {
         return;
     }
     var tier = this.level.tierMap['t' + actualIndex];
-    var keys = this.keys[tier.name] ? this.keys[tier.name] : 0;
-    keys += 1;
-    this.keys[tier.name] = keys;
+    var shards = this.shards[tier.name] ? this.shards[tier.name] : 0;
+    shards += 1;
+    this.shards[tier.name] = shards;
     var index = (this.numTiers - 1) - (actualIndex - this.lowest);
-    this.fillUpCloud(keys);
+    this.fillUpCloud(shards);
     var dy = TierMeter.CLOUD_W / 2;
-    keys = keys > TierMeter.CLOUD_MAX ?
-        (TierMeter.CLOUD_MAX - 1) / 2 : keys - 1;
-    var dx = dy + keys *
+    shards = shards > TierMeter.CLOUD_MAX ?
+        (TierMeter.CLOUD_MAX - 1) / 2 : shards - 1;
+    var dx = dy + shards *
         (TierMeter.CLOUD_W + TierMeter.CLOUD_PAD);
     this.ckbPool.make(this.game).burst(
         this.cloudx + dx, this.cloudy + dy,
         this, tier.palette.c1.i);
 };
 
-// Subtract a key for the current tier.
-TierMeter.prototype.useKey = function() {
+// Subtract a shard for the current tier.
+TierMeter.prototype.useShard = function() {
     this.showBriefly();
     var currentIndex = this.level.tier.index;
     var tier = this.level.tierMap['t' + currentIndex];
-    var keys = this.keys[tier.name] ? this.keys[tier.name] : 0;
-    if (keys <= 0) {
+    var shards = this.shards[tier.name] ? this.shards[tier.name] : 0;
+    if (shards <= 0) {
         return;
     }
-    keys -= 1;
-    this.keys[tier.name] = keys;
+    shards -= 1;
+    this.shards[tier.name] = shards;
     var index = (this.numTiers - 1) - (currentIndex - this.lowest);
-    this.text.setText(keys);
-    this.keyEmpty.visible = keys == 0;
-    this.keyFull.visible = keys > 0;
+    this.text.setText(shards);
+    this.shardEmpty.visible = shards == 0;
+    this.shardFull.visible = shards > 0;
     this.ksbPool.make(this.game).burst(0, 0, this);
 };
 

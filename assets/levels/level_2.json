@@ -30,7 +30,7 @@
                 "p4": {
                     "x": 50,
                     "y": 0,
-                    "type": "key"
+                    "type": "shard"
                 }
             },
             "paths": {
@@ -84,7 +84,7 @@
                 "p4": {
                     "x": 50,
                     "y": 0,
-                    "type": "key"
+                    "type": "shard"
                 }
             },
             "paths": {
@@ -138,7 +138,7 @@
                 "p4": {
                     "x": 50,
                     "y": 0,
-                    "type": "key"
+                    "type": "shard"
                 }
             },
             "paths": {
@@ -193,7 +193,7 @@
                 "p4": {
                     "x": 50,
                     "y": 0,
-                    "type": "key"
+                    "type": "shard"
                 }
             },
             "paths": {
@@ -247,7 +247,7 @@
                 "p4": {
                     "x": 50,
                     "y": 0,
-                    "type": "key"
+                    "type": "shard"
                 }
             },
             "paths": {
@@ -301,7 +301,7 @@
                 "p4": {
                     "x": 50,
                     "y": 0,
-                    "type": "key"
+                    "type": "shard"
                 }
             },
             "paths": {

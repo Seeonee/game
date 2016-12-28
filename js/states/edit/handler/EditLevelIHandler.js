@@ -24,7 +24,7 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     // Customization-specific states.
     new CustomizeStartPointIState(this, this.level);
     new CustomizeEndPointIState(this, this.level);
-    new CustomizeKeyPointIState(this, this.level);
+    new CustomizeShardPointIState(this, this.level);
     new CustomizeSwitchPointIState(this, this.level);
     new CustomizeWarpPointIState(this, this.level);
     new CustomizePortalPointIState(this, this.level);
