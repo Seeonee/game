@@ -23,13 +23,13 @@ ObstacleEditorIState.prototype.activated = function(prev) {
     }
     this.indicator.visible = true;
     this.indicator.tint = this.tier.palette.c2.i;
+    this.marker = undefined;
     this.updateMarkerAndObstacle();
 };
 
 // Called when we deactivate.
 ObstacleEditorIState.prototype.deactivated = function(next) {
     this.indicator.visible = false;
-    this.marker = undefined;
     this.avatar.body.velocity.x = 0;
     this.avatar.body.velocity.y = 0;
 };

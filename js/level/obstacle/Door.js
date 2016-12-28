@@ -1,6 +1,6 @@
 // Door object.
-var Door = function(game, name, x, y, type, subtype) {
-    Obstacle.call(this, game, name, x, y, type);
+var Door = function(name, x, y, subtype) {
+    Obstacle.call(this, name, x, y);
     this.subtype = subtype;
 };
 
@@ -15,6 +15,7 @@ Obstacle.load.factory[Door.TYPE] = Door;
 // Draw loop.
 Door.prototype.draw = function(tier) {
     if (this.renderNeeded) {
+        this.game = tier.game;
         this.renderNeeded = false;
         this.hitbox = new Hitbox(this.game, tier, this,
             this.x, this.y, Door.D);
@@ -73,6 +74,6 @@ Door.prototype.toJSON = function() {
 
 // Load our JSON representation.
 Door.load = function(game, name, json) {
-    return new Door(game, name, json.x, json.y,
-        json.type, json.subtype);
+    return new Door(name, json.x, json.y,
+        json.subtype);
 };

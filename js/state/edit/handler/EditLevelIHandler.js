@@ -41,6 +41,11 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     new AddObstacleIState(this, this.level);
     new DeleteObstacleIState(this, this.level);
 
+    // Creation-specific states.
+    new CreateShardIState(this, this.level);
+    new CreateItemIState(this, this.level);
+    new CreateDoorIState(this, this.level);
+
     // Reset the level.
     this.modes.push(new ResetLevelIState(this, this.level));
 

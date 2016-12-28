@@ -1,6 +1,6 @@
 // A "skill point" shard that the avatar can pick up.
-var Shard = function(game, name, x, y, type) {
-    Obstacle.call(this, game, name, x, y, type);
+var Shard = function(name, x, y) {
+    Obstacle.call(this, name, x, y);
 };
 
 Shard.TYPE = 'shard';
@@ -14,6 +14,7 @@ Obstacle.load.factory[Shard.TYPE] = Shard;
 // Draw loop.
 Shard.prototype.draw = function(tier) {
     if (this.renderNeeded) {
+        this.game = tier.game;
         this.renderNeeded = false;
         this.hitbox = new Hitbox(this.game, tier, this,
             this.x, this.y);
@@ -59,6 +60,5 @@ Shard.prototype.toJSON = function() {
 
 // Load our JSON representation.
 Shard.load = function(game, name, json) {
-    return new Shard(game, name, json.x, json.y,
-        json.type);
+    return new Shard(name, json.x, json.y);
 };

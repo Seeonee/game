@@ -91,6 +91,16 @@ Tier.prototype.getNewWireName = function() {
     return 'w' + i;
 };
 
+// Return a string that can be used to name a new obstacle.
+Tier.prototype.getNewObstacleName = function(type) {
+    type = type ? type : 'o';
+    var i = 0;
+    while (this.obstacleMap[type + i]) {
+        i += 1;
+    }
+    return type + i;
+};
+
 // Track a coordinate we've occupied.
 Tier.prototype.trackCoords = function(coords) {
     this.coords[coords] = true;
@@ -364,6 +374,8 @@ Tier.prototype.deleteWire = function(wire) {
 // Internal use only.
 // Adds an already-constructed obstacle.
 Tier.prototype._addObstacle = function(obstacle) {
+    obstacle.gx = obstacle.x;
+    obstacle.gy = obstacle.y;
     this.obstacles.push(obstacle);
     this.obstacleMap[obstacle.name] = obstacle;
     this.events.onFadingIn.add(obstacle.fadingIn, obstacle);

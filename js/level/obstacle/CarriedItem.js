@@ -1,10 +1,11 @@
 // An item that the avatar can pick up.
-var CarriedItem = function(game, name, x, y, type, subtype) {
-    Obstacle.call(this, game, name, x, y, type);
+var CarriedItem = function(name, x, y, subtype) {
+    Obstacle.call(this, name, x, y);
     this.subtype = subtype;
 };
 
 CarriedItem.TYPE = 'item';
+CarriedItem.ALL_TYPES = ['key'];
 CarriedItem.prototype = Object.create(Obstacle.prototype);
 CarriedItem.prototype.constructor = CarriedItem;
 
@@ -15,6 +16,7 @@ Obstacle.load.factory[CarriedItem.TYPE] = CarriedItem;
 // Draw loop.
 CarriedItem.prototype.draw = function(tier) {
     if (this.renderNeeded) {
+        this.game = tier.game;
         this.renderNeeded = false;
         this.hitbox = new Hitbox(this.game, tier, this,
             this.x, this.y);
@@ -78,6 +80,6 @@ CarriedItem.prototype.toJSON = function() {
 
 // Load our JSON representation.
 CarriedItem.load = function(game, name, json) {
-    return new CarriedItem(game, name, json.x, json.y,
-        json.type, json.subtype);
+    return new CarriedItem(name, json.x, json.y,
+        json.subtype);
 };

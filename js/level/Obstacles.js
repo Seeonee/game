@@ -122,14 +122,13 @@ Hitbox.prototype.obstruct = function(avatar) {
 // Obstacle "wrapper" base class.
 // This should almost certainly make use of 
 // Hitboxs for in-game physics.
-var Obstacle = function(game, name, x, y, type) {
-    this.game = game;
+var Obstacle = function(name, x, y) {
     this.name = name;
     this.x = x;
     this.y = y;
     this.gx = x;
     this.gy = y;
-    this.type = type;
+    this.type = this.constructor.TYPE;
     this.renderNeeded = true;
 };
 
