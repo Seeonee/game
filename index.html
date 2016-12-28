@@ -35,25 +35,25 @@
     <script type="text/javascript" src="js/utils/filters/BlurXFilter.js"></script>
     <script type="text/javascript" src="js/utils/filters/BlurYFilter.js"></script>
     <!-- Level components -->
-    <script type="text/javascript" src="js/levels/Point.js"></script>
-    <script type="text/javascript" src="js/levels/Path.js"></script>
-    <script type="text/javascript" src="js/levels/Wire.js"></script>
-    <script type="text/javascript" src="js/levels/Obstacles.js"></script>
-    <script type="text/javascript" src="js/levels/Tier.js"></script>
-    <script type="text/javascript" src="js/levels/Level.js"></script>
-    <script type="text/javascript" src="js/levels/Catalog.js"></script>
+    <script type="text/javascript" src="js/level/Point.js"></script>
+    <script type="text/javascript" src="js/level/Path.js"></script>
+    <script type="text/javascript" src="js/level/Wire.js"></script>
+    <script type="text/javascript" src="js/level/Obstacles.js"></script>
+    <script type="text/javascript" src="js/level/Tier.js"></script>
+    <script type="text/javascript" src="js/level/Level.js"></script>
+    <script type="text/javascript" src="js/level/Catalog.js"></script>
     <!-- Custom points -->
-    <script type="text/javascript" src="js/levels/points/PortalPoint.js"></script>
-    <script type="text/javascript" src="js/levels/points/WarpPoint.js"></script>
-    <script type="text/javascript" src="js/levels/points/SwitchPoint.js"></script>
-    <script type="text/javascript" src="js/levels/points/ShardPoint.js"></script>
-    <script type="text/javascript" src="js/levels/points/PowerPoint.js"></script>
-    <script type="text/javascript" src="js/levels/points/JunctionPoint.js"></script>
-    <script type="text/javascript" src="js/levels/points/StartPoint.js"></script>
-    <script type="text/javascript" src="js/levels/points/EndPoint.js"></script>
+    <script type="text/javascript" src="js/level/point/PortalPoint.js"></script>
+    <script type="text/javascript" src="js/level/point/WarpPoint.js"></script>
+    <script type="text/javascript" src="js/level/point/SwitchPoint.js"></script>
+    <script type="text/javascript" src="js/level/point/ShardPoint.js"></script>
+    <script type="text/javascript" src="js/level/point/PowerPoint.js"></script>
+    <script type="text/javascript" src="js/level/point/JunctionPoint.js"></script>
+    <script type="text/javascript" src="js/level/point/StartPoint.js"></script>
+    <script type="text/javascript" src="js/level/point/EndPoint.js"></script>
     <!-- Obstacles and enemies -->
-    <script type="text/javascript" src="js/levels/obstacles/Door.js"></script>
-    <script type="text/javascript" src="js/levels/obstacles/CarriedItem.js"></script>
+    <script type="text/javascript" src="js/level/obstacle/Door.js"></script>
+    <script type="text/javascript" src="js/level/obstacle/CarriedItem.js"></script>
     <!-- GFX -->
     <script type="text/javascript" src="js/gfx/ZGroup.js"></script>
     <script type="text/javascript" src="js/gfx/HFlash.js"></script>
@@ -75,6 +75,8 @@
     <script type="text/javascript" src="js/gfx/point/warp/WContrail.js"></script>
     <script type="text/javascript" src="js/gfx/point/warp/WOrb.js"></script>
     <script type="text/javascript" src="js/gfx/point/switch/WSwitch.js"></script>
+    <script type="text/javascript" src="js/gfx/obstacle/door/DoorSprite.js"></script>
+    <script type="text/javascript" src="js/gfx/obstacle/item/CarriedItemSprite.js"></script>
     <!-- Player avatar -->
     <script type="text/javascript" src="js/avatar/AvatarGraphicsKey.js"></script>
     <script type="text/javascript" src="js/avatar/AvatarGraphicsBall.js"></script>
@@ -89,55 +91,55 @@
     <script type="text/javascript" src="js/settings/Settings.js"></script>
     <!-- Game states -->
     <!-- Boot -->
-    <script type="text/javascript" src="js/states/boot/BootState.js"></script>
+    <script type="text/javascript" src="js/state/boot/BootState.js"></script>
     <!-- Preload -->
-    <script type="text/javascript" src="js/states/preload/PreloadState.js"></script>
+    <script type="text/javascript" src="js/state/preload/PreloadState.js"></script>
     <!-- Title menu -->
-    <script type="text/javascript" src="js/states/title/TitleMenuState.js"></script>
-    <script type="text/javascript" src="js/states/title/input/TitleMenuIHandler.js"></script>
-    <script type="text/javascript" src="js/states/title/input/PressStartIState.js"></script>
-    <script type="text/javascript" src="js/states/title/input/TitleMenuIState.js"></script>
+    <script type="text/javascript" src="js/state/title/TitleMenuState.js"></script>
+    <script type="text/javascript" src="js/state/title/input/TitleMenuIHandler.js"></script>
+    <script type="text/javascript" src="js/state/title/input/PressStartIState.js"></script>
+    <script type="text/javascript" src="js/state/title/input/TitleMenuIState.js"></script>
     <!-- Playing a level -->
-    <script type="text/javascript" src="js/states/level/LevelStateParams.js"></script>
-    <script type="text/javascript" src="js/states/level/PlayLevelState.js"></script>
-    <script type="text/javascript" src="js/states/level/handler/PlayLevelIHandler.js"></script>
-    <script type="text/javascript" src="js/states/level/handler/PointIHandler.js"></script>
-    <script type="text/javascript" src="js/states/level/handler/CameraIHandler.js"></script>
-    <script type="text/javascript" src="js/states/level/handler/PlayLevelMenuIHandler.js"></script>
-    <script type="text/javascript" src="js/states/level/point/PortalIState.js"></script>
-    <script type="text/javascript" src="js/states/level/point/WarpIState.js"></script>
-    <script type="text/javascript" src="js/states/level/point/EndIState.js"></script>
-    <script type="text/javascript" src="js/states/level/point/SwitchIState.js"></script>
-    <script type="text/javascript" src="js/states/level/general/MoveIState.js"></script>
-    <script type="text/javascript" src="js/states/level/general/CameraIState.js"></script>
-    <script type="text/javascript" src="js/states/level/general/PausedIState.js"></script>
-    <script type="text/javascript" src="js/states/level/general/UnpausedIState.js"></script>
+    <script type="text/javascript" src="js/state/level/LevelStateParams.js"></script>
+    <script type="text/javascript" src="js/state/level/PlayLevelState.js"></script>
+    <script type="text/javascript" src="js/state/level/handler/PlayLevelIHandler.js"></script>
+    <script type="text/javascript" src="js/state/level/handler/PointIHandler.js"></script>
+    <script type="text/javascript" src="js/state/level/handler/CameraIHandler.js"></script>
+    <script type="text/javascript" src="js/state/level/handler/PlayLevelMenuIHandler.js"></script>
+    <script type="text/javascript" src="js/state/level/point/PortalIState.js"></script>
+    <script type="text/javascript" src="js/state/level/point/WarpIState.js"></script>
+    <script type="text/javascript" src="js/state/level/point/EndIState.js"></script>
+    <script type="text/javascript" src="js/state/level/point/SwitchIState.js"></script>
+    <script type="text/javascript" src="js/state/level/general/MoveIState.js"></script>
+    <script type="text/javascript" src="js/state/level/general/CameraIState.js"></script>
+    <script type="text/javascript" src="js/state/level/general/PausedIState.js"></script>
+    <script type="text/javascript" src="js/state/level/general/UnpausedIState.js"></script>
     <!-- Level editor -->
-    <script type="text/javascript" src="js/states/edit/EditLevelState.js"></script>
-    <script type="text/javascript" src="js/states/edit/handler/EditLevelIHandler.js"></script>
-    <script type="text/javascript" src="js/states/edit/general/GeneralEditIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/general/SwapIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/general/FloatIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/general/AddIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/general/DeleteIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/general/DisablePointIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/general/CustomizePointIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/customize/CustomizeStartPointIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/customize/CustomizeEndPointIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/customize/CustomizeShardPointIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/customize/CustomizeSwitchPointIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/customize/CustomizeWarpPointIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/customize/CustomizePortalPointIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/customize/CustomizePowerPointIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/customize/CustomizeJunctionPointIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/customize/CustomizeNormalPointIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/wire/WireEditorIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/wire/AddWireIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/wire/DeleteWireIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/test/TestLevelIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/save/SaveLevelIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/reset/ResetLevelIState.js"></script>
-    <script type="text/javascript" src="js/states/edit/controls/EditControlsIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/EditLevelState.js"></script>
+    <script type="text/javascript" src="js/state/edit/handler/EditLevelIHandler.js"></script>
+    <script type="text/javascript" src="js/state/edit/general/GeneralEditIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/general/SwapIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/general/FloatIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/general/AddIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/general/DeleteIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/general/DisablePointIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/general/CustomizePointIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/customize/CustomizeStartPointIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/customize/CustomizeEndPointIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/customize/CustomizeShardPointIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/customize/CustomizeSwitchPointIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/customize/CustomizeWarpPointIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/customize/CustomizePortalPointIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/customize/CustomizePowerPointIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/customize/CustomizeJunctionPointIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/customize/CustomizeNormalPointIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/wire/WireEditorIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/wire/AddWireIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/wire/DeleteWireIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/test/TestLevelIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/save/SaveLevelIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/reset/ResetLevelIState.js"></script>
+    <script type="text/javascript" src="js/state/edit/controls/EditControlsIState.js"></script>
     <!-- main() -->
     <script type="text/javascript" src="js/main.js"></script>
 </body>

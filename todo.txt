@@ -1,4 +1,5 @@
 add enemies
+change shards to picked-up items
 figure out what powers should do
 
 
