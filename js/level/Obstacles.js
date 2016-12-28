@@ -55,7 +55,7 @@ Obstacles.prototype._overlap = function(avatar, hitbox) {
     var a1 = Utils.angleBetweenPoints(avatar.x, avatar.y,
         hitbox.x, hitbox.y);
     var a2 = Utils.angleBetweenPoints(avatar.x, avatar.y,
-        avatar.destination.x, avatar.destination.y);
+        avatar.destination.gx, avatar.destination.gy);
     var difference = Utils.getBoundedAngleDifference(a1, a2);
     if (difference < 0.25) {
         return hitbox.obstacle.obstruct(avatar);
