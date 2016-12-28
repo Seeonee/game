@@ -166,6 +166,7 @@ AddFromPointIState.prototype.constructor = AddFromPointIState;
 
 // Action for adding new points (and paths to them) from existing ones.
 AddFromPointIState.prototype.activated = function(prev) {
+    this.avatar.body.enable = true;
     this.tier = this.level.tier;
     this.point = this.avatar.point;
     this.near = undefined;

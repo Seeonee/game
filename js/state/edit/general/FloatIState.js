@@ -20,6 +20,7 @@ FloatIState.prototype.activated = function(prev) {
     } else {
         this.prev = this.handler.states[GeneralEditIState.NAME];
     }
+    this.avatar.body.enable = true;
     this.gpad.consumeButtonEvent();
     var attach = this.game.settings.buttonMap.buttonName(
         this.game.settings.buttonMap.EDIT_FLOAT);

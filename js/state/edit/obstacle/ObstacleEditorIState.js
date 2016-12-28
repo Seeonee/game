@@ -15,6 +15,7 @@ ObstacleEditorIState.GRID_UNIT = 50;
 
 // Called when we become the active state.
 ObstacleEditorIState.prototype.activated = function(prev) {
+    this.avatar.body.enable = true;
     this.tier = this.level.tier;
     if (!this.indicator) {
         this.indicator = this.game.add.sprite(0, 0, 'smoke');

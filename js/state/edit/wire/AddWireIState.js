@@ -14,6 +14,7 @@ AddWireIState.prototype.constructor = AddWireIState;
 
 // Activate/deactivate.
 AddWireIState.prototype.activated = function(prev) {
+    this.avatar.body.enable = true;
     this.canceled = prev.depth && prev.depth > this.depth;
     BaseCustomizeIState.prototype.activated.call(this, prev);
 };

@@ -1,7 +1,5 @@
 add enemies
 figure out what powers should do
-reenable avatar physics body for certain edit states
-you can tap-move through obstacles
 
 
 LONG-TERM CLEANUP:

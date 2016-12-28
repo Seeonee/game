@@ -31,6 +31,7 @@ CustomizeWarpPoint2IState.prototype.constructor = CustomizeWarpPoint2IState;
 
 // Called when activated.
 CustomizeWarpPoint2IState.prototype.activated = function(prev) {
+    this.avatar.body.enable = true;
     this.gpad.consumeButtonEvent();
     this.target = this.point;
     this.tier = this.level.tier;
