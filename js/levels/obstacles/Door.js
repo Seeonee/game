@@ -80,7 +80,7 @@ Obstacle.load.factory[Door.TYPE] = Door;
 Door.prototype.draw = function(tier) {
     if (this.renderNeeded) {
         this.renderNeeded = false;
-        this.hitbox = new Hitbox(this.game, this,
+        this.hitbox = new Hitbox(this.game, tier, this,
             this.x, this.y, Door.D);
         this.game.state.getCurrentState().z.mg.add(this.hitbox);
 

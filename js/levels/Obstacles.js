@@ -1,26 +1,46 @@
 // Primary obstacles manager.
 var Obstacles = function(game) {
     this.game = game;
-    this.obstacles = [];
+    // Map of tiers to hitbox lists.
+    this.hitboxes = {};
 };
 
-// Register an obstacle.
-Obstacles.prototype.add = function(obstacle) {
-    this.obstacles.push(obstacle);
+// Register an obstacle hitbox.
+Obstacles.prototype.add = function(tier, hitbox) {
+    if (!this.level) {
+        this.level = tier.level;
+    }
+    var hitboxes = this.hitboxes[tier.name];
+    if (hitboxes == undefined) {
+        hitboxes = [];
+        this.hitboxes[tier.name] = hitboxes;
+    }
+    hitboxes.push(hitbox);
 };
 
-// Unregister an obstacle.
-Obstacles.prototype.remove = function(obstacle) {
-    var i = this.obstacles.indexOf(obstacle);
-    this.obstacles.slice(i, 1);
+// Unregister an obstacle hitbox.
+Obstacles.prototype.remove = function(tier, hitbox) {
+    var hitboxes = this.hitboxes[tier.name];
+    if (!hitboxes) {
+        return;
+    }
+    var i = hitboxes.indexOf(hitbox);
+    if (i < 0) {
+        return;
+    }
+    hitboxes.slice(i, 1);
 };
 
 // Perform a hit test between us and the avatar.
 // This will call the shouldAvatarPass() method 
 // of any obstacles that the avatar overlaps with.
 Obstacles.prototype.overlap = function(avatar) {
+    if (!this.level) {
+        return false;
+    }
+    var t = this.level.tier.name;
     return this.game.physics.arcade.overlap(avatar,
-        this.obstacles, null, this._overlap, this);
+        this.hitboxes[t], null, this._overlap, this);
 };
 
 // Test avatar's overlap with an obstacle's hitbox.
@@ -53,12 +73,13 @@ Obstacles.prototype._overlap = function(avatar, hitbox) {
 
 
 // Hitbox sprite. Used by obstacles to detect avatar collision.
-var Hitbox = function(game, obstacle, x, y, side) {
+var Hitbox = function(game, tier, obstacle, x, y, side) {
     Phaser.Sprite.call(this, game, x, y);
     this.anchor.setTo(0.5);
     this.obstacle = obstacle;
     this.obstacles = this.game.state.getCurrentState().obstacles;
-    this.obstacles.add(this);
+    this.tier = tier;
+    this.obstacles.add(tier, this);
     this.game.physics.enable(this, Phaser.Physics.ARCADE);
     side = side != undefined ? side : Hitbox.D;
     var w = this.body.width;
@@ -81,7 +102,7 @@ Hitbox.prototype.update = function() {
 
 // Make us un-collidable. Also, annihilates us.
 Hitbox.prototype.removeCollision = function() {
-    this.obstacles.remove(this);
+    this.obstacles.remove(this.tier, this);
     this.body.enable = false;
     this.body = null;
     Utils.destroy(this);

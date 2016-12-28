@@ -45,7 +45,7 @@ CarriedItemSprite.HOVER_TIME = 2000; // ms
 CarriedItemSprite.HOVER_HEIGHT = 50;
 CarriedItemSprite.CARRY_HEIGHT = 80;
 CarriedItemSprite.HOVER_DRIFT = 15;
-CarriedItemSprite.USE_TIME = 500; // ms
+CarriedItemSprite.USE_TIME = 700; // ms
 CarriedItemSprite.PICKUP_TIME = 700; // ms
 
 
@@ -74,8 +74,8 @@ CarriedItemSprite.prototype.pickUp = function(avatar) {
 // Call to consume the item.
 CarriedItemSprite.prototype.useUp = function() {
     var t = this.game.add.tween(this.corona.scale);
-    t.to({ x: 0, y: 0 },
-        CarriedItemSprite.USE_TIME, Phaser.Easing.Cubic.Out, true);
+    t.to({ x: 0, y: 0 }, CarriedItemSprite.USE_TIME,
+        Phaser.Easing.Back.In, true);
     t.onComplete.add(function() {
         Utils.destroy(this);
     }, this);
@@ -105,7 +105,7 @@ Obstacle.load.factory[CarriedItem.TYPE] = CarriedItem;
 CarriedItem.prototype.draw = function(tier) {
     if (this.renderNeeded) {
         this.renderNeeded = false;
-        this.hitbox = new Hitbox(this.game, this,
+        this.hitbox = new Hitbox(this.game, tier, this,
             this.x, this.y);
         this.game.state.getCurrentState().z.mg.add(this.hitbox);
 
