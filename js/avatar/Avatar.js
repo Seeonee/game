@@ -162,8 +162,7 @@ Avatar.prototype.headTowardsDestination = function(ratio, angle) {
     if (!this.game.settings.edit) {
         var obstacles = this.game.state.getCurrentState().obstacles;
         if (obstacles.overlap(this)) {
-            this.body.velocity.x = 0;
-            this.body.velocity.y = 0;
+            this.setVelocity(0, 0, true);
             return;
         }
     }
@@ -177,8 +176,7 @@ Avatar.prototype.headTowardsDestination = function(ratio, angle) {
             ip.x, ip.y, this.destination.x, this.destination.y);
         if (distance <= Avatar.POINT_SNAP_RADIUS) {
             // Snap to a point.
-            this.body.velocity.x = 0;
-            this.body.velocity.y = 0;
+            this.setVelocity(0, 0);
             var gp = this.tier.translateInternalPointToGamePoint(
                 this.destination.x, this.destination.y);
             this.x = gp.x;
@@ -197,13 +195,20 @@ Avatar.prototype.headTowardsDestination = function(ratio, angle) {
             if (a3 > 0) {
                 ratio *= 1 - (a3 / Avatar.TILT_PARTIAL_ANGLE);
             }
-            this.body.velocity.x = this.roundVelocity(ratio * Avatar.MAX_SPEED * Math.sin(a2));
-            this.body.velocity.y = this.roundVelocity(ratio * Avatar.MAX_SPEED * Math.cos(a2));
+            var vx = this.roundVelocity(ratio * Avatar.MAX_SPEED * Math.sin(a2));
+            var vy = this.roundVelocity(ratio * Avatar.MAX_SPEED * Math.cos(a2));
+            this.setVelocity(vx, vy);
         }
     } else {
-        this.body.velocity.x = 0;
-        this.body.velocity.y = 0;
+        this.setVelocity(0, 0);
     }
+};
+
+// Set velocity.
+Avatar.prototype.setVelocity = function(vx, vy, keepBodyEnabled) {
+    this.body.enable = keepBodyEnabled || vx != 0 || vy != 0;
+    this.body.velocity.x = vx;
+    this.body.velocity.y = vy;
 };
 
 // Eliminate microscopic velocities.

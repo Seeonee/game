@@ -3,8 +3,6 @@ figure out what powers should do
 
 
 LONG-TERM CLEANUP:
-consider handling velocity internally for gameplay loop
-    may fix the overshoot bugs
 make end point gfx actually attach to node (still behind tier.image z)
 make wire gfx attach to tier image (behind it)
 
