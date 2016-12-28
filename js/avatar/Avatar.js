@@ -19,6 +19,8 @@ var Avatar = function(game, graphics, level) {
     this.setColor(this.tier.palette);
     this.tierMeter = new TierMeter(this.game, this.level);
 
+    this.colliding = false;
+
     this.attached = undefined;
     this.events.onAttach = new Phaser.Signal();
     this.events.onDetach = new Phaser.Signal();
@@ -161,8 +163,9 @@ Avatar.prototype.updateDestination = function(angle, ratio) {
 Avatar.prototype.headTowardsDestination = function(ratio, angle) {
     if (!this.game.settings.edit) {
         var obstacles = this.game.state.getCurrentState().obstacles;
-        if (obstacles.overlap(this)) {
-            this.setVelocity(0, 0, true);
+        this.colliding = obstacles.overlap(this);
+        if (this.colliding) {
+            this.setVelocity(0, 0);
             return;
         }
     }
@@ -205,8 +208,8 @@ Avatar.prototype.headTowardsDestination = function(ratio, angle) {
 };
 
 // Set velocity.
-Avatar.prototype.setVelocity = function(vx, vy, keepBodyEnabled) {
-    this.body.enable = keepBodyEnabled || vx != 0 || vy != 0;
+Avatar.prototype.setVelocity = function(vx, vy) {
+    this.body.enable = this.colliding || vx != 0 || vy != 0;
     this.body.velocity.x = vx;
     this.body.velocity.y = vy;
 };
