@@ -256,6 +256,6 @@ Avatar.prototype.setPressed = function(pressed) {
 
 // Optional physics debug view.
 Avatar.prototype.update = function() {
-    this.game.debug.body(this);
-    this.game.debug.spriteCoords(this);
+    // this.game.debug.body(this);
+    // this.game.debug.spriteCoords(this);
 };

@@ -23,22 +23,22 @@ Obstacles.prototype.overlap = function(avatar) {
         this.obstacles, null, this._overlap, this);
 };
 
-// Test avatar's overlap with an obstacle.
+// Test avatar's overlap with an obstacle's hitbox.
 // This mainly checks to see if we're headed towards it.
 // If we are, the obstacle's canAvatarPass() is called; 
 // put your custom code there.
 // If we're not, we abort and let avatar movement continue.
-Obstacles.prototype._overlap = function(avatar, obstacle) {
+Obstacles.prototype._overlap = function(avatar, hitbox) {
     if (!avatar.destination) {
         return false;
     }
     var a1 = Utils.angleBetweenPoints(avatar.x, avatar.y,
-        obstacle.x, obstacle.y);
+        hitbox.x, hitbox.y);
     var a2 = Utils.angleBetweenPoints(avatar.x, avatar.y,
         avatar.destination.x, avatar.destination.y);
     var difference = Utils.getBoundedAngleDifference(a1, a2);
-    if (difference < 0.25 && obstacle.obstruct) {
-        return obstacle.obstruct(avatar);
+    if (difference < 0.25) {
+        return hitbox.obstacle.obstruct(avatar);
     } else {
         return false;
     }
@@ -52,39 +52,44 @@ Obstacles.prototype._overlap = function(avatar, obstacle) {
 
 
 
-// Obstacle sprite parent class.
-var ObstacleSprite = function(game, x, y, arg) {
-    Phaser.Sprite.call(this, game, x, y, arg);
+// Hitbox sprite. Used by obstacles to detect avatar collision.
+var Hitbox = function(game, obstacle, x, y, side) {
+    Phaser.Sprite.call(this, game, x, y);
+    this.anchor.setTo(0.5);
+    this.obstacle = obstacle;
     this.obstacles = this.game.state.getCurrentState().obstacles;
     this.obstacles.add(this);
     this.game.physics.enable(this, Phaser.Physics.ARCADE);
-    if (!arg) {
-        var w = this.body.width;
-        var h = this.body.height;
-        var d = ObstacleSprite.D;
-        this.body.setSize(d, d, -w / 2, h / 2 - d / 2);
-    }
+    side = side != undefined ? side : Hitbox.D;
+    var w = this.body.width;
+    var h = this.body.height;
+    this.body.setSize(side, side, w / 2 - side / 2, h / 2 - side / 2);
 };
 
-ObstacleSprite.prototype = Object.create(Phaser.Sprite.prototype);
-ObstacleSprite.prototype.constructor = ObstacleSprite;
+Hitbox.prototype = Object.create(Phaser.Sprite.prototype);
+Hitbox.prototype.constructor = Hitbox;
 
 // A few constants.
-ObstacleSprite.D = 32;
+Hitbox.D = 32;
 
 
-// Make us un-collidable.
-ObstacleSprite.prototype.removeCollision = function() {
+// Update loop.
+Hitbox.prototype.update = function() {
+    // this.game.debug.body(this);
+    // this.game.debug.spriteCoords(this);
+};
+
+// Make us un-collidable. Also, annihilates us.
+Hitbox.prototype.removeCollision = function() {
     this.obstacles.remove(this);
     this.body.enable = false;
     this.body = null;
+    Utils.destroy(this);
 };
 
 // Called on avatar overlap.
-// Returns true if we should block the avatar.
-ObstacleSprite.prototype.obstruct = function(avatar) {
-    // Override me!
-    return true;
+Hitbox.prototype.obstruct = function(avatar) {
+    return this.obstacle.obstruct(avatar);
 };
 
 
@@ -95,7 +100,7 @@ ObstacleSprite.prototype.obstruct = function(avatar) {
 
 // Obstacle "wrapper" base class.
 // This should almost certainly make use of 
-// ObstacleSprites for in-game physics.
+// Hitboxs for in-game physics.
 var Obstacle = function(game, name, x, y, type) {
     this.game = game;
     this.name = name;
@@ -114,6 +119,13 @@ Obstacle.prototype.draw = function(tier) {
 Obstacle.prototype.update = function() {
     // Noop.
 }
+
+// Called on avatar overlap.
+// Returns true if we should block the avatar.
+Hitbox.prototype.obstruct = function(avatar) {
+    // Override me!
+    return true;
+};
 
 // Handle various fade events.
 Obstacle.prototype.fadingIn = function(tier) {};
