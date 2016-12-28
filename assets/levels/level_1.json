@@ -384,7 +384,8 @@
                     "y": 250
                 },
                 "key0": {
-                    "type": "key",
+                    "type": "item",
+                    "subtype": "key",
                     "x": 250,
                     "y": 100
                 }

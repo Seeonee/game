@@ -1,3 +1,4 @@
+restrict collisions within tier
 add enemies
 add system for picking up and holding items
 add general held items
