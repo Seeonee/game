@@ -1,5 +1,5 @@
 // A door that requires a key to pass through.
-var DoorSprite = function(game, x, y, palette) {
+var DoorSprite = function(game, x, y, name, palette) {
     this.game = game;
     var d = DoorSprite.D;
     var bitmap = this.game.add.bitmapData(d, d);
@@ -20,7 +20,8 @@ var DoorSprite = function(game, x, y, palette) {
     this.inner.anchor.setTo(0.5);
 
     // And our icon!
-    this.icon = this.addChild(this.game.add.sprite(0, 0, 'item_key'));
+    this.icon = this.addChild(this.game.add.sprite(
+        0, 0, 'item_' + name));
     this.icon.scale.setTo(0.5);
     this.icon.anchor.setTo(0.5);
     this.icon.rotation = -Math.PI / 4;
@@ -64,8 +65,9 @@ DoorSprite.prototype.unlock = function() {
 
 
 // Door object.
-var Door = function(game, name, x, y, type) {
+var Door = function(game, name, x, y, type, subtype) {
     Obstacle.call(this, game, name, x, y, type);
+    this.subtype = subtype;
 };
 
 Door.TYPE = 'door';
@@ -88,7 +90,8 @@ Door.prototype.draw = function(tier) {
             this.x, this.y);
         var ap = tier.translateInternalPointToAnchorPoint(
             ip.x, ip.y);
-        this.door = new DoorSprite(this.game, ap.x, ap.y, tier.palette);
+        this.door = new DoorSprite(this.game, ap.x, ap.y,
+            this.subtype, tier.palette);
         tier.image.addChild(this.door);
     } else {
         this.door.setPalette(tier.palette);
@@ -99,7 +102,7 @@ Door.prototype.draw = function(tier) {
 Door.prototype.obstruct = function(avatar) {
     // Cheat and look for keys for the next tier up.
     // I.e. keys we've picked up on this tier.
-    if (avatar.held && avatar.held.subtype == 'key') {
+    if (avatar.held && avatar.held.subtype == this.subtype) {
         avatar.held.useUp();
         this.hitbox.removeCollision();
         this.hitbox = undefined;
@@ -124,11 +127,12 @@ Door.prototype.delete = function() {
 // Write our JSON conversion.
 Door.prototype.toJSON = function() {
     var result = Obstacle.prototype.toJSON.call(this);
+    result.subtype = this.subtype;
     return result;
 };
 
 // Load our JSON representation.
 Door.load = function(game, name, json) {
     return new Door(game, name, json.x, json.y,
-        json.type);
+        json.type, json.subtype);
 };

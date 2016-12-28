@@ -45,7 +45,7 @@ CarriedItemSprite.HOVER_TIME = 2000; // ms
 CarriedItemSprite.HOVER_HEIGHT = 50;
 CarriedItemSprite.CARRY_HEIGHT = 80;
 CarriedItemSprite.HOVER_DRIFT = 15;
-CarriedItemSprite.USE_TIME = 700; // ms
+CarriedItemSprite.USE_TIME = 500; // ms
 CarriedItemSprite.PICKUP_TIME = 700; // ms
 
 

@@ -380,6 +380,7 @@
             "obstacles": {
                 "door0": {
                     "type": "door",
+                    "subtype": "key",
                     "x": 100,
                     "y": 250
                 },
