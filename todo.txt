@@ -11,6 +11,7 @@ make wire gfx attach to tier image (behind it)
 
 
 LONG-TERM FEATURES:
+add localized text popups on trigger
 add relays to carry current between tiers
 add ability to sync switches
 add gpad version that handles keyboard input

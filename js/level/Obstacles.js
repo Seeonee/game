@@ -127,8 +127,16 @@ var Obstacle = function(game, name, x, y, type) {
     this.name = name;
     this.x = x;
     this.y = y;
+    this.gx = x;
+    this.gy = y;
     this.type = type;
     this.renderNeeded = true;
+};
+
+
+// Convenient string representation of our *game* coords.
+Obstacle.prototype.coords = function() {
+    return Point.coords(this.gx, this.gy)
 };
 
 // Draw loop. Gives us a chance to render.
@@ -153,6 +161,11 @@ Obstacle.prototype.fadingIn = function(tier) {};
 Obstacle.prototype.fadedIn = function(tier) {};
 Obstacle.prototype.fadingOut = function(tier) {};
 Obstacle.prototype.fadedOut = function(tier) {};
+
+// String version of our details, displayed during editing.
+Obstacle.prototype.getDetails = function() {
+    return ' (' + this.x + ',' + this.y + ')';
+};
 
 // JSON conversion of an obstacle.
 Obstacle.prototype.toJSON = function() {

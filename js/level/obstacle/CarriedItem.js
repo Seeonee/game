@@ -32,7 +32,7 @@ CarriedItem.prototype.draw = function(tier) {
     }
 };
 
-// Debug code.
+// Collision check.
 CarriedItem.prototype.obstruct = function(avatar) {
     if (!avatar.held) {
         avatar.held = this;
@@ -61,6 +61,12 @@ CarriedItem.prototype.delete = function() {
         this.hitbox.removeCollision();
         this.hitbox = undefined;
     }
+};
+
+// Editor details.
+CarriedItem.prototype.getDetails = function() {
+    return Obstacle.prototype.getDetails.call(this) + '\n' +
+        '(' + this.subtype + ')';
 };
 
 // Write our JSON conversion.

@@ -32,7 +32,7 @@ Door.prototype.draw = function(tier) {
     }
 };
 
-// Debug code.
+// Collision check.
 Door.prototype.obstruct = function(avatar) {
     // Cheat and look for keys for the next tier up.
     // I.e. keys we've picked up on this tier.
@@ -56,6 +56,12 @@ Door.prototype.delete = function() {
         this.hitbox.removeCollision();
         this.hitbox = undefined;
     }
+};
+
+// Editor details.
+Door.prototype.getDetails = function() {
+    return Obstacle.prototype.getDetails.call(this) + '\n' +
+        '(' + this.subtype + ')';
 };
 
 // Write our JSON conversion.

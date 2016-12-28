@@ -24,7 +24,6 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     // Customization-specific states.
     new CustomizeStartPointIState(this, this.level);
     new CustomizeEndPointIState(this, this.level);
-    new CustomizeShardPointIState(this, this.level);
     new CustomizeSwitchPointIState(this, this.level);
     new CustomizeWarpPointIState(this, this.level);
     new CustomizePortalPointIState(this, this.level);
@@ -39,6 +38,11 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     this.modes.push(new WireEditorIState(this, this.level));
     new AddWireIState(this, this.level);
     new DeleteWireIState(this, this.level);
+
+    // Objects/obstacles.
+    this.modes.push(new ObstacleEditorIState(this, this.level));
+    new AddObstacleIState(this, this.level);
+    new DeleteObstacleIState(this, this.level);
 
     // Reset the level.
     this.modes.push(new ResetLevelIState(this, this.level));

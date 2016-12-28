@@ -20,6 +20,7 @@ var Tier = function(game, name) {
     this.wireMap = {};
     this.obstacleMap = {};
     this.coords = {};
+    this.obstacleCoords = {};
 
     // Bitmap gets set up later.
     this.bitmap = undefined;
@@ -98,6 +99,16 @@ Tier.prototype.trackCoords = function(coords) {
 // Forget a coordinate we've occupied.
 Tier.prototype.forgetCoords = function(coords) {
     delete this.coords[coords];
+};
+
+// Track an obstacle's coordinates.
+Tier.prototype.trackObstacle = function(obstacle) {
+    this.obstacleCoords[obstacle.coords()] = obstacle;
+};
+
+// Forget an obstacle's coordinates.
+Tier.prototype.forgetObstacle = function(obstacle) {
+    delete this.obstacleCoords[obstacle.coords()];
 };
 
 // Create a new point, optionally connected to an existing one.
@@ -360,6 +371,9 @@ Tier.prototype._addObstacle = function(obstacle) {
     this.events.onFadingOut.add(obstacle.fadingOut, obstacle);
     this.events.onFadedOut.add(obstacle.fadedOut, obstacle);
     this.renderNeeded = true;
+    if (this.game.settings.edit) {
+        this.trackObstacle(obstacle);
+    }
     return obstacle;
 };
 
@@ -374,6 +388,9 @@ Tier.prototype.deleteObstacle = function(obstacle) {
         this.events.onFadedOut.remove(obstacle.fadedOut, obstacle);
         this.obstacles.splice(obstacle, 1);
         delete this.obstacleMap[obstacle.name];
+        if (this.game.settings.edit) {
+            this.forgetObstacle(obstacle);
+        }
         return obstacle;
     }
     return undefined;
