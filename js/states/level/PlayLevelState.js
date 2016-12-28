@@ -54,10 +54,10 @@ PlayLevelState.prototype.create = function() {
     }
 
     // TODO: Debug only!
-    var d = new Door(game, 100, 250, this.level.tier.palette);
-    this.z.fg.tier().add(d);
-    var dk = new DoorKey(game, 250, 100, this.level.tier.palette);
-    this.z.mg.tier().add(dk);
+    // var d = new Door(game, 100, 250, this.level.tier.palette);
+    // this.z.fg.tier().add(d);
+    // var dk = new DoorKey(game, 250, 100, this.level.tier.palette);
+    // this.z.mg.tier().add(dk);
 };
 
 // Create the level.

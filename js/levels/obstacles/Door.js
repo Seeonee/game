@@ -26,7 +26,7 @@ var Door = function(game, x, y, palette) {
     this.icon.rotation = -Math.PI / 4;
 };
 
-Door.Type = 'door';
+Door.TYPE = 'door';
 Door.prototype = Object.create(ObstacleSprite.prototype);
 Door.prototype.constructor = Door;
 
@@ -76,8 +76,8 @@ Door.prototype.obstruct = function(avatar) {
 
 
 // Door wrapper.
-var DoorWrapper = function(game, x, y, type) {
-    Obstacle.call(this, game, x, y, type);
+var DoorWrapper = function(game, name, x, y, type) {
+    Obstacle.call(this, game, name, x, y, type);
 };
 
 DoorWrapper.prototype = Object.create(Obstacle.prototype);
@@ -95,7 +95,7 @@ DoorWrapper.prototype.draw = function(tier) {
             this.x, this.y);
         var ap = tier.translateInternalPointToAnchorPoint(
             ip.x, ip.y);
-        this.door = new Door(this.game, ip.x, ip.y, tier.palette);
+        this.door = new Door(this.game, ap.x, ap.y, tier.palette);
         tier.image.addChild(this.door);
     }
 };
@@ -184,8 +184,8 @@ DoorKey.prototype.obstruct = function(avatar) {
 
 
 // Door key wrapper.
-var DoorKeyWrapper = function(game, x, y, type) {
-    Obstacle.call(this, game, x, y, type);
+var DoorKeyWrapper = function(game, name, x, y, type) {
+    Obstacle.call(this, game, name, x, y, type);
 };
 
 DoorKeyWrapper.prototype = Object.create(Obstacle.prototype);
@@ -203,7 +203,7 @@ DoorKeyWrapper.prototype.draw = function(tier) {
             this.x, this.y);
         var ap = tier.translateInternalPointToAnchorPoint(
             ip.x, ip.y);
-        this.dkey = new DoorKey(this.game, ip.x, ip.y, tier.palette);
+        this.dkey = new DoorKey(this.game, ap.x, ap.y, tier.palette);
         tier.image.addChild(this.dkey);
     }
 };

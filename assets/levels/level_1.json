@@ -376,6 +376,18 @@
                     "source": "p23",
                     "sink": "p14"
                 }
+            },
+            "obstacles": {
+                "door0": {
+                    "type": "door",
+                    "x": 100,
+                    "y": 250
+                },
+                "key0": {
+                    "type": "key",
+                    "x": 250,
+                    "y": 100
+                }
             }
         },
         "t2": {

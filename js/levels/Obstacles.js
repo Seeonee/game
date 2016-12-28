@@ -110,6 +110,17 @@ Obstacle.prototype.draw = function(tier) {
     this.renderNeeded = false; // Extend me!
 }
 
+// Update loop. Override if you need it.
+Obstacle.prototype.update = function() {
+    // Noop.
+}
+
+// Handle various fade events.
+Obstacle.prototype.fadingIn = function(tier) {};
+Obstacle.prototype.fadedIn = function(tier) {};
+Obstacle.prototype.fadingOut = function(tier) {};
+Obstacle.prototype.fadedOut = function(tier) {};
+
 // JSON conversion of an obstacle.
 Obstacle.prototype.toJSON = function() {
     return {
