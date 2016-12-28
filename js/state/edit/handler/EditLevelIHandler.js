@@ -31,9 +31,6 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     new CustomizeJunctionPointIState(this, this.level);
     new CustomizeNormalPointIState(this, this.level);
 
-    // Test states.
-    this.modes.push(new TestLevelIState(this, this.level));
-
     // Wires.
     this.modes.push(new WireEditorIState(this, this.level));
     new AddWireIState(this, this.level);
@@ -52,6 +49,9 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
 
     // Display controls..
     this.modes.push(new EditControlsIState(this, this.level));
+
+    // Test states.
+    this.modes.push(new TestLevelIState(this, this.level));
 
     // Set our starting state.
     this.activate(GeneralEditIState.NAME);

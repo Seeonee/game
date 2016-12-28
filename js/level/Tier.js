@@ -386,7 +386,7 @@ Tier.prototype.deleteObstacle = function(obstacle) {
         this.events.onFadedIn.remove(obstacle.fadedIn, obstacle);
         this.events.onFadingOut.remove(obstacle.fadingOut, obstacle);
         this.events.onFadedOut.remove(obstacle.fadedOut, obstacle);
-        this.obstacles.splice(obstacle, 1);
+        this.obstacles.splice(index, 1);
         delete this.obstacleMap[obstacle.name];
         if (this.game.settings.edit) {
             this.forgetObstacle(obstacle);

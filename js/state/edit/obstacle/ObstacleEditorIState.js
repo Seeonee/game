@@ -49,12 +49,14 @@ ObstacleEditorIState.prototype.update = function() {
 
         if (this.gpad.justReleased(this.buttonMap.EDIT_ADD) ||
             this.gpad.justReleased(this.buttonMap.EDIT_CUSTOMIZE)) {
+            this.gpad.consumeButtonEvent();
             if (!this.obstacle) {
                 this.activate(AddObstacleIState.NAME);
             }
         } else if (this.gpad.justPressed(this.buttonMap.EDIT_DELETE)) {
+            this.gpad.consumeButtonEvent();
             if (this.obstacle) {
-                this.activate(DeleteWireIState.NAME);
+                this.activate(DeleteObstacleIState.NAME);
             }
         } else if (this.gpad.justPressed(this.buttonMap.EDIT_STEP_UP)) {
             this.activate(StepUpIState.NAME);
