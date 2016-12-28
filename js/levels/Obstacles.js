@@ -58,10 +58,19 @@ var ObstacleSprite = function(game, x, y, arg) {
     this.obstacles = this.game.state.getCurrentState().obstacles;
     this.obstacles.add(this);
     this.game.physics.enable(this, Phaser.Physics.ARCADE);
+    if (!arg) {
+        var w = this.body.width;
+        var h = this.body.height;
+        var d = ObstacleSprite.D;
+        this.body.setSize(d, d, -w / 2, h / 2 - d / 2);
+    }
 };
 
 ObstacleSprite.prototype = Object.create(Phaser.Sprite.prototype);
 ObstacleSprite.prototype.constructor = ObstacleSprite;
+
+// A few constants.
+ObstacleSprite.D = 32;
 
 
 // Make us un-collidable.
@@ -69,6 +78,13 @@ ObstacleSprite.prototype.removeCollision = function() {
     this.obstacles.remove(this);
     this.body.enable = false;
     this.body = null;
+};
+
+// Called on avatar overlap.
+// Returns true if we should block the avatar.
+ObstacleSprite.prototype.obstruct = function(avatar) {
+    // Override me!
+    return true;
 };
 
 
@@ -80,7 +96,11 @@ ObstacleSprite.prototype.removeCollision = function() {
 // Obstacle "wrapper" base class.
 // This should almost certainly make use of 
 // ObstacleSprites for in-game physics.
-var Obstacle = function(game, type) {
+var Obstacle = function(game, name, x, y, type) {
+    this.game = game;
+    this.name = name;
+    this.x = x;
+    this.y = y;
     this.type = type;
     this.renderNeeded = true;
 };
@@ -92,7 +112,11 @@ Obstacle.prototype.draw = function(tier) {
 
 // JSON conversion of an obstacle.
 Obstacle.prototype.toJSON = function() {
-    return { type: this.type }; // Extend me!
+    return {
+        x: this.x,
+        y: this.y,
+        type: this.type
+    };
 };
 
 // Load a JSON representation of a obstacle.

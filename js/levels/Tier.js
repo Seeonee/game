@@ -13,10 +13,12 @@ var Tier = function(game, name) {
     this.points = [];
     this.paths = [];
     this.wires = [];
+    this.obstacles = [];
     this.objects = [];
     this.pointMap = {};
     this.pathMap = {};
     this.wireMap = {};
+    this.obstacleMap = {};
     this.coords = {};
 
     // Bitmap gets set up later.
@@ -348,6 +350,35 @@ Tier.prototype.deleteWire = function(wire) {
     return undefined;
 };
 
+// Internal use only.
+// Adds an already-constructed obstacle.
+Tier.prototype._addObstacle = function(obstacle) {
+    this.obstacles.push(obstacle);
+    this.obstacleMap[obstacle.name] = obstacle;
+    this.events.onFadingIn.add(obstacle.fadingIn, obstacle);
+    this.events.onFadedIn.add(obstacle.fadedIn, obstacle);
+    this.events.onFadingOut.add(obstacle.fadingOut, obstacle);
+    this.events.onFadedOut.add(obstacle.fadedOut, obstacle);
+    this.renderNeeded = true;
+    return obstacle;
+};
+
+// Delete an obstacle. Returns it too, why not.
+Tier.prototype.deleteObstacle = function(obstacle) {
+    var index = this.obstacles.indexOf(obstacle);
+    if (index >= 0) {
+        obstacle.delete();
+        this.events.onFadingIn.remove(obstacle.fadingIn, obstacle);
+        this.events.onFadedIn.remove(obstacle.fadedIn, obstacle);
+        this.events.onFadingOut.remove(obstacle.fadingOut, obstacle);
+        this.events.onFadedOut.remove(obstacle.fadedOut, obstacle);
+        this.obstacles.splice(obstacle, 1);
+        delete this.obstacleMap[obstacle.name];
+        return obstacle;
+    }
+    return undefined;
+};
+
 // Get the tier above us.
 Tier.prototype.getAbove = function() {
     return this.level.tierMap['t' + (this.index + 1)];
@@ -587,7 +618,8 @@ Tier.prototype.draw = function() {
     this.bitmap.context.lineDashOffset = Tier.LINE_DASH_OFFSET;
     // this.bitmap.context.strokeRect(0, 0, this.width, this.height);
 
-    this.objects = this.paths.concat(this.points).concat(this.wires);
+    this.objects = this.paths.concat(this.points)
+        .concat(this.wires).concat(this.obstacles);
     this.objects.sort(function(a, b) {
         var z1 = a.z ? a.z : 10;
         var z2 = b.z ? b.z : 10;
@@ -878,7 +910,8 @@ Tier.prototype.toJSON = function() {
     return {
         points: this.pointMap,
         paths: this.pathMap,
-        wires: this.wireMap
+        wires: this.wireMap,
+        obstacles: this.obstacleMap
     };
 };
 
@@ -910,6 +943,15 @@ Tier.load = function(game, name, json) {
             var wireObj = json.wires[key];
             var wire = Wire.load(game, key, wireObj);
             tier._addWire(wire);
+        }
+    }
+    if (json.obstacles) {
+        keys = Object.keys(json.obstacles);
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var obstacleObj = json.obstacles[key];
+            var obstacle = Obstacle.load(game, key, obstacleObj);
+            tier._addObstacle(obstacle);
         }
     }
     return tier;

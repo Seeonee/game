@@ -26,6 +26,7 @@ var Door = function(game, x, y, palette) {
     this.icon.rotation = -Math.PI / 4;
 };
 
+Door.Type = 'door';
 Door.prototype = Object.create(ObstacleSprite.prototype);
 Door.prototype.constructor = Door;
 
@@ -74,6 +75,61 @@ Door.prototype.obstruct = function(avatar) {
 
 
 
+// Door wrapper.
+var DoorWrapper = function(game, x, y, type) {
+    Obstacle.call(this, game, x, y, type);
+};
+
+DoorWrapper.prototype = Object.create(Obstacle.prototype);
+DoorWrapper.prototype.constructor = DoorWrapper;
+
+// Set up our factory.
+Obstacle.load.factory[Door.TYPE] = DoorWrapper;
+
+
+// Draw loop.
+DoorWrapper.prototype.draw = function(tier) {
+    if (this.renderNeeded) {
+        this.renderNeeded = false;
+        var ip = tier.translateGamePointToInternalPoint(
+            this.x, this.y);
+        var ap = tier.translateInternalPointToAnchorPoint(
+            ip.x, ip.y);
+        this.door = new Door(this.game, ip.x, ip.y, tier.palette);
+        tier.image.addChild(this.door);
+    }
+};
+
+// Delete ourself.
+DoorWrapper.prototype.delete = function() {
+    if (this.door) {
+        this.door.removeCollision();
+        Utils.destroy(this.door);
+        this.door = undefined;
+    }
+};
+
+// Write our JSON conversion.
+DoorWrapper.prototype.toJSON = function() {
+    var result = Obstacle.prototype.toJSON.call(this);
+    return result;
+};
+
+// Load our JSON representation.
+DoorWrapper.load = function(game, name, json) {
+    return new DoorWrapper(game, name, json.x, json.y,
+        json.type);
+};
+
+
+
+
+
+
+
+
+
+
 // Key for passing through a door.
 var DoorKey = function(game, x, y, palette) {
     ObstacleSprite.call(this, game, x, y);
@@ -98,7 +154,7 @@ DoorKey.PICKUP_TIME = 500; // ms
 // Call to destruct!
 DoorKey.prototype.pickUp = function() {
     this.removeCollision();
-    var t = this.game.add.tween(this.scale);
+    var t = this.game.add.tween(this.icon.scale);
     t.to({ x: 0, y: 0 },
         DoorKey.UNLOCK_TIME, Phaser.Easing.Cubic.Out, true);
     t.onComplete.add(function() {
@@ -119,4 +175,56 @@ DoorKey.prototype.obstruct = function(avatar) {
         this.pickUp();
     }
     return false;
+};
+
+
+
+
+
+
+
+// Door key wrapper.
+var DoorKeyWrapper = function(game, x, y, type) {
+    Obstacle.call(this, game, x, y, type);
+};
+
+DoorKeyWrapper.prototype = Object.create(Obstacle.prototype);
+DoorKeyWrapper.prototype.constructor = DoorKeyWrapper;
+
+// Set up our factory.
+Obstacle.load.factory[DoorKey.TYPE] = DoorKeyWrapper;
+
+
+// Draw loop.
+DoorKeyWrapper.prototype.draw = function(tier) {
+    if (this.renderNeeded) {
+        this.renderNeeded = false;
+        var ip = tier.translateGamePointToInternalPoint(
+            this.x, this.y);
+        var ap = tier.translateInternalPointToAnchorPoint(
+            ip.x, ip.y);
+        this.dkey = new DoorKey(this.game, ip.x, ip.y, tier.palette);
+        tier.image.addChild(this.dkey);
+    }
+};
+
+// Delete ourself.
+DoorKeyWrapper.prototype.delete = function() {
+    if (this.dkey) {
+        this.dkey.removeCollision();
+        Utils.destroy(this.dkey);
+        this.dkey = undefined;
+    }
+};
+
+// Write our JSON conversion.
+DoorKeyWrapper.prototype.toJSON = function() {
+    var result = Obstacle.prototype.toJSON.call(this);
+    return result;
+};
+
+// Load our JSON representation.
+DoorKeyWrapper.load = function(game, name, json) {
+    return new DoorKeyWrapper(game, name, json.x, json.y,
+        json.type);
 };
