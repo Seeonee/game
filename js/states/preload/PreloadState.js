@@ -28,6 +28,7 @@ PreloadState.prototype.preload = function() {
     this.game.load.image('ring_outer', 'assets/ring_outer.png');
     this.game.load.spritesheet('switch_light', 'assets/switch_light.png',
         10, 10);
+    this.game.load.image('key_icon', 'assets/key_icon.png');
 
     this.game.load.image('power_diamond', 'assets/powerdiamond.png');
     this.game.load.image('power_icon_crown', 'assets/power_crown.png');

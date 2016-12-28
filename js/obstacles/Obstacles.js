@@ -40,7 +40,32 @@ Obstacles.prototype._overlap = function(avatar, obstacle) {
     if (difference < 0.25 && obstacle.obstruct) {
         return obstacle.obstruct(avatar);
     } else {
-
         return false;
     }
+};
+
+
+
+
+
+
+
+
+// Obstacle sprite parent class.
+var Obstacle = function(game, x, y, arg) {
+    Phaser.Sprite.call(this, game, x, y, arg);
+    this.obstacles = this.game.state.getCurrentState().obstacles;
+    this.obstacles.add(this);
+    this.game.physics.enable(this, Phaser.Physics.ARCADE);
+};
+
+Obstacle.prototype = Object.create(Phaser.Sprite.prototype);
+Obstacle.prototype.constructor = Obstacle;
+
+
+// Make us un-collidable.
+Obstacle.prototype.removeCollision = function() {
+    this.obstacles.remove(this);
+    this.body.enable = false;
+    this.body = null;
 };
