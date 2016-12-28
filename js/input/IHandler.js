@@ -112,6 +112,9 @@ IHandler.prototype.activate = function(name) {
     this.state = next;
     if (next) {
         next.activated(prev);
+    } else {
+        console.error('failed to activate istate ' +
+            name + ' after istate ' + prev.name);
     }
 };
 

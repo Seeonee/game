@@ -30,7 +30,8 @@ ObstacleEditorIState.prototype.activated = function(prev) {
 ObstacleEditorIState.prototype.deactivated = function(next) {
     this.indicator.visible = false;
     this.marker = undefined;
-    this.avatar.move(0, 0);
+    this.avatar.body.velocity.x = 0;
+    this.avatar.body.velocity.y = 0;
 };
 
 // Handle an update.

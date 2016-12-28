@@ -1,8 +1,12 @@
 // Base class for point customization istates.
 var BaseCustomizeIState = function(handler, level, pointClass, depth) {
-    var name = pointClass ?
-        BaseCustomizeIState.getName(pointClass, depth) :
-        BaseCustomizeIState.NAME;
+    if (typeof pointClass == 'string') {
+        var name = pointClass;
+    } else if (pointClass == undefined) {
+        var name = BaseCustomizeIState.NAME;
+    } else {
+        var name = BaseCustomizeIState.getName(pointClass, depth);
+    }
     IState.call(this, name, handler);
     this.level = level;
     this.avatar = level.avatar;
