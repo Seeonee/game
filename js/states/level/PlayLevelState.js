@@ -29,6 +29,7 @@ PlayLevelState.prototype.preload = function() {
 
 // Set up the level.
 PlayLevelState.prototype.create = function() {
+    this.obstacles = new Obstacles(this.game);
     this.flicker = this.createFlickerManager();
     this.level = this.createLevel();
     this.createAvatar();

@@ -159,6 +159,14 @@ Avatar.prototype.updateDestination = function(angle, ratio) {
 // Head towards our destination point, 
 // if we have one.
 Avatar.prototype.headTowardsDestination = function(ratio, angle) {
+    var obstacles = this.game.state.getCurrentState().obstacles;
+    if (obstacles.overlap(this)) {
+        this.body.velocity.x = 0;
+        this.body.velocity.y = 0;
+        return;
+    }
+    this.xOld = this.x;
+    this.yOld = this.y;
     var ip = this.tier.translateGamePointToInternalPoint(this.x, this.y);
     if (this.destination) {
         var a2 = Utils.angleBetweenPoints(

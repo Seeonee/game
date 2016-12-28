@@ -32,7 +32,8 @@ AvatarGraphicsKey.prototype.createGraphics = function(avatar) {
     var x = (w - w2) / 2;
     var y = avatar.keyplate.y + (h - h2) / 2;
     var dh = (w2 / 2) - ((h2 + y) / 2);
-    avatar.body.setSize(w2, h2 + dh, x, y);
+    // avatar.body.setSize(w2, h2 + dh, x, y);
+    avatar.body.setSize(w2, w2, x, y + h2 + dh - w2 - 5);
     this.createSmokeEmitter(avatar);
 };
 

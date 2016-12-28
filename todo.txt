@@ -1,11 +1,21 @@
-make end point gfx actually attach to node (still behind tier.image z)
-add relays to carry current between tiers
-add ability to sync switches
-add lock mechanics
+add enemies
+add doors
+add actual keys (not skill points)
+add general held items
 figure out what powers should do
-add settings submenu for key bindings
-add gpad version that handles keyboard input
-add ability for menu items to have things other than raw text
-add sound fx and music
+
+
+LONG-TERM CLEANUP:
 consider handling velocity internally for gameplay loop
     may fix the overshoot bugs
+make end point gfx actually attach to node (still behind tier.image z)
+make wire gfx attach to tier image (behind it)
+
+
+LONG-TERM FEATURES:
+add relays to carry current between tiers
+add ability to sync switches
+add gpad version that handles keyboard input
+add settings submenu for key bindings
+add sound fx and music
+add ability for menu items to have things other than raw text
