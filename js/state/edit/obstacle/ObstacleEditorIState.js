@@ -3,8 +3,6 @@ var ObstacleEditorIState = function(handler, level) {
     IState.call(this, ObstacleEditorIState.NAME, handler);
     this.level = level;
     this.avatar = level.avatar;
-    this.avatar.events.onAttachEdit.add(
-        this.updateHelpText, this);
 };
 
 ObstacleEditorIState.NAME = 'objects';
@@ -12,7 +10,7 @@ ObstacleEditorIState.prototype = Object.create(IState.prototype);
 ObstacleEditorIState.prototype.constructor = ObstacleEditorIState;
 
 // Constants.
-ObstacleEditorIState.GRID_UNIT = 50 / 2;
+ObstacleEditorIState.GRID_UNIT = 50;
 
 
 // Called when we become the active state.
@@ -84,6 +82,9 @@ ObstacleEditorIState.prototype.updateMarkerAndObstacle = function() {
 // Figure out the new marker position.
 ObstacleEditorIState.prototype.findMarker = function() {
     var u = ObstacleEditorIState.GRID_UNIT;
+    if (this.gpad.isDown(this.buttonMap.EDIT_FLOAT)) {
+        u /= 2;
+    }
     var ip = { x: this.avatar.x, y: this.avatar.y };
     ip.x = Math.floor(ip.x + ((u / 2) * Math.sign(ip.x)));
     ip.y = Math.floor(ip.y + ((u / 2) * Math.sign(ip.y)));

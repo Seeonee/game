@@ -116,6 +116,11 @@ GPad.prototype.clearButtonDown = function(buttonCode) {
     this.pad._buttons[buttonCode].timeUp = 0;
 };
 
+// Check if a button's currently down.
+GPad.prototype.isDown = function(buttonCode) {
+    return this.pad._buttons[buttonCode].isDown;
+};
+
 // Return a map of all button codes that are currently down.
 GPad.prototype.getButtonDownList = function() {
     var map = [];
