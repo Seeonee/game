@@ -7,17 +7,20 @@ var CarriedItemSprite = function(game, x, y, name, palette) {
     this.gobetween = this.addChild(this.game.add.sprite(0, 0));
     this.gobetween.anchor.setTo(0.5);
 
-    var r = 15;
-    var pad = 3;
-    var bitmap = this.game.add.bitmapData(2 * (r + pad), 2 * (r + pad));
-    var c = bitmap.context;
-    c.translate(pad, pad);
-    c.strokeStyle = this.game.settings.colors.WHITE.s;
-    c.lineWidth = 1.5;
-    c.arc(r, r, r, 0, 2 * Math.PI, false);
-    c.stroke();
+    if (CarriedItemSprite.CACHED_BITMAP == undefined) {
+        var r = 15;
+        var pad = 3;
+        var bitmap = this.game.add.bitmapData(2 * (r + pad), 2 * (r + pad));
+        var c = bitmap.context;
+        c.translate(pad, pad);
+        c.strokeStyle = this.game.settings.colors.WHITE.s;
+        c.lineWidth = 1.5;
+        c.arc(r, r, r, 0, 2 * Math.PI, false);
+        c.stroke();
+        CarriedItemSprite.CACHED_BITMAP = bitmap;
+    }
     this.corona = this.gobetween.addChild(this.game.add.sprite(
-        0, 0, bitmap));
+        0, 0, CarriedItemSprite.CACHED_BITMAP));
     this.corona.anchor.setTo(0.5);
     this.corona.y -= CarriedItemSprite.HOVER_HEIGHT;
 
@@ -79,4 +82,7 @@ CarriedItemSprite.prototype.useUp = function() {
     t.onComplete.add(function() {
         Utils.destroy(this);
     }, this);
+    var t2 = this.game.add.tween(this);
+    t2.to({ y: 0 }, CarriedItemSprite.USE_TIME,
+        Phaser.Easing.Cubic.Out, true);
 };

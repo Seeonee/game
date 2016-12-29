@@ -20,11 +20,13 @@ SwitchIState.prototype.activated = function(prev) {
 
     this.point = this.avatar.point;
     this.switch = this.avatar.point.switch;
-    this.once = this.point.once;
     this.contact = this.point.contact;
-    this.done = this.point.done;
 
-    if (!this.done && this.contact) {
+    if (!this.point.done && this.contact) {
+        if (this.avatar.held && this.avatar.held.subtype == 'lightning') {
+            this.avatar.held.useUp();
+            this.point.once = true;
+        }
         this.point.flip();
     }
 };
@@ -34,7 +36,7 @@ SwitchIState.prototype.deactivated = function(prev) {
     this.point.setPressed(false);
     this.avatar.setBobble(false);
     this.avatar.setPressed(false);
-    if (!this.done && this.contact) {
+    if (!this.point.done && this.contact) {
         this.point.flip();
     }
 };
@@ -42,7 +44,7 @@ SwitchIState.prototype.deactivated = function(prev) {
 // Handle an update.
 SwitchIState.prototype.update = function() {
     var time = this.game.time.now;
-    if (this.done || this.contact || time < this.reactivateTime) {
+    if (this.point.done || this.contact || time < this.reactivateTime) {
         this.avatar.setBobble(false);
         this.pressed = false;
         return false;

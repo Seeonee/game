@@ -31,10 +31,10 @@ SwitchPoint.prototype.draw = function(tier) {
     Point.prototype.draw.call(this, tier);
     if (!this.drawn) {
         this.drawn = true;
-        var game = tier.game;
+        this.game = tier.game;
         var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
-        this.switch = new WSwitch(game, ap.x, ap.y + SwitchPoint.Y,
+        this.switch = new WSwitch(this.game, ap.x, ap.y + SwitchPoint.Y,
             tier.palette, this.enabled, this.contact);
         tier.image.addChild(this.switch);
     } else {
@@ -63,6 +63,8 @@ SwitchPoint.prototype.setEnabled = function(enabled) {
     if (this.once) {
         this.done = true;
         this.switch.lock();
+        var gfx = new SwitchLock(this.game, this.gx, this.gy + SwitchPoint.Y);
+        this.game.state.getCurrentState().z.mg.tier().add(gfx);
     }
     this.switch.flip();
     Point.prototype.setEnabled.call(this, enabled);

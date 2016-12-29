@@ -84,3 +84,48 @@ WSwitch.prototype.fadingIn = function() {
 WSwitch.prototype.fadingOut = function() {
     this.alpha = 0;
 };
+
+
+
+
+
+
+
+
+// Graphics for when a switch locks after flipping once.
+var SwitchLock = function(game, x, y) {
+    if (SwitchLock.CACHED_BITMAP == undefined) {
+        this.game = game;
+        var r = SwitchLock.R;
+        var pad = 8;
+        var bitmap = this.game.add.bitmapData(2 * (r + pad), 2 * (r + pad));
+        var c = bitmap.context;
+        c.translate(pad, pad);
+        c.strokeStyle = this.game.settings.colors.WHITE.s;
+        c.lineWidth = pad;
+        c.arc(r, r, r, 0, 2 * Math.PI, false);
+        c.stroke();
+        SwitchLock.CACHED_BITMAP = bitmap;
+    }
+    Phaser.Sprite.call(this, game, x, y, SwitchLock.CACHED_BITMAP);
+    this.anchor.setTo(0.5);
+    this.alpha = 0;
+
+    var time = SwitchLock.TIME;
+    var easing = Phaser.Easing.Cubic.In;
+    var t = this.game.add.tween(this);
+    t.to({ alpha: 1 }, time, easing, true);
+    var t2 = this.game.add.tween(this.scale);
+    t2.to({ x: 0.25, y: 0.25 }, time, easing, true);
+    t2.onComplete.add(function() {
+        this.destroy();
+    }, this);
+};
+
+SwitchLock.prototype = Object.create(Phaser.Sprite.prototype);
+SwitchLock.prototype.constructor = SwitchLock;
+
+
+// Constants.
+SwitchLock.R = 50;
+SwitchLock.TIME = 500; // ms

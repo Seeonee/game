@@ -30,6 +30,7 @@ PreloadState.prototype.preload = function() {
         10, 10);
 
     this.game.load.image('item_key', 'assets/item_key.png');
+    this.game.load.image('item_lightning', 'assets/item_lightning.png');
 
     this.game.load.image('power_diamond', 'assets/powerdiamond.png');
     this.game.load.image('power_icon_crown', 'assets/power_crown.png');

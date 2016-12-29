@@ -5,7 +5,7 @@ var CarriedItem = function(name, x, y, subtype) {
 };
 
 CarriedItem.TYPE = 'item';
-CarriedItem.ALL_TYPES = ['key'];
+CarriedItem.ALL_TYPES = ['key', 'lightning'];
 CarriedItem.prototype = Object.create(Obstacle.prototype);
 CarriedItem.prototype.constructor = CarriedItem;
 
