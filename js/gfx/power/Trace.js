@@ -17,6 +17,13 @@ var Trace = function(avatar, palette) {
     this.base.anchor.setTo(0.5);
     this.z.fg.tier().add(this.base);
 
+    // Triangular sparks.
+    this.sparks = [];
+    for (var i = 0; i < Trace.PARTICLES; i++) {
+        var spark = new TraceSpark(this, i / Trace.PARTICLES);
+        this.sparks.push(this.base.addChild(spark));
+    }
+
     // This is the actual diamond silhouette.
     // It bursts in and shrinks, then flickers.
     this.silhouette = new TraceSilhouette(this, palette);
@@ -24,12 +31,7 @@ var Trace = function(avatar, palette) {
     this.silhouette.scale.setTo(0.6);
     this.base.addChild(this.silhouette);
 
-    this.sparks = [];
-    for (var i = 0; i < Trace.PARTICLES; i++) {
-        var spark = new TraceSpark(this, i / Trace.PARTICLES);
-        this.sparks.push(this.base.addChild(spark));
-    }
-
+    // One-time flash.
     this.burst = this.game.add.sprite(0, 0, 'keyplate');
     this.burst.anchor.setTo(0.5, 0.5);
     this.base.addChild(this.burst);
@@ -113,12 +115,18 @@ TraceSilhouette.prototype.recall = function() {
     for (var i = 0; i < this.tweens.length; i++) {
         this.tweens[i].stop();
     }
-    this.alpha = 1;
     var t = this.game.add.tween(this);
-    t.to({ alpha: 0 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
+    t.to({ alpha: 1 }, 250, Phaser.Easing.Quartic.In, true);
+    var t2 = this.game.add.tween(this);
+    t2.to({ alpha: 0 }, 500, Phaser.Easing.Cubic.Out);
+    t.chain(t2);
+
     var t = this.game.add.tween(this.scale);
-    t.to({ x: 1.5, y: 1.5 }, 500, Phaser.Easing.Cubic.Out, true);
-    t.onComplete.add(function() {
+    t.to({ x: 0.5, y: 0.5 }, 250, Phaser.Easing.Cubic.In, true);
+    var t2 = this.game.add.tween(this.scale);
+    t2.to({ x: 1.5, y: 1.5 }, 500, Phaser.Easing.Cubic.Out);
+    t.chain(t2);
+    t2.onComplete.add(function() {
         this.destroy();
     }, this);
 };
