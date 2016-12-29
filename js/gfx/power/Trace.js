@@ -1,21 +1,13 @@
 // Manager for the gfx involved in deploying a trace.
-var Trace = function(avatar, palette) {
+var Trace = function(avatar, tier) {
     this.avatar = avatar;
+    this.tier = tier;
     this.game = avatar.game;
-    this.avatar.trace = this;
-    this.point = avatar.point;
-    this.path = avatar.path;
-
-    this.reuseTime = this.game.time.now + Trace.REUSE_DELAY;
-    this.palette = palette;
-    this.x = avatar.x;
-    this.y = avatar.y + avatar.keyplate.y;
-    this.z = this.game.state.getCurrentState().z;
 
     // This one is for absolutely positioning.
-    this.base = this.game.add.sprite(this.x, this.y);
+    this.base = this.game.add.sprite(0, 0);
     this.base.anchor.setTo(0.5);
-    this.z.fg.tier().add(this.base);
+    this.base.visible = false;
 
     // Triangular sparks.
     this.sparks = [];
@@ -26,23 +18,15 @@ var Trace = function(avatar, palette) {
 
     // This is the actual diamond silhouette.
     // It bursts in and shrinks, then flickers.
-    this.silhouette = new TraceSilhouette(this, palette);
+    this.silhouette = new TraceSilhouette(this);
     this.silhouette.anchor.setTo(0.5);
-    this.silhouette.scale.setTo(0.6);
     this.base.addChild(this.silhouette);
 
     // One-time flash.
-    this.burst = this.game.add.sprite(0, 0, 'keyplate');
-    this.burst.anchor.setTo(0.5, 0.5);
+    this.burst = new TraceBurst(this);
     this.base.addChild(this.burst);
 
-    var t = this.game.add.tween(this.burst);
-    t.to({ alpha: 0 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
-    var t = this.game.add.tween(this.burst.scale);
-    t.to({ x: 1.5, y: 1.5 }, 500, Phaser.Easing.Cubic.Out, true);
-    t.onComplete.add(function() {
-        this.burst.destroy();
-    }, this);
+    this.reset(avatar, tier);
 };
 
 // Constants.
@@ -50,9 +34,33 @@ Trace.PARTICLES = 15;
 Trace.REUSE_DELAY = 700; // ms
 
 
+// Prepare everything again.
+Trace.prototype.reset = function(avatar, tier) {
+    this.avatar.trace = this;
+    this.point = avatar.point;
+    this.path = avatar.path;
+    this.reuseTime = this.game.time.now + Trace.REUSE_DELAY;
+    this.palette = tier.palette;
+    this.x = avatar.x;
+    this.y = avatar.y + avatar.keyplate.y;
+    this.z = this.game.state.getCurrentState().z;
+
+    this.base.x = this.x;
+    this.base.y = this.y;
+    this.z.fg.tier().add(this.base);
+    this.silhouette.scale.setTo(0.6);
+
+    this.burst.reset(this);
+    this.silhouette.reset(this);
+    for (var i = 0; i < this.sparks.length; i++) {
+        this.sparks[i].reset(this);
+    }
+    this.base.visible = true;
+};
+
 // Shut it down.
 Trace.prototype.recall = function() {
-    this.silhouette.recall();
+    this.silhouette.recall(this);
     for (var i = 0; i < this.sparks.length; i++) {
         this.sparks[i].recall();
     }
@@ -67,13 +75,58 @@ Trace.prototype.recall = function() {
 
 
 
+// Burst.
+var TraceBurst = function(trace) {
+    Phaser.Sprite.call(this, trace.game, 0, 0, 'keyplate');
+    this.anchor.setTo(0.5);
+    this.tweens = [];
+};
+
+TraceBurst.prototype = Object.create(Phaser.Sprite.prototype);
+TraceBurst.prototype.constructor = TraceBurst;
+
+
+// Reset.
+TraceBurst.prototype.reset = function(trace) {
+    this.revive();
+    this.alpha = 1;
+    this.scale.setTo(1);
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    this.tweens = [];
+
+    this.play();
+};
+
+// Start our gfx cycle.
+TraceBurst.prototype.play = function() {
+    var t = this.game.add.tween(this);
+    t.to({ alpha: 0 }, 500, Phaser.Easing.Sinusoidal.InOut, true);
+    this.tweens.push(t);
+    var t = this.game.add.tween(this.scale);
+    t.to({ x: 1.5, y: 1.5 }, 500, Phaser.Easing.Cubic.Out, true);
+    t.onComplete.add(function() {
+        this.kill();
+    }, this);
+    this.tweens.push(t);
+};
+
+
+
+
+
+
+
+
+
+
+
 // Player ghost.
 var TraceSilhouette = function(trace) {
     Phaser.Sprite.call(this, trace.game, 0, 0, 'keyplate');
     this.anchor.setTo(0.5);
-    // this.tint = trace.palette.c2.i;
-    this.scale.setTo(0.6);
-    this.play();
+    this.tweens = [];
 };
 
 TraceSilhouette.prototype = Object.create(Phaser.Sprite.prototype);
@@ -83,10 +136,23 @@ TraceSilhouette.prototype.constructor = TraceSilhouette;
 TraceSilhouette.FLICKER_TIME = 1000; // ms
 
 
+// Reset.
+TraceSilhouette.prototype.reset = function(trace) {
+    this.revive();
+    // this.tint = trace.palette.c2.i;
+    this.scale.setTo(0.6);
+    this.alpha = 0;
+
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    this.tweens = [];
+
+    this.play();
+};
+
 // Start our gfx cycle.
 TraceSilhouette.prototype.play = function() {
-    this.alpha = 0;
-    this.tweens = [];
     var t = this.game.add.tween(this);
     t.to({ alpha: 0.5 }, TraceSilhouette.FLICKER_TIME,
         Phaser.Easing.Bounce.InOut, true,
@@ -110,25 +176,32 @@ TraceSilhouette.prototype.flicker = function() {
 };
 
 // Shut it down.
-TraceSilhouette.prototype.recall = function() {
+TraceSilhouette.prototype.recall = function(trace) {
+    this.trace = trace;
     this.game.time.events.remove(this.event);
     for (var i = 0; i < this.tweens.length; i++) {
         this.tweens[i].stop();
     }
+    this.tweens = [];
     var t = this.game.add.tween(this);
     t.to({ alpha: 1 }, 250, Phaser.Easing.Quartic.In, true);
+    this.tweens.push(t);
     var t2 = this.game.add.tween(this);
     t2.to({ alpha: 0 }, 500, Phaser.Easing.Cubic.Out);
     t.chain(t2);
+    this.tweens.push(t2);
 
     var t = this.game.add.tween(this.scale);
     t.to({ x: 0.5, y: 0.5 }, 250, Phaser.Easing.Cubic.In, true);
+    this.tweens.push(t);
     var t2 = this.game.add.tween(this.scale);
     t2.to({ x: 1.5, y: 1.5 }, 500, Phaser.Easing.Cubic.Out);
     t.chain(t2);
     t2.onComplete.add(function() {
-        this.destroy();
+        this.kill();
+        this.trace.base.visible = false;
     }, this);
+    this.tweens.push(t2);
 };
 
 
@@ -145,13 +218,7 @@ var TraceSpark = function(trace, fraction) {
     Phaser.Sprite.call(this, trace.game, 0, 0, 'smoke');
     this.fraction = fraction;
     this.anchor.setTo(0.5, 0.6);
-    this.tint = trace.palette.c1.i;
-
-    this.rotation = Math.random() * 2 * Math.PI;
-    var scale = 0.4 + Math.random() * 0.6;
-    this.scale.setTo(scale);
-
-    this.burst();
+    this.tweens = [];
 };
 
 TraceSpark.prototype = Object.create(Phaser.Sprite.prototype);
@@ -165,11 +232,30 @@ TraceSpark.ALPHA1 = 0.3;
 TraceSpark.DRIFT = -6;
 
 
-// Start our gfx cycle.
-TraceSpark.prototype.burst = function() {
+// Reset.
+TraceSpark.prototype.reset = function(trace) {
+    this.revive();
+    this.alpha = 1;
+    this.x = 0;
+    this.y = 0;
+    this.tint = trace.palette.c1.i;
+
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
     this.tweens = [];
+
+    this.rotation = Math.random() * 2 * Math.PI;
+    var scale = 0.4 + Math.random() * 0.6;
+    this.scale.setTo(scale);
     this.time = TraceSpark.TIME;
     this.time *= 0.6 + Math.random() * 1.4;
+
+    this.burst();
+};
+
+// Start our gfx cycle.
+TraceSpark.prototype.burst = function() {
     var time = this.time;
 
     var rotation = this.rotation +
@@ -226,13 +312,17 @@ TraceSpark.prototype.recall = function() {
     for (var i = 0; i < this.tweens.length; i++) {
         this.tweens[i].stop();
     }
+    this.tweens = [];
+
     this.alpha = 1;
     var t = this.game.add.tween(this);
     t.to({ alpha: 0, x: 0, y: 0 }, 500,
         Phaser.Easing.Sinusoidal.InOut, true);
+    this.tweens.push(t);
     var t = this.game.add.tween(this.scale);
     t.to({ x: 0.25, y: 0.25 }, 500, Phaser.Easing.Cubic.Out, true);
     t.onComplete.add(function() {
-        this.destroy();
+        this.kill();
     }, this);
+    this.tweens.push(t);
 };
