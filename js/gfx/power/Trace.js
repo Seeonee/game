@@ -97,18 +97,12 @@ TraceSilhouette.prototype.flicker = function() {
 // Triangular particle.
 var TraceSpark = function(trace, fraction) {
     Phaser.Sprite.call(this, trace.game, 0, 0, 'smoke');
+    this.fraction = fraction;
     this.anchor.setTo(0.5, 0.6);
     this.tint = trace.palette.c1.i;
-    var a = fraction * 2 * Math.PI;
-    // a *= 1 + (0.5 - Math.random()) * 0.2;
 
-    var d = TraceSpark.SHIFT;
-    d *= 0.8 + Math.random() * 0.6;
-    var scale = 0.4 + Math.random() * 0.6;
-
-    this.x += d * Math.sin(a);
-    this.y += d * Math.cos(a);
     this.rotation = Math.random() * 2 * Math.PI;
+    var scale = 0.4 + Math.random() * 0.6;
     this.scale.setTo(scale);
 
     this.burst();
@@ -127,25 +121,44 @@ TraceSpark.DRIFT = -6;
 
 // Start our gfx cycle.
 TraceSpark.prototype.burst = function() {
-    this.play();
-};
+    this.tweens = [];
+    this.time = TraceSpark.TIME;
+    this.time *= 0.6 + Math.random() * 1.4;
+    var time = this.time;
 
-// Start our gfx cycle.
-TraceSpark.prototype.play = function() {
-    var time = TraceSpark.TIME;
-    time *= 0.6 + Math.random() * 1.4;
     var rotation = this.rotation +
         (Math.random() >= 0.5 ? 2 * Math.PI : -2 * Math.PI);
-
-    this.tweens = [];
     var t = this.game.add.tween(this);
     t.to({ rotation: rotation }, time,
         Phaser.Easing.Linear.None, true,
         0, Number.POSITIVE_INFINITY);
     this.tweens.push(t);
 
-    this.alpha = TraceSpark.ALPHA0;
-    var alpha = TraceSpark.ALPHA1;
+    var a = this.fraction * 2 * Math.PI;
+    // a *= 1 + (0.5 - Math.random()) * 0.2;
+    var d = TraceSpark.SHIFT;
+    d *= 0.8 + Math.random() * 0.6;
+    var x = this.x + d * Math.sin(a);
+    var y = this.y + d * Math.cos(a);
+    var t = this.game.add.tween(this);
+    var drift = TraceSpark.DRIFT;
+    t.to({
+            x: x - drift / 2,
+            y: y - drift / 2,
+            alpha: TraceSpark.ALPHA1
+        },
+        500 + Math.random() * 200,
+        Phaser.Easing.Quintic.In, true);
+    this.tweens.push(t);
+    t.onComplete.add(this.play, this);
+};
+
+// Looping gfx.
+TraceSpark.prototype.play = function() {
+    var time = this.time;
+
+    this.alpha = TraceSpark.ALPHA1;
+    var alpha = TraceSpark.ALPHA0;
     var t = this.game.add.tween(this);
     t.to({ alpha: alpha }, time / 5,
         Phaser.Easing.Bounce.InOut, true,
@@ -153,8 +166,6 @@ TraceSpark.prototype.play = function() {
     this.tweens.push(t);
 
     var drift = TraceSpark.DRIFT;
-    this.x -= drift / 2;
-    this.y -= drift / 2;
     var y = this.y + drift;
     var x = this.x + drift;
     var t = this.game.add.tween(this);
