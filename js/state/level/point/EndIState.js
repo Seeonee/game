@@ -6,6 +6,9 @@ var EndIState = function(handler, level) {
 
     this.root.text = level.name + ' complete';
     this.nextLevel = this.add('next level', this.selectNextLevel);
+    if (this.game.settings.edit) {
+        this.add('reset', this.selectReset);
+    }
     this.add('restart', this.selectRestart);
     this.add('exit', this.selectExit);
 };
@@ -85,14 +88,15 @@ EndIState.prototype.fullyCharged = function() {
     var autoplay = !edit;
     var catalogLevel = this.game.state.getCurrentState()
         .catalogLevel;
-    var next = catalogLevel.next();
-    if (catalogLevel.parent !== next.parent) {
-        this.nextLevel.text = 'continue to ' + next.parent.name;
-        autoplay = false;
+    if (!edit) {
+        var next = catalogLevel.next();
+        if (catalogLevel.parent !== next.parent) {
+            this.nextLevel.text = 'continue to ' + next.parent.name;
+            autoplay = false;
+        } else {
+            this.nextLevel.text = 'continue to ' + next.name;
+        }
     } else {
-        this.nextLevel.text = 'continue to ' + next.name;
-    }
-    if (edit) {
         this.nextLevel.enabled = false;
     }
 
@@ -113,6 +117,16 @@ EndIState.prototype.selectNextLevel = function(option) {
         var state = this.game.state.getCurrentState().key;
         this.game.state.start(state, true, false, params);
     }
+};
+
+// User opted to reset.
+EndIState.prototype.selectReset = function(option) {
+    var json = JSON.parse(JSON.stringify(this.level));
+    var params = this.game.state.getCurrentState().params;
+    params.json = json;
+    params.restart = true;
+    var state = this.game.state.getCurrentState().key;
+    this.game.state.start(state, true, false, params);
 };
 
 // User opted to restart.
