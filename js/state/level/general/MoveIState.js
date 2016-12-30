@@ -12,6 +12,9 @@ MoveIState.prototype.constructor = MoveIState;
 
 // Called on update.
 MoveIState.prototype.update = function() {
+    if (this.tracing) {
+        return;
+    }
     var joystick = this.gpad.getAngleAndTilt();
     this.avatar.move(joystick.angle, joystick.tilt);
     if (this.gpad.justReleased(this.buttonMap.EDIT_STEP_UP)) {
@@ -26,12 +29,21 @@ MoveIState.prototype.update = function() {
         if (!trace.alive) {
             trace.reset(this.avatar, this.level.tier);
         } else if (trace.tier === this.level.tier) {
+            this.tracing = true;
             this.avatar.point = trace.point;
             this.avatar.path = trace.path;
-            this.avatar.x = trace.x;
-            this.avatar.y = trace.y;
             this.avatar.updateAttachment();
             trace.recall();
+            var t = this.game.add.tween(this.avatar);
+            t.to({ x: trace.x, y: trace.y },
+                500, Phaser.Easing.Quintic.Out, true);
+            t.onComplete.add(function() {
+                this.tracing = undefined;
+            }, this);
+            var t = this.game.add.tween(this.avatar);
+            t.to({ alpha: 0 }, 500 / 2,
+                Phaser.Easing.Quintic.Out, true,
+                0, 0, true);
         }
     }
 };

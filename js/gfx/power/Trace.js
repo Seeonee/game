@@ -188,7 +188,7 @@ TraceSilhouette.prototype.recall = function(trace) {
     t.to({ alpha: 1 }, 250, Phaser.Easing.Quartic.In, true);
     this.tweens.push(t);
     var t2 = this.game.add.tween(this);
-    t2.to({ alpha: 0 }, 500, Phaser.Easing.Cubic.Out);
+    t2.to({ alpha: 0 }, 500, Phaser.Easing.Quadratic.In);
     t.chain(t2);
     this.tweens.push(t2);
 
