@@ -14,6 +14,26 @@ MoveIState.prototype.constructor = MoveIState;
 MoveIState.prototype.update = function() {
     var joystick = this.gpad.getAngleAndTilt();
     this.avatar.move(joystick.angle, joystick.tilt);
+    if (this.gpad.justReleased(this.buttonMap.EDIT_STEP_UP)) {
+        this.gpad.consumeButtonEvent();
+        if (this.avatar.trace == undefined) {
+            this.avatar.trace = new Trace(this.avatar);
+        }
+        var trace = this.avatar.trace;
+        if (trace.dying) {
+            return;
+        }
+        if (!trace.alive) {
+            trace.reset(this.avatar, this.level.tier);
+        } else if (trace.tier === this.level.tier) {
+            this.avatar.point = trace.point;
+            this.avatar.path = trace.path;
+            this.avatar.x = trace.x;
+            this.avatar.y = trace.y;
+            this.avatar.updateAttachment();
+            trace.recall();
+        }
+    }
 };
 
 // When we stop moving, snap to a halt.

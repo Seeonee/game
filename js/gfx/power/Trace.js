@@ -1,8 +1,8 @@
 // Manager for the gfx involved in deploying a trace.
-var Trace = function(avatar, tier) {
+var Trace = function(avatar) {
     this.avatar = avatar;
-    this.tier = tier;
-    this.game = avatar.game;
+    this.avatar.trace = this;
+    this.game = this.avatar.game;
 
     // This one is for absolutely positioning.
     this.base = this.game.add.sprite(0, 0);
@@ -26,7 +26,7 @@ var Trace = function(avatar, tier) {
     this.burst = new TraceBurst(this);
     this.base.addChild(this.burst);
 
-    this.reset(avatar, tier);
+    this.alive = false;
 };
 
 // Constants.
@@ -36,17 +36,17 @@ Trace.REUSE_DELAY = 700; // ms
 
 // Prepare everything again.
 Trace.prototype.reset = function(avatar, tier) {
-    this.avatar.trace = this;
+    this.alive = true;
     this.point = avatar.point;
     this.path = avatar.path;
-    this.reuseTime = this.game.time.now + Trace.REUSE_DELAY;
+    this.tier = tier;
     this.palette = tier.palette;
     this.x = avatar.x;
-    this.y = avatar.y + avatar.keyplate.y;
+    this.y = avatar.y;
     this.z = this.game.state.getCurrentState().z;
 
     this.base.x = this.x;
-    this.base.y = this.y;
+    this.base.y = this.y + avatar.keyplate.y;
     this.z.fg.tier().add(this.base);
     this.silhouette.scale.setTo(0.6);
 
@@ -60,6 +60,7 @@ Trace.prototype.reset = function(avatar, tier) {
 
 // Shut it down.
 Trace.prototype.recall = function() {
+    this.dying = true;
     this.silhouette.recall(this);
     for (var i = 0; i < this.sparks.length; i++) {
         this.sparks[i].recall();
@@ -200,6 +201,8 @@ TraceSilhouette.prototype.recall = function(trace) {
     t2.onComplete.add(function() {
         this.kill();
         this.trace.base.visible = false;
+        this.trace.alive = false;
+        this.trace.dying = false;
     }, this);
     this.tweens.push(t2);
 };
