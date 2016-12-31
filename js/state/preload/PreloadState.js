@@ -35,7 +35,7 @@ PreloadState.prototype.preload = function() {
     this.game.load.image('power_diamond', 'assets/powerdiamond.png');
     this.game.load.image('power_icon_crown', 'assets/power_crown.png');
     this.game.load.image('power_icon_hourglass', 'assets/power_hourglass.png');
-    this.game.load.image('power_icon_stealth', 'assets/power_stealth.png');
+    this.game.load.image('power_icon_trace', 'assets/power_trace.png');
     this.game.load.image('power_icon_might', 'assets/power_might.png');
     this.game.load.image('power_icon_wit', 'assets/power_wit.png');
     this.game.load.image('power_icon_presence', 'assets/power_presence.png');

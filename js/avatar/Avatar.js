@@ -264,6 +264,19 @@ Avatar.prototype.setPressed = function(pressed) {
     this.graphics.setPressed(this, pressed);
 };
 
+// Set our current power.
+Avatar.prototype.setPower = function(powerType) {
+    if (this.power) {
+        this.power.release();
+    }
+    this.power = Power.load(this.game, powerType);
+    if (this.power) {
+        this.power.acquire(this);
+    } else {
+        console.error('failed to acquire power ' + powerType);
+    }
+};
+
 // Optional physics debug view.
 Avatar.prototype.update = function() {
     // this.game.debug.body(this);

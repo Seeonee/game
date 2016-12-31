@@ -1,5 +1,9 @@
+make power points update enabled as keys are found/spent
+make purchasing powers cost appropriate keys
+add HUD for current(/queued?) powers
+add gfx settings menu to disable blur and/or adj. layer view
 add enemies
-figure out what powers should do
+trace gfx don't get blurred well (no spacer)
 
 
 LONG-TERM CLEANUP:

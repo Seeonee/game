@@ -5,6 +5,7 @@ var PowerPoint = function(name, x, y, powerType,
     this.powerType = powerType;
     this.power = undefined;
     this.rotation = rotation;
+    this.istateName = PowerIState.NAME;
 };
 
 PowerPoint.TYPE = 'power';
@@ -20,7 +21,7 @@ PowerPoint.prototype.draw = function(tier) {
         var game = tier.game;
         var ap = tier.translateInternalPointToAnchorPoint(
             this.x, this.y);
-        this.power = new Power(game, ap.x, ap.y,
+        this.power = new PowerSprite(game, ap.x, ap.y,
             this.powerType, tier.palette);
         var rotation = this.rotation;
         if (rotation == undefined) {
@@ -44,7 +45,7 @@ PowerPoint.prototype.setEnabled = function(enabled) {
         return;
     }
     Point.prototype.setEnabled.call(this, enabled);
-    if (this.power) {
+    if (!this.purchased && this.power) {
         this.power.setEnabled(this.enabled);
     }
 };
@@ -52,13 +53,25 @@ PowerPoint.prototype.setEnabled = function(enabled) {
 // Light up the power.
 PowerPoint.prototype.notifyAttached = function(avatar, prev) {
     Point.prototype.notifyAttached.call(this, avatar, prev);
-    this.power.select();
+    if (!this.purchased) {
+        this.power.select();
+    }
 };
 
 // Lights out for the power.
 PowerPoint.prototype.notifyDetached = function(avatar, next) {
     Point.prototype.notifyDetached.call(this, avatar, next);
-    this.power.deselect();
+    if (!this.purchased) {
+        this.power.deselect();
+    }
+};
+
+// Light up the power.
+PowerPoint.prototype.purchase = function(level) {
+    this.purchased = true;
+    this.setEnabled(false);
+    this.power.purchase();
+    level.avatar.setPower(this.powerType);
 };
 
 // Delete our power.

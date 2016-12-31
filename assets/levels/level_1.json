@@ -67,7 +67,7 @@
                     "y": 300,
                     "enabled": true,
                     "type": "power",
-                    "subtype": "sword"
+                    "subtype": "trace"
                 },
                 "p12": {
                     "x": 200,

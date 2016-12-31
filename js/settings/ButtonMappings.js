@@ -9,6 +9,7 @@ var ButtonMappings = function() {
     // Player avatar controls during a level.
     this.MOVE_X = undefined;
     this.MOVE_Y = undefined;
+    this.POWER = undefined;
     this.CAMERA_X = undefined;
     this.CAMERA_Y = undefined;
 
@@ -59,6 +60,7 @@ var ButtonMappingsPlaystation = function() {
     // Player avatar controls during a level.
     this.MOVE_X = Phaser.Gamepad.PS3XC_STICK_LEFT_X;
     this.MOVE_Y = Phaser.Gamepad.PS3XC_STICK_LEFT_Y;
+    this.POWER = Phaser.Gamepad.PS3XC_R1;
     this.CAMERA_X = Phaser.Gamepad.PS3XC_STICK_RIGHT_X;
     this.CAMERA_Y = Phaser.Gamepad.PS3XC_STICK_RIGHT_Y;
 
@@ -142,6 +144,7 @@ var ButtonMappingsXbox = function() {
     // Player avatar controls during a level.
     this.MOVE_X = Phaser.Gamepad.XBOX360_STICK_LEFT_X;
     this.MOVE_Y = Phaser.Gamepad.XBOX360_STICK_LEFT_Y;
+    this.POWER = Phaser.Gamepad.XBOX360_RIGHT_BUMPER;
     this.CAMERA_X = Phaser.Gamepad.XBOX360_STICK_RIGHT_X;
     this.CAMERA_Y = Phaser.Gamepad.XBOX360_STICK_RIGHT_Y;
 

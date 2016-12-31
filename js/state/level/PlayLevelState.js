@@ -74,7 +74,8 @@ PlayLevelState.prototype.createAvatar = function() {
 // Create input handlers.
 PlayLevelState.prototype.createIHandlers = function() {
     this.ihandler = this.createLevelHandler();
-    this.pointhandler = this.createPointHandler(this.ihandler);
+    this.powerhandler = this.createPowerHandler(this.ihandler);
+    this.pointhandler = this.createPointHandler(this.powerhandler);
     this.camerahandler = this.createCameraHandler(this.pointhandler);
     this.menuhandler = this.createMenuHandler(this.camerahandler);
 };
@@ -82,6 +83,11 @@ PlayLevelState.prototype.createIHandlers = function() {
 // Create the base level handler.
 PlayLevelState.prototype.createLevelHandler = function() {
     return new PlayLevelIHandler(this.game, this.gpad, this.level);
+};
+
+// Create the power handler, wrapping an earlier handler.
+PlayLevelState.prototype.createPowerHandler = function(ihandler) {
+    return new PowerIHandler(this.game, this.gpad, this.level, ihandler);
 };
 
 // Create the point handler, wrapping an earlier handler.

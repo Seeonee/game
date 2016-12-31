@@ -39,6 +39,7 @@
     <script type="text/javascript" src="js/level/Path.js"></script>
     <script type="text/javascript" src="js/level/Wire.js"></script>
     <script type="text/javascript" src="js/level/Obstacles.js"></script>
+    <script type="text/javascript" src="js/level/Power.js"></script>
     <script type="text/javascript" src="js/level/Tier.js"></script>
     <script type="text/javascript" src="js/level/Level.js"></script>
     <script type="text/javascript" src="js/level/Catalog.js"></script>
@@ -54,6 +55,8 @@
     <script type="text/javascript" src="js/level/obstacle/CarriedItem.js"></script>
     <script type="text/javascript" src="js/level/obstacle/Door.js"></script>
     <script type="text/javascript" src="js/level/obstacle/Shard.js"></script>
+    <!-- Special powers -->
+    <script type="text/javascript" src="js/level/power/TracePower.js"></script>
     <!-- GFX -->
     <script type="text/javascript" src="js/gfx/ZGroup.js"></script>
     <script type="text/javascript" src="js/gfx/HFlash.js"></script>
@@ -67,8 +70,8 @@
     <script type="text/javascript" src="js/gfx/hud/TierMeter.js"></script>
     <script type="text/javascript" src="js/gfx/point/portal/PGate.js"></script>
     <script type="text/javascript" src="js/gfx/point/portal/PortalFlash.js"></script>
-    <script type="text/javascript" src="js/gfx/power/Power.js"></script>
-    <script type="text/javascript" src="js/gfx/power/Trace.js"></script>
+    <script type="text/javascript" src="js/gfx/power/PowerSprite.js"></script>
+    <script type="text/javascript" src="js/gfx/power/TraceEffects.js"></script>
     <script type="text/javascript" src="js/gfx/title/TSquare.js"></script>
     <script type="text/javascript" src="js/gfx/point/warp/WEmber.js"></script>
     <script type="text/javascript" src="js/gfx/point/warp/WContrail.js"></script>
@@ -104,13 +107,16 @@
     <script type="text/javascript" src="js/state/level/LevelStateParams.js"></script>
     <script type="text/javascript" src="js/state/level/PlayLevelState.js"></script>
     <script type="text/javascript" src="js/state/level/handler/PlayLevelIHandler.js"></script>
+    <script type="text/javascript" src="js/state/level/handler/PowerIHandler.js"></script>
     <script type="text/javascript" src="js/state/level/handler/PointIHandler.js"></script>
     <script type="text/javascript" src="js/state/level/handler/CameraIHandler.js"></script>
     <script type="text/javascript" src="js/state/level/handler/PlayLevelMenuIHandler.js"></script>
+    <script type="text/javascript" src="js/state/level/power/TraceIState.js"></script>
     <script type="text/javascript" src="js/state/level/point/PortalIState.js"></script>
     <script type="text/javascript" src="js/state/level/point/WarpIState.js"></script>
     <script type="text/javascript" src="js/state/level/point/EndIState.js"></script>
     <script type="text/javascript" src="js/state/level/point/SwitchIState.js"></script>
+    <script type="text/javascript" src="js/state/level/point/PowerIState.js"></script>
     <script type="text/javascript" src="js/state/level/general/MoveIState.js"></script>
     <script type="text/javascript" src="js/state/level/general/CameraIState.js"></script>
     <script type="text/javascript" src="js/state/level/general/PausedIState.js"></script>
