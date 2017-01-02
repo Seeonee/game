@@ -1,6 +1,5 @@
 add an avatar.moveTo() method that will jump to coords/point/path,
     then do a collision check
-make purchasing powers cost appropriate keys
 add HUD for current(/queued?) powers
 add gfx settings menu to disable blur and/or adj. layer view
 add enemies
