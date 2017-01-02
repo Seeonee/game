@@ -27,7 +27,7 @@ SaveLevelIState.prototype.deactivated = function(next) {
 
 // Called on update.
 SaveLevelIState.prototype.update = function() {
-    if (this.handler.cycle()) {
+    if (this.chargedTime < 0 && this.handler.cycle()) {
         return this.handler.state.update();
     }
     if (this.gpad.justPressed(this.buttonMap.SELECT)) {
