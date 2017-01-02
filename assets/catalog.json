@@ -1,19 +1,15 @@
 {
     "name": "levels",
     "items": [{
-        "name": "level 0"
+        "name": "mask altar"
     }, {
-        "name": "level 1"
+        "name": "general test"
     }, {
-        "name": "level 2"
+        "name": "mass wire test"
     }, {
-        "name": "level 3"
+        "name": "junction test"
     }, {
-        "name": "level 4"
-    }, {
-        "name": "level 5"
-    }, {
-        "name": "level 6"
+        "name": "battery test"
     }, {
         "name": "tutorial",
         "items": [{
