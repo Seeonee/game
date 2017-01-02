@@ -38,18 +38,15 @@ EndPoint.prototype.draw = function(tier) {
             ap.x, ap.y, this.tier.palette.c1.i));
 
         // Now we add the actual gfx rings.
-        // Note: these get positioned absolutely, not anchored.
-        var gp = tier.translateInternalPointToGamePoint(
-            this.x, this.y);
         for (var i = 0; i < EndPoint.INNER_RINGS; i++) {
-            var ring = new ERing(this.game, gp.x, gp.y,
+            var ring = new ERing(this.game, ap.x, ap.y,
                 true, tier.palette, i)
             ring.setStable(!this.enabled && this.attached);
             ring.setEnabled(this.enabled);
             this.rings.inner.push(ring);
         }
         for (var i = 0; i < EndPoint.OUTER_RINGS; i++) {
-            var ring = new ERing(this.game, gp.x, gp.y,
+            var ring = new ERing(this.game, ap.x, ap.y,
                 false, tier.palette, i);
             ring.setStable(!this.enabled || this.attached);
             ring.setEnabled(this.enabled);
@@ -57,8 +54,7 @@ EndPoint.prototype.draw = function(tier) {
         }
         this.rings.all = this.rings.inner.concat(this.rings.outer);
         for (var i = 0; i < this.rings.all.length; i++) {
-            this.game.state.getCurrentState().z.bg.add(
-                this.rings.all[i]);
+            tier.image.addBackgroundChild(this.rings.all[i]);
         }
         var ring0 = this.rings.all[0];
 
