@@ -162,12 +162,10 @@ Avatar.prototype.updateDestination = function(angle, ratio) {
 // Head towards our destination point, 
 // if we have one.
 Avatar.prototype.headTowardsDestination = function(ratio, angle) {
-    if (!this.game.settings.edit) {
-        this.checkCollision();
-        if (this.colliding) {
-            this.setVelocity(0, 0);
-            return;
-        }
+    this.checkCollision();
+    if (this.colliding) {
+        this.setVelocity(0, 0);
+        return;
     }
     this.xOld = this.x;
     this.yOld = this.y;
@@ -270,6 +268,10 @@ Avatar.prototype.moveTo = function(obj, x, y) {
 
 // Update our colliding state.
 Avatar.prototype.checkCollision = function() {
+    if (this.game.settings.edit) {
+        this.colliding = false;
+        return;
+    }
     var obstacles = this.game.state.getCurrentState().obstacles;
     this.colliding = obstacles.overlap(this);
 };
