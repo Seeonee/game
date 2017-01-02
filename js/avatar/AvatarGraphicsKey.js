@@ -68,13 +68,13 @@ AvatarGraphicsKey.prototype.setMasq = function(avatar, masq) {
 
 // Wiggle if you can press a button!
 AvatarGraphicsKey.prototype.setBobble = function(avatar, bobble) {
+    if (!avatar.masq) {
+        return;
+    }
     if (this.bobble == bobble) {
         return;
     }
     this.bobble = bobble;
-    if (!avatar.masq) {
-        return;
-    }
     if (this.bobble && !this.btween) {
         this.btween = this.game.add.tween(avatar.masq);
         this.btween.y = avatar.masq.y;
@@ -93,13 +93,13 @@ AvatarGraphicsKey.prototype.setBobble = function(avatar, bobble) {
 
 // Now press that button!
 AvatarGraphicsKey.prototype.setPressed = function(avatar, pressed) {
+    if (!avatar.masq) {
+        return;
+    }
     if (this.pressed == pressed) {
         return;
     }
     this.pressed = pressed;
-    if (!avatar.masq) {
-        return;
-    }
     avatar.masq.scale.setTo(pressed ? 0.9 : 1);
 };
 
