@@ -24,7 +24,7 @@ Catalog.prototype.add = function(item) {
 // Get our fully qualified name.
 Catalog.prototype.getFullName = function() {
     var root = this.parent ? this.parent.getFullName() + '/' : '';
-    return root + this.name.replace(' ', '_');
+    return root + this.name.replaceAll(' ', '_');
 };
 
 // Return the next level at given index
@@ -79,7 +79,7 @@ var CLevel = function(name) {
 // Get our fully qualified name.
 CLevel.prototype.getFullName = function() {
     var root = this.parent ? this.parent.getFullName() + '/' : '';
-    return root + this.name.replace(' ', '_');
+    return root + this.name.replaceAll(' ', '_');
 };
 
 // Return the next level in sequence.
