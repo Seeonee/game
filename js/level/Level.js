@@ -239,8 +239,8 @@ Level.prototype.updateTierParallax = function() {
         }
         var dx = scale * xc * Level.PARALLAX_SCALE;
         var dy = scale * yc * Level.PARALLAX_SCALE;
-        t.image.x = x + dx;
-        t.image.y = y + dy;
+        t._bgimage.x = x + dx;
+        t._bgimage.y = y + dy;
     }
 };
 

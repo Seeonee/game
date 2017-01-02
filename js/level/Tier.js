@@ -25,6 +25,7 @@ var Tier = function(game, name) {
     // Bitmap gets set up later.
     this.bitmap = undefined;
     this.image = undefined;
+    this._bgimage = undefined;
 
     this.palette = this.game.settings.colors[name];
 
@@ -472,6 +473,16 @@ Tier.prototype.slideContents = function(minX, minY) {
     for (var i = 0; i < this.paths.length; i++) {
         this.paths[i].shift(this, -minX, -minY);
     }
+    if (this._bgimage && this._bgimage.children.length) {
+        for (var i = 0; i < this._bgimage.children.length; i++) {
+            var child = this._bgimage.children[i];
+            if (child === this.image) {
+                continue;
+            }
+            child.x -= minX;
+            child.y -= minY;
+        }
+    }
     if (this.image && this.image.children.length) {
         for (var i = 0; i < this.image.children.length; i++) {
             var child = this.image.children[i];
@@ -483,6 +494,16 @@ Tier.prototype.slideContents = function(minX, minY) {
 
 // When we stretch, our children's anchors need to shift.
 Tier.prototype.stretchContents = function(dw, dh) {
+    if (this._bgimage && this._bgimage.children.length) {
+        for (var i = 0; i < this._bgimage.children.length; i++) {
+            var child = this._bgimage.children[i];
+            if (child === this.image) {
+                continue;
+            }
+            child.x -= dw * 0.5;
+            child.y -= dh * 0.5;
+        }
+    }
     if (this.image && this.image.children.length) {
         for (var i = 0; i < this.image.children.length; i++) {
             var child = this.image.children[i];
@@ -570,26 +591,38 @@ Tier.prototype.recreateImageAsNeeded = function() {
     var w = (this.bitmap) ? this.bitmap.width : 0;
     var h = (this.bitmap) ? this.bitmap.height : 0;
     var children = undefined;
+    var bgchildren = undefined;
     if (this.width != w || this.height != h) {
         if (this.bitmap) {
             children = this.image.children.slice();
+            bgchildren = this._bgimage.children.slice();
+            var idx = bgchildren.indexOf(this.image);
+            if (idx >= 0) {
+                bgchildren.splice(idx, 1);
+            }
             this.image.kill();
+            this._bgimage.kill();
             this.bitmap.destroy();
             this.image = undefined;
+            this._bgimage = undefined;
             this.bitmap = undefined;
         }
     }
     if (this.bitmap) {
         this.bitmap.context.clearRect(0, 0, w, h);
     } else {
+        var bitmap = this.game.add.bitmapData(
+            this.width, this.height);
+        this._bgimage = this.game.add.sprite(
+            this.x + this.widthOver2, this.y + this.heightOver2, bitmap);
+        this._bgimage.anchor.setTo(0.5, 0.5);
+        this.game.state.getCurrentState().z.level.tier().addAt(
+            this._bgimage, 0);
+
         this.bitmap = this.game.add.bitmapData(
             this.width, this.height);
-        this.image = this.game.add.sprite(
-            this.x + this.widthOver2, this.y + this.heightOver2,
-            this.bitmap);
+        this.image = this.game.add.sprite(0, 0, this.bitmap);
         this.image.anchor.setTo(0.5, 0.5);
-        this.game.state.getCurrentState().z.level.tier().addAt(
-            this.image, 0);
 
         if (!this.spacer) {
             this.spacer = this.game.add.sprite(
@@ -604,7 +637,14 @@ Tier.prototype.recreateImageAsNeeded = function() {
         this.spacer.y = this.y - (sh2 - this.height) / 2;
         this.spacer.scale.setTo(sw2 / sw, sh2 / sh);
 
-
+        if (bgchildren) {
+            for (var i = 0; i < bgchildren.length; i++) {
+                var child = bgchildren[i];
+                this._bgimage.addChild(child);
+                child.revive();
+            }
+        }
+        this._bgimage.addChild(this.image);
         if (children) {
             for (var i = 0; i < children.length; i++) {
                 var child = children[i];
@@ -612,6 +652,10 @@ Tier.prototype.recreateImageAsNeeded = function() {
                 child.revive();
             }
         }
+        this.image.addBackgroundChild = function(child) {
+            var idx = this.parent.children.length - 1;
+            this.parent.addChildAt(child, idx);
+        };
         this.updateWorldBounds();
     }
 };
@@ -742,7 +786,7 @@ Tier.prototype.setFaded = function() {
         this.events.onUnhiding.dispatch(this);
         this.events.onHidden.dispatch(this);
     }
-    this.image.alpha = Tier.FADE_ALPHA;
+    this._bgimage.alpha = Tier.FADE_ALPHA;
     this.faded = true;
     this.hidden = false;
 };
@@ -758,7 +802,7 @@ Tier.prototype.setHidden = function() {
         this.events.onHiding.dispatch(this);
         this.events.onHidden.dispatch(this);
     }
-    this.image.alpha = Tier.HIDE_ALPHA;
+    this._bgimage.alpha = Tier.HIDE_ALPHA;
     this.faded = true;
     this.hidden = true;
 };
@@ -789,9 +833,9 @@ Tier.prototype.fadeIn = function(increasing) {
     var time = Tier.FADE_TIME;
     var s = increasing ?
         Tier.FADE_SCALE_UP : Tier.FADE_SCALE_DOWN;
-    this.image.alpha = increasing ?
+    this._bgimage.alpha = increasing ?
         Tier.FADE_ALPHA_UP : Tier.FADE_ALPHA_DOWN;
-    var t = this.game.add.tween(this.image);
+    var t = this.game.add.tween(this._bgimage);
     t.to({ alpha: 1 }, time, Phaser.Easing.Cubic.Out, true);
     t.onComplete.add(function() {
         this.events.onFadedIn.dispatch(this);
@@ -801,8 +845,8 @@ Tier.prototype.fadeIn = function(increasing) {
     // so the new tier needs to start huge and shrink down 
     // to normal as well.
     var scale = increasing ? s : 1 / s;
-    this.image.scale.setTo(scale);
-    var t2 = this.game.add.tween(this.image.scale);
+    this._bgimage.scale.setTo(scale);
+    var t2 = this.game.add.tween(this._bgimage.scale);
     t2.to({ x: 1, y: 1 }, time, Phaser.Easing.Quartic.Out, true);
     this.fades.push(t2);
 };
@@ -814,7 +858,7 @@ Tier.prototype.fadeOut = function(increasing) {
     }
     this.faded = true;
     this.hidden = false;
-    if (!this.image) {
+    if (!this._bgimage) {
         return;
     }
     this.clearFades();
@@ -825,8 +869,8 @@ Tier.prototype.fadeOut = function(increasing) {
         Tier.FADE_SCALE_UP : Tier.FADE_SCALE_DOWN;
     var alpha = increasing ?
         Tier.FADE_ALPHA_UP : Tier.FADE_ALPHA_DOWN;
-    this.image.alpha = 1;
-    var t = this.game.add.tween(this.image);
+    this._bgimage.alpha = 1;
+    var t = this.game.add.tween(this._bgimage);
     t.to({ alpha: alpha }, time, Phaser.Easing.Cubic.Out, true);
     t.onComplete.add(function() {
         this.events.onFadedOut.dispatch(this);
@@ -836,8 +880,8 @@ Tier.prototype.fadeOut = function(increasing) {
     // so the new tier needs to start huge and shrink down 
     // to normal as well.
     var scale = increasing ? s : 1 / s;
-    this.image.scale.setTo(1);
-    var t2 = this.game.add.tween(this.image.scale);
+    this._bgimage.scale.setTo(1);
+    var t2 = this.game.add.tween(this._bgimage.scale);
     t2.to({ x: scale, y: scale }, time,
         Phaser.Easing.Quartic.Out, true);
     this.fades.push(t2);
@@ -854,11 +898,11 @@ Tier.prototype.unhide = function(increasing) {
     this.events.onUnhiding.dispatch(this);
 
     var time = Tier.FADE_TIME;
-    this.image.alpha = increasing ?
+    this._bgimage.alpha = increasing ?
         Tier.HIDE_ALPHA_UP : Tier.HIDE_ALPHA_DOWN;
     var alpha = increasing ?
         Tier.FADE_ALPHA_UP : Tier.FADE_ALPHA_DOWN;
-    var t = this.game.add.tween(this.image);
+    var t = this.game.add.tween(this._bgimage);
     t.to({ alpha: alpha }, time, Phaser.Easing.Cubic.Out, true);
     t.onComplete.add(function() {
         this.events.onUnhidden.dispatch(this);
@@ -870,11 +914,11 @@ Tier.prototype.unhide = function(increasing) {
     var s = increasing ?
         Tier.HIDE_SCALE_UP : Tier.HIDE_SCALE_DOWN;
     var scale = increasing ? s : 1 / s;
-    this.image.scale.setTo(scale);
+    this._bgimage.scale.setTo(scale);
     var s = increasing ?
         Tier.FADE_SCALE_UP : Tier.FADE_SCALE_DOWN;
     var scale = increasing ? s : 1 / s;
-    var t2 = this.game.add.tween(this.image.scale);
+    var t2 = this.game.add.tween(this._bgimage.scale);
     t2.to({ x: scale, y: scale }, time, Phaser.Easing.Quartic.Out, true);
     this.fades.push(t2);
 };
@@ -885,18 +929,18 @@ Tier.prototype.hide = function(increasing) {
         return;
     }
     this.hidden = true;
-    if (!this.image) {
+    if (!this._bgimage) {
         return;
     }
     this.clearFades();
     this.events.onHiding.dispatch(this);
 
     var time = Tier.FADE_TIME;
-    this.image.alpha = increasing ?
+    this._bgimage.alpha = increasing ?
         Tier.FADE_ALPHA_UP : Tier.FADE_ALPHA_DOWN;
     var alpha = increasing ?
         Tier.HIDE_ALPHA_UP : Tier.HIDE_ALPHA_DOWN;
-    var t = this.game.add.tween(this.image);
+    var t = this.game.add.tween(this._bgimage);
     t.to({ alpha: alpha }, time, Phaser.Easing.Cubic.Out, true);
     t.onComplete.add(function() {
         this.events.onHidden.dispatch(this);
@@ -908,11 +952,11 @@ Tier.prototype.hide = function(increasing) {
     var s = increasing ?
         Tier.FADE_SCALE_UP : Tier.FADE_SCALE_DOWN;
     var scale = increasing ? s : 1 / s;
-    this.image.scale.setTo(scale);
+    this._bgimage.scale.setTo(scale);
     var s = increasing ?
         Tier.HIDE_SCALE_UP : Tier.HIDE_SCALE_DOWN;
     var scale = increasing ? s : 1 / s;
-    var t2 = this.game.add.tween(this.image.scale);
+    var t2 = this.game.add.tween(this._bgimage.scale);
     t2.to({ x: scale, y: scale }, time,
         Phaser.Easing.Quartic.Out, true);
     this.fades.push(t2);
@@ -931,6 +975,7 @@ Tier.prototype.delete = function() {
     this.events.onFadingOut.removeAll();
     this.events.onFadedOut.removeAll();
     Utils.destroy(this.image);
+    Utils.destroy(this._bgimage);
     Utils.destroy(this.spacer);
 };
 

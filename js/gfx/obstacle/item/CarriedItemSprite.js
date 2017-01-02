@@ -69,8 +69,8 @@ CarriedItemSprite.prototype.setPalette = function(palette) {
 
 // Call to transfer ownership.
 CarriedItemSprite.prototype.pickUp = function(avatar) {
-    var x = this.parent.x + this.x;
-    var y = this.parent.y + this.y;
+    var x = this.parent.parent.x + this.x;
+    var y = this.parent.parent.y + this.y;
     var dx = x - avatar.x;
     var dy = y - avatar.y;
     avatar.addChild(this);
