@@ -67,10 +67,19 @@ Wire.prototype.draw = function(tier) {
             Wire.ALPHA_OFF = Wire.ALPHA_BASE_OFF;
         }
         var bitmap = this.createBitmap();
-        this.image = this.game.add.sprite(
-            this.x - Wire.PAD, this.y - Wire.PAD, bitmap);
-        this.game.state.getCurrentState().z.wire.tier().add(
-            this.image);
+        var p = { x: this.x - Wire.PAD, y: this.y - Wire.PAD };
+        p.x += bitmap.width / 2;
+        p.y += bitmap.height / 2;
+
+        var ip = tier.translateGamePointToInternalPoint(p.x, p.y);
+        var ap = tier.translateInternalPointToAnchorPoint(ip.x, ip.y);
+        this.image = this.game.add.sprite(ap.x, ap.y, bitmap);
+        this.image.anchor.setTo(0.5);
+        this.image.wire = this;
+        this.image.update = function() {
+            this.alpha = this.wire.flickerview.alpha;
+        };
+        tier.image.addBackgroundChild(this.image);
 
         if (!this.flickerview) {
             this.flickerview = this.game.state.getCurrentState().flicker
@@ -221,11 +230,6 @@ Wire.prototype.isEnabled = function() {
     return this.enabled;
 };
 
-// Called when the tier updates.
-Wire.prototype.update = function() {
-    this.image.alpha = this.flickerview.alpha;
-};
-
 // Highlight the wire.
 Wire.prototype.setHighlight = function(palette) {
     this.image.tint = palette.c2.i;
@@ -243,24 +247,9 @@ Wire.prototype.cancelHighlight = function() {
 };
 
 // Handle various fade events.
-Wire.prototype.fadingIn = function(tier) {
-    var alpha = this.enabled ? Wire.ALPHA_ON_LOW : Wire.ALPHA_OFF;
-    this.flickerview.alpha = 0;
-    this.flickerview.tween(alpha,
-        Tier.FADE_TIME / 2, Phaser.Easing.Linear.None,
-        Tier.FADE_TIME / 2, this.enabled);
-};
-
+Wire.prototype.fadingIn = function(tier) {};
 Wire.prototype.fadedIn = function(tier) {};
-
-Wire.prototype.fadingOut = function(tier) {
-    // We stop being the active tier, so our 
-    // update() calls end. That meanns we have
-    // to tween our alpha directly.
-    this.game.add.tween(this.image).to({ alpha: 0 },
-        Tier.FADE_TIME / 2, Phaser.Easing.Linear.None, true);
-};
-
+Wire.prototype.fadingOut = function(tier) {};
 Wire.prototype.fadedOut = function(tier) {};
 
 // Update one of our ends.
