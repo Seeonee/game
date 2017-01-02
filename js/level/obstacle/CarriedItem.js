@@ -42,6 +42,7 @@ CarriedItem.prototype.createSprite = function(tier, x, y) {
 // Collision check.
 CarriedItem.prototype.obstruct = function(avatar) {
     if (!avatar.held) {
+        this.avatar = avatar;
         avatar.held = this;
         this.hitbox.removeCollision();
         this.hitbox = undefined;
@@ -53,6 +54,7 @@ CarriedItem.prototype.obstruct = function(avatar) {
 // Drop/use/extinguish the item.
 CarriedItem.prototype.useUp = function() {
     if (this.citem) {
+        this.avatar.held = undefined;
         this.citem.useUp();
         this.citem = undefined;
     }
@@ -60,6 +62,9 @@ CarriedItem.prototype.useUp = function() {
 
 // Delete ourself.
 CarriedItem.prototype.delete = function() {
+    if (this.avatar && this.avatar.held === this) {
+        this.avatar.held = undefined;
+    }
     if (this.citem) {
         Utils.destroy(this.citem);
         this.citem = undefined;
