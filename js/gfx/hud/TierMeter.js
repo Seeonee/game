@@ -18,69 +18,6 @@ var TierMeter = function(game, level) {
     this.createSelf();
     this.level.z.fg.add(this);
 
-
-
-
-
-
-
-    this.powerMeter = this.game.add.sprite(0, 0);
-    this.powerMeter.anchor.setTo(0.5);
-    this.level.z.fg.add(this.powerMeter);
-    this.powerMeter.fixedToCamera = true;
-    this.powerMeter.cameraOffset.setTo(
-        this.game.camera.width - TierMeter.CAMERA_X,
-        TierMeter.CAMERA_Y);
-
-    var face = this.game.add.sprite(0, 0, 'power_meter_face');
-    face.anchor.setTo(0.5);
-    // face.alpha = 0.1;
-    this.powerMeter.addChild(face);
-    this.powerMeter.face = face;
-
-    var hand = this.game.add.sprite(0, 0, 'power_meter_hand');
-    hand.anchor.setTo(0.5);
-    this.powerMeter.addChild(hand);
-    this.powerMeter.hand = hand;
-
-    var offset = -32;
-    var spacer = this.game.add.sprite(0, 0);
-    spacer.anchor.setTo(0.5);
-    this.powerMeter.addChild(spacer);
-    var icon = this.game.add.sprite(0, offset, 'power_icon_trace');
-    icon.anchor.setTo(0.5);
-    // icon.scale.setTo(1.2);
-    spacer.addChild(icon);
-    this.powerMeter.icon = icon;
-
-    var icons = ['', 'sword', 'trace', 'crown', 'wit', 'might'];
-    for (var i = 1; i < 6; i++) {
-        var spacer = this.game.add.sprite(0, 0);
-        spacer.anchor.setTo(0.5);
-        spacer.rotation = i * Math.PI / 3;
-        this.powerMeter.addChild(spacer);
-        var name = icons[i];
-        var icon = this.game.add.sprite(0, offset, 'power_icon_' + name);
-        icon.anchor.setTo(0.5);
-        // icon.scale.setTo(1.2 / 2);
-        // icon.scale.setTo(1 / 2);
-        icon.scale.setTo(0.8);
-        icon.alpha = 0.1;
-        icon.rotation = i * -Math.PI / 3;
-        spacer.addChild(icon);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
     // Finish our setup, fixing camera position and 
     // listening for tier change events.
     this.alpha = 0;
@@ -88,9 +25,6 @@ var TierMeter = function(game, level) {
     this.fixedToCamera = true;
     this.cameraOffset.setTo(TierMeter.CAMERA_X, TierMeter.CAMERA_Y);
     this.level.events.onTierChange.add(this.setTier, this);
-    // this.setTier(this.level.tier);
-
-    // this.showBriefly();
 };
 
 TierMeter.prototype = Object.create(Phaser.Sprite.prototype);
@@ -302,9 +236,7 @@ TierMeter.prototype.setTier = function(tier, old) {
                 0, TierMeter.BURST_Y, this, tint, !up);
         }
     }
-
-    this.powerMeter.hand.tint = tier.palette.c2.i;
-    this.powerMeter.face.tint = tier.palette.c1.i;
+    this.showBriefly();
 };
 
 // Update anytime the settings change.

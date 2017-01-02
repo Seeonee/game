@@ -1,11 +1,7 @@
+when moving away from a point, it overshoots slightly in the wrong direction first???
 add HUD for current(/queued?) powers
 add gfx settings menu to disable blur and/or adj. layer view
 add enemies
-
-
-LONG-TERM CLEANUP:
-make end point gfx actually attach to node (still behind tier.image z)
-make wire gfx attach to tier image (behind it)
 
 
 LONG-TERM FEATURES:
@@ -13,6 +9,8 @@ add localized text popups on trigger
 add relays to carry current between tiers
 add ability to sync switches
 add gpad version that handles keyboard input
+add gpad version that handles touch input
 add settings submenu for key bindings
+add submenu for changing default mask (from unlocked masks)
 add sound fx and music
 add ability for menu items to have things other than raw text
