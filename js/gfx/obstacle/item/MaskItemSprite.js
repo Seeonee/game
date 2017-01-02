@@ -1,6 +1,6 @@
 // Special item: the avatar's mask!
-var MaskItemSprite = function(game, x, y, palette) {
-    CarriedItemSprite.call(this, game, x, y, 'mask', palette);
+var MaskItemSprite = function(game, x, y, name, palette) {
+    CarriedItemSprite.call(this, game, x, y, name, palette);
     this.pickupTime = 1000;
     // this.carryHeight = 50;
 };
@@ -11,7 +11,7 @@ MaskItemSprite.prototype.constructor = MaskItemSprite;
 
 // Handle our custom image.
 MaskItemSprite.prototype.createImage = function(name) {
-    this.masq = new AvatarMasq(game, 'keyhole', -55);
+    this.masq = new AvatarMasq(game, name, -55);
     this.masq.spriteC.y = -CarriedItemSprite.HOVER_HEIGHT;
     return this.masq.spriteC;
 };
@@ -28,6 +28,17 @@ MaskItemSprite.prototype.pickUp = function(avatar) {
     }
     this.tweens = [];
     this.avatar = avatar;
+    if (this.avatar.masq) {
+        var t = this.game.add.tween(
+            this.avatar.masq).to({
+                alpha: 0,
+                y: this.avatar.masq.y + 5
+            },
+            300, Phaser.Easing.Cubic.In, true);
+        t.onComplete.add(function() {
+            Utils.destroy(this.avatar.masq);
+        }, this);
+    }
     CarriedItemSprite.prototype.pickUp.call(this, avatar);
 };
 

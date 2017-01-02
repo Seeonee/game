@@ -1,9 +1,10 @@
 // The avatar's mask.
-var MaskItem = function(name, x, y) {
-    CarriedItem.call(this, name, x, y);
+var MaskItem = function(name, x, y, subtype) {
+    CarriedItem.call(this, name, x, y, subtype);
 };
 
 MaskItem.TYPE = 'mask';
+MaskItem.ALL_TYPES = ['keyhole'];
 MaskItem.prototype = Object.create(CarriedItem.prototype);
 MaskItem.prototype.constructor = MaskItem;
 
@@ -13,7 +14,7 @@ Obstacle.load.factory[MaskItem.TYPE] = MaskItem;
 
 // Create our sprite.
 MaskItem.prototype.createSprite = function(x, y, palette) {
-    return new MaskItemSprite(this.game, x, y, palette);
+    return new MaskItemSprite(this.game, x, y, this.subtype, palette);
 };
 
 // Collision check.
@@ -38,16 +39,12 @@ MaskItem.prototype.delete = function() {
 
 // Editor details.
 MaskItem.prototype.getDetails = function() {
-    return Obstacle.prototype.getDetails.call(this) + '\nmask';
-};
-
-// Write our JSON conversion.
-MaskItem.prototype.toJSON = function() {
-    var result = Obstacle.prototype.toJSON.call(this);
-    return result;
+    return Obstacle.prototype.getDetails.call(this) +
+        '\nmask (' + this.subtype + ')';
 };
 
 // Load our JSON representation.
 MaskItem.load = function(game, name, json) {
-    return new MaskItem(name, json.x, json.y);
+    return new MaskItem(name, json.x, json.y,
+        json.subtype);
 };

@@ -45,6 +45,7 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     new CreateShardIState(this, this.level);
     new CreateItemIState(this, this.level);
     new CreateDoorIState(this, this.level);
+    new CreateMaskIState(this, this.level);
 
     // Save the level.
     this.modes.push(new SaveLevelIState(this, this.level));
