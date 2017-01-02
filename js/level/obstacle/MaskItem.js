@@ -4,7 +4,7 @@ var MaskItem = function(name, x, y, subtype) {
 };
 
 MaskItem.TYPE = 'mask';
-MaskItem.ALL_TYPES = ['keyhole'];
+MaskItem.ALL_TYPES = ['hours', 'death', 'wisdom', 'sky', 'mischief'];
 MaskItem.prototype = Object.create(CarriedItem.prototype);
 MaskItem.prototype.constructor = MaskItem;
 
@@ -34,6 +34,10 @@ MaskItem.prototype.delete = function() {
     if (this.citem) {
         Utils.destroy(this.citem);
         this.citem = undefined;
+    }
+    if (this.altar) {
+        Utils.destroy(this.altar);
+        this.altar = undefined;
     }
     if (this.hitbox) {
         this.hitbox.removeCollision();

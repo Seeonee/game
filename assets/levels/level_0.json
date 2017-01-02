@@ -3,7 +3,7 @@
         "mask": false
     },
     "tiers": {
-        "t2": {
+        "t5": {
             "points": {
                 "p0": {
                     "x": 0,
@@ -128,7 +128,7 @@
                     "x": 1000,
                     "y": 250,
                     "type": "mask",
-                    "subtype": "keyhole"
+                    "subtype": "hours"
                 }
             }
         }

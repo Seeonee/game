@@ -15,14 +15,18 @@ PreloadState.prototype.preload = function() {
 
     this.game.load.image('keyplate', 'assets/keyplate.png');
     this.game.load.image('keyplate_outline', 'assets/keyplate_outline.png');
-    this.game.load.image('keyhole_w', 'assets/keyhole_w.png');
-    this.game.load.image('keyhole_c', 'assets/keyhole_c.png');
+    this.game.load.image('hours_w', 'assets/mask_hours_w.png');
+    this.game.load.image('hours_c', 'assets/mask_hours_c.png');
     this.game.load.image('smoke', 'assets/smoke.png');
 
-    // this.game.load.image('herne', 'assets/mask_herne.png');
-    // this.game.load.image('norwife', 'assets/mask_norwife.png');
-    // this.game.load.image('ragna', 'assets/mask_ragna.png');
-    // this.game.load.image('dunlevy', 'assets/mask_dunlevy.png');
+    this.game.load.image('death_w', 'assets/mask_herne_w.png');
+    this.game.load.image('death_c', 'assets/mask_herne_c.png');
+    this.game.load.image('wisdom_w', 'assets/mask_norwife_w.png');
+    this.game.load.image('wisdom_c', 'assets/mask_norwife_c.png');
+    this.game.load.image('sky_w', 'assets/mask_dunlevy_w.png');
+    this.game.load.image('sky_c', 'assets/mask_dunlevy_c.png');
+    this.game.load.image('mischief_w', 'assets/mask_ragna_w.png');
+    this.game.load.image('mischief_c', 'assets/mask_ragna_c.png');
 
     this.game.load.image('ring_inner', 'assets/ring_inner.png');
     this.game.load.image('ring_outer', 'assets/ring_outer.png');
@@ -31,7 +35,9 @@ PreloadState.prototype.preload = function() {
 
     this.game.load.image('item_key', 'assets/item_key.png');
     this.game.load.image('item_lightning', 'assets/item_lightning.png');
-    this.game.load.image('altar', 'assets/altar.png');
+    this.game.load.image('altar_face', 'assets/altar_face.png');
+    this.game.load.image('altar_minute', 'assets/altar_minute.png');
+    this.game.load.image('altar_hour', 'assets/altar_hour.png');
 
     this.game.load.image('power_diamond', 'assets/powerdiamond.png');
     this.game.load.image('power_icon_crown', 'assets/power_crown.png');

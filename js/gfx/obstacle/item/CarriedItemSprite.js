@@ -1,5 +1,5 @@
 // An item that can be picked up and carried.
-var CarriedItemSprite = function(game, x, y, name, palette) {
+var CarriedItemSprite = function(game, x, y, name, palette, drift) {
     Phaser.Sprite.call(this, game, x, y);
     this.anchor.setTo(0.5);
     this.pickupTime = CarriedItemSprite.PICKUP_TIME;
@@ -14,12 +14,14 @@ var CarriedItemSprite = function(game, x, y, name, palette) {
     this.setPalette(palette);
 
     this.tweens = [];
-    var t = this.game.add.tween(this.gobetween);
-    t.to({ y: CarriedItemSprite.HOVER_DRIFT },
-        CarriedItemSprite.HOVER_TIME,
-        Phaser.Easing.Sinusoidal.InOut, true, 0,
-        Number.POSITIVE_INFINITY, true);
-    this.tweens.push(t);
+    if (drift || drift == undefined) {
+        var t = this.game.add.tween(this.gobetween);
+        t.to({ y: CarriedItemSprite.HOVER_DRIFT },
+            CarriedItemSprite.HOVER_TIME,
+            Phaser.Easing.Sinusoidal.InOut, true, 0,
+            Number.POSITIVE_INFINITY, true);
+        this.tweens.push(t);
+    }
 };
 
 CarriedItemSprite.prototype = Object.create(Phaser.Sprite.prototype);

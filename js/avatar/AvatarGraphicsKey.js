@@ -19,9 +19,11 @@ AvatarGraphicsKey.prototype.createGraphics = function(avatar) {
     var yOffset = -avatar.keyplate.height / 1.65;
     avatar.keyplate.y = yOffset;
     avatar.keyplate.anchor.setTo(0.5, 0.5);
-    // Initialize our keyhole.
+    // Initialize our mask.
     if (avatar.level.properties.mask != false) {
-        this.setMasq(avatar, new AvatarMasq(game, 'keyhole', -55));
+        var name = avatar.level.properties.mask;
+        name = name ? name : 'hours';
+        this.setMasq(avatar, new AvatarMasq(game, name));
     }
     // Enable physics.
     this.game.physics.enable(avatar, Phaser.Physics.ARCADE);
@@ -143,15 +145,20 @@ var AvatarMasq = function(game, name, yOffset, scale) {
     this.spriteC.anchor.setTo(0.5);
     this.spriteW = this.spriteC.addChild(game.make.sprite(0, 0, name + '_w'));
     this.spriteW.anchor.setTo(0.5);
+    if (yOffset == undefined) {
+        yOffset = AvatarMasq.OFFSET[name];
+    }
+    if (yOffset == undefined) {
+        yOffset = 0;
+    }
     this.yOffset = yOffset;
     this.scale = (scale) ? scale : 1;
 };
 
-// Called by the main game's create().
-AvatarMasq.create = function(game) {
-    AvatarMasq.KEYHOLE = new AvatarMasq(game, 'keyhole', -55);
-    AvatarMasq.HERNE = new AvatarMasq(game, 'herne', -61);
-    AvatarMasq.NORWIFE = new AvatarMasq(game, 'norwife', -55);
-    AvatarMasq.RAGNA = new AvatarMasq(game, 'ragna', -62);
-    AvatarMasq.DUNLEVY = new AvatarMasq(game, 'dunlevy', -55);
-};
+// Constants for various masks' offsets.
+AvatarMasq.OFFSET = {};
+AvatarMasq.OFFSET.hours = -55;
+AvatarMasq.OFFSET.death = -61;
+AvatarMasq.OFFSET.wisdom = -55;
+AvatarMasq.OFFSET.sky = -55;
+AvatarMasq.OFFSET.mischief = -62;
