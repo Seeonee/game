@@ -1,3 +1,4 @@
+add way to set level properties in editor mode
 make power points update enabled as keys are found/spent
 make purchasing powers cost appropriate keys
 add HUD for current(/queued?) powers

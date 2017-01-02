@@ -246,9 +246,13 @@ Level.prototype.updateTierParallax = function() {
 
 // Push out a JSON version of our tiers.
 Level.prototype.toJSON = function() {
-    return {
+    var result = {
         tiers: this.tierMap
     };
+    if (Object.keys(this.properties).length > 0) {
+        result.properties = this.properties;
+    }
+    return result;
 };
 
 // Load a JSON representation of a level.
