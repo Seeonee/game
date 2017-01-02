@@ -13,8 +13,12 @@ Obstacle.load.factory[MaskItem.TYPE] = MaskItem;
 
 
 // Create our sprite.
-MaskItem.prototype.createSprite = function(x, y, palette) {
-    return new MaskItemSprite(this.game, x, y, this.subtype, palette);
+MaskItem.prototype.createSprite = function(tier, x, y) {
+    this.altar = new MaskAltar(this.game, this.gx, this.gy,
+        tier.palette);
+    tier.level.z.bg.tier().add(this.altar);
+    return new MaskItemSprite(this.game, x, y,
+        this.subtype, tier.palette);
 };
 
 // Collision check.
@@ -22,6 +26,7 @@ MaskItem.prototype.obstruct = function(avatar) {
     this.hitbox.removeCollision();
     this.hitbox = undefined;
     this.citem.pickUp(avatar);
+    this.altar.shine(avatar);
     return false;
 };
 

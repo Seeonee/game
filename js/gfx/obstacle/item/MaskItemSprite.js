@@ -58,3 +58,60 @@ MaskItemSprite.prototype.pickedUp = function() {
         this.avatar.masq.scale.setTo(this.masq.scale);
     }, this);
 };
+
+
+
+
+
+
+
+
+// Altar for the mask.
+var MaskAltar = function(game, x, y, palette) {
+    Phaser.Sprite.call(this, game, x, y - 55, 'altar');
+    this.anchor.setTo(0.5);
+    this.rgb = Color.rgb(palette.c2.i);
+    // this.tint = palette.c2.i;
+    this.tween = this.game.add.tween(this).to({ rotation: 2 * Math.PI },
+        MaskAltar.SPIN_TIME, Phaser.Easing.Linear.None, true, 0,
+        Number.POSITIVE_INFINITY);
+};
+
+MaskAltar.prototype = Object.create(Phaser.Sprite.prototype);
+MaskAltar.prototype.constructor = MaskAltar;
+
+// Constants.
+MaskAltar.SPIN_TIME = 10000; // ms
+MaskAltar.SHINE_TIME = 2200; // ms
+MaskAltar.SHINE_SPINS = 5;
+MaskAltar.FADE_TIME = 5000; // ms
+
+
+// Update tint.
+MaskAltar.prototype.update = function() {
+    this.tint = (this.rgb.r << 16) +
+        (this.rgb.g << 8) +
+        (this.rgb.b);
+};
+
+// Our mask's been picked up.
+MaskAltar.prototype.shine = function(avatar) {
+    this.gamestate = game.state.getCurrentState();
+    this.avatar = avatar;
+
+    this.tween.stop();
+    var rotation = MaskAltar.SHINE_SPINS * 2 * Math.PI;
+    var t = this.game.add.tween(this).to({ rotation: rotation },
+        MaskAltar.SHINE_TIME, Phaser.Easing.Cubic.In, true);
+    var white = this.game.settings.colors.WHITE.i;
+    var t = this.game.add.tween(this.rgb).to(
+        Color.rgb(white), MaskAltar.SHINE_TIME,
+        Phaser.Easing.Quintic.In, true);
+    t.onComplete.add(function() {
+        new HFlash(this.game).flash(this.gamestate.z.fg,
+            this.avatar.x, this.avatar.y);
+    }, this);
+    var t2 = this.game.add.tween(this).to({ alpha: 0.1 },
+        MaskAltar.FADE_TIME, Phaser.Easing.Sinusoidal.InOut);
+    t.chain(t2);
+};

@@ -127,7 +127,8 @@
                 "item0": {
                     "x": 1000,
                     "y": 250,
-                    "type": "mask"
+                    "type": "mask",
+                    "subtype": "keyhole"
                 }
             }
         }
