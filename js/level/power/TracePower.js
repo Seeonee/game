@@ -52,9 +52,12 @@ TracePower.prototype.reset = function(avatar, tier) {
     this.y = avatar.y;
     this.z = this.game.state.getCurrentState().z;
 
-    this.base.x = this.x;
-    this.base.y = this.y + avatar.keyplate.y;
-    this.z.fg.tier().add(this.base);
+    var p = { x: this.x, y: this.y + avatar.keyplate.y };
+    var ip = tier.translateGamePointToInternalPoint(p.x, p.y);
+    var ap = tier.translateInternalPointToAnchorPoint(ip.x, ip.y);
+    this.base.x = ap.x;
+    this.base.y = ap.y;
+    tier.image.addBackgroundChild(this.base);
     this.silhouette.scale.setTo(0.6);
 
     this.burst.reset(this);
