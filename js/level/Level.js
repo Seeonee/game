@@ -107,7 +107,7 @@ Level.prototype.setTier = function(tier, pointName) {
         this.tiers[i].updateBasedOnChangingTiers(this.tier, old);
     }
     this.tier.updateWorldBounds();
-    if (this.avatar) {
+    if (this.avatar && old) {
         this.updateAvatarForNewTier(pointName);
         this.flash(increasing);
     }
@@ -279,6 +279,8 @@ Level.load = function(game, name, json) {
             }
         }
     }
+    level.properties = json.properties ? json.properties : {};
+    new Avatar(game, new AvatarGraphicsKey(game), level);
 
     for (var i = 0; i < level.tiers.length; i++) {
         // Set our tier so that z-subgroups can be made.
@@ -288,6 +290,5 @@ Level.load = function(game, name, json) {
     // Unset it so that setTier won't think nothing's changed.
     level.tier = undefined;
     level.setTier(tier);
-    level.properties = json.properties ? json.properties : {};
     return level;
 };

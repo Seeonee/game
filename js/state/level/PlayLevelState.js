@@ -32,7 +32,6 @@ PlayLevelState.prototype.create = function() {
     this.obstacles = new Obstacles(this.game);
     this.flicker = this.createFlickerManager();
     this.level = this.createLevel();
-    this.createAvatar();
     this.gpad.consumeButtonEvent();
 
     // Set up the camera first.
@@ -52,23 +51,12 @@ PlayLevelState.prototype.create = function() {
     if (!this.params.restart) {
         this.createStartBanner(this.name);
     }
-
-    // TODO: Debug only!
-    // var d = new Door(game, 100, 250, this.level.tier.palette);
-    // this.z.fg.tier().add(d);
-    // var dk = new DoorKey(game, 250, 100, this.level.tier.palette);
-    // this.z.mg.tier().add(dk);
 };
 
 // Create the level.
 PlayLevelState.prototype.createLevel = function() {
     var json = game.cache.getJSON(this.catalogLevel.getFullName());
     return Level.load(this.game, this.name, json);
-};
-
-// Create the avatar (it gets stored into level.avatar).
-PlayLevelState.prototype.createAvatar = function() {
-    new Avatar(this.game, new AvatarGraphicsKey(this.game), this.level);
 };
 
 // Create input handlers.

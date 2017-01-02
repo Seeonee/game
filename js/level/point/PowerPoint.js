@@ -1,11 +1,12 @@
 // A point that has a power-up icon.
 var PowerPoint = function(name, x, y, powerType,
-    rotation, enabled) {
-    Point.call(this, name, x, y, enabled);
+    rotation) {
+    Point.call(this, name, x, y);
     this.powerType = powerType;
     this.power = undefined;
     this.rotation = rotation;
     this.istateName = PowerIState.NAME;
+    this.enabled = false;
 };
 
 PowerPoint.TYPE = 'power';
@@ -33,6 +34,8 @@ PowerPoint.prototype.draw = function(tier) {
         this.power.setRotation(rotation);
         tier.image.addChild(this.power);
         this.power.setEnabled(this.enabled);
+        tier.level.avatar.events.onShardChange.add(
+            this.shardsChanged, this);
     } else {
         this.power.updatePalette(tier.palette);
     }
@@ -67,6 +70,13 @@ PowerPoint.prototype.notifyDetached = function(avatar, next) {
 };
 
 // Light up the power.
+PowerPoint.prototype.shardsChanged = function(tier, shards) {
+    if (tier == this.tier) {
+        this.setEnabled(shards > 0);
+    }
+};
+
+// Light up the power.
 PowerPoint.prototype.purchase = function(level) {
     this.purchased = true;
     this.setEnabled(false);
@@ -78,6 +88,8 @@ PowerPoint.prototype.purchase = function(level) {
 PowerPoint.prototype.delete = function() {
     Point.prototype.delete.call(this);
     Utils.destroy(this.power);
+    this.tier.level.avatar.events.onShardChange.remove(
+        this.shardsChanged, this);
 };
 
 // Editor details.
@@ -89,6 +101,7 @@ PowerPoint.prototype.getDetails = function() {
 // JSON conversion of a portal.
 PowerPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
+    delete result.enabled;
     result.type = PowerPoint.TYPE;
     result.subtype = this.powerType;
     result.direction = this.direction;
@@ -103,5 +116,5 @@ PowerPoint.prototype.toJSON = function() {
 // that can be multiplied by Math.PI to produce an angle.
 PowerPoint.load = function(game, name, json) {
     return new PowerPoint(name, json.x, json.y,
-        json.subtype, json.rotation, json.enabled);
+        json.subtype, json.rotation);
 };

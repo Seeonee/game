@@ -347,6 +347,7 @@ Tier.prototype.addWire = function(name, sourceName, sinkName) {
 // Adds an already-constructed wire.
 Tier.prototype._addWire = function(wire) {
     this.wires.push(wire);
+    wire.tier = this;
     this.wireMap[wire.name] = wire;
     this.events.onFadingIn.add(wire.fadingIn, wire);
     this.events.onFadedIn.add(wire.fadedIn, wire);
@@ -377,6 +378,7 @@ Tier.prototype.deleteWire = function(wire) {
 Tier.prototype._addObstacle = function(obstacle) {
     obstacle.gx = obstacle.x;
     obstacle.gy = obstacle.y;
+    obstacle.tier = this;
     this.obstacles.push(obstacle);
     this.obstacleMap[obstacle.name] = obstacle;
     this.events.onFadingIn.add(obstacle.fadingIn, obstacle);

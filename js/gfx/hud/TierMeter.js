@@ -88,9 +88,9 @@ var TierMeter = function(game, level) {
     this.fixedToCamera = true;
     this.cameraOffset.setTo(TierMeter.CAMERA_X, TierMeter.CAMERA_Y);
     this.level.events.onTierChange.add(this.setTier, this);
-    this.setTier(this.level.tier);
+    // this.setTier(this.level.tier);
 
-    this.showBriefly();
+    // this.showBriefly();
 };
 
 TierMeter.prototype = Object.create(Phaser.Sprite.prototype);
@@ -392,6 +392,8 @@ TierMeter.prototype.addShard = function() {
     this.ckbPool.make(this.game).burst(
         this.cloudx + dx, this.cloudy + dy,
         this, tier.palette.c1.i);
+    this.avatar.events.onShardChange.dispatch(
+        tier, this.shards[tier.name]);
 };
 
 // Subtract a shard for the current tier.
@@ -410,6 +412,8 @@ TierMeter.prototype.useShard = function() {
     this.shardEmpty.visible = shards == 0;
     this.shardFull.visible = shards > 0;
     this.ksbPool.make(this.game).burst(0, 0, this);
+    this.avatar.events.onShardChange.dispatch(
+        tier, this.shards[tier.name]);
 };
 
 // Utility for drawing better segments.

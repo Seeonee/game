@@ -38,13 +38,9 @@ EditLevelState.prototype.createLevel = function() {
     } else {
         var json = EditLevelState.DEFAULT_STARTING_LEVEL;
     }
-    return Level.load(this.game, this.name, json);
-};
-
-// Hook up the avatar's help text.
-EditLevelState.prototype.createAvatar = function() {
-    PlayLevelState.prototype.createAvatar.call(this);
-    new EditHelp(this.game, this.level);
+    var level = Level.load(this.game, this.name, json);
+    new EditHelp(this.game, level);
+    return level;
 };
 
 // Create the menu handler, wrapping an earlier handler.
