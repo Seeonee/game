@@ -26,12 +26,17 @@ CarriedItem.prototype.draw = function(tier) {
             this.x, this.y);
         var ap = tier.translateInternalPointToAnchorPoint(
             ip.x, ip.y);
-        this.citem = new CarriedItemSprite(this.game, ap.x, ap.y,
-            this.subtype, tier.palette);
+        this.citem = this.createSprite(ap.x, ap.y, tier.palette);
         tier.image.addChild(this.citem);
     } else {
         this.citem.setPalette(tier.palette);
     }
+};
+
+// Create our sprite.
+CarriedItem.prototype.createSprite = function(x, y, palette) {
+    return new CarriedItemSprite(this.game, x, y,
+        this.subtype, palette);
 };
 
 // Collision check.

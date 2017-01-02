@@ -2,32 +2,14 @@
 var CarriedItemSprite = function(game, x, y, name, palette) {
     Phaser.Sprite.call(this, game, x, y);
     this.anchor.setTo(0.5);
+    this.pickupTime = CarriedItemSprite.PICKUP_TIME;
+    this.carryHeight = CarriedItemSprite.CARRY_HEIGHT;
 
     // Stealing this hack from Shard.js.
     this.gobetween = this.addChild(this.game.add.sprite(0, 0));
     this.gobetween.anchor.setTo(0.5);
-
-    if (CarriedItemSprite.CACHED_BITMAP == undefined) {
-        var r = 15;
-        var pad = 3;
-        var bitmap = this.game.add.bitmapData(2 * (r + pad), 2 * (r + pad));
-        var c = bitmap.context;
-        c.translate(pad, pad);
-        c.strokeStyle = this.game.settings.colors.WHITE.s;
-        c.lineWidth = 1.5;
-        c.arc(r, r, r, 0, 2 * Math.PI, false);
-        c.stroke();
-        CarriedItemSprite.CACHED_BITMAP = bitmap;
-    }
-    this.corona = this.gobetween.addChild(this.game.add.sprite(
-        0, 0, CarriedItemSprite.CACHED_BITMAP));
-    this.corona.anchor.setTo(0.5);
-    this.corona.y -= CarriedItemSprite.HOVER_HEIGHT;
-
-    this.icon = this.corona.addChild(this.game.add.sprite(
-        0, 0, 'item_' + name));
-    this.icon.scale.setTo(0.5);
-    this.icon.anchor.setTo(0.5);
+    this.image = this.createImage(name)
+    this.gobetween.addChild(this.image);
 
     this.setPalette(palette);
 
@@ -52,6 +34,33 @@ CarriedItemSprite.USE_TIME = 500; // ms
 CarriedItemSprite.PICKUP_TIME = 700; // ms
 
 
+// Create the image(s) to use.
+CarriedItemSprite.prototype.createImage = function(name) {
+    if (CarriedItemSprite.CACHED_BITMAP == undefined) {
+        var r = 15;
+        var pad = 3;
+        var bitmap = this.game.add.bitmapData(2 * (r + pad), 2 * (r + pad));
+        var c = bitmap.context;
+        c.translate(pad, pad);
+        c.strokeStyle = this.game.settings.colors.WHITE.s;
+        c.lineWidth = 1.5;
+        c.arc(r, r, r, 0, 2 * Math.PI, false);
+        c.stroke();
+        CarriedItemSprite.CACHED_BITMAP = bitmap;
+    }
+    this.corona = this.game.add.sprite(
+        0, 0, CarriedItemSprite.CACHED_BITMAP);
+    this.corona.anchor.setTo(0.5);
+    this.corona.y -= CarriedItemSprite.HOVER_HEIGHT;
+
+    this.icon = this.corona.addChild(this.game.add.sprite(
+        0, 0, 'item_' + name));
+    this.icon.scale.setTo(0.5);
+    this.icon.anchor.setTo(0.5);
+
+    return this.corona;
+};
+
 // Update colors.
 CarriedItemSprite.prototype.setPalette = function(palette) {
     this.corona.tint = palette.c2.i;
@@ -69,14 +78,19 @@ CarriedItemSprite.prototype.pickUp = function(avatar) {
     this.y = dy;
 
     var t = this.game.add.tween(this);
-    t.to({ x: 0, y: -CarriedItemSprite.CARRY_HEIGHT },
-        CarriedItemSprite.PICKUP_TIME,
-        Phaser.Easing.Back.InOut, true);
+    t.to({ x: 0, y: -this.carryHeight },
+        this.pickupTime, Phaser.Easing.Back.InOut, true);
+    t.onComplete.add(this.pickedUp, this);
+};
+
+// Called when the item is fully in place overhead.
+CarriedItemSprite.prototype.pickedUp = function() {
+    // Noop; override if you want.
 };
 
 // Call to consume the item.
 CarriedItemSprite.prototype.useUp = function() {
-    var t = this.game.add.tween(this.corona.scale);
+    var t = this.game.add.tween(this.image.scale);
     t.to({ x: 0, y: 0 }, CarriedItemSprite.USE_TIME,
         Phaser.Easing.Back.In, true);
     t.onComplete.add(function() {

@@ -20,7 +20,9 @@ AvatarGraphicsKey.prototype.createGraphics = function(avatar) {
     avatar.keyplate.y = yOffset;
     avatar.keyplate.anchor.setTo(0.5, 0.5);
     // Initialize our keyhole.
-    this.setMasq(avatar, new AvatarMasq(game, 'keyhole', -55));
+    if (avatar.level.properties.mask != false) {
+        this.setMasq(avatar, new AvatarMasq(game, 'keyhole', -55));
+    }
     // Enable physics.
     this.game.physics.enable(avatar, Phaser.Physics.ARCADE);
     // For fun, adjust bounding box to match keyplate,
@@ -42,7 +44,9 @@ AvatarGraphicsKey.prototype.setColor = function(avatar, palette) {
     this.c1 = palette.c1;
     this.c2 = palette.c2;
     avatar.keyplate.tint = this.c1.i;
-    avatar.masq.tint = this.c2.i;
+    if (avatar.masq) {
+        avatar.masq.tint = this.c2.i;
+    }
     avatar.smokeEmitter.tint = this.c1.i;
     avatar.smokeEmitter.forEach(function(particle) {
         particle.tint = particle.parent.tint;
@@ -68,6 +72,9 @@ AvatarGraphicsKey.prototype.setBobble = function(avatar, bobble) {
         return;
     }
     this.bobble = bobble;
+    if (!avatar.masq) {
+        return;
+    }
     if (this.bobble && !this.btween) {
         this.btween = this.game.add.tween(avatar.masq);
         this.btween.y = avatar.masq.y;
@@ -90,6 +97,9 @@ AvatarGraphicsKey.prototype.setPressed = function(avatar, pressed) {
         return;
     }
     this.pressed = pressed;
+    if (!avatar.masq) {
+        return;
+    }
     avatar.masq.scale.setTo(pressed ? 0.9 : 1);
 };
 

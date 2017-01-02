@@ -284,5 +284,6 @@ Level.load = function(game, name, json) {
     // Unset it so that setTier won't think nothing's changed.
     level.tier = undefined;
     level.setTier(tier);
+    level.properties = json.properties ? json.properties : {};
     return level;
 };
