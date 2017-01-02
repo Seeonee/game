@@ -203,6 +203,9 @@ Wire.prototype.createBitmap = function() {
     return bitmap;
 };
 
+// Update loop. Currently a noop.
+Wire.prototype.update = function() {};
+
 // Lights on!
 Wire.prototype.notifyEnabled = function() {
     if (!this.enabled) {
