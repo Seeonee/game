@@ -14,9 +14,8 @@ Obstacle.load.factory[MaskItem.TYPE] = MaskItem;
 
 // Create our sprite.
 MaskItem.prototype.createSprite = function(tier, x, y) {
-    this.altar = new MaskAltar(this.game, this.gx, this.gy,
-        tier.palette);
-    tier.level.z.bg.tier().add(this.altar);
+    this.altar = new MaskAltar(this.game, x, y, tier.palette);
+    tier.image.addBackgroundChild(this.altar);
     return new MaskItemSprite(this.game, x, y,
         this.subtype, tier.palette);
 };
