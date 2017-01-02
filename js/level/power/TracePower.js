@@ -57,7 +57,7 @@ TracePower.prototype.reset = function(avatar, tier) {
     var ap = tier.translateInternalPointToAnchorPoint(ip.x, ip.y);
     this.base.x = ap.x;
     this.base.y = ap.y;
-    tier.image.addBackgroundChild(this.base);
+    tier.image.addChild(this.base);
     this.silhouette.scale.setTo(0.6);
 
     this.burst.reset(this);

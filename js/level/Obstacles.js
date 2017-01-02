@@ -50,7 +50,7 @@ Obstacles.prototype.overlap = function(avatar) {
 // If we're not, we abort and let avatar movement continue.
 Obstacles.prototype._overlap = function(avatar, hitbox) {
     if (!avatar.destination) {
-        return true;
+        return hitbox.obstacle.obstruct(avatar);
     }
     var a1 = Utils.angleBetweenPoints(avatar.x, avatar.y,
         hitbox.x, hitbox.y);

@@ -82,15 +82,12 @@ WarpIState.prototype.warp = function() {
     var angle = Utils.angleBetweenPoints(
         this.avatar.point.x, this.avatar.point.y, point.x, point.y);
     angle = -angle;
-    this.avatar.point = point;
     var gp = this.level.tier.translateInternalPointToGamePoint(
-        this.avatar.point.x, this.avatar.point.y);
+        point.x, point.y);
     this.hflash.flash(this.level.z.fg.tier(),
         gp.x, gp.y - WarpIState.HOVER_Y, angle);
-    this.avatar.x = point.gx;
-    this.avatar.y = point.gy;
+    this.avatar.moveTo(point);
     this.avatar.alpha = 1;
-    this.avatar.updateAttachment();
 
     this.orb.fizzle();
     this.orb.events.onFizzled.addOnce(function(orb) {

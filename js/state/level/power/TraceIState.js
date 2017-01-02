@@ -54,7 +54,6 @@ TraceIState.prototype.update = function() {
             this.tracing = true;
             this.avatar.point = this.trace.point;
             this.avatar.path = this.trace.path;
-            this.avatar.updateAttachment();
             this.trace.recall();
             this.recallAvatar();
         }
@@ -70,6 +69,9 @@ TraceIState.prototype.recallAvatar = function() {
     t.to({ x: this.trace.x, y: this.trace.y },
         time, Phaser.Easing.Quintic.Out, true);
     t.onComplete.add(function() {
+        this.avatar.updateAttachment();
+        this.avatar.body.enable = true;
+        this.avatar.checkCollision();
         this.tracing = undefined;
     }, this);
     var t = this.game.add.tween(this.avatar);

@@ -163,8 +163,7 @@ Avatar.prototype.updateDestination = function(angle, ratio) {
 // if we have one.
 Avatar.prototype.headTowardsDestination = function(ratio, angle) {
     if (!this.game.settings.edit) {
-        var obstacles = this.game.state.getCurrentState().obstacles;
-        this.colliding = obstacles.overlap(this);
+        this.checkCollision();
         if (this.colliding) {
             this.setVelocity(0, 0);
             return;
@@ -248,6 +247,31 @@ Avatar.prototype.updateAttachment = function() {
     }
     this.events.onDetach.dispatch(this, this.attached, old);
     this.events.onAttach.dispatch(this, this.attached, old);
+};
+
+// Jump to a targeted object (point or path).
+// Also accepts coordinates (for paths).
+Avatar.prototype.moveTo = function(obj, x, y) {
+    x = x != undefined ? x : obj.gx;
+    y = y != undefined ? y : obj.gy;
+    if (obj instanceof Point) {
+        this.point = obj;
+        this.path = undefined;
+    } else {
+        this.path = obj;
+        this.point = undefined;
+    }
+    this.x = x;
+    this.y = y;
+    this.updateAttachment();
+    this.body.enable = true;
+    this.checkCollision();
+};
+
+// Update our colliding state.
+Avatar.prototype.checkCollision = function() {
+    var obstacles = this.game.state.getCurrentState().obstacles;
+    this.colliding = obstacles.overlap(this);
 };
 
 // Update our gfx color palette.
