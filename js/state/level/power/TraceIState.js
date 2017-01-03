@@ -78,9 +78,7 @@ TraceIState.prototype.recallAvatar = function() {
     t.to({ x: this.trace.x, y: this.trace.y },
         time, Phaser.Easing.Quintic.Out, true);
     t.onComplete.add(function() {
-        this.avatar.body.enable = true;
         this.avatar.checkCollision();
-        this.avatar.body.enable = this.avatar.colliding;
         this.tracing = undefined;
     }, this);
     var t = this.game.add.tween(this.avatar);

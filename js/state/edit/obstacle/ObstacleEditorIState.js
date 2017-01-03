@@ -15,7 +15,6 @@ ObstacleEditorIState.GRID_UNIT = 50;
 
 // Called when we become the active state.
 ObstacleEditorIState.prototype.activated = function(prev) {
-    this.avatar.body.enable = true;
     this.tier = this.level.tier;
     if (!this.indicator) {
         this.indicator = this.game.add.sprite(0, 0, 'smoke');
@@ -31,8 +30,8 @@ ObstacleEditorIState.prototype.activated = function(prev) {
 // Called when we deactivate.
 ObstacleEditorIState.prototype.deactivated = function(next) {
     this.indicator.visible = false;
-    this.avatar.body.velocity.x = 0;
-    this.avatar.body.velocity.y = 0;
+    this.avatar.velocity.x = 0;
+    this.avatar.velocity.y = 0;
 };
 
 // Handle an update.
@@ -53,8 +52,8 @@ ObstacleEditorIState.prototype.update = function() {
         var angle = joystick.angle;
         var tilt = joystick.tilt;
         var speed = tilt * FloatIState.FLOAT_MAX_SPEED;
-        this.avatar.body.velocity.x = speed * Math.sin(angle);
-        this.avatar.body.velocity.y = speed * Math.cos(angle);
+        this.avatar.velocity.x = speed * Math.sin(angle);
+        this.avatar.velocity.y = speed * Math.cos(angle);
         this.updateMarkerAndObstacle();
 
         if (this.gpad.justReleased(this.buttonMap.EDIT_ADD) ||

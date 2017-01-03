@@ -122,7 +122,8 @@ AvatarGraphicsKey.prototype.createSmokeEmitter = function(avatar) {
 
 // Update an avatar's smoke emitter. Hooray!
 AvatarGraphicsKey.prototype.move = function(avatar) {
-    var ratio = Utils.distanceBetweenPoints(0, 0, avatar.body.velocity.x, avatar.body.velocity.y);
+    var ratio = Utils.distanceBetweenPoints(0, 0,
+        avatar.velocity.x, avatar.velocity.y);
     ratio /= Avatar.MAX_SPEED;
     if (ratio >= AvatarGraphicsKey.SMOKE_RATIO_THRESHOLD) {
         avatar.smokeEmitter.x = avatar.x;

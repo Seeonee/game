@@ -166,7 +166,6 @@ AddFromPointIState.prototype.constructor = AddFromPointIState;
 
 // Action for adding new points (and paths to them) from existing ones.
 AddFromPointIState.prototype.activated = function(prev) {
-    this.avatar.body.enable = true;
     this.tier = this.level.tier;
     this.point = this.avatar.point;
     this.near = undefined;
@@ -281,8 +280,8 @@ AddFromPointIState.prototype.update = function() {
     var angle = joystick.angle;
     var ratio = joystick.tilt;
     var speed = ratio * FloatIState.FLOAT_MAX_SPEED;
-    this.avatar.body.velocity.x = speed * Math.sin(angle);
-    this.avatar.body.velocity.y = speed * Math.cos(angle);
+    this.avatar.velocity.x = speed * Math.sin(angle);
+    this.avatar.velocity.y = speed * Math.cos(angle);
     // Next, find and render the candidate.
     this.cacheSelectedMark();
 

@@ -20,7 +20,6 @@ FloatIState.prototype.activated = function(prev) {
     } else {
         this.prev = this.handler.states[GeneralEditIState.NAME];
     }
-    this.avatar.body.enable = true;
     this.gpad.consumeButtonEvent();
     var attach = this.game.settings.buttonMap.buttonName(
         this.game.settings.buttonMap.EDIT_FLOAT);
@@ -37,8 +36,8 @@ FloatIState.prototype.activated = function(prev) {
 
 // Called when we deactivate.
 FloatIState.prototype.deactivated = function(next) {
-    this.avatar.body.velocity.x = 0;
-    this.avatar.body.velocity.y = 0;
+    this.avatar.velocity.x = 0;
+    this.avatar.velocity.y = 0;
 };
 
 // Called on update.
@@ -48,8 +47,8 @@ FloatIState.prototype.update = function() {
     var angle = joystick.angle;
     var tilt = joystick.tilt;
     var speed = tilt * FloatIState.FLOAT_MAX_SPEED;
-    this.avatar.body.velocity.x = speed * Math.sin(angle);
-    this.avatar.body.velocity.y = speed * Math.cos(angle);
+    this.avatar.velocity.x = speed * Math.sin(angle);
+    this.avatar.velocity.y = speed * Math.cos(angle);
     this.point = this.findNearbyPoint();
     this.path = (this.point) ? undefined : this.findNearbyPath();
     if (this.point) {
@@ -150,8 +149,8 @@ FloatIState.prototype.snapToPoint = function(point) {
         point.x, point.y);
     this.avatar.x = gp.x;
     this.avatar.y = gp.y;
-    this.avatar.body.velocity.x = 0;
-    this.avatar.body.velocity.y = 0;
+    this.avatar.velocity.x = 0;
+    this.avatar.velocity.y = 0;
     this.avatar.point = point;
     this.avatar.path = undefined;
 };
@@ -169,8 +168,8 @@ FloatIState.prototype.snapToPath = function(path) {
     var gp = this.tier.translateInternalPointToGamePoint(x, y);
     this.avatar.x = gp.x;
     this.avatar.y = gp.y;
-    this.avatar.body.velocity.x = 0;
-    this.avatar.body.velocity.y = 0;
+    this.avatar.velocity.x = 0;
+    this.avatar.velocity.y = 0;
     this.avatar.path = path;
     this.avatar.point = undefined;
 };
@@ -179,8 +178,8 @@ FloatIState.prototype.snapToPath = function(path) {
 FloatIState.prototype.snapToStartingValues = function() {
     this.avatar.x = this.x;
     this.avatar.y = this.y;
-    this.avatar.body.velocity.x = 0;
-    this.avatar.body.velocity.y = 0;
+    this.avatar.velocity.x = 0;
+    this.avatar.velocity.y = 0;
 };
 
 // Display our (internal) coords.

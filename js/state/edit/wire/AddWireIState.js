@@ -14,7 +14,6 @@ AddWireIState.prototype.constructor = AddWireIState;
 
 // Activate/deactivate.
 AddWireIState.prototype.activated = function(prev) {
-    this.avatar.body.enable = true;
     this.canceled = prev.depth && prev.depth > this.depth;
     BaseCustomizeIState.prototype.activated.call(this, prev);
 };
@@ -70,8 +69,8 @@ AddWire2IState.prototype.update = function() {
     var angle = joystick.angle;
     var tilt = joystick.tilt;
     var speed = tilt * FloatIState.FLOAT_MAX_SPEED;
-    this.avatar.body.velocity.x = speed * Math.sin(angle);
-    this.avatar.body.velocity.y = speed * Math.cos(angle);
+    this.avatar.velocity.x = speed * Math.sin(angle);
+    this.avatar.velocity.y = speed * Math.cos(angle);
     var target = this.findNearbyPoint();
     if (target != this.target) {
         this.target = target;

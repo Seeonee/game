@@ -20,6 +20,7 @@ var Avatar = function(game, graphics, level) {
     this.tierMeter = new TierMeter(this.game, this.level);
 
     this.colliding = false;
+    this.velocity = { x: 0, y: 0 };
 
     this.attached = undefined;
     this.events.onAttach = new Phaser.Signal();
@@ -43,6 +44,8 @@ Avatar.TILT_PARTIAL_ANGLE =
     Avatar.TILT_TOTAL_ANGLE -
     Avatar.TILT_FULLSPEED_ANGLE;
 Avatar.HOLD_TIME = 250; // ms
+Avatar.FRAME_RATE = 60;
+
 
 // Update anytime the settings change.
 Avatar.prototype.updateSettings = function(settings) {
@@ -207,9 +210,8 @@ Avatar.prototype.headTowardsDestination = function(ratio, angle) {
 
 // Set velocity.
 Avatar.prototype.setVelocity = function(vx, vy) {
-    this.body.enable = this.colliding || vx != 0 || vy != 0;
-    this.body.velocity.x = vx;
-    this.body.velocity.y = vy;
+    this.velocity.x = vx;
+    this.velocity.y = vy;
 };
 
 // Eliminate microscopic velocities.
@@ -262,7 +264,6 @@ Avatar.prototype.moveTo = function(obj, x, y) {
     this.x = x;
     this.y = y;
     this.updateAttachment();
-    this.body.enable = true;
     this.checkCollision();
 };
 
@@ -307,6 +308,8 @@ Avatar.prototype.setPower = function(powerType) {
 
 // Optional physics debug view.
 Avatar.prototype.update = function() {
+    this.x += this.velocity.x / Avatar.FRAME_RATE;
+    this.y += this.velocity.y / Avatar.FRAME_RATE;
     // this.game.debug.body(this);
     // this.game.debug.spriteCoords(this);
 };

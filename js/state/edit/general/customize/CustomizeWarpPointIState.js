@@ -31,7 +31,6 @@ CustomizeWarpPoint2IState.prototype.constructor = CustomizeWarpPoint2IState;
 
 // Called when activated.
 CustomizeWarpPoint2IState.prototype.activated = function(prev) {
-    this.avatar.body.enable = true;
     this.gpad.consumeButtonEvent();
     this.target = this.point;
     this.tier = this.level.tier;
@@ -56,8 +55,8 @@ CustomizeWarpPoint2IState.prototype.update = function() {
     var angle = joystick.angle;
     var tilt = joystick.tilt;
     var speed = tilt * FloatIState.FLOAT_MAX_SPEED;
-    this.avatar.body.velocity.x = speed * Math.sin(angle);
-    this.avatar.body.velocity.y = speed * Math.cos(angle);
+    this.avatar.velocity.x = speed * Math.sin(angle);
+    this.avatar.velocity.y = speed * Math.cos(angle);
     var target = this.findNearbyPoint();
     if (target != this.target) {
         // TODO: Move gfx indicator
