@@ -196,7 +196,7 @@ TierMeter.prototype.setTier = function(tier, old) {
     }
     var keys = Object.keys(this.powers);
     for (var i = 0; i < keys.length; i++) {
-        this.powers[keys[i]].tint = tier.palette.c1.i;
+        this.powers[keys[i]].tint = tier.palette.c1.l.i;
     }
 
     this.showBriefly();
@@ -325,7 +325,7 @@ TierMeter.prototype.setPower = function(power) {
             'power_icon_' + power.type);
         this.powerIcon.anchor.setTo(0.5);
         if (this.palette) {
-            this.powerIcon.tint = this.palette.c1.i;
+            this.powerIcon.tint = this.palette.c1.l.i;
         }
         this.powers[power.type] = this.powerIcon;
         this.addChild(this.powerIcon);
