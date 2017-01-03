@@ -43,17 +43,26 @@ TraceIState.prototype.update = function() {
     if (this.tracing) {
         return;
     }
-    if (this.gpad.justReleased(this.buttonMap.POWER)) {
+    if (this.gpad.justPressed(this.buttonMap.POWER)) {
         this.gpad.consumeButtonEvent();
+        this.pressed = true;
+        this.avatar.tierMeter.setPowerPressed(true);
+    } else if (this.pressed &&
+        this.gpad.justReleased(this.buttonMap.POWER)) {
+        this.gpad.consumeButtonEvent();
+        this.avatar.tierMeter.setPowerPressed(false);
         if (this.trace.dying) {
             return;
         }
         if (!this.trace.alive) {
+            this.avatar.tierMeter.usePower();
             this.trace.reset(this.avatar, this.level.tier);
         } else if (this.trace.tier === this.level.tier) {
+            this.avatar.tierMeter.usePower();
             this.tracing = true;
             this.avatar.point = this.trace.point;
             this.avatar.path = this.trace.path;
+            this.avatar.updateAttachment();
             this.trace.recall();
             this.recallAvatar();
         }
@@ -69,9 +78,9 @@ TraceIState.prototype.recallAvatar = function() {
     t.to({ x: this.trace.x, y: this.trace.y },
         time, Phaser.Easing.Quintic.Out, true);
     t.onComplete.add(function() {
-        this.avatar.updateAttachment();
         this.avatar.body.enable = true;
         this.avatar.checkCollision();
+        this.avatar.body.enable = this.avatar.colliding;
         this.tracing = undefined;
     }, this);
     var t = this.game.add.tween(this.avatar);
