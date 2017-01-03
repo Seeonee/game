@@ -48,6 +48,7 @@ PreloadState.prototype.preload = function() {
     this.game.load.image('power_icon_presence', 'assets/power_presence.png');
     this.game.load.image('power_icon_sword', 'assets/power_sword.png');
     this.game.load.image('power_icon_axe', 'assets/power_axe.png');
+    this.game.load.image('power_icon_bow', 'assets/power_bow.png');
     this.game.load.image('power_icon_shield', 'assets/power_shield.png');
 
     this.game.load.image('power_meter_hand', 'assets/power_meter_hand.png');

@@ -20,6 +20,7 @@ var PowerSprite = function(game, x, y, name, palette, angle) {
         (this.diamond.height * 0.5);
     this.icon = this.addChild(game.make.sprite(
         0, this.iconY, 'power_icon_' + name));
+    this.icon.scale.setTo(0.5);
     this.icon.anchor.setTo(0.5, 0.5);
 
     // Power it down by default.

@@ -2,6 +2,7 @@ when moving away from a point, it overshoots slightly in the wrong direction fir
 add HUD for current(/queued?) powers
 add gfx settings menu to disable blur and/or adj. layer view
 add enemies
+clean up keys on tier deletion
 
 
 LONG-TERM FEATURES:
