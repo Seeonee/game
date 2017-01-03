@@ -42,16 +42,18 @@ FinalCreateIState.prototype.constructor = FinalCreateIState;
 // Call to retreat all the way out.
 FinalCreateIState.prototype.finished = function(obstacle) {
     this.gpad.consumeButtonEvent();
-    var tier = this.level.tier;
     // Find the original object editor state, 
     // so that we can use its marker info.
     var prev = this.prev;
     while (prev instanceof BaseCustomizeIState) {
         prev = prev.prev;
     }
-    obstacle.name = tier.getNewObstacleName(obstacle.type);
-    obstacle.x = prev.marker.x;
-    obstacle.y = prev.marker.y;
-    tier._addObstacle(obstacle);
+    if (obstacle) {
+        var tier = this.level.tier;
+        obstacle.name = tier.getNewObstacleName(obstacle.type);
+        obstacle.x = prev.marker.x;
+        obstacle.y = prev.marker.y;
+        tier._addObstacle(obstacle);
+    }
     this.activate(prev.name);
 };

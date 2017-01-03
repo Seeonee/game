@@ -10,5 +10,13 @@ CreateShardIState.prototype.constructor = CreateShardIState;
 
 // Update loop.
 CreateShardIState.prototype.update = function() {
-    this.finished(new Shard());
+    var tiers = this.level.tiers;
+    var maxIndex = tiers[tiers.length - 1].index;
+    if (this.level.tier.index < maxIndex) {
+        this.finished(new Shard());
+    } else {
+        this.avatar.help.setText('add shard failed\n' +
+            'can\'t add to top tier', true);
+        this.finished();
+    }
 };

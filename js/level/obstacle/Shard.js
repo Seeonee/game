@@ -33,10 +33,14 @@ Shard.prototype.draw = function(tier) {
 
 // Collision check.
 Shard.prototype.obstruct = function(avatar) {
-    this.hitbox.removeCollision();
-    this.hitbox = undefined;
-    avatar.tierMeter.addShard();
-    this.shard.pickUp();
+    var tiers = avatar.tier.level.tiers;
+    var maxIndex = tiers[tiers.length - 1].index;
+    if (avatar.tier.index < maxIndex) {
+        this.hitbox.removeCollision();
+        this.hitbox = undefined;
+        avatar.tierMeter.addShard();
+        this.shard.pickUp();
+    }
     return false;
 };
 
