@@ -25,6 +25,7 @@ var TierMeter = function(game, level) {
     this.fixedToCamera = true;
     this.cameraOffset.setTo(TierMeter.CAMERA_X, TierMeter.CAMERA_Y);
     this.level.events.onTierChange.add(this.setTier, this);
+    this.pressed = false;
 };
 
 TierMeter.prototype = Object.create(Phaser.Sprite.prototype);
@@ -48,6 +49,8 @@ TierMeter.FADE_TIME = 300; // ms
 TierMeter.FADE_OUT_DELAY = 3000; // ms
 TierMeter.TRIANGLE_TRAVEL_TIME = 500; // ms
 TierMeter.BURST_R = 35;
+TierMeter.POWER_X = 2;
+TierMeter.POWER_Y = 2;
 
 // Draw all of our stuff!
 TierMeter.prototype.createSelf = function() {
@@ -119,6 +122,9 @@ TierMeter.prototype.createSelf = function() {
     this.nowsquares = this.csquares.slice(
         TierMeter.CLOUD_MAX).reverse();
     this.fillUpCloud(0);
+
+    // This is for our active power.
+    this.powers = {};
 };
 
 // Clear and redraw ourself.
@@ -140,6 +146,7 @@ TierMeter.prototype.recreate = function() {
 
 // Change the current tier.
 TierMeter.prototype.setTier = function(tier, old) {
+    this.palette = tier.palette;
     var actualIndex = tier.index;
     var index = actualIndex - this.lowest;
 
@@ -187,6 +194,11 @@ TierMeter.prototype.setTier = function(tier, old) {
                 0, TierMeter.BURST_Y, this, tint, !up);
         }
     }
+    var keys = Object.keys(this.powers);
+    for (var i = 0; i < keys.length; i++) {
+        this.powers[keys[i]].tint = tier.palette.c1.i;
+    }
+
     this.showBriefly();
 };
 
@@ -296,6 +308,47 @@ TierMeter.prototype.useShard = function() {
     this.ksbPool.make(this.game).burst(0, 0, this);
     this.avatar.events.onShardChange.dispatch(
         tier, this.shards[tier.name]);
+};
+
+// Set our current power.
+TierMeter.prototype.setPower = function(power) {
+    if (this.powerIcon) {
+        this.powerIcon.visible = false;
+    }
+    if (!power) {
+        this.powerIcon = undefined;
+        return;
+    }
+    if (!this.powers[power.type]) {
+        this.powerIcon = this.game.add.sprite(
+            TierMeter.POWER_X, TierMeter.POWER_Y,
+            'power_icon_' + power.type);
+        this.powerIcon.anchor.setTo(0.5);
+        if (this.palette) {
+            this.powerIcon.tint = this.palette.c1.i;
+        }
+        this.powers[power.type] = this.powerIcon;
+        this.addChild(this.powerIcon);
+    } else {
+        this.powerIcon = this.powers[power.type];
+        this.powerIcon.visible = true;
+    }
+};
+
+// Animate the power icon.
+TierMeter.prototype.setPowerPressed = function(pressed) {
+    if (this.pressed == pressed) {
+        return;
+    }
+    this.pressed = pressed;
+    this.powerIcon.scale.setTo(pressed ? 0.8 : 1);
+    this.showBriefly();
+};
+
+// Animate the power icon.
+TierMeter.prototype.usePower = function() {
+    this.ksbPool.make(this.game).burst(0, 0, this);
+    this.setPowerPressed(false);
 };
 
 // Utility for drawing better segments.

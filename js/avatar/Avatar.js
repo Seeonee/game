@@ -299,6 +299,7 @@ Avatar.prototype.setPower = function(powerType) {
     this.power = Power.load(this.game, powerType);
     if (this.power) {
         this.power.acquire(this);
+        this.tierMeter.setPower(this.power);
     } else {
         console.error('failed to acquire power ' + powerType);
     }
