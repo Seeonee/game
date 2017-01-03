@@ -42,17 +42,12 @@ TierMeter.CAMERA_X = 15 + TierMeter.R2;
 TierMeter.CAMERA_Y = 15 + TierMeter.R2;
 TierMeter.TRIANGLE_SCALE = 0.65;
 TierMeter.TRIANGLE_OFFSET = 0.5;
-TierMeter.X_STROKE_LENGTH = 14;
-TierMeter.X_STROKE_WIDTH = 2.5;
-TierMeter.KEYPLATE_SCALE = 0.5;
-TierMeter.CLOUD_W = 6;
-TierMeter.CLOUD_PAD = 6;
 TierMeter.CLOUD_MAX = 3;
 TierMeter.BURST_Y = -13;
 TierMeter.FADE_TIME = 300; // ms
 TierMeter.FADE_OUT_DELAY = 3000; // ms
 TierMeter.TRIANGLE_TRAVEL_TIME = 500; // ms
-
+TierMeter.BURST_R = 35;
 
 // Draw all of our stuff!
 TierMeter.prototype.createSelf = function() {
@@ -111,58 +106,18 @@ TierMeter.prototype.createSelf = function() {
     this.addChild(this.triangle);
 
     // Shard trackers.
-    // Text for how many current-tier shards we hold.
-    var font = this.game.settings.font;
-    var style = {
-        font: font.sizePx + ' ' + font.name,
-        fill: this.game.settings.colors.WHITE.s
-    };
-    this.text = this.game.add.text(0, 0, '0', style);
-    this.addChild(this.text);
-    this.text.anchor.setTo(-0.7, 0.45);
-    // The little "x" for the number; looks better than font x.
-    w = TierMeter.X_STROKE_LENGTH;
-    h = w;
-    var stroke = TierMeter.X_STROKE_WIDTH;
-    var bitmap = this.game.add.bitmapData(w, h);
-    c = bitmap.context;
-    var xy = [stroke, w - stroke];
-    c.strokeStyle = this.game.settings.colors.WHITE.s;
-    c.lineWidth = stroke;
-    c.beginPath();
-    c.moveTo(xy[0], xy[0]);
-    c.lineTo(xy[1], xy[1]);
-    c.stroke();
-    c.beginPath();
-    c.moveTo(xy[0], xy[1]);
-    c.lineTo(xy[1], xy[0]);
-    c.stroke();
-    this.textx = this.game.add.sprite(0, 0, bitmap);
-    this.textx.anchor.setTo(0.2, 0.5);
-    this.addChild(this.textx);
-    // And now the empty/filled "shard" icon.
-    this.shardEmpty = this.game.add.sprite(0, 0, 'keyplate_outline');
-    this.addChild(this.shardEmpty);
-    scale = TierMeter.KEYPLATE_SCALE;
-    var anchorx = 1.2;
-    this.shardEmpty.anchor.setTo(anchorx, 0.5);
-    this.shardEmpty.scale.setTo(scale);
-    this.shardFull = this.game.add.sprite(0, 0, 'keyplate');
-    this.addChild(this.shardFull);
-    this.shardFull.anchor.setTo(anchorx, 0.5);
-    this.shardFull.scale.setTo(scale);
-    this.shardFull.visible = false;
-    // And finally, a small tracker for shards above this tier.
-    w = TierMeter.CLOUD_W;
-    var pad = TierMeter.CLOUD_PAD;
-    var dw = w + pad;
-    bitmap = this.game.add.bitmapData(
-        TierMeter.CLOUD_MAX * dw - pad, w);
-    this.cloud = this.game.add.sprite(0, 0, bitmap);
-    this.addChild(this.cloud);
-    this.cloud.anchor.setTo(0.5, 4.7);
-    this.cloudx = -this.cloud.width * this.cloud.anchor.x;
-    this.cloudy = -this.cloud.height * this.cloud.anchor.y;
+    this.csquares = [];
+    for (var i = 0; i < 2 * TierMeter.CLOUD_MAX; i++) {
+        var square = this.game.add.sprite(0, 0, 'meter_shard');
+        square.anchor.setTo(0.5);
+        square.rotation = (Math.PI / 6) - i * (Math.PI / 6);
+        this.csquares.push(square);
+        this.addChild(square);
+    }
+    this.cloudsquares = this.csquares.slice(0,
+        TierMeter.CLOUD_MAX).reverse();
+    this.nowsquares = this.csquares.slice(
+        TierMeter.CLOUD_MAX).reverse();
     this.fillUpCloud(0);
 };
 
@@ -174,11 +129,9 @@ TierMeter.prototype.recreate = function() {
         this.bitmap.width, this.bitmap.height);
     this.bitmap.dirty = true;
     this.triangle.kill();
-    this.text.kill();
-    this.textx.kill();
-    this.shardEmpty.kill();
-    this.shardFull.kill();
-    this.cloud.kill();
+    for (var i = 0; i < this.csquares.length; i++) {
+        this.csquares[i].kill();
+    }
     while (this.children.length) {
         this.removeChild(this.children[0]);
     }
@@ -200,31 +153,29 @@ TierMeter.prototype.setTier = function(tier, old) {
 
     var t0 = this.level.tierMap['t' + (actualIndex - 1)];
     if (t0) {
-        this.text.style.fill = tier.palette.c1.s;
-        this.text.dirty = true;
-        var shards = this.shards[tier.name] ? this.shards[tier.name] : 0;
-        this.text.setText(shards);
-        this.textx.tint = tier.palette.c1.i;
-        this.shardEmpty.tint = tier.palette.c1.i;
-        this.shardFull.tint = tier.palette.c1.i;
-        this.text.visible = true;
-        this.textx.visible = true;
-        this.shardEmpty.visible = shards == 0;
-        this.shardFull.visible = shards > 0;
+        var shards = this.shards[tier.name];
+        for (var i = 0; i < this.nowsquares.length; i++) {
+            this.nowsquares[i].visible = true;
+            this.nowsquares[i].tint = tier.palette.c1.i;
+        }
+        this.fillUpNow(shards ? shards : 0);
     } else {
-        this.text.visible = false;
-        this.textx.visible = false;
-        this.shardEmpty.visible = false;
-        this.shardFull.visible = false;
+        for (var i = 0; i < this.nowsquares.length; i++) {
+            this.nowsquares[i].visible = false;
+        }
     }
     var t2 = this.level.tierMap['t' + (actualIndex + 1)];
     if (t2) {
-        this.cloud.tint = t2.palette.c1.i;
         var shards = this.shards[t2.name];
+        for (var i = 0; i < this.cloudsquares.length; i++) {
+            this.cloudsquares[i].visible = true;
+            this.cloudsquares[i].tint = t2.palette.c1.i;
+        }
         this.fillUpCloud(shards ? shards : 0);
-        this.cloud.visible = true;
     } else {
-        this.cloud.visible = false;
+        for (var i = 0; i < this.cloudsquares.length; i++) {
+            this.cloudsquares[i].visible = false;
+        }
     }
     if (old) {
         var oldIndex = old.index;
@@ -240,19 +191,21 @@ TierMeter.prototype.setTier = function(tier, old) {
 };
 
 // Update anytime the settings change.
+TierMeter.prototype.fillUpNow = function(shards) {
+    shards = Math.min(shards, TierMeter.CLOUD_MAX);
+    for (var i = 0; i < TierMeter.CLOUD_MAX; i++) {
+        var square = this.nowsquares[i];
+        square.alpha = i < shards ? 1 : TierMeter.BORDER_ALPHA;
+    }
+};
+
+// Update anytime the settings change.
 TierMeter.prototype.fillUpCloud = function(shards) {
     shards = Math.min(shards, TierMeter.CLOUD_MAX);
-    var w = TierMeter.CLOUD_W;
-    var dw = w + TierMeter.CLOUD_PAD;
-    var bitmap = this.cloud.key;
-    var c = bitmap.context;
-    c.clearRect(0, 0, bitmap.width, bitmap.height);
     for (var i = 0; i < TierMeter.CLOUD_MAX; i++) {
-        alpha = i < shards ? 1 : TierMeter.BORDER_ALPHA;
-        c.fillStyle = this.game.settings.colors.WHITE.rgba(alpha);
-        c.fillRect(i * dw, 0, w, w);
+        var square = this.cloudsquares[i];
+        square.alpha = i < shards ? 1 : TierMeter.BORDER_ALPHA;
     }
-    bitmap.dirty = true;
 };
 
 // Update anytime the settings change.
@@ -316,14 +269,14 @@ TierMeter.prototype.addShard = function() {
     this.shards[tier.name] = shards;
     var index = (this.numTiers - 1) - (actualIndex - this.lowest);
     this.fillUpCloud(shards);
-    var dy = TierMeter.CLOUD_W / 2;
-    shards = shards > TierMeter.CLOUD_MAX ?
-        (TierMeter.CLOUD_MAX - 1) / 2 : shards - 1;
-    var dx = dy + shards *
-        (TierMeter.CLOUD_W + TierMeter.CLOUD_PAD);
+    var i = (shards > TierMeter.CLOUD_MAX ?
+        TierMeter.CLOUD_MAX : shards) - 1;
+    var r = TierMeter.BURST_R;
+    var a = Math.PI - this.cloudsquares[i].rotation;
+    var x = r * Math.sin(a);
+    var y = r * Math.cos(a);
     this.ckbPool.make(this.game).burst(
-        this.cloudx + dx, this.cloudy + dy,
-        this, tier.palette.c1.i);
+        x, y, this, tier.palette.c1.i);
     this.avatar.events.onShardChange.dispatch(
         tier, this.shards[tier.name]);
 };
@@ -339,10 +292,7 @@ TierMeter.prototype.useShard = function() {
     }
     shards -= 1;
     this.shards[tier.name] = shards;
-    var index = (this.numTiers - 1) - (currentIndex - this.lowest);
-    this.text.setText(shards);
-    this.shardEmpty.visible = shards == 0;
-    this.shardFull.visible = shards > 0;
+    this.fillUpNow(shards);
     this.ksbPool.make(this.game).burst(0, 0, this);
     this.avatar.events.onShardChange.dispatch(
         tier, this.shards[tier.name]);

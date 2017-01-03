@@ -33,6 +33,7 @@ PreloadState.prototype.preload = function() {
     this.game.load.spritesheet('switch_light', 'assets/switch_light.png',
         10, 10);
 
+    this.game.load.image('meter_shard', 'assets/meter_shard.png');
     this.game.load.image('item_key', 'assets/item_key.png');
     this.game.load.image('item_lightning', 'assets/item_lightning.png');
     this.game.load.image('altar_face', 'assets/altar_face.png');
@@ -50,9 +51,6 @@ PreloadState.prototype.preload = function() {
     this.game.load.image('power_icon_axe', 'assets/power_axe.png');
     this.game.load.image('power_icon_bow', 'assets/power_bow.png');
     this.game.load.image('power_icon_shield', 'assets/power_shield.png');
-
-    this.game.load.image('power_meter_hand', 'assets/power_meter_hand.png');
-    this.game.load.image('power_meter_face', 'assets/power_meter_face.png');
 };
 
 // Set up the progress bar that tracks our asset loading.

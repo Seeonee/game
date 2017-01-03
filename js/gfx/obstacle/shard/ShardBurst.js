@@ -11,7 +11,8 @@ ShardBurst.prototype.constructor = ShardBurst;
 
 // Constants.
 ShardBurst.DURATION = 400; // ms
-ShardBurst.DISTANCE = 40;
+ShardBurst.Y_DISTANCE = 40;
+ShardBurst.X_DISTANCE = 25;
 ShardBurst.DY_RATIO1 = 0.6;
 ShardBurst.DY_RATIO2 = 0.85;
 ShardBurst.SCALE1 = 2;
@@ -21,8 +22,9 @@ ShardBurst.SCALE2 = 0.25;
 // Shard transition flash.
 ShardBurst.prototype.burst = function(x, y, parent, tint, up) {
     parent.addChild(this);
-    this.x = x;
-    var dy = up ? -ShardBurst.DISTANCE : ShardBurst.DISTANCE;
+    var dx = (up ? 1 : -1) * ShardBurst.X_DISTANCE;
+    this.x = x - (up ? dx : 0);
+    var dy = up ? -ShardBurst.Y_DISTANCE : ShardBurst.Y_DISTANCE;
     this.y = y - dy * ShardBurst.DY_RATIO1;
     this.rotation = up ? 0 : Math.PI;
     this.tint = tint;
@@ -31,7 +33,10 @@ ShardBurst.prototype.burst = function(x, y, parent, tint, up) {
 
     var time = ShardBurst.DURATION;
     var t = this.game.add.tween(this);
-    t.to({ y: this.y + dy * ShardBurst.DY_RATIO2 },
+    t.to({
+            x: this.x + dx,
+            y: this.y + dy * ShardBurst.DY_RATIO2
+        },
         time, Phaser.Easing.Quadratic.Out, true);
     var t2 = this.game.add.tween(this.scale);
     t2.to({ x: ShardBurst.SCALE2, y: ShardBurst.SCALE2 },
@@ -40,6 +45,13 @@ ShardBurst.prototype.burst = function(x, y, parent, tint, up) {
         this.kill();
     }, this);
 };
+
+
+
+
+
+
+
 
 // Small blip for when we gain a shard in the cloud.
 // Note: the "cloud" is the little area in the tier meter
