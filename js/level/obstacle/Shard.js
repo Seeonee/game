@@ -13,6 +13,8 @@ Obstacle.load.factory[Shard.TYPE] = Shard;
 
 // Draw loop.
 Shard.prototype.draw = function(tier) {
+    var above = tier.getAbove();
+    var palette = above ? above.palette : tier.palette;
     if (this.renderNeeded) {
         this.game = tier.game;
         this.renderNeeded = false;
@@ -24,10 +26,10 @@ Shard.prototype.draw = function(tier) {
             this.x, this.y);
         var ap = tier.translateInternalPointToAnchorPoint(
             ip.x, ip.y);
-        this.shard = new ShardSprite(game, ap.x, ap.y, tier.palette);
+        this.shard = new ShardSprite(game, ap.x, ap.y, palette);
         tier.image.addChild(this.shard);
     } else {
-        this.shard.updatePalette(tier.palette);
+        this.shard.updatePalette(palette);
     }
 };
 
