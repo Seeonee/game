@@ -50,7 +50,8 @@ TierMeter.TRIANGLE_TRAVEL_TIME = 500; // ms
 TierMeter.BURST_R = 35;
 TierMeter.POWER_X = 2;
 TierMeter.POWER_Y = 2;
-TierMeter.SPIN_TIME = 1000; // ms
+TierMeter.PCIRCLE_RADIUS = 15;
+TierMeter.PCIRCLE_THICKNESS = 4;
 
 
 // Draw all of our stuff!
@@ -135,6 +136,24 @@ TierMeter.prototype.createSelf = function() {
 
     // This is for our active power.
     this.powers = {};
+    if (TierMeter.CACHED_BITMAP == undefined) {
+        var r = TierMeter.PCIRCLE_RADIUS;
+        var lw = TierMeter.PCIRCLE_THICKNESS;
+        var d = 2 * (r + lw);
+        var bitmap = this.game.add.bitmapData(d, d);
+        var c = bitmap.context;
+        c.strokeStyle = '#ffffff';
+        c.lineWidth = lw;
+        c.arc(d / 2, d / 2, r, 0, 2 * Math.PI, false);
+        c.stroke();
+        TierMeter.CACHED_BITMAP = bitmap;
+    }
+    this.pcircle = this.game.add.sprite(
+        TierMeter.POWER_X, TierMeter.POWER_Y,
+        TierMeter.CACHED_BITMAP);
+    this.addChild(this.pcircle);
+    this.pcircle.anchor.setTo(0.5);
+    this.pcircle.alpha = 2 * TierMeter.BORDER_ALPHA;
 };
 
 // Clear and redraw ourself.
@@ -205,8 +224,9 @@ TierMeter.prototype.setTier = function(tier, old) {
     }
     var keys = Object.keys(this.powers);
     for (var i = 0; i < keys.length; i++) {
-        this.powers[keys[i]].tint = tier.palette.c1.l.i;
+        this.powers[keys[i]].tint = tier.palette.c1.i;
     }
+    this.pcircle.tint = tier.palette.c1.i;
 
     this.showBriefly();
 };
@@ -383,7 +403,7 @@ TierMeter.prototype.setPower = function(power) {
             'power_icon_' + power.type);
         this.powerIcon.anchor.setTo(0.5);
         if (this.palette) {
-            this.powerIcon.tint = this.palette.c1.l.i;
+            this.powerIcon.tint = this.palette.c1.i;
         }
         this.powers[power.type] = this.powerIcon;
         this.addChild(this.powerIcon);

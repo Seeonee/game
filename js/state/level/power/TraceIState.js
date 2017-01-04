@@ -47,6 +47,7 @@ TraceIState.prototype.update = function() {
         this.gpad.consumeButtonEvent();
         this.pressed = true;
         this.avatar.tierMeter.setPowerPressed(true);
+        return false;
     } else if (this.pressed &&
         this.gpad.justReleased(this.buttonMap.POWER)) {
         this.gpad.consumeButtonEvent();
