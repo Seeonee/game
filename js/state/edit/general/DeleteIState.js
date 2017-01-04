@@ -240,10 +240,15 @@ DeleteIState.prototype.deleteTier = function() {
 // Called once the old tier has fully faded.
 DeleteIState.prototype.finishDeletingTier = function(tier) {
     var i = tier.index;
+    var shards = this.avatar.tierMeter.shards;
     if (i > this.level.tiers[0].index) {
         while (this.level.tierMap['t' + (i + 1)]) {
             var t = this.level.tierMap['t' + (i + 1)];
             t.index -= 1;
+            if (shards[t.name]) {
+                shards['t' + t.index] = shards[t.name];
+                delete shards[t.name];
+            }
             t.name = 't' + t.index;
             t.palette = this.game.settings.colors[t.name];
             this.level.tierMap[t.name] = t;

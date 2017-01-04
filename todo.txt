@@ -1,6 +1,5 @@
 add gfx settings menu to disable blur and/or adj. layer view
 add enemies
-clean up keys on tier deletion
 
 
 LONG-TERM FEATURES:
