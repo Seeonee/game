@@ -5,6 +5,19 @@ var Power = function(game) {
     this.ihandler = this.game.state.getCurrentState().powerhandler;
 };
 
+// Constants.
+Power.ALL_TYPES = [
+    'sword',
+    'shield',
+    'axe',
+    'crown',
+    'hourglass',
+    'might',
+    'presence',
+    'trace',
+    'wit'
+];
+
 
 // Called when access to this power is gained.
 Power.prototype.acquire = function(avatar) {

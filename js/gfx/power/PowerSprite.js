@@ -60,8 +60,10 @@ PowerSprite.DISABLED_DIAMOND_ALPHA = 0.25;
 // Set our colors.
 PowerSprite.prototype.updatePalette = function(palette) {
     this.diamondTint = palette.c2.i;
-    this.diamondUnpowered = this.diamondTint;
-    this.diamondPowered = this.diamondTint;
+    this.diamondUnpowered = this.enabled ?
+        this.diamondTint : this.whiteTint;
+    this.diamondPowered = this.enabled ?
+        this.diamondTint : this.whiteTint;
     this.diamond_rgb = Color.rgb(this.selected ?
         this.diamondPowered : this.diamondUnpowered);
     this.diamond.tint = (this.diamond_rgb.r << 16) +

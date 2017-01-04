@@ -21,17 +21,7 @@ CustomizePowerPointIState.prototype.constructor = CustomizePowerPointIState;
 // Set up a power.
 var CustomizePowerPoint2IState = function(handler, level) {
     var optionName = 'ability';
-    var options = [
-        'sword',
-        'shield',
-        'axe',
-        'crown',
-        'hourglass',
-        'might',
-        'presence',
-        'stealth',
-        'wit'
-    ];
+    var options = Power.ALL_TYPES;
     OptionSetGathererIState.call(this, handler, level, PowerPoint, 2,
         optionName, options);
 };
