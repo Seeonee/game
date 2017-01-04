@@ -8,7 +8,6 @@ var TierMeter = function(game, level) {
     this.shards = {};
     this.hud = undefined;
     this.lit = false;
-    this.kbPool = new SpritePool(this.game, ShardBurst);
     this.ckbPool = new SpritePool(this.game, CloudShardBurst);
     this.ksbPool = new SpritePool(this.game, ShardSpendBurst);
 
@@ -51,6 +50,8 @@ TierMeter.TRIANGLE_TRAVEL_TIME = 500; // ms
 TierMeter.BURST_R = 35;
 TierMeter.POWER_X = 2;
 TierMeter.POWER_Y = 2;
+TierMeter.SPIN_TIME = 1000; // ms
+
 
 // Draw all of our stuff!
 TierMeter.prototype.createSelf = function() {
@@ -109,19 +110,28 @@ TierMeter.prototype.createSelf = function() {
     this.addChild(this.triangle);
 
     // Shard trackers.
-    this.csquares = [];
-    for (var i = 0; i < 2 * TierMeter.CLOUD_MAX; i++) {
-        var square = this.game.add.sprite(0, 0, 'meter_shard');
-        square.anchor.setTo(0.5);
-        square.rotation = (Math.PI / 6) - i * (Math.PI / 6);
-        this.csquares.push(square);
-        this.addChild(square);
+    this.squarebase = this.addChild(this.game.add.sprite(0, 0));
+    this.squarebase.anchor.setTo(0.5);
+    this.csquares = {};
+    var max = TierMeter.CLOUD_MAX;
+    var n = this.numTiers - 1;
+    for (var i = 0; i < n; i++) {
+        var name = 't' + (this.lowest + i + 1);
+        var palette = this.level.tierMap[name].palette;
+        this.csquares[name] = [];
+        for (var j = 0; j < max; j++) {
+            var idx = i * max + j;
+            var square = this.game.add.sprite(0, 0, 'meter_shard');
+            square.anchor.setTo(0.5);
+            square.tint = palette.c1.i;
+            square.rotation = (-Math.PI / 6) + idx * (Math.PI / 6);
+            square.alpha = TierMeter.BORDER_ALPHA;
+            this.csquares[name].push(square);
+            this.squarebase.addChild(square);
+        }
     }
-    this.cloudsquares = this.csquares.slice(0,
-        TierMeter.CLOUD_MAX).reverse();
-    this.nowsquares = this.csquares.slice(
-        TierMeter.CLOUD_MAX).reverse();
-    this.fillUpCloud(0);
+    this.nowsquares = [];
+    this.cloudsquares = [];
 
     // This is for our active power.
     this.powers = {};
@@ -158,6 +168,11 @@ TierMeter.prototype.setTier = function(tier, old) {
     t.to({ rotation: a0 - da }, TierMeter.FADE_TIME,
         Phaser.Easing.Sinusoidal.InOut, true);
 
+    var rotation = -index * Math.PI / 2;
+    var t = this.game.add.tween(this.squarebase);
+    t.to({ rotation: rotation }, TierMeter.TRIANGLE_TRAVEL_TIME,
+        Phaser.Easing.Cubic.Out, true);
+
     var t0 = this.level.tierMap['t' + (actualIndex - 1)];
     if (t0) {
         var shards = this.shards[tier.name];
@@ -165,7 +180,7 @@ TierMeter.prototype.setTier = function(tier, old) {
             this.nowsquares[i].visible = true;
             this.nowsquares[i].tint = tier.palette.c1.i;
         }
-        this.fillUpNow(shards ? shards : 0);
+        // this.fillUpNow(shards ? shards : 0);
     } else {
         for (var i = 0; i < this.nowsquares.length; i++) {
             this.nowsquares[i].visible = false;
@@ -178,20 +193,10 @@ TierMeter.prototype.setTier = function(tier, old) {
             this.cloudsquares[i].visible = true;
             this.cloudsquares[i].tint = t2.palette.c1.i;
         }
-        this.fillUpCloud(shards ? shards : 0);
+        // this.fillUpCloud(shards ? shards : 0);
     } else {
         for (var i = 0; i < this.cloudsquares.length; i++) {
             this.cloudsquares[i].visible = false;
-        }
-    }
-    if (old) {
-        var oldIndex = old.index;
-        var up = oldIndex < actualIndex;
-        var tint = up ? tier.palette.c1.i : old.palette.c1.i;
-        var burst = up ? this.shards[tier.name] : this.shards[old.name];
-        if (burst) {
-            this.kbPool.make(this.game).burst(
-                0, TierMeter.BURST_Y, this, tint, !up);
         }
     }
     var keys = Object.keys(this.powers);
@@ -217,6 +222,41 @@ TierMeter.prototype.fillUpCloud = function(shards) {
     for (var i = 0; i < TierMeter.CLOUD_MAX; i++) {
         var square = this.cloudsquares[i];
         square.alpha = i < shards ? 1 : TierMeter.BORDER_ALPHA;
+    }
+};
+
+// Update loop.
+TierMeter.prototype.update = function() {
+    // Fade the shard indicators based on 
+    // their rotation.
+    Phaser.Sprite.prototype.update.call(this);
+    var keys = Object.keys(this.csquares);
+    for (var i = 0; i < keys.length; i++) {
+        var squares = this.csquares[keys[i]];
+        var shards = this.shards[keys[i]];
+        shards = shards ? shards : 0;
+        for (var j = 0; j < squares.length; j++) {
+            var square = squares[j];
+            var rotation = square.rotation +
+                square.parent.rotation;
+            rotation -= Math.PI / 6;
+            var desired = j < shards ? 1 : TierMeter.BORDER_ALPHA;
+            var ratio = 0;
+            if (0 >= rotation && rotation >= -5 * Math.PI / 6) {
+                ratio = 1;
+            } else if (rotation >= Math.PI / 6 ||
+                rotation <= -Math.PI) {
+                ratio = 0;
+            } else {
+                if (rotation < 0) {
+                    rotation = Math.PI + rotation;
+                    ratio = rotation / (Math.PI / 6);
+                } else {
+                    ratio = 1 - rotation / (Math.PI / 6);
+                }
+            }
+            square.alpha = ratio * desired;
+        }
     }
 };
 
@@ -280,11 +320,12 @@ TierMeter.prototype.addShard = function() {
     shards += 1;
     this.shards[tier.name] = shards;
     var index = (this.numTiers - 1) - (actualIndex - this.lowest);
-    this.fillUpCloud(shards);
+
     var i = (shards > TierMeter.CLOUD_MAX ?
         TierMeter.CLOUD_MAX : shards) - 1;
     var r = TierMeter.BURST_R;
-    var a = Math.PI - this.cloudsquares[i].rotation;
+    var square = this.csquares[tier.name][i];
+    var a = Math.PI - (square.rotation + square.parent.rotation);
     var x = r * Math.sin(a);
     var y = r * Math.cos(a);
     this.ckbPool.make(this.game).burst(
@@ -304,7 +345,6 @@ TierMeter.prototype.useShard = function() {
     }
     shards -= 1;
     this.shards[tier.name] = shards;
-    this.fillUpNow(shards);
     this.ksbPool.make(this.game).burst(0, 0, this);
     this.avatar.events.onShardChange.dispatch(
         tier, this.shards[tier.name]);
