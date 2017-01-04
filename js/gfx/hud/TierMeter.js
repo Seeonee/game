@@ -168,10 +168,14 @@ TierMeter.prototype.setTier = function(tier, old) {
     t.to({ rotation: a0 - da }, TierMeter.FADE_TIME,
         Phaser.Easing.Sinusoidal.InOut, true);
 
+    this.spinning = true;
     var rotation = -index * Math.PI / 2;
     var t = this.game.add.tween(this.squarebase);
     t.to({ rotation: rotation }, TierMeter.TRIANGLE_TRAVEL_TIME,
         Phaser.Easing.Cubic.Out, true);
+    t.onComplete.add(function() {
+        this.spinning = false;
+    }, this);
 
     var t0 = this.level.tierMap['t' + (actualIndex - 1)];
     if (t0) {
@@ -227,9 +231,14 @@ TierMeter.prototype.fillUpCloud = function(shards) {
 
 // Update loop.
 TierMeter.prototype.update = function() {
-    // Fade the shard indicators based on 
-    // their rotation.
     Phaser.Sprite.prototype.update.call(this);
+    if (this.spinning) {
+        this.updateShardAlphas();
+    }
+};
+
+// Fade the shard indicators based on their rotation.
+TierMeter.prototype.updateShardAlphas = function() {
     var keys = Object.keys(this.csquares);
     for (var i = 0; i < keys.length; i++) {
         var squares = this.csquares[keys[i]];
@@ -330,6 +339,9 @@ TierMeter.prototype.addShard = function() {
     var y = r * Math.cos(a);
     this.ckbPool.make(this.game).burst(
         x, y, this, tier.palette.c1.i);
+    if (!this.spinning) {
+        square.alpha = 1;
+    }
     this.avatar.events.onShardChange.dispatch(
         tier, this.shards[tier.name]);
 };
@@ -342,6 +354,12 @@ TierMeter.prototype.useShard = function() {
     var shards = this.shards[tier.name] ? this.shards[tier.name] : 0;
     if (shards <= 0) {
         return;
+    }
+    var i = (shards > TierMeter.CLOUD_MAX ?
+        TierMeter.CLOUD_MAX : shards) - 1;
+    var square = this.csquares[tier.name][i];
+    if (!this.spinning) {
+        square.alpha = TierMeter.BORDER_ALPHA;
     }
     shards -= 1;
     this.shards[tier.name] = shards;
