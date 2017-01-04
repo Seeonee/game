@@ -78,9 +78,6 @@ PowerPoint.prototype.shardsChanged = function(tier, shards) {
 
 // Light up the power.
 PowerPoint.prototype.purchase = function(level) {
-    this.purchased = true;
-    this.setEnabled(false);
-    this.power.purchase();
     level.avatar.tierMeter.useShard();
     level.avatar.setPower(this.powerType);
 };

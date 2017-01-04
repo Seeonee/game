@@ -1,4 +1,3 @@
-add HUD for current(/queued?) powers
 add gfx settings menu to disable blur and/or adj. layer view
 add enemies
 clean up keys on tier deletion
