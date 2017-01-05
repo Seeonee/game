@@ -51,6 +51,8 @@ PreloadState.prototype.preload = function() {
     this.game.load.image('power_icon_axe', 'assets/power_axe.png');
     this.game.load.image('power_icon_bow', 'assets/power_bow.png');
     this.game.load.image('power_icon_shield', 'assets/power_shield.png');
+
+    this.game.load.spritesheet('foe_sentry', 'assets/foe_sentry.png', 42, 42);
 };
 
 // Set up the progress bar that tracks our asset loading.

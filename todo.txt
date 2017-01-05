@@ -1,7 +1,6 @@
 add pre-scaled power icons; make a power icon spritesheet
-change "key gained" gfx to triangle
 add gfx settings menu to disable blur and/or adj. layer view
-add enemies
+add avatar death behavior (reset/checkpoint)
 
 
 LONG-TERM FEATURES:
