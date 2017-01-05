@@ -21,7 +21,7 @@ MaskItem.prototype.createSprite = function(tier, x, y) {
 };
 
 // Collision check.
-MaskItem.prototype.obstruct = function(avatar) {
+MaskItem.prototype.obstruct = function(avatar, hitbox) {
     this.hitbox.removeCollision();
     this.hitbox = undefined;
     this.citem.pickUp(avatar);

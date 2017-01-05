@@ -108,6 +108,16 @@ Hitbox.prototype.removeCollision = function() {
     Utils.destroy(this);
 };
 
+// Update our tier.
+Hitbox.prototype.updateTier = function(tier) {
+    if (tier === this.tier) {
+        return;
+    }
+    this.obstacles.remove(this.tier, this);
+    this.obstacles.add(tier, this);
+    this.tier = tier;
+};
+
 // Called on avatar overlap.
 Hitbox.prototype.obstruct = function(avatar) {
     return this.obstacle.obstruct(avatar);

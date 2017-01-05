@@ -18,7 +18,7 @@ Door.prototype.draw = function(tier) {
         this.game = tier.game;
         this.renderNeeded = false;
         this.hitbox = new Hitbox(this.game, tier, this,
-            this.x, this.y, Door.D);
+            this.x, this.y, DoorSprite.D);
         this.game.state.getCurrentState().z.mg.add(this.hitbox);
 
         var ip = tier.translateGamePointToInternalPoint(
@@ -29,12 +29,13 @@ Door.prototype.draw = function(tier) {
             this.subtype, tier.palette);
         tier.image.addChild(this.door);
     } else {
+        this.hitbox.updateTier(tier);
         this.door.setPalette(tier.palette);
     }
 };
 
 // Collision check.
-Door.prototype.obstruct = function(avatar) {
+Door.prototype.obstruct = function(avatar, hitbox) {
     // Cheat and look for keys for the next tier up.
     // I.e. keys we've picked up on this tier.
     if (avatar.held && avatar.held.subtype == this.subtype) {

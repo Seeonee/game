@@ -29,6 +29,7 @@ CarriedItem.prototype.draw = function(tier) {
         this.citem = this.createSprite(tier, ap.x, ap.y);
         tier.image.addChild(this.citem);
     } else {
+        this.hitbox.updateTier(tier);
         this.citem.setPalette(tier.palette);
     }
 };
@@ -40,7 +41,7 @@ CarriedItem.prototype.createSprite = function(tier, x, y) {
 };
 
 // Collision check.
-CarriedItem.prototype.obstruct = function(avatar) {
+CarriedItem.prototype.obstruct = function(avatar, hitbox) {
     if (!avatar.held) {
         this.avatar = avatar;
         avatar.held = this;

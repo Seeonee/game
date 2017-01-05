@@ -29,12 +29,13 @@ Shard.prototype.draw = function(tier) {
         this.shard = new ShardSprite(game, ap.x, ap.y, palette);
         tier.image.addChild(this.shard);
     } else {
+        this.hitbox.updateTier(tier);
         this.shard.updatePalette(palette);
     }
 };
 
 // Collision check.
-Shard.prototype.obstruct = function(avatar) {
+Shard.prototype.obstruct = function(avatar, hitbox) {
     var tiers = avatar.tier.level.tiers;
     var maxIndex = tiers[tiers.length - 1].index;
     if (avatar.tier.index < maxIndex) {
