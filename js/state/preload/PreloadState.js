@@ -66,5 +66,6 @@ PreloadState.prototype.initializeLoadingBar = function() {
 
 // Created? Moving on!
 PreloadState.prototype.create = function() {
+    this.game.bitmapCache = new BitmapCache(this.game);
     this.game.state.start('TitleMenuState', true, false, this.palette);
 };

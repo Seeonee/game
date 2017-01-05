@@ -6,8 +6,11 @@ var BitmapCache = function(game) {
 
 
 // Add an object to the cache.
-BitmapCache.prototype.add = function(key, painter, context,
+BitmapCache.prototype.get = function(key, painter, context,
     redrawOnResize) {
+    if (this.cache[key]) {
+        return this.cache[key].bitmap;
+    }
     var cbm = new BitmapCache.CachedBitmap(this.game,
         key, painter, context, redrawOnResize);
     this.cache[key] = cbm;
