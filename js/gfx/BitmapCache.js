@@ -11,6 +11,7 @@ BitmapCache.prototype.add = function(key, painter, context,
     var cbm = new BitmapCache.CachedBitmap(this.game,
         key, painter, context, redrawOnResize);
     this.cache[key] = cbm;
+    return cbm.bitmap;
 };
 
 // Notify cache objects that the game has resized.
