@@ -50,15 +50,16 @@ Obstacles.prototype.overlap = function(avatar) {
 // If we're not, we abort and let avatar movement continue.
 Obstacles.prototype._overlap = function(avatar, hitbox) {
     if (!avatar.destination) {
-        return hitbox.obstacle.obstruct(avatar);
+        return hitbox.obstacle.obstruct(avatar, hitbox);
     }
     var a1 = Utils.angleBetweenPoints(avatar.x, avatar.y,
         hitbox.x, hitbox.y);
     var a2 = Utils.angleBetweenPoints(avatar.x, avatar.y,
         avatar.destination.gx, avatar.destination.gy);
     var difference = Utils.getBoundedAngleDifference(a1, a2);
+    var result = hitbox.obstacle.obstruct(avatar, hitbox);
     if (difference < 0.25) {
-        return hitbox.obstacle.obstruct(avatar);
+        return result;
     } else {
         return false;
     }
@@ -73,7 +74,7 @@ Obstacles.prototype._overlap = function(avatar, hitbox) {
 
 
 // Hitbox sprite. Used by obstacles to detect avatar collision.
-var Hitbox = function(game, tier, obstacle, x, y, side) {
+var Hitbox = function(game, tier, obstacle, x, y, side, circle) {
     Phaser.Sprite.call(this, game, x, y);
     this.anchor.setTo(0.5);
     this.obstacle = obstacle;
@@ -82,9 +83,13 @@ var Hitbox = function(game, tier, obstacle, x, y, side) {
     this.obstacles.add(tier, this);
     this.game.physics.enable(this, Phaser.Physics.ARCADE);
     side = side != undefined ? side : Hitbox.D;
+    side = circle ? 2 * side : side;
     var w = this.body.width;
     var h = this.body.height;
     this.body.setSize(side, side, w / 2 - side / 2, h / 2 - side / 2);
+    if (circle) {
+        this.body.setCircle(side / 2);
+    }
 };
 
 Hitbox.prototype = Object.create(Phaser.Sprite.prototype);
@@ -160,7 +165,7 @@ Obstacle.prototype.update = function() {
 
 // Called on avatar overlap.
 // Returns true if we should block the avatar.
-Hitbox.prototype.obstruct = function(avatar) {
+Hitbox.prototype.obstruct = function(avatar, hitbox) {
     // Override me!
     return true;
 };
