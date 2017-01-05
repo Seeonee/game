@@ -1,7 +1,8 @@
 // Settings class.
 // Initializes with default values.
 // Eventually, it should be loaded from/exported to JSON.
-var Settings = function() {
+var Settings = function(game) {
+    this.game = game;
     this.colors = new Colors();
     this.font = {
         size: 30,
@@ -12,6 +13,7 @@ var Settings = function() {
     this.edit = false;
     this.hud = Settings.HUD_SOMETIMES;
     this._controller = Settings.CONTROLLER_PLAYSTATION;
+    this._fullscreen = Settings.FULLSCREEN_OFF;
     this.buttonMap = new ButtonMappingsPlaystation();
 };
 
@@ -36,13 +38,34 @@ Object.defineProperty(Settings.prototype, 'controller', {
     }
 });
 
+// Property for the fullscreen setting.
+Object.defineProperty(Settings.prototype, 'fullscreen', {
+    get: function() {
+        return this._fullscreen;
+    },
+    set: function(value) {
+        if (this._fullscreen != value) {
+            this._fullscreen = value;
+            this.game.scale.scaleMode =
+                value == Settings.FULLSCREEN_ON ?
+                Phaser.ScaleManager.RESIZE :
+                Phaser.ScaleManager.NO_SCALE;
+        }
+    }
+});
+
 
 // Even we have constants!
 Settings.HUD_ALWAYS = 0;
 Settings.HUD_SOMETIMES = 1;
 Settings.HUD_NEVER = 2;
+
 Settings.CONTROLLER_PLAYSTATION = 0;
 Settings.CONTROLLER_XBOX = 1;
+
+Settings.FULLSCREEN_ON = 0;
+Settings.FULLSCREEN_OFF = 1;
+
 
 // Restore a JSON'd Settings object.
 Settings.load = function(json) {
@@ -73,6 +96,12 @@ Settings.Menu.populateSubmenu = function(parent) {
         settings, 'controller', 'controller', [
             { text: 'playstation', value: Settings.CONTROLLER_PLAYSTATION },
             { text: 'xbox', value: Settings.CONTROLLER_XBOX }
+        ]);
+    // Controls for fullscreen.
+    Settings.Menu.createRadialSettingMenu(
+        settings, 'fullscreen', 'fullscreen', [
+            { text: 'on', value: Settings.FULLSCREEN_ON },
+            { text: 'off', value: Settings.FULLSCREEN_OFF }
         ]);
     // Aaaaand a final "get out of here" option.
     settings.addCancel('back');

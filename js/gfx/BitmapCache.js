@@ -51,6 +51,6 @@ BitmapCache.CachedBitmap.prototype.gameResized = function() {
     if (this.redrawOnResize) {
         this.bitmap.context.clearRect(0, 0,
             this.bitmap.width, this.bitmap.height);
-        this.painter.call(this.bitmap);
+        this.painter.call(this.context, this.bitmap);
     }
 };

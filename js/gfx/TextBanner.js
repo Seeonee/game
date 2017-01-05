@@ -1,10 +1,10 @@
 // An orbiting ring fragment.
 var TextBanner = function(game, x, y) {
     this.game = game;
-    x = x != undefined ? x : (this.game.camera.width / 2);
-    y = y != undefined ? y : (this.game.camera.height / 3);
+    this.x = x;
+    this.y = y;
     var bitmap = this.game.bitmapCache.get(
-        TextBanner.prototype.painter, this);
+        TextBanner.prototype.painter, this, true);
     Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5);
     this.alpha = 0;
@@ -22,7 +22,6 @@ var TextBanner = function(game, x, y) {
 
     // Lock position relative to the camera.
     this.fixedToCamera = true;
-    this.cameraOffset.setTo(x, y);
 };
 
 TextBanner.prototype = Object.create(Phaser.Sprite.prototype);
@@ -58,6 +57,10 @@ TextBanner.prototype.painter = function(bitmap) {
     gradient.addColorStop(1, colorEdge);
     c.fillStyle = gradient;
     c.fillRect(0, 0, w, h);
+
+    this.x2 = this.x != undefined ? this.x : (this.game.camera.width / 2);
+    this.y2 = this.y != undefined ? this.y : (this.game.camera.height / 3);
+    this.cameraOffset.setTo(this.x2, this.y2);
 };
 
 // Throw the banner up for a bit, then fade out and die.

@@ -12,6 +12,8 @@ var PressStartIState = function(handler) {
         'press start', style);
     this.text.anchor.setTo(0.5, 0.5);
     this.text.alpha = 0;
+    this.game.scale.onFullScreenChange.add(this.sizeChanged, this);
+    this.game.scale.onSizeChange.add(this.sizeChanged, this);
 };
 
 PressStartIState.NAME = 'press-start';
@@ -22,6 +24,7 @@ PressStartIState.prototype.constructor = PressStartIState;
 PressStartIState.TEXT_DELAY = 500; // ms
 PressStartIState.TEXT_FADE_TIME = 2500; // ms
 PressStartIState.BUTTON_LOCKOUT_TIME = 1000; // ms
+
 
 // Show some fancy "press start" text.
 PressStartIState.prototype.activated = function(prev) {
@@ -49,4 +52,10 @@ PressStartIState.prototype.update = function() {
         this.text.alpha = 0;
         this.activate(TitleMenuIState.NAME);
     }
+};
+
+// Screen resized.
+PressStartIState.prototype.sizeChanged = function() {
+    this.text.x = this.game.camera.width / 2;
+    this.text.y = this.game.camera.height / 3;
 };
