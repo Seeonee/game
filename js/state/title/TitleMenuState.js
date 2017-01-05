@@ -27,14 +27,6 @@ TitleMenuState.prototype.create = function() {
 
     this.cascader = new Cascader(this.game,
         this.z.fg, this.palette.c1.i);
-
-    this.game.input.onDown.add(function() {
-        if (this.game.scale.isFullScreen) {
-            this.game.scale.stopFullScreen();
-        } else {
-            this.game.scale.startFullScreen(false);
-        }
-    }, this);
 };
 
 // Update loop.
@@ -47,6 +39,12 @@ TitleMenuState.prototype.update = function() {
 TitleMenuState.prototype.render = function() {
     this.menuhandler.render();
 };
+
+
+
+
+
+
 
 
 // Sprite pool that automatically cascades squares 
@@ -65,6 +63,7 @@ Cascader.prototype.constructor = Cascader;
 Cascader.MIN_DELAY = 1000; // ms
 Cascader.VARIANCE = 100; // ms
 
+
 // Spawn squares as needed.
 Cascader.prototype.update = function() {
     t = this.game.time.now;
@@ -73,7 +72,8 @@ Cascader.prototype.update = function() {
             this.zgroup, this.color);
         var chance = Math.random();
         chance *= chance;
-        this.time = t + Cascader.MIN_DELAY +
+        var ratio = 800 / this.game.camera.width;
+        this.time = t + ratio * Cascader.MIN_DELAY +
             chance * Cascader.VARIANCE;
     }
 };

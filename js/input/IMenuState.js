@@ -166,33 +166,43 @@ IMenuState.prototype.activated = function(prev) {
     this.height = view.height;
 
     if (!this.created) {
-        // Create EVERYTHING.
-        this.colorPrimary = this.color;
-        this.cBitmap = this.createChromeBitmap();
-        this.drawChromeBitmap();
-        this.chrome = this.createChrome(this.cBitmap);
-        if (this.blurBackground) {
-            this.spacer = this.createSpacer();
-        }
-        this.sBitmap = this.createSelectorBitmap();
-        this.selector = this.createSelector(this.sBitmap);
-        this.createTextFor(this.root);
-        if (this.blurBackground) {
-            this.myFilter = this.createFilter();
-        }
-        this.created = true;
+        this.createMenu();
     } else {
-        if (this.colorPrimary != this.color) {
-            // Have to rebuild our chrome, and 
-            // recolor our text components.
-            this.colorPrimary = this.color;
-            this.drawChromeBitmap();
-        }
-        if (this.blurBackground) {
-            this.spacer = this.createSpacer();
-        }
+        this.updateMenu();
     }
     this.show();
+};
+
+// Create EVERYTHING.
+IMenuState.prototype.createMenu = function() {
+    this.fullscreen = this.game.settings.fullscreen;
+    this.colorPrimary = this.color;
+    this.cBitmap = this.createChromeBitmap();
+    this.drawChromeBitmap();
+    this.chrome = this.createChrome(this.cBitmap);
+    if (this.blurBackground) {
+        this.spacer = this.createSpacer();
+    }
+    this.sBitmap = this.createSelectorBitmap();
+    this.selector = this.createSelector(this.sBitmap);
+    this.createTextFor(this.root);
+    if (this.blurBackground) {
+        this.myFilter = this.createFilter();
+    }
+    this.created = true;
+};
+
+// A more modest update.
+IMenuState.prototype.updateMenu = function() {
+    if (this.colorPrimary != this.color) {
+        // Have to rebuild our chrome, and 
+        // recolor our text components.
+        this.colorPrimary = this.color;
+        this.drawChromeBitmap();
+    }
+    if (this.blurBackground) {
+        this.spacer = this.createSpacer();
+    }
 };
 
 // Creates the menu chrome, and if asked also draws
@@ -381,6 +391,39 @@ IMenuState.prototype.createFilterTween = function(myFilter) {
     return tween;
 };
 
+// Clean up the menu so it can be rebuilt.
+IMenuState.prototype.recreateMenu = function() {
+    if (!this.created) {
+        // Don't bother; it'll happen soon enough.
+        return;
+    }
+    // Delete chrome.
+    this.chrome.destroy();
+    // Delete spacer and undo blur if they exist.
+    if (this.spacer) {
+        this.spacer.destroy();
+        this.game.state.getCurrentState().z.filters = null;
+    }
+    // Delete selector.
+    this.selector.destroy();
+    // Delete all text recursively.
+    this.deleteTextFor(this.root);
+    // Rebuild the menu.
+    this.created = false;
+    this.activated();
+};
+
+// Recursively delete text.
+IMenuState.prototype.deleteTextFor = function(option) {
+    if (option.t) {
+        option.t.destroy();
+        option.t = undefined;
+    }
+    for (var i = 0; i < option.options.length; i++) {
+        this.deleteTextFor(option.options[i]);
+    }
+};
+
 // Redraw our selector when the button's lifted.
 IMenuState.prototype.deactivateSelector = function() {
     var d = IMenuState.SELECTOR_SIDE;
@@ -471,12 +514,11 @@ IMenuState.prototype.setSelected = function(index) {
         tween.to({ y: y, alpha: alpha }, IMenuState.OPTION_TRANSITION_TIME,
             Phaser.Easing.Sinusoidal.InOut, true);
         if (selected) {
-            tween.scope = this;
             tween.onComplete.add(function(text, tween) {
-                text.style.fill = tween.scope.colorSelection.s;
-                tween.scope.setInputBlocked(false);
+                text.style.fill = this.colorSelection.s;
+                this.setInputBlocked(false);
                 text.dirty = true;
-            });
+            }, this);
         }
         this.tweens.push(tween);
     }
@@ -541,12 +583,11 @@ IMenuState.prototype.advanceIntoSelection = function() {
         tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
             Phaser.Easing.Sinusoidal.InOut, true);
         if (selected) {
-            tween.scope = this;
             tween.onComplete.add(function(text, tween) {
-                text.style.fill = tween.scope.colorSelection.s;
-                tween.scope.setInputBlocked(false);
+                text.style.fill = this.colorSelection.s;
+                this.setInputBlocked(false);
                 text.dirty = true;
-            });
+            }, this);
         }
         this.tweens.push(tween);
     }
@@ -598,10 +639,9 @@ IMenuState.prototype.retreatOutOfSelection = function() {
         tween.to({ x: x, alpha: alpha }, IMenuState.LEVEL_TRANSITION_TIME,
             Phaser.Easing.Sinusoidal.InOut, true);
         if (selected) {
-            tween.scope = this;
             tween.onComplete.add(function(text, tween) {
-                tween.scope.setInputBlocked(false);
-            });
+                this.setInputBlocked(false);
+            }, this);
         }
         this.tweens.push(tween);
     }
@@ -677,6 +717,14 @@ IMenuState.prototype.updateFromJoystick = function(joystick) {
     }
 };
 
+// Propagate any settings changes.
+IMenuState.prototype.updateSettings = function(settings) {
+    IState.prototype.updateSettings.call(this, settings);
+    if (settings.fullscreen != this.fullscreen) {
+        this.game.time.events.add(100, this.recreateMenu, this);
+    }
+};
+
 // Figure out if the user's currently pressing a button 
 // that we animate for.
 IMenuState.prototype.updateSelector = function() {
@@ -713,13 +761,12 @@ IMenuState.prototype.cleanUp = function() {
     }
     if (this.blurBackground) {
         var tween = this.game.add.tween(this.myFilter);
-        tween.scope = this;
         tween.to({ blur: 0 }, IMenuState.BLUR_TIME,
             Phaser.Easing.Cubic.Out, true);
         tween.onComplete.add(function(filter, tween) {
-            tween.scope.spacer.destroy();
-            tween.scope.game.state.getCurrentState().z.filters = null;
-        });
+            this.spacer.destroy();
+            this.game.state.getCurrentState().z.filters = null;
+        }, this);
     }
 };
 
