@@ -402,6 +402,7 @@ TierMeter.prototype.setPower = function(power) {
             TierMeter.POWER_X, TierMeter.POWER_Y,
             'power_icon_' + power.type);
         this.powerIcon.anchor.setTo(0.5);
+        this.powerIcon.scale.setTo(0.8);
         if (this.palette) {
             this.powerIcon.tint = this.palette.c1.i;
         }
@@ -419,7 +420,7 @@ TierMeter.prototype.setPowerPressed = function(pressed) {
         return;
     }
     this.pressed = pressed;
-    this.powerIcon.scale.setTo(pressed ? 0.8 : 1);
+    this.powerIcon.scale.setTo(pressed ? 0.7 : 0.8);
     this.showBriefly();
 };
 
