@@ -98,6 +98,29 @@ Utils.destroy = function(sprite) {
     }
 };
 
+// Update a bitmapData's size.
+// You probably want to clear it afterwards and 
+// start from scratch.
+Utils.resizeBitmap = function(bitmap, width, height) {
+    if (width == bitmap.width && height == bitmap.height) {
+        return;
+    }
+    bitmap.width = width;
+    bitmap.height = height;
+
+    bitmap.canvas.width = width;
+    bitmap.canvas.height = height;
+
+    bitmap.baseTexture.width = width;
+    bitmap.baseTexture.height = height;
+
+    bitmap.textureFrame.width = width;
+    bitmap.textureFrame.height = height;
+
+    bitmap.texture.width = width;
+    bitmap.texture.height = height;
+};
+
 
 // Simple factory for instantiating new sprite-based objects.
 // Main goal is that it will return a new sprite if 
