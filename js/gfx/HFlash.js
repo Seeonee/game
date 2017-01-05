@@ -42,7 +42,10 @@ HFlash.prototype.flash = function(zgroup, x, y, rotation) {
         this.rotation = rotation;
     }
     zgroup.add(this);
-    this.scale.setTo(HFlash.X_SCALE1, HFlash.Y_SCALE);
+    var d = 2 * Math.max(this.game.scale.width, this.game.scale.height);
+    var h = this.height / this.scale.y;
+    var yscale = d / h;
+    this.scale.setTo(HFlash.X_SCALE1, yscale);
     this.alpha = 0;
     this.visible = true;
 
