@@ -12,18 +12,10 @@ var ShardSprite = function(game, x, y, palette) {
     this.gobetween = this.addChild(this.game.add.sprite(0, 0));
     this.gobetween.anchor.setTo(0.5);
 
-    if (ShardSprite.CACHED_BITMAP == undefined) {
-        var r = ShardSprite.RADIUS;
-        r *= ShardSprite.FIX;
-        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-        var c = bitmap.context;
-        c.fillStyle = game.settings.colors.WHITE.s;
-        c.arc(r, r, r, 0, 2 * Math.PI, false);
-        c.fill();
-        ShardSprite.CACHED_BITMAP = bitmap;
-    }
+    var bitmap = this.game.bitmapCache.get(
+        ShardSprite.prototype.painter, this);
     this.glow = this.gobetween.addChild(
-        this.game.add.sprite(0, 0, ShardSprite.CACHED_BITMAP));
+        this.game.add.sprite(0, 0, bitmap));
     this.glow.scale.setTo(1 / ShardSprite.FIX);
     this.glow.anchor.setTo(0.5);
 
@@ -65,6 +57,17 @@ ShardSprite.BURST_SCALE = 8;
 ShardSprite.FIX = 2;
 ShardSprite.BURST_DURATION = 500;
 
+
+// Paint our bitmap.
+ShardSprite.prototype.painter = function(bitmap) {
+    var r = ShardSprite.RADIUS;
+    r *= ShardSprite.FIX;
+    Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
+    var c = bitmap.context;
+    c.fillStyle = game.settings.colors.WHITE.s;
+    c.arc(r, r, r, 0, 2 * Math.PI, false);
+    c.fill();
+};
 
 // Set our colors.
 ShardSprite.prototype.updatePalette = function(palette) {

@@ -4,16 +4,9 @@ var TraceIState = function(handler, level) {
     this.level = level;
     this.avatar = level.avatar;
 
-    if (TraceIState.CACHED_BITMAP == undefined) {
-        var r = TraceIState.RADIUS;
-        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-        var c = bitmap.context;
-        c.fillStyle = '#ffffff';
-        c.arc(r, r, r, 0, 2 * Math.PI, false);
-        c.fill();
-        TraceIState.CACHED_BITMAP = bitmap;
-    }
-    this.orb = this.game.add.sprite(0, 0, TraceIState.CACHED_BITMAP);
+    var bitmap = this.game.bitmapCache.get(
+        TraceIState.prototype.painter, this);
+    this.orb = this.game.add.sprite(0, 0, bitmap);
     this.orb.anchor.setTo(0.5);
     this.orb.visible = false;
 };
@@ -26,6 +19,16 @@ TraceIState.prototype.constructor = TraceIState;
 TraceIState.RADIUS = 15;
 TraceIState.RECALL_TIME = 500; // ms
 
+
+// Paint our bitmap.
+TraceIState.prototype.painter = function(bitmap) {
+    var r = TraceIState.RADIUS;
+    Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
+    var c = bitmap.context;
+    c.fillStyle = '#ffffff';
+    c.arc(r, r, r, 0, 2 * Math.PI, false);
+    c.fill();
+};
 
 // Called when obtained.
 TraceIState.prototype.activated = function(prev) {

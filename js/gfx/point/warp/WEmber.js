@@ -1,19 +1,9 @@
 // First, define a warp point socket for an ember.
 var WSocket = function(game, x, y, palette) {
     this.game = game;
-    if (WSocket.CACHED_BITMAP == undefined) {
-        // Container ring.
-        var r = WSocket.RING_RADIUS;
-        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-        var c = bitmap.context;
-        c.strokeStyle = this.game.settings.colors.WHITE.s;
-        c.lineWidth = Tier.PATH_WIDTH * WarpPoint.PATH_RATIO;
-        c.beginPath();
-        c.arc(r, r, r / 2, 0, 2 * Math.PI, false);
-        c.stroke();
-        WSocket.CACHED_BITMAP = bitmap;
-    }
-    Phaser.Sprite.call(this, game, x, y, WSocket.CACHED_BITMAP);
+    var bitmap = this.game.bitmapCache.get(
+        WSocket.prototype.painter, this);
+    Phaser.Sprite.call(this, game, x, y, bitmap);
     this.tint = palette.c1.i;
     this.anchor.setTo(0.5, 0.5);
 };
@@ -24,6 +14,19 @@ WSocket.prototype.constructor = WSocket;
 // Constants.
 WSocket.RING_RADIUS = 20;
 
+
+// Paint our bitmap.
+WSocket.prototype.painter = function(bitmap) {
+    // Container ring.
+    var r = WSocket.RING_RADIUS;
+    Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
+    var c = bitmap.context;
+    c.strokeStyle = this.game.settings.colors.WHITE.s;
+    c.lineWidth = Tier.PATH_WIDTH * WarpPoint.PATH_RATIO;
+    c.beginPath();
+    c.arc(r, r, r / 2, 0, 2 * Math.PI, false);
+    c.stroke();
+};
 
 // Set our colors.
 WSocket.prototype.updatePalette = function(palette) {
@@ -40,16 +43,9 @@ WSocket.prototype.updatePalette = function(palette) {
 // Ember smoldering in the center of a warp point.
 var WEmber = function(game) {
     this.game = game;
-    if (WEmber.CACHED_BITMAP == undefined) {
-        var r = WEmber.EMBER_RADIUS;
-        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-        c = bitmap.context;
-        c.fillStyle = this.game.settings.colors.WHITE.s;
-        c.arc(r, r, r, 0, 2 * Math.PI, false);
-        c.fill();
-        WEmber.CACHED_BITMAP = bitmap;
-    }
-    Phaser.Sprite.call(this, game, 0, 0, WEmber.CACHED_BITMAP);
+    var bitmap = this.game.bitmapCache.get(
+        WEmber.prototype.painter, this);
+    Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5, 0.5);
 
     this.enabled = true;
@@ -64,6 +60,16 @@ WEmber.prototype.constructor = WEmber;
 WEmber.EMBER_RADIUS = 4;
 WEmber.DISABLED_ALPHA = 0; // 0.25;
 
+
+// Paint our bitmap.
+WEmber.prototype.painter = function(bitmap) {
+    var r = WEmber.EMBER_RADIUS;
+    Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
+    c = bitmap.context;
+    c.fillStyle = this.game.settings.colors.WHITE.s;
+    c.arc(r, r, r, 0, 2 * Math.PI, false);
+    c.fill();
+};
 
 // Start our slow burn.
 WEmber.prototype.update = function() {

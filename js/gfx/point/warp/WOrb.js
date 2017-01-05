@@ -1,16 +1,9 @@
 // The warp orb effect.
 var WOrb = function(game) {
     this.game = game;
-    if (WOrb.CACHED_BITMAP == undefined) {
-        var r = WOrb.R1;
-        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-        var c = bitmap.context;
-        c.fillStyle = this.game.settings.colors.WHITE.s;
-        c.arc(r, r, r, 0, Math.PI * 2, false);
-        c.fill();
-        WOrb.CACHED_BITMAP = bitmap;
-    }
-    Phaser.Sprite.call(this, game, 0, 0, WOrb.CACHED_BITMAP);
+    var bitmap = this.game.bitmapCache.get(
+        WOrb.prototype.painter, this);
+    Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5);
     this.visible = false;
 
@@ -28,6 +21,16 @@ WOrb.HOVER_Y = 44;
 WOrb.FADE_TIME = 250; // ms
 WOrb.SCALE_TIME = 450; // ms
 
+
+// Paint our bitmap.
+WOrb.prototype.painter = function(bitmap) {
+    var r = WOrb.R1;
+    Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
+    var c = bitmap.context;
+    c.fillStyle = this.game.settings.colors.WHITE.s;
+    c.arc(r, r, r, 0, Math.PI * 2, false);
+    c.fill();
+};
 
 // Begin the theatre!
 WOrb.prototype.charge = function(x, y) {

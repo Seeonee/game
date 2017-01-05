@@ -1,16 +1,9 @@
 // A slightly enlarged point.
 var PNub = function(game, x, y, tint) {
-    var r = PNub.RADIUS;
-    if (PNub.CACHED_BITMAP == undefined) {
-        var bitmap = game.add.bitmapData(2 * r, 2 * r);
-        var c = bitmap.context;
-        c.fillStyle = game.settings.colors.WHITE.s;
-        c.beginPath();
-        c.arc(r, r, r, 0, 2 * Math.PI, false);
-        c.fill();
-        PNub.CACHED_BITMAP = bitmap;
-    }
-    Phaser.Sprite.call(this, game, x, y, PNub.CACHED_BITMAP);
+    this.game = game;
+    var bitmap = this.game.bitmapCache.get(
+        PNub.prototype.painter, this);
+    Phaser.Sprite.call(this, game, x, y, bitmap);
     this.anchor.setTo(0.5, 0.5);
     this.tint = tint;
 };
@@ -21,6 +14,17 @@ PNub.prototype.constructor = PNub;
 // Constants.
 PNub.RADIUS = Tier.PATH_WIDTH;
 
+
+// Paint our bitmap.
+PNub.prototype.painter = function(bitmap) {
+    var r = PNub.RADIUS;
+    Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
+    var c = bitmap.context;
+    c.fillStyle = game.settings.colors.WHITE.s;
+    c.beginPath();
+    c.arc(r, r, r, 0, 2 * Math.PI, false);
+    c.fill();
+};
 
 // Set our colors.
 PNub.prototype.updatePalette = function(palette) {

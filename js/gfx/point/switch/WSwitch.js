@@ -94,20 +94,10 @@ WSwitch.prototype.fadingOut = function() {
 
 // Graphics for when a switch locks after flipping once.
 var SwitchLock = function(game, x, y) {
-    if (SwitchLock.CACHED_BITMAP == undefined) {
-        this.game = game;
-        var r = SwitchLock.R;
-        var pad = 8;
-        var bitmap = this.game.add.bitmapData(2 * (r + pad), 2 * (r + pad));
-        var c = bitmap.context;
-        c.translate(pad, pad);
-        c.strokeStyle = this.game.settings.colors.WHITE.s;
-        c.lineWidth = pad;
-        c.arc(r, r, r, 0, 2 * Math.PI, false);
-        c.stroke();
-        SwitchLock.CACHED_BITMAP = bitmap;
-    }
-    Phaser.Sprite.call(this, game, x, y, SwitchLock.CACHED_BITMAP);
+    this.game = game;
+    var bitmap = this.game.bitmapCache.get(
+        SwitchLock.prototype.painter, this);
+    Phaser.Sprite.call(this, game, x, y, bitmap);
     this.anchor.setTo(0.5);
     this.alpha = 0;
 
@@ -129,3 +119,17 @@ SwitchLock.prototype.constructor = SwitchLock;
 // Constants.
 SwitchLock.R = 50;
 SwitchLock.TIME = 500; // ms
+
+
+// Paint our bitmap.
+SwitchLock.prototype.painter = function(bitmap) {
+    var r = SwitchLock.R;
+    var pad = 8;
+    Utils.resizeBitmap(bitmap, 2 * (r + pad), 2 * (r + pad));
+    var c = bitmap.context;
+    c.translate(pad, pad);
+    c.strokeStyle = this.game.settings.colors.WHITE.s;
+    c.lineWidth = pad;
+    c.arc(r, r, r, 0, 2 * Math.PI, false);
+    c.stroke();
+};

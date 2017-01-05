@@ -27,6 +27,14 @@ TitleMenuState.prototype.create = function() {
 
     this.cascader = new Cascader(this.game,
         this.z.fg, this.palette.c1.i);
+
+    this.game.input.onDown.add(function() {
+        if (this.game.scale.isFullScreen) {
+            this.game.scale.stopFullScreen();
+        } else {
+            this.game.scale.startFullScreen(false);
+        }
+    }, this);
 };
 
 // Update loop.

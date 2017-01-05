@@ -1,16 +1,9 @@
 // A horizontal flash.
 var HFlash = function(game) {
     this.game = game;
-    if (HFlash.CACHED_BITMAP == undefined) {
-        var d = HFlash.FLASH_DIMENSION;
-        var bitmap = this.game.add.bitmapData(d, d);
-        var c = bitmap.context;
-        c.fillStyle = HFlash.FLASH_COLOR;
-        c.beginPath();
-        c.fillRect(0, 0, d, d);
-        HFlash.CACHED_BITMAP = bitmap;
-    }
-    Phaser.Sprite.call(this, game, 0, 0, HFlash.CACHED_BITMAP);
+    var bitmap = this.game.bitmapCache.get(
+        HFlash.prototype.painter, this);
+    Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
 };
@@ -32,6 +25,16 @@ HFlash.FLASH_TOTAL = HFlash.FLASH_IN +
     HFlash.FLASH_HOLD +
     HFlash.FLASH_OUT;
 
+
+// Paint our bitmap.
+HFlash.prototype.painter = function(bitmap) {
+    var d = HFlash.FLASH_DIMENSION;
+    Utils.resizeBitmap(bitmap, d, d);
+    var c = bitmap.context;
+    c.fillStyle = HFlash.FLASH_COLOR;
+    c.beginPath();
+    c.fillRect(0, 0, d, d);
+};
 
 // Horizontal flash at our position.
 HFlash.prototype.flash = function(zgroup, x, y, rotation) {

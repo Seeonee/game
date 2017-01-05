@@ -1,22 +1,9 @@
 // Portal marker.
 var PGate = function(game, x, y, palette, direction) {
     this.game = game;
-    if (PGate.CACHED_BITMAP == undefined) {
-        var r = PGate.RADIUS;
-        // Leave some slack for the path width.
-        var factor = 3;
-        var bitmap = this.game.add.bitmapData(
-            factor * r, factor * r);
-        var c = bitmap.context;
-        c.strokeStyle = this.game.settings.colors.WHITE.s;
-        c.lineWidth = Tier.PATH_WIDTH;
-        c.beginPath();
-        c.arc(factor * r / 2, factor * r / 2,
-            r, 0, 2 * Math.PI, false);
-        c.stroke();
-        PGate.CACHED_BITMAP = bitmap;
-    }
-    Phaser.Sprite.call(this, game, x, y, PGate.CACHED_BITMAP);
+    var bitmap = this.game.bitmapCache.get(
+        PGate.prototype.painter, this);
+    Phaser.Sprite.call(this, game, x, y, bitmap);
     this.anchor.setTo(0.5);
     this.tint = palette.c1.i;
 
@@ -40,6 +27,21 @@ PGate.RADIUS = 35 / 2;
 PGate.DISABLED_TRIANGLE_ALPHA = 0.25;
 PGate.DISABLED_TRIANGLE_SCALE = 0.7;
 
+
+// Paint our bitmap.
+PGate.prototype.painter = function(bitmap) {
+    var r = PGate.RADIUS;
+    // Leave some slack for the path width.
+    var factor = 3;
+    Utils.resizeBitmap(bitmap, factor * r, factor * r);
+    var c = bitmap.context;
+    c.strokeStyle = this.game.settings.colors.WHITE.s;
+    c.lineWidth = Tier.PATH_WIDTH;
+    c.beginPath();
+    c.arc(factor * r / 2, factor * r / 2,
+        r, 0, 2 * Math.PI, false);
+    c.stroke();
+};
 
 // Set our colors.
 PGate.prototype.updatePalette = function(palette) {

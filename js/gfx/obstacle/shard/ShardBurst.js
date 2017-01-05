@@ -56,18 +56,9 @@ CloudShardBurst.prototype.burst = function(x, y, parent, tint) {
 // Small burst to indicate that we spent a shard.
 var ShardSpendBurst = function(game) {
     this.game = game;
-    if (ShardSpendBurst.CACHED_BITMAP == undefined) {
-        var r = ShardSpendBurst.RADIUS;
-        var bitmap = this.game.add.bitmapData(3 * r, 3 * r);
-        var c = bitmap.context;
-        c.strokeStyle = game.settings.colors.WHITE.s;
-        c.lineWidth = ShardSpendBurst.PATH_WIDTH;
-        c.beginPath();
-        c.arc(r * 1.5, r * 1.5, r, 0, 2 * Math.PI, false);
-        c.stroke();
-        ShardSpendBurst.CACHED_BITMAP = bitmap;
-    }
-    Phaser.Sprite.call(this, game, 0, 0, ShardSpendBurst.CACHED_BITMAP);
+    var bitmap = this.game.bitmapCache.get(
+        ShardSpendBurst.prototype.painter, this);
+    Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
 };
@@ -82,6 +73,18 @@ ShardSpendBurst.DURATION = 400; // ms
 ShardSpendBurst.SCALE1 = 0.1;
 ShardSpendBurst.SCALE2 = 1.25;
 
+
+// Paint our bitmap.
+ShardSpendBurst.prototype.painter = function(bitmap) {
+    var r = ShardSpendBurst.RADIUS;
+    Utils.resizeBitmap(bitmap, 3 * r, 3 * r);
+    var c = bitmap.context;
+    c.strokeStyle = game.settings.colors.WHITE.s;
+    c.lineWidth = ShardSpendBurst.PATH_WIDTH;
+    c.beginPath();
+    c.arc(r * 1.5, r * 1.5, r, 0, 2 * Math.PI, false);
+    c.stroke();
+};
 
 // Shard-spent flash.
 ShardSpendBurst.prototype.burst = function(x, y, parent) {

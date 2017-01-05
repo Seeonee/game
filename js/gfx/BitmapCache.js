@@ -8,14 +8,14 @@ var BitmapCache = function(game) {
 
 
 // Add an object to the cache.
-BitmapCache.prototype.get = function(key, painter, context,
+BitmapCache.prototype.get = function(painter, context,
     redrawOnResize) {
-    if (this.cache[key]) {
-        return this.cache[key].bitmap;
+    if (this.cache[painter]) {
+        return this.cache[painter].bitmap;
     }
     var cbm = new BitmapCache.CachedBitmap(this.game,
-        key, painter, context, redrawOnResize);
-    this.cache[key] = cbm;
+        painter, context, redrawOnResize);
+    this.cache[painter] = cbm;
     return cbm.bitmap;
 };
 
@@ -36,9 +36,8 @@ BitmapCache.prototype.gameResized = function() {
 
 
 // A cached object.
-BitmapCache.CachedBitmap = function(game, key, painter, context,
+BitmapCache.CachedBitmap = function(game, painter, context,
     redrawOnResize) {
-    this.key = key;
     this.painter = painter;
     this.context = context;
     this.redrawOnResize = redrawOnResize;

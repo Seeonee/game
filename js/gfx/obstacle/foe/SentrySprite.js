@@ -11,36 +11,15 @@ var SentrySprite = function(game, x, y, palette) {
     this.feet = this.addChild(this.game.add.sprite(0, y, 'foe_sentry', 2));
     this.feet.anchor.setTo(0.5);
 
-    if (SentrySprite.CACHED_BITMAP == undefined) {
-        var r = Sentry.TRAP_RADIUS;
-        var lw = SentrySprite.LINE_WIDTH;
-        var d = 2 * (r + lw);
-        var bitmap = this.game.add.bitmapData(d, d);
-        var c = bitmap.context;
-        c.strokeStyle = '#ffffff';
-        c.lineWidth = lw;
-        c.arc(d / 2, d / 2, r, 0, 2 * Math.PI, false);
-        c.stroke();
-        SentrySprite.CACHED_BITMAP = bitmap;
-    }
-    this.ring = this.addChild(this.game.add.sprite(0, 0,
-        SentrySprite.CACHED_BITMAP));
+    var bitmap = this.game.bitmapCache.get(
+        SentrySprite.prototype.painterRing, this);
+    this.ring = this.addChild(this.game.add.sprite(0, 0, bitmap));
     this.ring.anchor.setTo(0.5);
     this.ring.alpha = SentrySprite.IDLE_ALPHA;
 
-    if (SentrySprite.CACHED_BITMAP2 == undefined) {
-        var r = Sentry.TRAP_RADIUS;
-        var lw = SentrySprite.LINE_WIDTH;
-        var d = 2 * (r + lw);
-        var bitmap = this.game.add.bitmapData(d, d);
-        var c = bitmap.context;
-        c.fillStyle = '#ffffff';
-        c.arc(d / 2, d / 2, r, 0, 2 * Math.PI, false);
-        c.fill();
-        SentrySprite.CACHED_BITMAP2 = bitmap;
-    }
-    this.burst = this.addChild(this.game.add.sprite(0, 0,
-        SentrySprite.CACHED_BITMAP2));
+    var bitmap = this.game.bitmapCache.get(
+        SentrySprite.prototype.painterBurst, this);
+    this.burst = this.addChild(this.game.add.sprite(0, 0, bitmap));
     this.burst.anchor.setTo(0.5);
     this.burst.alpha = 0;
 
@@ -56,6 +35,31 @@ SentrySprite.LINE_WIDTH = 2;
 SentrySprite.IDLE_ALPHA = 0;
 SentrySprite.EXPAND_TIME = 50; // ms
 
+
+// Paint our bitmap.
+SentrySprite.prototype.painterRing = function(bitmap) {
+    var r = Sentry.TRAP_RADIUS;
+    var lw = SentrySprite.LINE_WIDTH;
+    var d = 2 * (r + lw);
+    Utils.resizeBitmap(bitmap, d, d);
+    var c = bitmap.context;
+    c.strokeStyle = '#ffffff';
+    c.lineWidth = lw;
+    c.arc(d / 2, d / 2, r, 0, 2 * Math.PI, false);
+    c.stroke();
+};
+
+// Paint our bitmap.
+SentrySprite.prototype.painterBurst = function(bitmap) {
+    var r = Sentry.TRAP_RADIUS;
+    var lw = SentrySprite.LINE_WIDTH;
+    var d = 2 * (r + lw);
+    Utils.resizeBitmap(bitmap, d, d);
+    var c = bitmap.context;
+    c.fillStyle = '#ffffff';
+    c.arc(d / 2, d / 2, r, 0, 2 * Math.PI, false);
+    c.fill();
+};
 
 // Update colors.
 SentrySprite.prototype.setPalette = function(palette) {

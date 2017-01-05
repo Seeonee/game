@@ -3,28 +3,9 @@ var TextBanner = function(game, x, y) {
     this.game = game;
     x = x != undefined ? x : (this.game.camera.width / 2);
     y = y != undefined ? y : (this.game.camera.height / 3);
-    if (TextBanner.CACHED_BITMAP == undefined) {
-        var w = TextBanner.WIDTH != undefined ?
-            TextBanner.WIDTH : this.game.camera.width;
-        var h = TextBanner.HEIGHT;
-
-        // Initialize the banner.
-        var bitmap = this.game.add.bitmapData(w, h);
-        c = bitmap.context;
-        var gradient = c.createLinearGradient(0, 0, w, h);
-        var colorEdge = this.game.settings.colors.BLACK.rgba(0);
-        var colorMid = this.game.settings.colors.BLACK.rgba(
-            TextBanner.BANNER_ALPHA);
-        var e = TextBanner.BANNER_EDGE_RATIO;
-        gradient.addColorStop(0, colorEdge);
-        gradient.addColorStop(e, colorMid);
-        gradient.addColorStop(1 - e, colorMid);
-        gradient.addColorStop(1, colorEdge);
-        c.fillStyle = gradient;
-        c.fillRect(0, 0, w, h);
-        TextBanner.CACHED_BITMAP = bitmap;
-    }
-    Phaser.Sprite.call(this, game, 0, 0, TextBanner.CACHED_BITMAP);
+    var bitmap = this.game.bitmapCache.get(
+        TextBanner.prototype.painter, this);
+    Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5);
     this.alpha = 0;
     this.visible = false;
@@ -56,6 +37,28 @@ TextBanner.FADE_IN_TIME = 1000; // ms
 TextBanner.DURATION = 2000; // ms
 TextBanner.FADE_OUT_TIME = 1000; // ms
 
+
+// Paint our bitmap.
+TextBanner.prototype.painter = function(bitmap) {
+    var w = TextBanner.WIDTH != undefined ?
+        TextBanner.WIDTH : this.game.camera.width;
+    var h = TextBanner.HEIGHT;
+
+    // Initialize the banner.
+    Utils.resizeBitmap(bitmap, w, h);
+    c = bitmap.context;
+    var gradient = c.createLinearGradient(0, 0, w, h);
+    var colorEdge = this.game.settings.colors.BLACK.rgba(0);
+    var colorMid = this.game.settings.colors.BLACK.rgba(
+        TextBanner.BANNER_ALPHA);
+    var e = TextBanner.BANNER_EDGE_RATIO;
+    gradient.addColorStop(0, colorEdge);
+    gradient.addColorStop(e, colorMid);
+    gradient.addColorStop(1 - e, colorMid);
+    gradient.addColorStop(1, colorEdge);
+    c.fillStyle = gradient;
+    c.fillRect(0, 0, w, h);
+};
 
 // Throw the banner up for a bit, then fade out and die.
 TextBanner.prototype.splash = function(text, zgroup) {

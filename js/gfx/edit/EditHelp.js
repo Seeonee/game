@@ -14,14 +14,11 @@ var EditHelp = function(game, level) {
     this.avatar.addChild(this);
     this.avatar.help = this;
 
-    if (EditHelp.CACHED_BITMAP == undefined) {
-        var d = EditHelp.CURTAIN_D;
-        var bitmap = this.game.add.bitmapData(d, d);
-        bitmap.context.fillRect(0, 0, d, d);
-        EditHelp.CACHED_BITMAP = bitmap;
-    }
-    this.curtain = this.addChild(this.game.add.sprite(-EditHelp.CURTAIN_PAD, -EditHelp.CURTAIN_PAD,
-        EditHelp.CACHED_BITMAP));
+    var bitmap = this.game.bitmapCache.get(
+        EditHelp.prototype.painter, this);
+    this.curtain = this.addChild(
+        this.game.add.sprite(-EditHelp.CURTAIN_PAD, -EditHelp.CURTAIN_PAD,
+            bitmap));
     this.curtain.alpha = 0.75;
 
     this.main = this.addChild(this.game.add.text(
@@ -53,6 +50,13 @@ EditHelp.SUB_Y_OFFSET = 34;
 EditHelp.SUB_FONT_DELTA = -8;
 EditHelp.DEFAULT_HOLD = 1000;
 
+
+// Paint our bitmap.
+EditHelp.prototype.painter = function(bitmap) {
+    var d = EditHelp.CURTAIN_D;
+    Utils.resizeBitmap(bitmap, d, d);
+    bitmap.context.fillRect(0, 0, d, d);
+};
 
 // Change the current tier.
 EditHelp.prototype.setTier = function(tier, old) {

@@ -1,29 +1,17 @@
 // A door that requires a key to pass through.
 var DoorSprite = function(game, x, y, name, palette) {
     this.game = game;
-    if (DoorSprite.CACHED_BITMAP1 == undefined) {
-        var d = DoorSprite.D;
-        var bitmap = this.game.add.bitmapData(d, d);
-        var c = bitmap.context;
-        c.fillStyle = this.game.settings.colors.WHITE.s;
-        c.fillRect(0, 0, d, d);
-        DoorSprite.CACHED_BITMAP1 = bitmap;
-    }
-    Phaser.Sprite.call(this, game, x, y, DoorSprite.CACHED_BITMAP1);
+    var bitmap = this.game.bitmapCache.get(
+        DoorSprite.prototype.painterOuter, this);
+    Phaser.Sprite.call(this, game, x, y, bitmap);
     this.anchor.setTo(0.5);
     this.rotation = Math.PI / 4;
 
     // More decals.
-    if (DoorSprite.CACHED_BITMAP2 == undefined) {
-        var d = DoorSprite.D2;
-        var bitmap = this.game.add.bitmapData(d, d);
-        var c = bitmap.context;
-        c.fillStyle = this.game.settings.colors.WHITE.s;
-        c.fillRect(0, 0, d, d);
-        DoorSprite.CACHED_BITMAP2 = bitmap;
-    }
+    var bitmap = this.game.bitmapCache.get(
+        DoorSprite.prototype.painterInner, this);
     this.inner = this.addChild(this.game.add.sprite(
-        0, 0, DoorSprite.CACHED_BITMAP2));
+        0, 0, bitmap));
     this.inner.anchor.setTo(0.5);
 
     // And our icon!
@@ -45,6 +33,24 @@ DoorSprite.D2 = 24;
 DoorSprite.UNLOCK_TIME = 500; // ms
 DoorSprite.UNLOCK_SCALE = 2;
 
+
+// Paint our bitmap.
+DoorSprite.prototype.painterOuter = function(bitmap) {
+    var d = DoorSprite.D;
+    Utils.resizeBitmap(bitmap, d, d);
+    var c = bitmap.context;
+    c.fillStyle = this.game.settings.colors.WHITE.s;
+    c.fillRect(0, 0, d, d);
+};
+
+// Paint our bitmap.
+DoorSprite.prototype.painterInner = function(bitmap) {
+    var d = DoorSprite.D2;
+    Utils.resizeBitmap(bitmap, d, d);
+    var c = bitmap.context;
+    c.fillStyle = this.game.settings.colors.WHITE.s;
+    c.fillRect(0, 0, d, d);
+};
 
 // Update colors.
 DoorSprite.prototype.setPalette = function(palette) {

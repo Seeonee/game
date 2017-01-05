@@ -1,22 +1,9 @@
 // Falling squares for the (T)itle menu screen.
 var TSquare = function(game) {
     this.game = game;
-    if (TSquare.CACHED_BITMAP == undefined) {
-        var d = TSquare.D;
-        var h = d * Math.sqrt(3 / 4);
-        var bitmap = this.game.add.bitmapData(d, d);
-        var c = bitmap.context;
-        c.fillStyle = this.game.settings.colors.WHITE.s;
-        c.beginPath();
-        c.moveTo(0, h);
-        c.lineTo(d / 2, 0);
-        c.lineTo(d, h);
-        c.closePath();
-        c.fill();
-        // c.fillRect(0, 0, d, d);
-        TSquare.CACHED_BITMAP = bitmap;
-    }
-    Phaser.Sprite.call(this, game, 0, 0, TSquare.CACHED_BITMAP);
+    var bitmap = this.game.bitmapCache.get(
+        TSquare.prototype.painter, this);
+    Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
 
@@ -46,6 +33,22 @@ TSquare.MIN_SCALE = 0.1;
 TSquare.ROTATION = 0.6 * Math.PI; // 3 * Math.PI;
 TSquare.CASCADE_UP = true;
 
+
+// Paint our bitmap.
+TSquare.prototype.painter = function(bitmap) {
+    var d = TSquare.D;
+    var h = d * Math.sqrt(3 / 4);
+    Utils.resizeBitmap(bitmap, d, d);
+    var c = bitmap.context;
+    c.fillStyle = this.game.settings.colors.WHITE.s;
+    c.beginPath();
+    c.moveTo(0, h);
+    c.lineTo(d / 2, 0);
+    c.lineTo(d, h);
+    c.closePath();
+    c.fill();
+    // c.fillRect(0, 0, d, d);
+};
 
 // Let the square trickle up.
 TSquare.prototype.cascade = function(zgroup, tint) {

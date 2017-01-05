@@ -8,22 +8,15 @@ var ETraveller = function(game, x, y, palette) {
     this.events.onPortalOpen = new Phaser.Signal();
     this.events.onPortalClosed = new Phaser.Signal();
 
-    if (ETraveller.CACHED_BITMAP == undefined) {
-        var r = ETraveller.RADIUS;
-        var bitmap = this.game.add.bitmapData(2 * r, 2 * r);
-        var c = bitmap.context;
-        c.fillStyle = this.game.settings.colors.WHITE.s;
-        c.arc(r, r, r, 0, Math.PI * 2, false);
-        c.fill();
-        ETraveller.CACHED_BITMAP = bitmap;
-    }
-    this.corona = this.game.add.sprite(0, 0, ETraveller.CACHED_BITMAP);
+    var bitmap = this.game.bitmapCache.get(
+        ETraveller.prototype.painter, this);
+    this.corona = this.game.add.sprite(0, 0, bitmap);
     this.addChild(this.corona);
     this.corona.anchor.setTo(0.5);
     this.corona.tint = palette.c2.i;
     this.corona.scale.setTo(ETraveller.CORONA_SCALE1);
 
-    this.core = this.game.add.sprite(0, 0, ETraveller.CACHED_BITMAP);
+    this.core = this.game.add.sprite(0, 0, bitmap);
     this.addChild(this.core);
     this.core.anchor.setTo(0.5);
     this.core.scale.setTo(ETraveller.CORE_SCALE1);
@@ -97,3 +90,14 @@ ETraveller.FADE_OUT_DELAY =
     ETraveller.CORONA_OUT_TIME -
     ETraveller.FADE_IN_TIME -
     ETraveller.FADE_OUT_TIME; // ms
+
+
+// Paint our bitmap.
+ETraveller.prototype.painter = function(bitmap) {
+    var r = ETraveller.RADIUS;
+    Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
+    var c = bitmap.context;
+    c.fillStyle = this.game.settings.colors.WHITE.s;
+    c.arc(r, r, r, 0, Math.PI * 2, false);
+    c.fill();
+};

@@ -136,24 +136,26 @@ TierMeter.prototype.createSelf = function() {
 
     // This is for our active power.
     this.powers = {};
-    if (TierMeter.CACHED_BITMAP == undefined) {
-        var r = TierMeter.PCIRCLE_RADIUS;
-        var lw = TierMeter.PCIRCLE_THICKNESS;
-        var d = 2 * (r + lw);
-        var bitmap = this.game.add.bitmapData(d, d);
-        var c = bitmap.context;
-        c.strokeStyle = '#ffffff';
-        c.lineWidth = lw;
-        c.arc(d / 2, d / 2, r, 0, 2 * Math.PI, false);
-        c.stroke();
-        TierMeter.CACHED_BITMAP = bitmap;
-    }
+    var bitmap = this.game.bitmapCache.get(
+        TierMeter.prototype.painter, this);
     this.pcircle = this.game.add.sprite(
-        TierMeter.POWER_X, TierMeter.POWER_Y,
-        TierMeter.CACHED_BITMAP);
+        TierMeter.POWER_X, TierMeter.POWER_Y, bitmap);
     this.addChild(this.pcircle);
     this.pcircle.anchor.setTo(0.5);
     this.pcircle.alpha = 2 * TierMeter.BORDER_ALPHA;
+};
+
+// Paint our bitmap.
+TierMeter.prototype.painter = function(bitmap) {
+    var r = TierMeter.PCIRCLE_RADIUS;
+    var lw = TierMeter.PCIRCLE_THICKNESS;
+    var d = 2 * (r + lw);
+    Utils.resizeBitmap(bitmap, d, d);
+    var c = bitmap.context;
+    c.strokeStyle = '#ffffff';
+    c.lineWidth = lw;
+    c.arc(d / 2, d / 2, r, 0, 2 * Math.PI, false);
+    c.stroke();
 };
 
 // Clear and redraw ourself.
