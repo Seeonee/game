@@ -2,6 +2,8 @@
 var BitmapCache = function(game) {
     this.game = game;
     this.cache = {};
+    this.game.scale.onFullScreenChange.add(this.gameResized, this);
+    this.game.scale.onSizeChange.add(this.gameResized, this);
 };
 
 
