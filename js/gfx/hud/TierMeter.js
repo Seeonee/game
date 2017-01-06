@@ -137,7 +137,7 @@ TierMeter.prototype.createSelf = function() {
     // This is for our active power.
     this.powers = {};
     var bitmap = this.game.bitmapCache.get(
-        TierMeter.prototype.painter, this);
+        TierMeter.painter);
     this.pcircle = this.game.add.sprite(
         TierMeter.POWER_X, TierMeter.POWER_Y, bitmap);
     this.addChild(this.pcircle);
@@ -146,7 +146,7 @@ TierMeter.prototype.createSelf = function() {
 };
 
 // Paint our bitmap.
-TierMeter.prototype.painter = function(bitmap) {
+TierMeter.painter = function(bitmap) {
     var r = TierMeter.PCIRCLE_RADIUS;
     var lw = TierMeter.PCIRCLE_THICKNESS;
     var d = 2 * (r + lw);

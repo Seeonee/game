@@ -57,7 +57,7 @@ CloudShardBurst.prototype.burst = function(x, y, parent, tint) {
 var ShardSpendBurst = function(game) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        ShardSpendBurst.prototype.painter, this);
+        ShardSpendBurst.painter);
     Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
@@ -75,7 +75,7 @@ ShardSpendBurst.SCALE2 = 1.25;
 
 
 // Paint our bitmap.
-ShardSpendBurst.prototype.painter = function(bitmap) {
+ShardSpendBurst.painter = function(bitmap) {
     var r = ShardSpendBurst.RADIUS;
     Utils.resizeBitmap(bitmap, 3 * r, 3 * r);
     var c = bitmap.context;

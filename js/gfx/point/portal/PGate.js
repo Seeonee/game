@@ -2,7 +2,7 @@
 var PGate = function(game, x, y, palette, direction) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        PGate.prototype.painter, this);
+        PGate.painter);
     Phaser.Sprite.call(this, game, x, y, bitmap);
     this.anchor.setTo(0.5);
     this.tint = palette.c1.i;
@@ -29,7 +29,7 @@ PGate.DISABLED_TRIANGLE_SCALE = 0.7;
 
 
 // Paint our bitmap.
-PGate.prototype.painter = function(bitmap) {
+PGate.painter = function(bitmap) {
     var r = PGate.RADIUS;
     // Leave some slack for the path width.
     var factor = 3;

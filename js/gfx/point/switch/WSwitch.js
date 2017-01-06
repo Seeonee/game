@@ -96,7 +96,7 @@ WSwitch.prototype.fadingOut = function() {
 var SwitchLock = function(game, x, y) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        SwitchLock.prototype.painter, this);
+        SwitchLock.painter);
     Phaser.Sprite.call(this, game, x, y, bitmap);
     this.anchor.setTo(0.5);
     this.alpha = 0;
@@ -122,7 +122,7 @@ SwitchLock.TIME = 500; // ms
 
 
 // Paint our bitmap.
-SwitchLock.prototype.painter = function(bitmap) {
+SwitchLock.painter = function(bitmap) {
     var r = SwitchLock.R;
     var pad = 8;
     Utils.resizeBitmap(bitmap, 2 * (r + pad), 2 * (r + pad));

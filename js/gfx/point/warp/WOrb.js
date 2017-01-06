@@ -2,7 +2,7 @@
 var WOrb = function(game) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        WOrb.prototype.painter, this);
+        WOrb.painter);
     Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5);
     this.visible = false;
@@ -23,7 +23,7 @@ WOrb.SCALE_TIME = 450; // ms
 
 
 // Paint our bitmap.
-WOrb.prototype.painter = function(bitmap) {
+WOrb.painter = function(bitmap) {
     var r = WOrb.R1;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
     var c = bitmap.context;

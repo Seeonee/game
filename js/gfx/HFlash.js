@@ -2,7 +2,7 @@
 var HFlash = function(game) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        HFlash.prototype.painter, this);
+        HFlash.painter);
     Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
@@ -27,7 +27,7 @@ HFlash.FLASH_TOTAL = HFlash.FLASH_IN +
 
 
 // Paint our bitmap.
-HFlash.prototype.painter = function(bitmap) {
+HFlash.painter = function(bitmap) {
     var d = HFlash.FLASH_DIMENSION;
     Utils.resizeBitmap(bitmap, d, d);
     var c = bitmap.context;

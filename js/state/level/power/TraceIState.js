@@ -5,7 +5,7 @@ var TraceIState = function(handler, level) {
     this.avatar = level.avatar;
 
     var bitmap = this.game.bitmapCache.get(
-        TraceIState.prototype.painter, this);
+        TraceIState.painter);
     this.orb = this.game.add.sprite(0, 0, bitmap);
     this.orb.anchor.setTo(0.5);
     this.orb.visible = false;
@@ -21,7 +21,7 @@ TraceIState.RECALL_TIME = 500; // ms
 
 
 // Paint our bitmap.
-TraceIState.prototype.painter = function(bitmap) {
+TraceIState.painter = function(bitmap) {
     var r = TraceIState.RADIUS;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
     var c = bitmap.context;

@@ -39,7 +39,7 @@ CarriedItemSprite.PICKUP_TIME = 700; // ms
 // Create the image(s) to use.
 CarriedItemSprite.prototype.createImage = function(name) {
     var bitmap = this.game.bitmapCache.get(
-        CarriedItemSprite.prototype.painter, this);
+        CarriedItemSprite.painter);
     this.corona = this.game.add.sprite(0, 0, bitmap);
     this.corona.anchor.setTo(0.5);
     this.corona.y -= CarriedItemSprite.HOVER_HEIGHT;
@@ -53,7 +53,7 @@ CarriedItemSprite.prototype.createImage = function(name) {
 };
 
 // Paint our bitmap.
-CarriedItemSprite.prototype.painter = function(bitmap) {
+CarriedItemSprite.painter = function(bitmap) {
     var r = 15;
     var pad = 3;
     Utils.resizeBitmap(bitmap, 2 * (r + pad), 2 * (r + pad));

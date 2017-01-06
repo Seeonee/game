@@ -2,7 +2,7 @@
 var WSocket = function(game, x, y, palette) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        WSocket.prototype.painter, this);
+        WSocket.painter);
     Phaser.Sprite.call(this, game, x, y, bitmap);
     this.tint = palette.c1.i;
     this.anchor.setTo(0.5, 0.5);
@@ -16,7 +16,7 @@ WSocket.RING_RADIUS = 20;
 
 
 // Paint our bitmap.
-WSocket.prototype.painter = function(bitmap) {
+WSocket.painter = function(bitmap) {
     // Container ring.
     var r = WSocket.RING_RADIUS;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
@@ -44,7 +44,7 @@ WSocket.prototype.updatePalette = function(palette) {
 var WEmber = function(game) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        WEmber.prototype.painter, this);
+        WEmber.painter);
     Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5, 0.5);
 
@@ -62,7 +62,7 @@ WEmber.DISABLED_ALPHA = 0; // 0.25;
 
 
 // Paint our bitmap.
-WEmber.prototype.painter = function(bitmap) {
+WEmber.painter = function(bitmap) {
     var r = WEmber.EMBER_RADIUS;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
     c = bitmap.context;

@@ -13,7 +13,7 @@ var ShardSprite = function(game, x, y, palette) {
     this.gobetween.anchor.setTo(0.5);
 
     var bitmap = this.game.bitmapCache.get(
-        ShardSprite.prototype.painter, this);
+        ShardSprite.painter);
     this.glow = this.gobetween.addChild(
         this.game.add.sprite(0, 0, bitmap));
     this.glow.scale.setTo(1 / ShardSprite.FIX);
@@ -59,7 +59,7 @@ ShardSprite.BURST_DURATION = 500;
 
 
 // Paint our bitmap.
-ShardSprite.prototype.painter = function(bitmap) {
+ShardSprite.painter = function(bitmap) {
     var r = ShardSprite.RADIUS;
     r *= ShardSprite.FIX;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);

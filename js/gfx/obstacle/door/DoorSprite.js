@@ -2,14 +2,14 @@
 var DoorSprite = function(game, x, y, name, palette) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        DoorSprite.prototype.painterOuter, this);
+        DoorSprite.painterOuter);
     Phaser.Sprite.call(this, game, x, y, bitmap);
     this.anchor.setTo(0.5);
     this.rotation = Math.PI / 4;
 
     // More decals.
     var bitmap = this.game.bitmapCache.get(
-        DoorSprite.prototype.painterInner, this);
+        DoorSprite.painterInner);
     this.inner = this.addChild(this.game.add.sprite(
         0, 0, bitmap));
     this.inner.anchor.setTo(0.5);
@@ -35,7 +35,7 @@ DoorSprite.UNLOCK_SCALE = 2;
 
 
 // Paint our bitmap.
-DoorSprite.prototype.painterOuter = function(bitmap) {
+DoorSprite.painterOuter = function(bitmap) {
     var d = DoorSprite.D;
     Utils.resizeBitmap(bitmap, d, d);
     var c = bitmap.context;
@@ -44,7 +44,7 @@ DoorSprite.prototype.painterOuter = function(bitmap) {
 };
 
 // Paint our bitmap.
-DoorSprite.prototype.painterInner = function(bitmap) {
+DoorSprite.painterInner = function(bitmap) {
     var d = DoorSprite.D2;
     Utils.resizeBitmap(bitmap, d, d);
     var c = bitmap.context;

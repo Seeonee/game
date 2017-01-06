@@ -2,7 +2,7 @@
 var PNub = function(game, x, y, tint) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        PNub.prototype.painter, this);
+        PNub.painter);
     Phaser.Sprite.call(this, game, x, y, bitmap);
     this.anchor.setTo(0.5, 0.5);
     this.tint = tint;
@@ -16,7 +16,7 @@ PNub.RADIUS = Tier.PATH_WIDTH;
 
 
 // Paint our bitmap.
-PNub.prototype.painter = function(bitmap) {
+PNub.painter = function(bitmap) {
     var r = PNub.RADIUS;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
     var c = bitmap.context;

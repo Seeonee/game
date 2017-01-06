@@ -15,7 +15,7 @@ var EditHelp = function(game, level) {
     this.avatar.help = this;
 
     var bitmap = this.game.bitmapCache.get(
-        EditHelp.prototype.painter, this);
+        EditHelp.painter);
     this.curtain = this.addChild(
         this.game.add.sprite(-EditHelp.CURTAIN_PAD, -EditHelp.CURTAIN_PAD,
             bitmap));
@@ -52,7 +52,7 @@ EditHelp.DEFAULT_HOLD = 1000;
 
 
 // Paint our bitmap.
-EditHelp.prototype.painter = function(bitmap) {
+EditHelp.painter = function(bitmap) {
     var d = EditHelp.CURTAIN_D;
     Utils.resizeBitmap(bitmap, d, d);
     bitmap.context.fillRect(0, 0, d, d);

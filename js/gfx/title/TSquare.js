@@ -2,7 +2,7 @@
 var TSquare = function(game) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        TSquare.prototype.painter, this, true);
+        TSquare.painter, true);
     Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
@@ -23,7 +23,7 @@ TSquare.CASCADE_UP = true;
 
 
 // Paint our bitmap.
-TSquare.prototype.painter = function(bitmap) {
+TSquare.painter = function(bitmap) {
     var d = TSquare.D;
     var h = d * Math.sqrt(3 / 4);
     Utils.resizeBitmap(bitmap, d, d);

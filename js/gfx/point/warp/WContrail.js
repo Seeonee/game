@@ -2,7 +2,7 @@
 var WContrail = function(game, angle) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        WContrail.prototype.painter, this);
+        WContrail.painter);
     Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0, 0.5);
     this.alpha = 0;
@@ -22,7 +22,7 @@ WContrail.FLICKER_TIME = 700; // ms
 
 
 // Paint our bitmap.
-WContrail.prototype.painter = function(bitmap) {
+WContrail.painter = function(bitmap) {
     // Set up a bunch of values we'll need.
     var r = WContrail.W1;
     var w = WContrail.LENGTH;

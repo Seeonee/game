@@ -2,7 +2,7 @@
 var PortalFlash = function(game) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        PortalFlash.prototype.painter, this);
+        PortalFlash.painter);
     Phaser.Sprite.call(this, game, 0, 0, PortalFlash.CACHED_BITMAP);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
@@ -20,7 +20,7 @@ PortalFlash.ROTATION = 1.5 * Math.PI;
 
 
 // Paint our bitmap.
-PortalFlash.prototype.painter = function(bitmap) {
+PortalFlash.painter = function(bitmap) {
     var r = PortalFlash.RADIUS;
     r *= PortalFlash.SCALE;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);

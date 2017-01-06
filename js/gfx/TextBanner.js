@@ -2,7 +2,7 @@
 var TextBanner = function(game) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        TextBanner.prototype.painter, this, true);
+        TextBanner.painter, true);
     Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5);
     this.alpha = 0;
@@ -36,7 +36,7 @@ TextBanner.FADE_OUT_TIME = 1000; // ms
 
 
 // Paint our bitmap.
-TextBanner.prototype.painter = function(bitmap) {
+TextBanner.painter = function(bitmap) {
     var w = TextBanner.WIDTH != undefined ?
         TextBanner.WIDTH : bitmap.game.camera.width;
     var h = TextBanner.HEIGHT;

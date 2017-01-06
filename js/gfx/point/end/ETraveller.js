@@ -9,7 +9,7 @@ var ETraveller = function(game, x, y, palette) {
     this.events.onPortalClosed = new Phaser.Signal();
 
     var bitmap = this.game.bitmapCache.get(
-        ETraveller.prototype.painter, this);
+        ETraveller.painter);
     this.corona = this.game.add.sprite(0, 0, bitmap);
     this.addChild(this.corona);
     this.corona.anchor.setTo(0.5);
@@ -93,7 +93,7 @@ ETraveller.FADE_OUT_DELAY =
 
 
 // Paint our bitmap.
-ETraveller.prototype.painter = function(bitmap) {
+ETraveller.painter = function(bitmap) {
     var r = ETraveller.RADIUS;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
     var c = bitmap.context;
