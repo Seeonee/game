@@ -64,7 +64,7 @@ ShardSprite.prototype.painter = function(bitmap) {
     r *= ShardSprite.FIX;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
     var c = bitmap.context;
-    c.fillStyle = game.settings.colors.WHITE.s;
+    c.fillStyle = bitmap.game.settings.colors.WHITE.s;
     c.arc(r, r, r, 0, 2 * Math.PI, false);
     c.fill();
 };

@@ -31,8 +31,8 @@ WContrail.prototype.painter = function(bitmap) {
     var maxh = Math.max(h, h2);
     var dy = (maxh - h) / 2;
     var dh = (maxh - h2) / 2;
-    var color1 = this.game.settings.colors.WHITE.s;
-    var color2 = this.game.settings.colors.WHITE.rgba(0);
+    var color1 = bitmap.game.settings.colors.WHITE.s;
+    var color2 = bitmap.game.settings.colors.WHITE.rgba(0);
 
     Utils.resizeBitmap(bitmap, w, maxh);
     c = bitmap.context;

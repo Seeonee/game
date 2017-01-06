@@ -38,15 +38,15 @@ TextBanner.FADE_OUT_TIME = 1000; // ms
 // Paint our bitmap.
 TextBanner.prototype.painter = function(bitmap) {
     var w = TextBanner.WIDTH != undefined ?
-        TextBanner.WIDTH : this.game.camera.width;
+        TextBanner.WIDTH : bitmap.game.camera.width;
     var h = TextBanner.HEIGHT;
 
     // Initialize the banner.
     Utils.resizeBitmap(bitmap, w, h);
     c = bitmap.context;
     var gradient = c.createLinearGradient(0, 0, w, h);
-    var colorEdge = this.game.settings.colors.BLACK.rgba(0);
-    var colorMid = this.game.settings.colors.BLACK.rgba(
+    var colorEdge = bitmap.game.settings.colors.BLACK.rgba(0);
+    var colorMid = bitmap.game.settings.colors.BLACK.rgba(
         TextBanner.BANNER_ALPHA);
     var e = TextBanner.BANNER_EDGE_RATIO;
     gradient.addColorStop(0, colorEdge);

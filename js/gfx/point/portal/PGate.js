@@ -35,7 +35,7 @@ PGate.prototype.painter = function(bitmap) {
     var factor = 3;
     Utils.resizeBitmap(bitmap, factor * r, factor * r);
     var c = bitmap.context;
-    c.strokeStyle = this.game.settings.colors.WHITE.s;
+    c.strokeStyle = bitmap.game.settings.colors.WHITE.s;
     c.lineWidth = Tier.PATH_WIDTH;
     c.beginPath();
     c.arc(factor * r / 2, factor * r / 2,

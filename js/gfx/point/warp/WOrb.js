@@ -27,7 +27,7 @@ WOrb.prototype.painter = function(bitmap) {
     var r = WOrb.R1;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
     var c = bitmap.context;
-    c.fillStyle = this.game.settings.colors.WHITE.s;
+    c.fillStyle = bitmap.game.settings.colors.WHITE.s;
     c.arc(r, r, r, 0, Math.PI * 2, false);
     c.fill();
 };

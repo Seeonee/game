@@ -79,7 +79,7 @@ ShardSpendBurst.prototype.painter = function(bitmap) {
     var r = ShardSpendBurst.RADIUS;
     Utils.resizeBitmap(bitmap, 3 * r, 3 * r);
     var c = bitmap.context;
-    c.strokeStyle = game.settings.colors.WHITE.s;
+    c.strokeStyle = bitmap.game.settings.colors.WHITE.s;
     c.lineWidth = ShardSpendBurst.PATH_WIDTH;
     c.beginPath();
     c.arc(r * 1.5, r * 1.5, r, 0, 2 * Math.PI, false);

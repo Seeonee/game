@@ -39,7 +39,7 @@ DoorSprite.prototype.painterOuter = function(bitmap) {
     var d = DoorSprite.D;
     Utils.resizeBitmap(bitmap, d, d);
     var c = bitmap.context;
-    c.fillStyle = this.game.settings.colors.WHITE.s;
+    c.fillStyle = bitmap.game.settings.colors.WHITE.s;
     c.fillRect(0, 0, d, d);
 };
 
@@ -48,7 +48,7 @@ DoorSprite.prototype.painterInner = function(bitmap) {
     var d = DoorSprite.D2;
     Utils.resizeBitmap(bitmap, d, d);
     var c = bitmap.context;
-    c.fillStyle = this.game.settings.colors.WHITE.s;
+    c.fillStyle = bitmap.game.settings.colors.WHITE.s;
     c.fillRect(0, 0, d, d);
 };
 

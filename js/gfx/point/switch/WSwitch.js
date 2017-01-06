@@ -128,7 +128,7 @@ SwitchLock.prototype.painter = function(bitmap) {
     Utils.resizeBitmap(bitmap, 2 * (r + pad), 2 * (r + pad));
     var c = bitmap.context;
     c.translate(pad, pad);
-    c.strokeStyle = this.game.settings.colors.WHITE.s;
+    c.strokeStyle = bitmap.game.settings.colors.WHITE.s;
     c.lineWidth = pad;
     c.arc(r, r, r, 0, 2 * Math.PI, false);
     c.stroke();

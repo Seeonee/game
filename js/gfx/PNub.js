@@ -20,7 +20,7 @@ PNub.prototype.painter = function(bitmap) {
     var r = PNub.RADIUS;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
     var c = bitmap.context;
-    c.fillStyle = game.settings.colors.WHITE.s;
+    c.fillStyle = bitmap.game.settings.colors.WHITE.s;
     c.beginPath();
     c.arc(r, r, r, 0, 2 * Math.PI, false);
     c.fill();

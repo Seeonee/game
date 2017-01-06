@@ -21,7 +21,7 @@ WSocket.prototype.painter = function(bitmap) {
     var r = WSocket.RING_RADIUS;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
     var c = bitmap.context;
-    c.strokeStyle = this.game.settings.colors.WHITE.s;
+    c.strokeStyle = bitmap.game.settings.colors.WHITE.s;
     c.lineWidth = Tier.PATH_WIDTH * WarpPoint.PATH_RATIO;
     c.beginPath();
     c.arc(r, r, r / 2, 0, 2 * Math.PI, false);
@@ -66,7 +66,7 @@ WEmber.prototype.painter = function(bitmap) {
     var r = WEmber.EMBER_RADIUS;
     Utils.resizeBitmap(bitmap, 2 * r, 2 * r);
     c = bitmap.context;
-    c.fillStyle = this.game.settings.colors.WHITE.s;
+    c.fillStyle = bitmap.game.settings.colors.WHITE.s;
     c.arc(r, r, r, 0, 2 * Math.PI, false);
     c.fill();
 };
