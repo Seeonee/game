@@ -229,7 +229,7 @@ Level.prototype.updateTierParallax = function() {
         var xo = t.widthOver2;
         var yo = t.heightOver2;
 
-        var scale = t.image.scale.x;
+        var scale = t._bgimage.scale.x;
         if (scale > 1) {
             scale -= 1;
         } else if (scale < 1) {
