@@ -40,7 +40,6 @@ Sentry.prototype.draw = function(tier) {
         this.sentry = new SentrySprite(this.game, ap.x, ap.y,
             tier.palette);
         tier.image.addChild(this.sentry);
-        this.hflash = new HFlash(this.game);
     } else {
         this.bodyhitbox.updateTier(tier);
         this.traphitbox.updateTier(tier);
@@ -52,7 +51,7 @@ Sentry.prototype.draw = function(tier) {
 Sentry.prototype.obstruct = function(avatar, hitbox) {
     if (hitbox === this.traphitbox) {
         if (this.lethal) {
-            avatar.smite();
+            avatar.smite({ x: this.x, y: this.y + Sentry.Y_OFFSET });
         }
         if (this.game.time.now > this.readyTime) {
             this.readyTime = this.game.time.now +
@@ -73,9 +72,7 @@ Sentry.prototype.tripTrap = function() {
 // Spring the trap.
 Sentry.prototype.blast = function() {
     this.lethal = true;
-    this.hflash.flash(
-        this.game.state.getCurrentState().z.fg,
-        this.gx, this.gy);
+    this.game.camera.flash(); //undefined, 250);
     this.sentry.coolDown();
     this.game.time.events.add(Sentry.KILL_TIME, function() {
         this.lethal = false;
@@ -95,10 +92,6 @@ Sentry.prototype.delete = function() {
     if (this.traphitbox) {
         this.trapbodyhitbox.removeCollision();
         this.trapbodyhitbox = undefined;
-    }
-    if (this.hflash) {
-        this.hflash.destroy();
-        this.hflash = undefined;
     }
 };
 
