@@ -3,7 +3,7 @@ var PortalFlash = function(game) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
         PortalFlash.painter);
-    Phaser.Sprite.call(this, game, 0, 0, PortalFlash.CACHED_BITMAP);
+    Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
 };
