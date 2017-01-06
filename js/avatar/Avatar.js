@@ -308,7 +308,8 @@ Avatar.prototype.setPower = function(powerType) {
 
 // Kill the avatar and reset to checkpoint/level start.
 Avatar.prototype.smite = function() {
-    console.log('you should be dead!!!');
+    this.game.state.getCurrentState().menuhandler.activate(
+        DeathIState.NAME);
 };
 
 // Optional physics debug view.

@@ -11,6 +11,7 @@ var PlayLevelMenuIHandler = function(game, gpad, level, ihandler) {
     // creation automatically registers them.
     new UnpausedIState(this);
     new PausedIState(this, level);
+    new DeathIState(this, level);
 
     // Set our starting state.
     this.activate(UnpausedIState.NAME);
