@@ -721,7 +721,7 @@ IMenuState.prototype.updateFromJoystick = function(joystick) {
 IMenuState.prototype.updateSettings = function(settings) {
     IState.prototype.updateSettings.call(this, settings);
     if (settings.fullscreen != this.fullscreen) {
-        this.game.time.events.add(100, this.recreateMenu, this);
+        this.recreateNeeded = true;
     }
 };
 
@@ -804,6 +804,10 @@ IMenuState.prototype.pauseUpdate = function() {
 IMenuState.prototype.update = function() {
     this.cleanUpTweens();
     this.updateSelector();
+    if (this.recreateNeeded) {
+        this.recreateNeeded = false;
+        this.recreateMenu();
+    }
     if (this.inputBlocked) {
         return;
     }
