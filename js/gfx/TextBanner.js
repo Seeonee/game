@@ -1,8 +1,6 @@
 // An orbiting ring fragment.
-var TextBanner = function(game, x, y) {
+var TextBanner = function(game) {
     this.game = game;
-    this.x = x;
-    this.y = y;
     var bitmap = this.game.bitmapCache.get(
         TextBanner.prototype.painter, this, true);
     Phaser.Sprite.call(this, game, 0, 0, bitmap);
@@ -57,16 +55,15 @@ TextBanner.prototype.painter = function(bitmap) {
     gradient.addColorStop(1, colorEdge);
     c.fillStyle = gradient;
     c.fillRect(0, 0, w, h);
-
-    this.x2 = this.x != undefined ? this.x : (this.game.camera.width / 2);
-    this.y2 = this.y != undefined ? this.y : (this.game.camera.height / 3);
-    this.cameraOffset.setTo(this.x2, this.y2);
 };
 
 // Throw the banner up for a bit, then fade out and die.
 TextBanner.prototype.splash = function(text, zgroup) {
     zgroup.add(this);
     this.text.setText(text);
+    this.x = this.game.camera.width / 2;
+    this.y = this.game.camera.height / 3;
+    this.cameraOffset.setTo(this.x, this.y);
     this.visible = true;
 
     // Alpha should already be at zero.

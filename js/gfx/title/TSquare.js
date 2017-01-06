@@ -2,7 +2,7 @@
 var TSquare = function(game) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
-        TSquare.prototype.painter, this, true);
+        TSquare.prototype.painter, this.game, true);
     Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5, 0.5);
     this.visible = false;
@@ -24,11 +24,12 @@ TSquare.CASCADE_UP = true;
 
 // Paint our bitmap.
 TSquare.prototype.painter = function(bitmap) {
+    // Our "this" context is the game itself.
     var d = TSquare.D;
     var h = d * Math.sqrt(3 / 4);
     Utils.resizeBitmap(bitmap, d, d);
     var c = bitmap.context;
-    c.fillStyle = this.game.settings.colors.WHITE.s;
+    c.fillStyle = this.settings.colors.WHITE.s;
     c.beginPath();
     c.moveTo(0, h);
     c.lineTo(d / 2, 0);
@@ -39,14 +40,14 @@ TSquare.prototype.painter = function(bitmap) {
 
     TSquare.scalemin = TSquare.MIN_SCALE;
     TSquare.scalerange = 1 - TSquare.scalemin;
-    TSquare.xmin = this.game.camera.x + TSquare.XBOUNDS;
-    TSquare.xrange = this.game.camera.width - (2 * TSquare.XBOUNDS);
+    TSquare.xmin = this.camera.x + TSquare.XBOUNDS;
+    TSquare.xrange = this.camera.width - (2 * TSquare.XBOUNDS);
     if (TSquare.CASCADE_UP) {
-        TSquare.y0 = this.game.camera.y + this.game.camera.height;
-        TSquare.y1 = this.game.camera.y;
+        TSquare.y0 = this.camera.y + this.camera.height;
+        TSquare.y1 = this.camera.y;
     } else {
-        TSquare.y0 = this.game.camera.y;
-        TSquare.y1 = this.game.camera.y + this.game.camera.height;
+        TSquare.y0 = this.camera.y;
+        TSquare.y1 = this.camera.y + this.camera.height;
     }
 };
 
