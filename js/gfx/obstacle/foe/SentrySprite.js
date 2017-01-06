@@ -24,6 +24,8 @@ var SentrySprite = function(game, x, y, palette) {
     this.burst.alpha = 0;
 
     this.setPalette(palette);
+    this.sPool = new SpritePool(this.game, SentrySpark);
+    this.sparkTime = -1;
 };
 
 SentrySprite.prototype = Object.create(Phaser.Sprite.prototype);
@@ -34,6 +36,8 @@ SentrySprite.Y_OFFSET = 10;
 SentrySprite.LINE_WIDTH = 2;
 SentrySprite.IDLE_ALPHA = 0;
 SentrySprite.EXPAND_TIME = 50; // ms
+SentrySprite.SPARK_INTERVAL = 300; // ms
+SentrySprite.SPARK_LIFESPAN = 1000; // ms
 
 
 // Paint our bitmap.
@@ -70,6 +74,7 @@ SentrySprite.prototype.setPalette = function(palette) {
 
 // Charge up a burst.
 SentrySprite.prototype.chargeUp = function(callback, context) {
+    this.chargeTime = this.game.time.now;
     this.ring.alpha = 1;
 
     this.burst.alpha = 0;
@@ -85,7 +90,30 @@ SentrySprite.prototype.chargeUp = function(callback, context) {
 };
 
 // Cool off after a burst.
+SentrySprite.prototype.update = function() {
+    if (this.chargeTime) {
+        var progress = this.game.time.now - this.chargeTime;
+        progress /= Sentry.CHARGE_TIME;
+        if (progress >= 1) {
+            return;
+        }
+        if (this.sparkTime < this.game.time.now) {
+            var time = SentrySprite.SPARK_LIFESPAN;
+            time /= (1 + 2 * progress);
+            if (time / 2 > (1 - progress) * Sentry.CHARGE_TIME) {
+                this.chargeTime = undefined;
+                return;
+            }
+            this.sPool.make(this).burn(time);
+            this.sparkTime = this.game.time.now +
+                SentrySprite.SPARK_INTERVAL / (1 + 6 * progress);
+        }
+    }
+};
+
+// Cool off after a burst.
 SentrySprite.prototype.coolDown = function() {
+    this.chargeTime = undefined;
     var t = this.game.add.tween(this.ring);
     t.to({ alpha: SentrySprite.IDLE_ALPHA },
         Sentry.RECHARGE_TIME * 0.95,
@@ -93,11 +121,50 @@ SentrySprite.prototype.coolDown = function() {
 
     this.burst.alpha = 1;
     var t = this.game.add.tween(this.burst);
-    t.to({ alpha: 0 }, Sentry.KILL_TIME * 1.15,
+    t.to({ alpha: 0 }, Sentry.KILL_TIME,
         Phaser.Easing.Quartic.In, true);
-
-    this.burst.scale.setTo(0.75);
     var t = this.game.add.tween(this.burst.scale);
     t.to({ x: 1.05, y: 1.05 }, Sentry.KILL_TIME,
-        Phaser.Easing.Quintic.Out, true, 0, 0, true);
+        Phaser.Easing.Quintic.Out, true);
+};
+
+
+
+
+
+
+// Sparks while charging.
+var SentrySpark = function(parent) {
+    Phaser.Sprite.call(this, parent.game, 0, 0, 'smoke');
+    this.anchor.setTo(0.5);
+    parent.addChild(this);
+    this.alpha = 0;
+};
+
+SentrySpark.prototype = Object.create(Phaser.Sprite.prototype);
+SentrySpark.prototype.constructor = SentrySpark;
+
+
+// Light the spark.
+SentrySpark.prototype.burn = function(time) {
+    this.alpha = 0;
+    var a = Math.random() * 2 * Math.PI;
+    var r = 50 + Math.random() * 50;
+    this.rotation = -a;
+    this.x = r * Math.sin(a);
+    this.y = r * Math.cos(a);
+    var x = 0;
+    var y = 0;
+    this.game.add.tween(this).to({ x: x, y: y }, time,
+        Phaser.Easing.Quadratic.In, true).onComplete.add(
+        function() {
+            this.kill();
+        }, this);
+    this.game.add.tween(this).to({ alpha: 1 }, time / 2,
+        Phaser.Easing.Sinusoidal.In, true, 0, 0, true);
+    var scale1 = 0.2 + Math.random() * 0.3;
+    var scale2 = 4 * scale1; //  0.8 + Math.random() * 0.7;
+    this.scale.setTo(scale1);
+    this.game.add.tween(this.scale).to({ x: scale2, y: scale2 },
+        time, Phaser.Easing.Sinusoidal.In, true);
 };

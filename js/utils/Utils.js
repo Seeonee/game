@@ -122,6 +122,12 @@ Utils.resizeBitmap = function(bitmap, width, height) {
 };
 
 
+
+
+
+
+
+
 // Simple factory for instantiating new sprite-based objects.
 // Main goal is that it will return a new sprite if 
 // necessary, otherwise it'll revive an earlier one.
