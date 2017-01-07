@@ -88,13 +88,13 @@ Fireball.prototype.obstruct = function(avatar, hitbox) {
 
 // Delete ourself.
 Fireball.prototype.delete = function() {
-    if (this.Fireball) {
-        Utils.destroy(this.Fireball);
-        this.Fireball = undefined;
-    }
     if (this.hitbox) {
-        this.traphitbox.removeCollision();
-        this.traphitbox = undefined;
+        this.hitbox.removeCollision();
+        this.hitbox = undefined;
+    }
+    if (this.fireball) {
+        Utils.destroy(this.fireball);
+        this.fireball = undefined;
     }
 };
 

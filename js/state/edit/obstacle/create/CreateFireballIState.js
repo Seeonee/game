@@ -1,7 +1,7 @@
 // Set up a fireball.
 var CreateFireballIState = function(handler, level) {
     var optionName = 'radius';
-    var options = Fireball.ALL_RADII;
+    var options = Fireball.ALL_RADII.slice();
     options.unshift({ text: 'default', value: undefined });
     OptionSetGathererIState.call(this, handler, level, Fireball, 1,
         optionName, options);
@@ -25,7 +25,7 @@ CreateFireballIState.prototype.constructor = CreateFireballIState;
 // Additional states.
 var CreateFireball2IState = function(handler, level) {
     var optionName = 'speed ratio';
-    var options = Fireball.ALL_SPEEDS;
+    var options = Fireball.ALL_SPEEDS.slice();
     options.unshift({ text: 'default', value: undefined });
     OptionSetGathererIState.call(this, handler, level, Fireball, 2,
         optionName, options);
@@ -64,7 +64,7 @@ CreateFireball3IState.prototype.constructor = CreateFireball3IState;
 // Additional states.
 var CreateFireball4IState = function(handler, level) {
     var optionName = 'starting angle %';
-    var options = Fireball.ALL_ANGLES;
+    var options = Fireball.ALL_ANGLES.slice();
     options.unshift({ text: 'default', value: undefined });
     OptionSetGathererIState.call(this, handler, level, Fireball, 4,
         optionName, options);
@@ -84,7 +84,7 @@ CreateFireball4IState.prototype.constructor = CreateFireball4IState;
 // Additional states.
 var CreateFireball5IState = function(handler, level) {
     var optionName = 'return angle %';
-    var options = Fireball.ALL_ANGLES;
+    var options = Fireball.ALL_ANGLES.slice();
     options.unshift({ text: 'default', value: undefined });
     OptionSetGathererIState.call(this, handler, level, Fireball, 5,
         optionName, options);
