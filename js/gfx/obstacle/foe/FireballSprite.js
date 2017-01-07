@@ -40,7 +40,10 @@ var FireballSprite = function(fireball, x, y, palette) {
     this.sparklifespan = FireballSprite.SPARK_LIFESPAN /
         this.fireball.speedRatio;
 
-    this.sPool = new SpritePool(this.game, FireballSprite.Spark);
+    if (FireballSprite.SPARK_POOL == undefined) {
+        FireballSprite.SPARK_POOL = new SpritePool(
+            this.game, FireballSprite.Spark, true);
+    }
 };
 
 FireballSprite.prototype = Object.create(Phaser.Sprite.prototype);
@@ -87,7 +90,7 @@ FireballSprite.prototype.update = function() {
     Phaser.Sprite.prototype.update.call(this);
     var time = this.game.time.now;
     if (time > this.sparkTime) {
-        var spark = this.sPool.make(this.game);
+        var spark = FireballSprite.SPARK_POOL.make(this.game);
         spark.fireAway(this);
         this.sparkTime = time + this.interval;
     }

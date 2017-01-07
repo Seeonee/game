@@ -151,10 +151,18 @@ Utils.toggleFullscreen = function(pointer, isDoubleClick) {
 // Main goal is that it will return a new sprite if 
 // necessary, otherwise it'll revive an earlier one.
 // Either way, its reset method is then called.
-var SpritePool = function(game, ctor) {
+var SpritePool = function(game, ctor, clearOnStateChange) {
     this.game = game;
     this.ctor = ctor;
     this.all = [];
+    if (clearOnStateChange) {
+        this.game.state.onStateChange.add(function() {
+            for (var i = 0; i < this.all.length; i++) {
+                this.all[i].destroy();
+            }
+            this.all = [];
+        }, this);
+    }
 };
 
 // Instantiate a new sprite.
