@@ -11,7 +11,8 @@ var Settings = function(game) {
     };
     // this.sounds = new Sounds();
     this.edit = false;
-    this.hud = Settings.HUD_SOMETIMES;
+    this.hud = Settings.SOMETIMES;
+    this.text = Settings.SOMETIMES;
     this._controller = Settings.CONTROLLER_PLAYSTATION;
     this._fullscreen = Settings.FULLSCREEN_OFF;
     this.buttonMap = new ButtonMappingsPlaystation();
@@ -57,9 +58,9 @@ Object.defineProperty(Settings.prototype, 'fullscreen', {
 
 
 // Even we have constants!
-Settings.HUD_ALWAYS = 0;
-Settings.HUD_SOMETIMES = 1;
-Settings.HUD_NEVER = 2;
+Settings.ALWAYS = 0;
+Settings.SOMETIMES = 1;
+Settings.NEVER = 2;
 
 Settings.CONTROLLER_PLAYSTATION = 0;
 Settings.CONTROLLER_XBOX = 1;
@@ -97,9 +98,16 @@ Settings.Menu.populateSubmenu = function(parent) {
     // Controls for the heads-up display.
     Settings.Menu.createRadialSettingMenu(
         settings, 'HUD display', 'hud', [
-            { text: 'always', value: Settings.HUD_ALWAYS },
-            { text: 'sometimes', value: Settings.HUD_SOMETIMES },
-            { text: 'never', value: Settings.HUD_NEVER }
+            { text: 'always', value: Settings.ALWAYS },
+            { text: 'sometimes', value: Settings.SOMETIMES },
+            { text: 'never', value: Settings.NEVER }
+        ]);
+    // Controls for text events.
+    Settings.Menu.createRadialSettingMenu(
+        settings, 'text events', 'text', [
+            { text: 'always', value: Settings.ALWAYS },
+            { text: 'first time only', value: Settings.SOMETIMES },
+            { text: 'never', value: Settings.NEVER }
         ]);
     // Controls for... controlling! Change controller button mappings.
     Settings.Menu.createRadialSettingMenu(

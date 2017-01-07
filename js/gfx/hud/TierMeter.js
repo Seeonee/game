@@ -295,18 +295,18 @@ TierMeter.prototype.updateShardAlphas = function() {
 TierMeter.prototype.updateSettings = function(settings) {
     var old = this.hud;
     this.hud = settings.hud;
-    if (this.hud == Settings.HUD_SOMETIMES && settings.edit) {
-        this.hud = Settings.HUD_ALWAYS;
+    if (this.hud == Settings.SOMETIMES && settings.edit) {
+        this.hud = Settings.ALWAYS;
     }
     if (old == this.hud) {
         return;
     }
-    if (this.t && this.hud != Settings.HUD_SOMETIMES) {
+    if (this.t && this.hud != Settings.SOMETIMES) {
         this.t.stop();
     }
-    if (this.hud == Settings.HUD_ALWAYS) {
+    if (this.hud == Settings.ALWAYS) {
         this.alpha = 1;
-    } else if (this.hud == Settings.HUD_NEVER) {
+    } else if (this.hud == Settings.NEVER) {
         this.alpha = 0;
     } else {
         this.alpha = this.lit ? 1 : 0;
@@ -316,7 +316,7 @@ TierMeter.prototype.updateSettings = function(settings) {
 // Fade ourselves in or out.
 TierMeter.prototype.fade = function(fadeIn) {
     this.lit = fadeIn;
-    if (this.hud != Settings.HUD_SOMETIMES) {
+    if (this.hud != Settings.SOMETIMES) {
         return;
     }
     var alpha = fadeIn ? 1 : 0;
@@ -332,7 +332,7 @@ TierMeter.prototype.fade = function(fadeIn) {
 // Briefly display ourselves.
 // Only fires if we're displayable and not already showing.
 TierMeter.prototype.showBriefly = function() {
-    if (!this.lit && this.hud == Settings.HUD_SOMETIMES) {
+    if (!this.lit && this.hud == Settings.SOMETIMES) {
         this.alpha = 1;
         this.fade(false);
     }

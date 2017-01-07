@@ -261,7 +261,11 @@ Level.prototype.addTextKey = function(textKey, text) {
 // Retrieve localized text by key.
 Level.prototype.getTextKey = function(textKey) {
     var result = undefined;
-    if (this.textsSeen.has(textKey)) {
+    if (this.game.settings.text == Settings.NEVER) {
+        return result;
+    }
+    if (this.game.settings.text == Settings.SOMETIMES &&
+        this.textsSeen.has(textKey)) {
         return result;
     }
     this.textsSeen.add(textKey);
