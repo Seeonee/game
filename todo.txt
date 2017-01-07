@@ -1,3 +1,4 @@
+combine edit reset/restart
 add pre-scaled power icons; make a power icon spritesheet
 add gfx settings menu to disable blur and/or adj. layer view
 adjust text banner centering when screen size changes

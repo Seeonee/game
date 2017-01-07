@@ -35,6 +35,10 @@ var FireballSprite = function(fireball, x, y, palette) {
     this.orb.addChild(this.hitbox);
 
     this.sparkTime = -1;
+    this.interval = FireballSprite.SPARK_INTERVAL /
+        this.fireball.speedRatio;
+    this.sparklifespan = FireballSprite.SPARK_LIFESPAN /
+        this.fireball.speedRatio;
 };
 
 FireballSprite.prototype = Object.create(Phaser.Sprite.prototype);
@@ -43,8 +47,8 @@ FireballSprite.prototype.constructor = FireballSprite;
 // Constants.
 FireballSprite.LEAD_FLAME_SCALE = 0.8;
 FireballSprite.SPARK_R = 24;
-FireballSprite.SPARK_INTERVAL = 100; // ms
-FireballSprite.SPARK_LIFETIME = 700; // ms
+FireballSprite.SPARK_INTERVAL = 40; // ms
+FireballSprite.SPARK_LIFESPAN = 700; // ms
 FireballSprite.SPARK_STARTING_SCALE = 0.7;
 FireballSprite.SPARK_TINT_DELAY = 50; // ms
 FireballSprite.SPARK_GROWTH_TIME = 100; // ms
@@ -82,7 +86,7 @@ FireballSprite.prototype.update = function() {
     var time = this.game.time.now;
     if (time > this.sparkTime) {
         new FireballSprite.Spark(this);
-        this.sparkTime = time + FireballSprite.SPARK_INTERVAL;
+        this.sparkTime = time + this.interval;
     }
 };
 
@@ -104,7 +108,7 @@ FireballSprite.Spark = function(fbsprite) {
     this.rgb = Color.rgb(this.game.settings.colors.WHITE.i);
     var rgb = Color.rgb(fbsprite.sparktint);
     this.game.add.tween(this.rgb).to(rgb,
-        FireballSprite.SPARK_LIFETIME,
+        fbsprite.sparklifespan / 2,
         Phaser.Easing.Quadratic.Out, true,
         FireballSprite.SPARK_TINT_DELAY);
 
@@ -115,7 +119,7 @@ FireballSprite.Spark = function(fbsprite) {
         time, Phaser.Easing.Linear.None, true);
     var scale = 0.1 + Math.random() * 0.2;
     var t2 = this.game.add.tween(this.scale).to({ x: scale, y: scale },
-        FireballSprite.SPARK_LIFETIME - time,
+        fbsprite.sparklifespan - time,
         Phaser.Easing.Linear.None);
     t.chain(t2);
 
@@ -131,7 +135,7 @@ FireballSprite.Spark = function(fbsprite) {
             y: y,
             rotation: rotation
         },
-        FireballSprite.SPARK_LIFETIME,
+        fbsprite.sparklifespan,
         Phaser.Easing.Linear.None, true);
     t.onComplete.add(function() {
         this.kill();

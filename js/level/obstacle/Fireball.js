@@ -4,10 +4,10 @@ var Fireball = function(name, x, y,
     returnAnglePercentage) {
     Obstacle.call(this, name, x, y);
     this.leash = leash;
-    if (leash && leash != Fireball.DEFAULT_LEASH) {
+    if (leash && leash != Fireball.DEFAULT_RADIUS) {
         this.radius = leash;
     } else {
-        this.radius = Fireball.DEFAULT_LEASH;
+        this.radius = Fireball.DEFAULT_RADIUS;
     }
     this.speedRatio = speedRatio != undefined ? speedRatio : 1;
     this.clockwise = clockwise != undefined ? clockwise : true;
@@ -32,7 +32,8 @@ var Fireball = function(name, x, y,
     this.percentage = Math.abs(
         (this.rotation - this.startAngle) / (2 * Math.PI));
     this.yoyo = this.returnAngle;
-    this.time = this.percentage * Fireball.TIME / this.speedRatio;
+    var ratio = this.radius / Fireball.DEFAULT_RADIUS;
+    this.time = ratio * this.percentage * Fireball.TIME / this.speedRatio;
 };
 
 Fireball.TYPE = 'foe-fireball';
@@ -40,7 +41,7 @@ Fireball.prototype = Object.create(Obstacle.prototype);
 Fireball.prototype.constructor = Fireball;
 
 Fireball.ALL_RADII = [25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 400, 500];
-Fireball.ALL_SPEEDS = [0.1, 0.2, 0.25, 0.5, 0.75, 1];
+Fireball.ALL_SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 Fireball.ALL_ANGLES = [0.125, 0.25, 0.33, 0.5, 0.66, 0.75, 1];
 
 // Set up our factory.
@@ -48,7 +49,7 @@ Obstacle.load.factory[Fireball.TYPE] = Fireball;
 
 // Constants.
 Fireball.HITBOX = 30;
-Fireball.DEFAULT_LEASH = 100;
+Fireball.DEFAULT_RADIUS = 100;
 Fireball.TIME = 2000;
 
 
