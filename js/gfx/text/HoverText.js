@@ -73,11 +73,7 @@ HoverText.prototype.setTier = function(tier, old) {
 // until the current hold expires.
 HoverText.prototype.setText = function(text, hold, wipe) {
     if (wipe && this.holding) {
-        this.queue = [];
-        this.holding = false;
-        if (this.event) {
-            this.game.time.events.remove(this.event);
-        }
+        this.clearHold();
     }
     if (!this.holding) {
         this._setText(text, hold);
@@ -149,6 +145,21 @@ HoverText.prototype.clearTweens = function() {
             this.tweens[i].stop();
         }
         this.tweens = [];
+    }
+};
+
+// Set the text that we display whenever all current text
+// fades out.
+HoverText.prototype.setEmptyText = function(text) {
+    this.emptyText = text;
+};
+
+// Clear any text events that we may have queued up.
+HoverText.prototype.clearHold = function() {
+    this.queue = [];
+    this.holding = false;
+    if (this.event) {
+        this.game.time.events.remove(this.event);
     }
 };
 

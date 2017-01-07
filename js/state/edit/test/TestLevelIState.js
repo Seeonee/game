@@ -13,7 +13,10 @@ TestLevelIState.prototype.constructor = TestLevelIState;
 
 // Called when we become the active state.
 TestLevelIState.prototype.activated = function(prev) {
-    this.avatar.htext.setText(EditLevelIHandler.addArrows('test'));
+    var text = EditLevelIHandler.addArrows('test');
+    this.avatar.htext.setText(text);
+    this.avatar.htext.animate = true;
+    this.avatar.htext.setEmptyText(text);
     this.game.settings.edit = false;
     if (this.avatar.point) {
         this.avatar.point.notifyAttached(this.avatar);
@@ -22,6 +25,9 @@ TestLevelIState.prototype.activated = function(prev) {
 
 // Called when we become the inactive state.
 TestLevelIState.prototype.deactivated = function(next) {
+    this.avatar.htext.animate = false;
+    this.avatar.htext.setEmptyText();
+    this.avatar.htext.clearHold();
     if (this.avatar.point) {
         this.avatar.point.notifyDetached(this.avatar);
     }
