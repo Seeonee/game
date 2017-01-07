@@ -90,8 +90,8 @@ Sentry.prototype.delete = function() {
         this.bodyhitbox = undefined;
     }
     if (this.traphitbox) {
-        this.trapbodyhitbox.removeCollision();
-        this.trapbodyhitbox = undefined;
+        this.traphitbox.removeCollision();
+        this.traphitbox = undefined;
     }
 };
 
