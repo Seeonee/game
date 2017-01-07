@@ -36,10 +36,9 @@ PlayLevelState.prototype.create = function() {
 
     // Set up the camera first.
     this.game.camera.follow(this.level.avatar);
-    this.game.camera.deadzone = new Phaser.Rectangle(
-        PlayLevelState.DEADZONE_EDGE_X, PlayLevelState.DEADZONE_EDGE_Y,
-        this.game.width - (2 * PlayLevelState.DEADZONE_EDGE_X),
-        this.game.height - (2 * PlayLevelState.DEADZONE_EDGE_Y));
+    this.game.scale.onFullScreenChange.add(this.updateDeadzone, this);
+    this.game.scale.onSizeChange.add(this.updateDeadzone, this);
+    this.updateDeadzone();
 
     // And now the ihandlers (some use the camera).
     this.createIHandlers();
@@ -103,6 +102,17 @@ PlayLevelState.prototype.createStartBanner = function(text) {
     new TextBanner(this.game).splash(text, this.z.fg);
 };
 
+// Update camera deadzone.
+PlayLevelState.prototype.updateDeadzone = function() {
+    var x = PlayLevelState.DEADZONE_EDGE_X;
+    var y = PlayLevelState.DEADZONE_EDGE_Y;
+    var w = this.game.camera.width;
+    var h = this.game.camera.height;
+    x = Math.min(x, w / 2 - 1);
+    y = Math.min(y, h / 2 - 1);
+    this.game.camera.deadzone = new Phaser.Rectangle(
+        x, y, w - 2 * x, h - 2 * y);
+};
 
 
 // Render loop.

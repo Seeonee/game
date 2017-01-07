@@ -3,11 +3,29 @@ var CameraIState = function(handler) {
     IState.call(this, CameraIState.NAME, handler);
     this.free = false;
 
+    this.game.scale.onFullScreenChange.add(this.updateDeadzone, this);
+    this.game.scale.onSizeChange.add(this.updateDeadzone, this);
+    this.updateDeadzone();
+};
+
+CameraIState.NAME = 'camera';
+CameraIState.prototype = Object.create(IState.prototype);
+CameraIState.prototype.constructor = CameraIState;
+
+// Constants.
+CameraIState.MAX_SPEED = 500;
+CameraIState.SNAP_TIME = 800;
+CameraIState.DEADZONE_EDGE_X = 50;
+CameraIState.DEADZONE_EDGE_Y = 50;
+
+
+// Update deadzones on screen size change.
+CameraIState.prototype.updateDeadzone = function() {
     this.dzFree = new Phaser.Rectangle(
         CameraIState.DEADZONE_EDGE_X,
         CameraIState.DEADZONE_EDGE_Y,
-        this.game.width - (2 * CameraIState.DEADZONE_EDGE_X),
-        this.game.height - (2 * CameraIState.DEADZONE_EDGE_Y));
+        this.game.camera.width - (2 * CameraIState.DEADZONE_EDGE_X),
+        this.game.camera.height - (2 * CameraIState.DEADZONE_EDGE_Y));
     this.dzSnap = {};
     this.game.camera.deadzone.copyTo(
         this.dzSnap);
@@ -21,17 +39,6 @@ var CameraIState = function(handler) {
         b: PlayLevelState.DEADZONE_EDGE_Y
     };
 };
-
-CameraIState.NAME = 'camera';
-CameraIState.prototype = Object.create(IState.prototype);
-CameraIState.prototype.constructor = CameraIState;
-
-// Constants.
-CameraIState.MAX_SPEED = 500;
-CameraIState.SNAP_TIME = 800;
-CameraIState.DEADZONE_EDGE_X = 50;
-CameraIState.DEADZONE_EDGE_Y = 50;
-
 
 // Handle an update.
 CameraIState.prototype.update = function() {
