@@ -57,8 +57,10 @@ HoverText.CURTAIN_D = 50;
 HoverText.CURTAIN_PAD = 3;
 HoverText.SUB_Y_OFFSET = 34;
 HoverText.SUB_FONT_DELTA = -8;
-HoverText.DEFAULT_HOLD = 1000; // ms
-HoverText.APPEAR_TIME = 350; // ms
+HoverText.APPEAR_TIME = 400; // ms
+HoverText.FADE_TIME = 400; // ms
+HoverText.BASE_HOLD = 1000; // ms
+HoverText.WORDS_PER_SECOND = 2.5;
 
 
 // Paint our bitmap.
@@ -113,11 +115,21 @@ HoverText.prototype._setText = function(text, hold) {
     }
 
     if (hold) {
-        hold = hold == true ? HoverText.DEFAULT_HOLD : hold;
+        hold = hold == true ? this.getHoldMSForText(text) : hold;
+        hold += !this.animate ? 0 :
+            HoverText.APPEAR_TIME + HoverText.FADE_TIME;
         this.holding = true;
         this.event = this.game.time.events.add(
             hold, this.holdExpired, this);
     }
+};
+
+// Figure out how long to hold (in milliseconds) for 
+// a block of text.
+HoverText.prototype.getHoldMSForText = function(text) {
+    var words = text.trim().split(/\s+/).length;
+    return HoverText.BASE_HOLD + 1000 *
+        words / HoverText.WORDS_PER_SECOND;
 };
 
 // Called when a hold expires.
@@ -173,6 +185,19 @@ HoverText.prototype.clearHold = function() {
 
 // Called when a hold expires.
 HoverText.prototype.holdExpired = function() {
+    if (!this.animate) {
+        this.textFaded();
+        return;
+    }
+    var t = this.game.add.tween(this);
+    t.to({ alpha: 0 }, HoverText.FADE_TIME,
+        Phaser.Easing.Sinusoidal.InOut, true);
+    this.tweens.push(t);
+    t.onComplete.add(this.textFaded, this);
+};
+
+// Called when text fades back out.
+HoverText.prototype.textFaded = function() {
     this.holding = false;
     do {
         var next = this.queue.shift();
