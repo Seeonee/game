@@ -51,6 +51,8 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
 
     // Text.
     this.modes.push(new TextEditorIState(this, this.level));
+    // new AddTextIState(this, this.level);
+    new DeleteTextIState(this, this.level);
 
     // Change level properties.
     this.modes.push(new LevelPropertiesIState(this, this.level));
