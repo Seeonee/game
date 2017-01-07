@@ -31,6 +31,9 @@ EditLevelState.prototype.preload = function() {
 
 // Create the level.
 EditLevelState.prototype.createLevel = function() {
+    // Because we don't call our superclass's createLevel(),
+    // the params.textsSeen never gets set. That's good!
+    // We want to clear the textsSeen every time in edit mode.
     if (this.params.json) {
         var json = this.params.json;
     } else if (this.catalogLevel) {

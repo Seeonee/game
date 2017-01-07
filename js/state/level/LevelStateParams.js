@@ -25,4 +25,11 @@ var LevelStateParams = function(gpad) {
     // used to do things like hide the "what level is this?"
     // splash (since the user probably knows by now).
     this.restart = false;
+
+    // A set of text keys that we've already seen.
+    // This can be grabbed from level.textsSeen prior to 
+    // a restart. Doing so will allow us to skip displaying 
+    // those text events to the user during the restart.
+    this.textsSeen = undefined;
+
 };

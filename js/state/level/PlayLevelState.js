@@ -60,7 +60,11 @@ PlayLevelState.prototype.create = function() {
 // Create the level.
 PlayLevelState.prototype.createLevel = function() {
     var json = game.cache.getJSON(this.catalogLevel.getFullName());
-    return Level.load(this.game, this.name, json);
+    var level = Level.load(this.game, this.name, json);
+    if (this.params.textsSeen) {
+        level.textsSeen = this.params.textsSeen;
+    }
+    return level;
 };
 
 // Create input handlers.
@@ -122,6 +126,7 @@ PlayLevelState.prototype.updateDeadzone = function() {
 // Restart the level.
 PlayLevelState.prototype.restartLevel = function() {
     this.params.restart = true;
+    this.params.textsSeen = this.level.textsSeen;
     this.game.state.start(this.key, true, false, this.params);
 };
 

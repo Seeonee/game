@@ -31,6 +31,7 @@ var Level = function(game, name) {
     this.z.createSubgroup('menu', false);
     game.state.getCurrentState().z = this.z;
     this.textLocalized = undefined;
+    this.textsSeen = new Set();
 };
 
 // Constants.
@@ -260,6 +261,10 @@ Level.prototype.addTextKey = function(textKey, text) {
 // Retrieve localized text by key.
 Level.prototype.getTextKey = function(textKey) {
     var result = undefined;
+    if (this.textsSeen.has(textKey)) {
+        return result;
+    }
+    this.textsSeen.add(textKey);
     var l = Settings.languageName(this.game.settings.language);
     if (this.textLocalized) {
         if (this.textLocalized[l]) {
