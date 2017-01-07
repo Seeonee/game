@@ -73,7 +73,9 @@ TextEditorIState.prototype.updateHelpText = function() {
     if (num > 0) {
         s += ':';
         for (var i = 0; i < num; i++) {
-            s += '\n* ' + obj.textKeys[i];
+            var textKey = obj.textKeys[i];
+            s += '\n\n[' + textKey + ']\n';
+            s += this.level.getTextKey(textKey);
         }
     }
     this.avatar.htext.setText(EditLevelIHandler.addArrows(s));
