@@ -258,17 +258,21 @@ Level.prototype.addTextKey = function(textKey, text) {
     this.textLocalized[l][textKey] = text;
 };
 
+// Remove localized text by key.
+Level.prototype.removeTextKey = function(textKey) {
+    if (!this.textLocalized) {
+        return;
+    }
+    var l = Settings.languageName(this.game.settings.language);
+    if (!this.textLocalized[l]) {
+        return;
+    }
+    delete this.textLocalized[l][textKey];
+};
+
 // Retrieve localized text by key.
 Level.prototype.getTextKey = function(textKey) {
     var result = undefined;
-    if (this.game.settings.text == Settings.NEVER) {
-        return result;
-    }
-    if (this.game.settings.text == Settings.SOMETIMES &&
-        this.textsSeen.has(textKey)) {
-        return result;
-    }
-    this.textsSeen.add(textKey);
     var l = Settings.languageName(this.game.settings.language);
     if (this.textLocalized) {
         if (this.textLocalized[l]) {
@@ -280,6 +284,20 @@ Level.prototype.getTextKey = function(textKey) {
             ' for language ' + l);
     }
     return result;
+};
+
+// Retrieve localized text by key.
+// This only returns it if it hasns't been seen.
+Level.prototype.getTextKeyForDisplay = function(textKey) {
+    if (this.game.settings.text == Settings.NEVER) {
+        return undefined;
+    }
+    if (this.game.settings.text == Settings.SOMETIMES &&
+        this.textsSeen.has(textKey)) {
+        return undefined;
+    }
+    this.textsSeen.add(textKey);
+    return this.getTextKey(textKey);
 };
 
 

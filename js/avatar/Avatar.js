@@ -309,7 +309,7 @@ Avatar.prototype.setPower = function(powerType) {
 
 // Display text based on a localization key.
 Avatar.prototype.showText = function(textKey) {
-    var text = this.level.getTextKey(textKey);
+    var text = this.level.getTextKeyForDisplay(textKey);
     if (text) {
         this.htext.setText(text, true);
     }
