@@ -72,7 +72,7 @@ Sentry.prototype.tripTrap = function() {
 // Spring the trap.
 Sentry.prototype.blast = function() {
     this.lethal = true;
-    this.game.camera.flash(); //undefined, 250);
+    this.game.camera.flash();
     this.sentry.coolDown();
     this.game.time.events.add(Sentry.KILL_TIME, function() {
         this.lethal = false;

@@ -81,6 +81,7 @@ Fireball.prototype.obstruct = function(avatar, hitbox) {
     var y = this.gy + p.y;
     var d = Utils.distanceBetweenPoints(avatar.x, avatar.y, x, y);
     if (d < Fireball.HITBOX) {
+        this.game.camera.flash();
         avatar.smite({ x: x, y: y });
     }
     return false;
