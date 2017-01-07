@@ -311,7 +311,7 @@ Avatar.prototype.smite = function(obj) {
     var x = obj ? obj.x : this.game.camera.x + this.game.camera.width / 2;
     var y = obj ? obj.y : this.game.camera.y + this.game.camera.width / 2;
     this.deathAngle = Utils.angleBetweenPoints(
-        x, y, this.x, this.y + AvatarMasq.OFFSET.hours);
+        x, y, this.x, this.y);
     this.game.state.getCurrentState().menuhandler.activate(
         DeathIState.NAME);
 };

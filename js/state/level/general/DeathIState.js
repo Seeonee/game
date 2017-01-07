@@ -29,14 +29,19 @@ DeathIState.SPARK_FADE_DELAY_VARY = 5000; // ms
 
 // Activated.
 DeathIState.prototype.activated = function(prev) {
-    this.tint = this.level.tier.palette.c2.i;
-
     this.a = this.avatar.deathAngle;
     this.masq = this.avatar.masq;
+    if (!this.masq) {
+        this.masq = this.avatar.keyplate;
+        this.tint = this.level.tier.palette.c1.i;
+    } else {
+        this.tint = this.level.tier.palette.c2.i;
+    }
     this.masq.x += this.masq.parent.x;
     this.masq.y += this.masq.parent.y;
-    this.game.add.existing(this.masq);
     this.game.camera.follow(this.masq);
+    this.game.add.existing(this.masq);
+
     var d = DeathIState.MASK_FLY_DISTANCE;
     var x = this.masq.x + d * Math.sin(this.a);
     var y = this.masq.y + d * Math.cos(this.a);
