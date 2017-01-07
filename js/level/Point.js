@@ -1,5 +1,5 @@
 // A point is a juncture among one or more paths.
-var Point = function(name, x, y, enabled) {
+var Point = function(name, x, y, enabled, textKeys) {
     this.name = name;
     this.x = x;
     this.y = y;
@@ -29,6 +29,7 @@ var Point = function(name, x, y, enabled) {
     this.events.onDisabled = new Phaser.Signal();
 
     this.wires = [];
+    this.textKeys = textKeys;
 };
 
 Point.TYPE = 'point';
@@ -133,6 +134,12 @@ Point.prototype.notifyAttached = function(avatar, prev) {
     if (this.enabled || !this.disableIStateWhileDisabled) {
         this.enableIState();
     }
+    if (this.textKeys && !this.textFired) {
+        this.textFired = true;
+        for (var i = 0; i < this.textKeys.length; i++) {
+            avatar.showText(this.textKeys[i]);
+        }
+    }
 };
 
 // Called upon avatar detachment.
@@ -221,6 +228,9 @@ Point.prototype.toJSON = function() {
     if (this.type) {
         result.enabled = this.startEnabled;
     }
+    if (this.textKeys && this.textKeys.length) {
+        result.textKeys = this.textKeys;
+    }
     return result;
 };
 
@@ -234,7 +244,8 @@ Point.load = function(game, name, json) {
             console.error('Failed to load point class ' + type);
         }
     }
-    return new Point(name, json.x, json.y, json.enabled);
+    return new Point(name, json.x, json.y,
+        json.enabled, json.textKeys);
 };
 
 // This is a map of type values to Point subclasses.

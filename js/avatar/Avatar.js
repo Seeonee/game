@@ -307,6 +307,11 @@ Avatar.prototype.setPower = function(powerType) {
     }
 };
 
+// Display text based on a localization key.
+Avatar.prototype.showText = function(textKey) {
+    console.log('textKey', textKey);
+};
+
 // Kill the avatar and reset to checkpoint/level start.
 Avatar.prototype.smite = function(obj) {
     var x = obj ? obj.x : this.game.camera.x + this.game.camera.width / 2;

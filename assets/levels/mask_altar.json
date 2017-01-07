@@ -8,12 +8,14 @@
                 "p0": {
                     "x": 0,
                     "y": 0,
-                    "type": "start"
+                    "type": "start",
+                    "textKeys": ["point-key-1"]
                 },
                 "p1": {
                     "x": 250,
                     "y": 0,
-                    "enabled": true
+                    "enabled": true,
+                    "textKeys": ["point-key-2"]
                 },
                 "p2": {
                     "x": 350,
@@ -75,7 +77,8 @@
             "paths": {
                 "a0": {
                     "p1": "p1",
-                    "p2": "p0"
+                    "p2": "p0",
+                    "textKeys": ["path-key-1"]
                 },
                 "a1": {
                     "p1": "p2",
@@ -124,12 +127,6 @@
             },
             "wires": {},
             "obstacles": {
-                "fireball0": {
-                    "x": 250,
-                    "y": 0,
-                    "type": "foe-fireball",
-                    "speedRatio": 0.5
-                },
                 "item0": {
                     "x": 1000,
                     "y": 250,

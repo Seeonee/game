@@ -1,11 +1,13 @@
 // A path is just two Point objects, connected.
-var Path = function(name, p1, p2) {
+var Path = function(name, p1, p2, textKeys) {
     this.name = name;
     this.p1 = p1;
     this.p2 = p2;
     // Store our angles.
-    this.angleForward = Utils.angleBetweenPoints(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
-    this.angleBackward = (this.angleForward + Math.PI) % (2 * Math.PI);
+    this.angleForward = Utils.angleBetweenPoints(
+        this.p1.x, this.p1.y, this.p2.x, this.p2.y);
+    this.angleBackward = (this.angleForward +
+        Math.PI) % (2 * Math.PI);
     // Store our length.
     this.length = Utils.distanceBetweenPoints(
         this.p1.x, this.p1.y,
@@ -14,6 +16,7 @@ var Path = function(name, p1, p2) {
     this.broken = false;
     this.renderNeeded = true;
     // this.setBroken(Math.random() > 0.75);
+    this.textKeys = textKeys;
 };
 
 // Constants.
@@ -149,6 +152,12 @@ Path.prototype.getPoint = function(angle, x, y) {
 // Also takes the previous point the avatar was attached to.
 Path.prototype.notifyAttached = function(avatar, prev) {
     // console.log('attach ' + this.name);
+    if (this.textKeys && !this.textFired) {
+        this.textFired = true;
+        for (var i = 0; i < this.textKeys.length; i++) {
+            avatar.showText(this.textKeys[i]);
+        }
+    }
 };
 
 // Called upon avatar detachment.
@@ -178,7 +187,11 @@ Path.prototype.getDetails = function() {
 
 // JSON conversion of a path.
 Path.prototype.toJSON = function() {
-    return { p1: this.p1.name, p2: this.p2.name };
+    var result = { p1: this.p1.name, p2: this.p2.name };
+    if (this.textKeys && this.textKeys.length) {
+        result.textKeys = this.textKeys;
+    }
+    return result;
 };
 
 // Load a JSON representation of a path.
@@ -186,12 +199,13 @@ Path.load = function(game, name, json, p1, p2) {
     var type = json.type;
     if (type) {
         if (Path.load.factory[type]) {
-            return Path.load.factory[type].load(game, name, json, p1, p2);
+            return Path.load.factory[type].load(game, name,
+                json, p1, p2);
         } else {
             console.error('Failed to load path class ' + type);
         }
     }
-    return new Path(name, p1, p2);
+    return new Path(name, p1, p2, json.textKeys);
 };
 
 // This is a map of type values to Path subclasses.
