@@ -13,7 +13,7 @@ var HoverText = function(game, level, doNotAnimate) {
     Phaser.Sprite.call(this, game,
         HoverText.X_OFFSET, HoverText.Y_OFFSET);
     this.avatar.addChild(this);
-    this.avatar.help = this;
+    this.avatar.htext = this;
     this.alpha = 0;
 
     var bitmap = this.game.bitmapCache.get(

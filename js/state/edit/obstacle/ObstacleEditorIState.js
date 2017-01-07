@@ -123,12 +123,12 @@ ObstacleEditorIState.prototype.updateHelpText = function() {
     }
     if (!this.obstacle) {
         var s = 'objects (' + this.marker.x + ',' + this.marker.y + ')';
-        this.avatar.help.setText(EditLevelIHandler.addArrows(s));
+        this.avatar.htext.setText(EditLevelIHandler.addArrows(s));
         return;
     }
     var s = 'objects ' + ' / ' + this.obstacle.name;
     if (this.obstacle.getDetails) {
         s += this.obstacle.getDetails();
     }
-    this.avatar.help.setText(EditLevelIHandler.addArrows(s));
+    this.avatar.htext.setText(EditLevelIHandler.addArrows(s));
 };

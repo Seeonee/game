@@ -18,7 +18,7 @@ DisablePointIState.prototype.update = function() {
         this.avatar.point.setEnabled(enabled);
         var s = this.avatar.point.name + ' ' +
             (enabled ? 'enabled' : 'disabled');
-        this.avatar.help.setText(s, true);
+        this.avatar.htext.setText(s, true);
     }
     this.activate(GeneralEditIState.NAME);
 };

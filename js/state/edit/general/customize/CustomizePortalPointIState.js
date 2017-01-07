@@ -15,7 +15,7 @@ CustomizePortalPointIState.prototype.constructor = CustomizePortalPointIState;
 // Update loop.
 CustomizePortalPointIState.prototype.update = function() {
     if (this.level.tiers.length == 1) {
-        this.avatar.help.setText('create portal failed\n' +
+        this.avatar.htext.setText('create portal failed\n' +
             'add tiers first', true);
         this.finished();
         return;

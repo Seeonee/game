@@ -24,7 +24,7 @@ FloatIState.prototype.activated = function(prev) {
     var attach = this.game.settings.buttonMap.buttonName(
         this.game.settings.buttonMap.EDIT_FLOAT);
     this.info = '\n' + attach + ' to land';
-    this.avatar.help.setText('hover' + this.info);
+    this.avatar.htext.setText('hover' + this.info);
     this.tier = this.level.tier;
     this.points = this.tier.points;
     this.paths = this.tier.paths;
@@ -52,10 +52,10 @@ FloatIState.prototype.update = function() {
     this.point = this.findNearbyPoint();
     this.path = (this.point) ? undefined : this.findNearbyPath();
     if (this.point) {
-        this.avatar.help.setText('hover / ' + this.point.name +
+        this.avatar.htext.setText('hover / ' + this.point.name +
             this.info);
     } else if (this.path) {
-        this.avatar.help.setText('hover / ' + this.path.name +
+        this.avatar.htext.setText('hover / ' + this.path.name +
             this.info);
     } else {
         this.updateHoverText();
@@ -185,7 +185,7 @@ FloatIState.prototype.snapToStartingValues = function() {
 // Display our (internal) coords.
 FloatIState.prototype.updateHoverText = function() {
     var gp = { x: this.avatar.x, y: this.avatar.y };
-    this.avatar.help.setText('hover / (' +
+    this.avatar.htext.setText('hover / (' +
         Math.floor(gp.x) + ',' + Math.floor(gp.y) + ')' +
         this.info);
 };

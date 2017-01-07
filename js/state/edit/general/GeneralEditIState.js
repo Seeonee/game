@@ -67,5 +67,5 @@ GeneralEditIState.prototype.updateHelpText = function() {
     if (more) {
         s += more;
     }
-    this.avatar.help.setText(EditLevelIHandler.addArrows(s));
+    this.avatar.htext.setText(EditLevelIHandler.addArrows(s));
 };

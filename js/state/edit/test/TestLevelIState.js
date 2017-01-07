@@ -13,7 +13,7 @@ TestLevelIState.prototype.constructor = TestLevelIState;
 
 // Called when we become the active state.
 TestLevelIState.prototype.activated = function(prev) {
-    this.avatar.help.setText(EditLevelIHandler.addArrows('test'));
+    this.avatar.htext.setText(EditLevelIHandler.addArrows('test'));
     this.game.settings.edit = false;
     if (this.avatar.point) {
         this.avatar.point.notifyAttached(this.avatar);

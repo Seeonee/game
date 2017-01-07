@@ -4,12 +4,12 @@ var EditControlsIState = function(handler, level) {
     this.level = level;
     this.avatar = this.level.avatar;
 
-    var sub = this.avatar.help.sub;
+    var sub = this.avatar.htext.sub;
     var style = sub.style;
     this.text = this.game.add.text(
         EditControlsIState.COLUMN_X_OFFSET,
         sub.y, '', style);
-    this.avatar.help.addChild(this.text);
+    this.avatar.htext.addChild(this.text);
     this.text.visible = false;
 };
 
@@ -63,8 +63,8 @@ EditControlsIState.prototype.activated = function(prev) {
     this.text.visible = true;
     this.text.setText(s2);
 
-    this.avatar.help.setText(EditLevelIHandler.addArrows(s));
-    this.avatar.help.setCurtainDimensions(
+    this.avatar.htext.setText(EditLevelIHandler.addArrows(s));
+    this.avatar.htext.setCurtainDimensions(
         EditControlsIState.CURTAIN_W, EditControlsIState.CURTAIN_H);
 };
 

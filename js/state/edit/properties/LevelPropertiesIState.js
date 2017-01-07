@@ -15,7 +15,7 @@ LevelPropertiesIState.prototype.constructor = LevelPropertiesIState;
 // Called when we become the active state.
 LevelPropertiesIState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
-    this.avatar.help.setText(EditLevelIHandler.addArrows('properties'));
+    this.avatar.htext.setText(EditLevelIHandler.addArrows('properties'));
     this.chargedTime = -1;
 };
 

@@ -58,7 +58,7 @@ BaseCustomizeIState.prototype.updateHelp = function() {
     if (s[s.length - 1] == '\n') {
         s = s.substring(0, s.length - 1);
     }
-    this.avatar.help.setText(s);
+    this.avatar.htext.setText(s);
 };
 
 // Update help text. This will gather all of our lower-depth 

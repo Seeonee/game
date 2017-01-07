@@ -15,7 +15,7 @@ CreateShardIState.prototype.update = function() {
     if (this.level.tier.index < maxIndex) {
         this.finished(new Shard());
     } else {
-        this.avatar.help.setText('add shard failed\n' +
+        this.avatar.htext.setText('add shard failed\n' +
             'can\'t add to top tier', true);
         this.finished();
     }

@@ -39,7 +39,7 @@ AddFromPathIState.prototype.activated = function(prev) {
         this.game.settings.buttonMap.SELECT);
     var cancel = this.game.settings.buttonMap.buttonName(
         this.game.settings.buttonMap.CANCEL);
-    this.avatar.help.setText('add ' + newName + ' to ' +
+    this.avatar.htext.setText('add ' + newName + ' to ' +
         this.path.name + '\n  ' + select + ' to confirm\n  ' +
         cancel + ' to cancel');
 };
@@ -193,7 +193,7 @@ AddFromPointIState.prototype.activated = function(prev) {
         this.game.settings.buttonMap.CANCEL);
     this.helptext = 'add ' + newPointName + ' to ' + this.point.name +
         '\n  ' + select + ' to confirm\n  ' + cancel + ' to cancel';
-    this.avatar.help.setText(this.helptext);
+    this.avatar.htext.setText(this.helptext);
 };
 
 // Translate a game coordinate point so that it can 
@@ -307,9 +307,9 @@ AddFromPointIState.prototype.update = function() {
             }
             // Make sure we're not overlapping earlier stuff.
             if (this.isOverlapping(existing)) {
-                this.avatar.help.setText(
+                this.avatar.htext.setText(
                     'failed to add (overlap)', true);
-                this.avatar.help.setText(this.helptext);
+                this.avatar.htext.setText(this.helptext);
                 return;
             }
             if (existing) {
@@ -394,7 +394,7 @@ AddFromFloatIState.prototype.activated = function(prev) {
     this.chargeTime = this.game.time.now + EditCharge.TIME;
     this.newPoint = this.tier.getNewPointName();
     this.details = '(' + ap.x + ',' + ap.y + ')';
-    this.avatar.help.setText('add point ' + this.newPoint +
+    this.avatar.htext.setText('add point ' + this.newPoint +
         ' ' + this.details + '?' + '\nhold to confirm');
 };
 
@@ -402,7 +402,7 @@ AddFromFloatIState.prototype.activated = function(prev) {
 AddFromFloatIState.prototype.update = function() {
     var charged = this.game.time.now > this.chargeTime;
     if (charged) {
-        this.avatar.help.setText('add point ' + this.newPoint +
+        this.avatar.htext.setText('add point ' + this.newPoint +
             ' ' + this.details + '?\nok');
     }
     if (this.gpad.justReleased(this.buttonMap.EDIT_ADD)) {
@@ -411,12 +411,12 @@ AddFromFloatIState.prototype.update = function() {
         if (charged) {
             // Make sure we're not overlapping earlier stuff.
             if (this.isOverlapping()) {
-                this.avatar.help.setText(
+                this.avatar.htext.setText(
                     'failed to add (overlap)', true);
             } else {
                 var p = this.tier.addPoint(this.newPoint,
                     this.near.x, this.near.y);
-                this.avatar.help.setText('added point ' + this.newPoint +
+                this.avatar.htext.setText('added point ' + this.newPoint +
                     ' ' + this.details, true);
                 this.avatar.x = p.gx;
                 this.avatar.y = p.gy;

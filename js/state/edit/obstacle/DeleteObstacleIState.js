@@ -15,7 +15,7 @@ DeleteObstacleIState.prototype.activated = function(prev) {
     this.tier = this.level.tier;
     this.obstacle = prev.obstacle;
     this.timeToCharge = EditCharge.TIME;
-    this.avatar.help.setText('delete ' + this.obstacle.name + '?');
+    this.avatar.htext.setText('delete ' + this.obstacle.name + '?');
     this.eventTime = this.game.time.now + this.timeToCharge;
 
     this.image = new EditCharge(this.game,
@@ -43,7 +43,7 @@ DeleteObstacleIState.prototype.proceed = function() {
 DeleteObstacleIState.prototype.update = function() {
     this.charged = this.game.time.now > this.eventTime;
     if (this.charged) {
-        this.avatar.help.setText('delete ' + this.obstacle.name);
+        this.avatar.htext.setText('delete ' + this.obstacle.name);
     }
     if (this.gpad.released(this.buttonMap.EDIT_DELETE)) {
         this.gpad.consumeButtonEvent();

@@ -56,7 +56,7 @@ WireEditorIState.prototype.updateHelpText = function() {
     }
     var obj = this.avatar.point;
     if (!obj) {
-        this.avatar.help.setText(EditLevelIHandler.addArrows('wires'));
+        this.avatar.htext.setText(EditLevelIHandler.addArrows('wires'));
         return;
     }
     var s = 'wires ' + ' / ' + obj.name;
@@ -72,5 +72,5 @@ WireEditorIState.prototype.updateHelpText = function() {
             s += obj.wires[i].name;
         }
     }
-    this.avatar.help.setText(EditLevelIHandler.addArrows(s));
+    this.avatar.htext.setText(EditLevelIHandler.addArrows(s));
 };
