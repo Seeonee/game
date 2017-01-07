@@ -134,8 +134,8 @@ Point.prototype.notifyAttached = function(avatar, prev) {
     if (this.enabled || !this.disableIStateWhileDisabled) {
         this.enableIState();
     }
-    if (this.textKeys && !this.textFired) {
-        this.textFired = true;
+    if (this.textKeys && !this.textSeen) {
+        this.textSeen = true;
         for (var i = 0; i < this.textKeys.length; i++) {
             avatar.showText(this.textKeys[i]);
         }

@@ -152,8 +152,8 @@ Path.prototype.getPoint = function(angle, x, y) {
 // Also takes the previous point the avatar was attached to.
 Path.prototype.notifyAttached = function(avatar, prev) {
     // console.log('attach ' + this.name);
-    if (this.textKeys && !this.textFired) {
-        this.textFired = true;
+    if (this.textKeys && !this.textSeen) {
+        this.textSeen = true;
         for (var i = 0; i < this.textKeys.length; i++) {
             avatar.showText(this.textKeys[i]);
         }
