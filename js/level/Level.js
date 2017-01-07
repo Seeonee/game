@@ -30,6 +30,7 @@ var Level = function(game, name) {
     ]);
     this.z.createSubgroup('menu', false);
     game.state.getCurrentState().z = this.z;
+    this.textLocalized = undefined;
 };
 
 // Constants.
@@ -244,6 +245,35 @@ Level.prototype.updateTierParallax = function() {
     }
 };
 
+// Add some text under a localization key.
+Level.prototype.addTextKey = function(textKey, text) {
+    if (!this.textLocalized) {
+        this.textLocalized = {};
+    }
+    var l = Settings.languageName(this.game.settings.language);
+    if (!this.textLocalized[l]) {
+        this.textLocalized[l] = {};
+    }
+    this.textLocalized[l][textKey] = text;
+};
+
+// Retrieve localized text by key.
+Level.prototype.getTextKey = function(textKey) {
+    var result = undefined;
+    var l = Settings.languageName(this.game.settings.language);
+    if (this.textLocalized) {
+        if (this.textLocalized[l]) {
+            result = this.textLocalized[l][textKey];
+        }
+    }
+    if (result == undefined) {
+        console.log('failed to look up text key ' + textKey +
+            ' for language ' + l);
+    }
+    return result;
+};
+
+
 // Push out a JSON version of our tiers.
 Level.prototype.toJSON = function() {
     var result = {
@@ -251,6 +281,9 @@ Level.prototype.toJSON = function() {
     };
     if (Object.keys(this.properties).length > 0) {
         result.properties = this.properties;
+    }
+    if (this.textLocalized) {
+        result.textLocalized = this.textLocalized;
     }
     return result;
 };
@@ -279,7 +312,10 @@ Level.load = function(game, name, json) {
             }
         }
     }
+
     level.properties = json.properties ? json.properties : {};
+    level.textLocalized = json.textLocalized;
+
     new Avatar(game, new AvatarGraphicsKey(game), level);
 
     for (var i = 0; i < level.tiers.length; i++) {
