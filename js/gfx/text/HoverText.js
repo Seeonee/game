@@ -1,4 +1,5 @@
-// Help text floating beside the avatar during editing.
+// Textbox floating beside the avatar; can be used 
+// to display temporary or permanent messages.
 var HoverText = function(game, level) {
     this.game = game;
     this.level = level;
@@ -41,6 +42,9 @@ var HoverText = function(game, level) {
         this.setTier(this.level.tier);
     }
     this.level.events.onTierChange.add(this.setTier, this);
+
+    this.showingEmpty = true;
+    this.emptyText = '';
 };
 
 HoverText.prototype = Object.create(Phaser.Sprite.prototype);
@@ -72,6 +76,7 @@ HoverText.prototype.setTier = function(tier, old) {
 // Queue up a text change. If necessary, delays 
 // until the current hold expires.
 HoverText.prototype.setText = function(text, hold, wipe) {
+    this.showingEmpty = false;
     if (wipe && this.holding) {
         this.clearHold();
     }
@@ -151,7 +156,10 @@ HoverText.prototype.clearTweens = function() {
 // Set the text that we display whenever all current text
 // fades out.
 HoverText.prototype.setEmptyText = function(text) {
-    this.emptyText = text;
+    this.emptyText = text ? text : '';
+    if (this.showingEmpty) {
+        this._setText(this.emptyText);
+    }
 };
 
 // Clear any text events that we may have queued up.
@@ -171,5 +179,8 @@ HoverText.prototype.holdExpired = function() {
     } while (this.queue.length && next && !next.h);
     if (next) {
         this._setText(next.t, next.h);
+    } else {
+        this.showingEmpty = true;
+        this._setText(this.emptyText);
     }
 };
