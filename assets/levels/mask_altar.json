@@ -77,7 +77,8 @@
                     "p1": "p1",
                     "p2": "p0",
                     "textKeys": [
-                        "path-key-1"
+                        "path-key-1",
+                        "path-key-2"
                     ]
                 },
                 "a1": {
@@ -141,7 +142,8 @@
     },
     "textLocalized": {
         "english": {
-            "path-key-1": "I'm awake...",
+            "path-key-1": "At long last...",
+            "path-key-2": "I'm awake.",
             "point-key-1": "The Mask of Hours\nis waiting."
         }
     }
