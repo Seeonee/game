@@ -47,7 +47,7 @@ var Tier = function(game, name) {
 
 // Constants.
 Tier.PADDING = 5;
-Tier.CAMERA_PADDING = 1500;
+Tier.CAMERA_PADDING = 5000;
 Tier.PATH_WIDTH = 7;
 Tier.LINE_CAP_STYLE = 'butt';
 Tier.LINE_JOIN_STYLE = 'round';
