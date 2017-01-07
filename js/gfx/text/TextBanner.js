@@ -61,10 +61,13 @@ TextBanner.painter = function(bitmap) {
 TextBanner.prototype.splash = function(text, zgroup) {
     zgroup.add(this);
     this.text.setText(text);
-    this.x = this.game.camera.width / 2;
-    this.y = this.game.camera.height / 3;
+    this.x = this.game.width / 2;
+    this.y = this.game.height / 3;
     this.cameraOffset.setTo(this.x, this.y);
     this.visible = true;
+
+    this.game.scale.onSizeChange.add(this.screenResized, this);
+    this.game.scale.onFullScreenChange.add(this.screenResized, this);
 
     // Alpha should already be at zero.
     var t = this.game.add.tween(this);
@@ -75,7 +78,16 @@ TextBanner.prototype.splash = function(text, zgroup) {
         Phaser.Easing.Sinusoidal.InOut, false,
         TextBanner.DURATION);
     t2.onComplete.add(function() {
+        this.game.scale.onSizeChange.remove(this.screenResized, this);
+        this.game.scale.onFullScreenChange.remove(this.screenResized, this);
         this.kill();
     }, this);
     t.chain(t2);
+};
+
+// Recenter when screen resizes.
+TextBanner.prototype.screenResized = function() {
+    this.x = this.game.width / 2;
+    this.y = this.game.height / 3;
+    this.cameraOffset.setTo(this.x, this.y);
 };
