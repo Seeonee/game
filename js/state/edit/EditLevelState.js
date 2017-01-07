@@ -39,7 +39,7 @@ EditLevelState.prototype.createLevel = function() {
         var json = EditLevelState.DEFAULT_STARTING_LEVEL;
     }
     var level = Level.load(this.game, this.name, json);
-    new EditHelp(this.game, level, true);
+    new HoverText(this.game, level, true);
     return level;
 };
 
