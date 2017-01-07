@@ -309,7 +309,10 @@ Avatar.prototype.setPower = function(powerType) {
 
 // Display text based on a localization key.
 Avatar.prototype.showText = function(textKey) {
-    console.log('textKey', textKey);
+    var text = this.level.getTextKey(textKey);
+    if (text) {
+        this.htext.setText(text, true);
+    }
 };
 
 // Kill the avatar and reset to checkpoint/level start.

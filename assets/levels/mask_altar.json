@@ -1,21 +1,19 @@
 {
-    "properties": {
-        "mask": false
-    },
     "tiers": {
         "t2": {
             "points": {
                 "p0": {
                     "x": 0,
                     "y": 0,
-                    "type": "start",
-                    "textKeys": ["point-key-1"]
+                    "type": "start"
                 },
                 "p1": {
                     "x": 250,
                     "y": 0,
                     "enabled": true,
-                    "textKeys": ["point-key-2"]
+                    "textKeys": [
+                        "point-key-1"
+                    ]
                 },
                 "p2": {
                     "x": 350,
@@ -78,7 +76,9 @@
                 "a0": {
                     "p1": "p1",
                     "p2": "p0",
-                    "textKeys": ["path-key-1"]
+                    "textKeys": [
+                        "path-key-1"
+                    ]
                 },
                 "a1": {
                     "p1": "p2",
@@ -134,6 +134,15 @@
                     "subtype": "hours"
                 }
             }
+        }
+    },
+    "properties": {
+        "mask": false
+    },
+    "textLocalized": {
+        "english": {
+            "path-key-1": "I'm awake...",
+            "point-key-1": "The Mask of Hours\nis waiting."
         }
     }
 }
