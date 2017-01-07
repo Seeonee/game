@@ -124,6 +124,12 @@
             },
             "wires": {},
             "obstacles": {
+                "fireball0": {
+                    "x": 250,
+                    "y": 0,
+                    "type": "foe-fireball",
+                    "speedRatio": 0.5
+                },
                 "item0": {
                     "x": 1000,
                     "y": 250,
