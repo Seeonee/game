@@ -1,7 +1,7 @@
 // A point that has a power-up icon.
-var PowerPoint = function(name, x, y, powerType,
+var PowerPoint = function(name, x, y, textKeys, powerType,
     rotation) {
-    Point.call(this, name, x, y);
+    Point.call(this, name, x, y, textKeys);
     this.powerType = powerType;
     this.power = undefined;
     this.rotation = rotation;
@@ -114,5 +114,5 @@ PowerPoint.prototype.toJSON = function() {
 // that can be multiplied by Math.PI to produce an angle.
 PowerPoint.load = function(game, name, json) {
     return new PowerPoint(name, json.x, json.y,
-        json.subtype, json.rotation);
+        json.textKeys, json.subtype, json.rotation);
 };

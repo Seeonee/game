@@ -1,6 +1,6 @@
 // "End of the level" point.
-var EndPoint = function(name, x, y, enabled) {
-    Point.call(this, name, x, y, enabled);
+var EndPoint = function(name, x, y, enabled, textKeys) {
+    Point.call(this, name, x, y, enabled, textKeys);
     this.z = Point.Z + 1;
     this.rings = { inner: [], outer: [] };
     this.stabilized = false;
@@ -215,5 +215,5 @@ EndPoint.prototype.toJSON = function() {
 // Load a JSON representation of an end point.
 EndPoint.load = function(game, name, json) {
     return new EndPoint(name, json.x, json.y,
-        json.enabled);
+        json.enabled, json.textKeys);
 };

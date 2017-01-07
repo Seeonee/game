@@ -1,6 +1,6 @@
 // This is where you start out.
-var StartPoint = function(name, x, y) {
-    Point.call(this, name, x, y, true); // Always enabled.
+var StartPoint = function(name, x, y, textKeys) {
+    Point.call(this, name, x, y, true, textKeys); // Always enabled.
     this.drawn = false;
 };
 
@@ -48,5 +48,5 @@ StartPoint.prototype.toJSON = function() {
 
 // Create a starting point.
 StartPoint.load = function(game, name, json) {
-    return new StartPoint(name, json.x, json.y);
+    return new StartPoint(name, json.x, json.y, json.textKeys);
 };

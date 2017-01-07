@@ -1,6 +1,7 @@
 // A point that allows transitioning to other tiers.
-var PortalPoint = function(name, x, y, direction, to, enabled, synchronize) {
-    Point.call(this, name, x, y, enabled);
+var PortalPoint = function(name, x, y, enabled, textKeys,
+    direction, to, synchronize) {
+    Point.call(this, name, x, y, enabled, textKeys);
     this.direction = direction;
     this.to = to;
     this.synchronize = synchronize;
@@ -188,5 +189,6 @@ PortalPoint.prototype.toJSON = function() {
 // Load a JSON representation of a portal.
 PortalPoint.load = function(game, name, json) {
     return new PortalPoint(name, json.x, json.y,
-        json.direction, json.to, json.enabled);
+        json.enabled, json.textKeys,
+        json.direction, json.to);
 };

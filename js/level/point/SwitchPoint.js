@@ -2,9 +2,9 @@
 // when stepped upon or toggled.
 // It's like a circuit; closed means we send a signal, 
 // open means we don't (unless you wire stuff to open).
-var SwitchPoint = function(name, x, y, enabled, /* wires, */
+var SwitchPoint = function(name, x, y, enabled, textKeys,
     once, contact) {
-    Point.call(this, name, x, y, enabled);
+    Point.call(this, name, x, y, enabled, textKeys);
     this.once = once;
     this.contact = contact;
     this.done = false;
@@ -106,5 +106,6 @@ SwitchPoint.prototype.toJSON = function() {
 // Load a JSON representation of a portal.
 SwitchPoint.load = function(game, name, json) {
     return new SwitchPoint(name, json.x, json.y,
-        json.enabled, json.once, json.contact);
+        json.enabled, json.textKeys,
+        json.once, json.contact);
 };

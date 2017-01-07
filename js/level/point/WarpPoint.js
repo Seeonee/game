@@ -1,6 +1,6 @@
 // A point that allows transitioning to other tiers.
-var WarpPoint = function(name, x, y, to, enabled) {
-    Point.call(this, name, x, y, enabled);
+var WarpPoint = function(name, x, y, to, enabled, textKeys) {
+    Point.call(this, name, x, y, enabled, textKeys);
     this.emitters = [];
     this.z = Point.Z + 1;
     this.to = to;
@@ -108,5 +108,5 @@ WarpPoint.prototype.toJSON = function() {
 // Load a JSON representation of a warp point.
 WarpPoint.load = function(game, name, json) {
     return new WarpPoint(name, json.x, json.y,
-        json.to, json.enabled);
+        json.to, json.enabled, json.textKeys);
 };

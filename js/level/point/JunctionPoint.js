@@ -1,8 +1,8 @@
 // A point that combine signals from one or more source wires, 
 // and spits out the result to one or more sink wires.
 // Optionally supports a mode between AND and OR.
-var JunctionPoint = function(name, x, y, mode) {
-    Point.call(this, name, x, y);
+var JunctionPoint = function(name, x, y, textKeys, mode) {
+    Point.call(this, name, x, y, true, textKeys);
     this.mode = mode != undefined ? mode : JunctionPoint.MODE_AND;
 
     this.attachmentOffsetX = Wire.SEGMENT_X;
@@ -185,5 +185,5 @@ JunctionPoint.prototype.toJSON = function() {
 // Load our JSON representation.
 JunctionPoint.load = function(game, name, json) {
     return new JunctionPoint(name, json.x, json.y,
-        json.mode);
+        json.textKeys, json.mode);
 };
