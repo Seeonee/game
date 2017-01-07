@@ -132,7 +132,7 @@ Utils.toggleFullscreen = function(pointer, isDoubleClick) {
         var canvas = document.getElementsByTagName('canvas')[0];
         if (game.scale.isFullScreen) {
             game.scale.stopFullScreen();
-            canvas.style.cursor = 'inherit';
+            canvas.style.cursor = 'default';
         } else {
             game.scale.startFullScreen(false);
             canvas.style.cursor = 'none';

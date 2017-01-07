@@ -1,11 +1,9 @@
 add pre-scaled power icons; make a power icon spritesheet
 add gfx settings menu to disable blur and/or adj. layer view
-add fullscreen mode on double-click
 adjust text banner centering when screen size changes
-add "dead" state
-add avatar death gfx
 add "restore to state" for all elements
 add checkpoints
+speed up large camera moves
 
 
 LONG-TERM FEATURES:

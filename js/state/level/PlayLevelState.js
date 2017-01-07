@@ -39,6 +39,9 @@ PlayLevelState.prototype.create = function() {
     this.game.scale.onFullScreenChange.add(this.updateDeadzone, this);
     this.game.scale.onSizeChange.add(this.updateDeadzone, this);
     this.updateDeadzone();
+    this.game.camera.focusOnXY(
+        this.level.avatar.x + this.game.width / 4,
+        this.level.avatar.y + this.game.height / 6);
 
     // And now the ihandlers (some use the camera).
     this.createIHandlers();

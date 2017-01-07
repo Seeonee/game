@@ -440,11 +440,6 @@
                 }
             },
             "obstacles": {
-                "sentry0": {
-                    "x": 175,
-                    "y": 100,
-                    "type": "foe-sentry"
-                },
                 "door0": {
                     "x": 100,
                     "y": 250,
