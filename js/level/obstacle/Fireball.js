@@ -40,6 +40,10 @@ Fireball.TYPE = 'foe-fireball';
 Fireball.prototype = Object.create(Obstacle.prototype);
 Fireball.prototype.constructor = Fireball;
 
+Fireball.ALL_RADII = [25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 400, 500];
+Fireball.ALL_SPEEDS = [0.1, 0.2, 0.25, 0.5, 0.75, 1];
+Fireball.ALL_ANGLES = [0.125, 0.25, 0.33, 0.5, 0.66, 0.75, 1];
+
 // Set up our factory.
 Obstacle.load.factory[Fireball.TYPE] = Fireball;
 

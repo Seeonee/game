@@ -47,6 +47,7 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     new CreateDoorIState(this, this.level);
     new CreateMaskIState(this, this.level);
     new CreateSentryIState(this, this.level);
+    new CreateFireballIState(this, this.level);
 
     // Change level properties.
     this.modes.push(new LevelPropertiesIState(this, this.level));
