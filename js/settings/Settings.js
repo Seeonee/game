@@ -15,6 +15,7 @@ var Settings = function(game) {
     this._controller = Settings.CONTROLLER_PLAYSTATION;
     this._fullscreen = Settings.FULLSCREEN_OFF;
     this.buttonMap = new ButtonMappingsPlaystation();
+    this.language = Settings.ENGLISH;
 };
 
 // Make controller a property that affects button map.
@@ -66,14 +67,23 @@ Settings.CONTROLLER_XBOX = 1;
 Settings.FULLSCREEN_ON = 0;
 Settings.FULLSCREEN_OFF = 1;
 
+Settings.ENGLISH = 0;
 
-// Restore a JSON'd Settings object.
-Settings.load = function(json) {
-    var settings = new Settings();
-    settings.buttonMap = ButtonMappings.load(json.buttonMap);
-    settings.colors = Colors.load(json.colors);
-    return settings;
+
+// Look up a language name.
+Settings.languageName = function(language) {
+    switch (language) {
+        case Settings.ENGLISH:
+        default:
+            return 'english';
+    }
 };
+
+
+
+
+
+
 
 
 // Root object for all our settings menu stuff.
