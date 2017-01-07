@@ -3,7 +3,7 @@ add gfx settings menu to disable blur and/or adj. layer view
 adjust text banner centering when screen size changes
 add "restore to state" for all elements
 add checkpoints
-speed up large camera moves
+reduce size of "add from point" bitmap? it's laggy
 
 
 LONG-TERM FEATURES:

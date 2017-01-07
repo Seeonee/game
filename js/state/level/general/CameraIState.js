@@ -13,7 +13,7 @@ CameraIState.prototype = Object.create(IState.prototype);
 CameraIState.prototype.constructor = CameraIState;
 
 // Constants.
-CameraIState.MAX_SPEED = 500;
+CameraIState.MAX_SPEED = 700;
 CameraIState.SNAP_TIME = 800;
 CameraIState.DEADZONE_EDGE_X = 50;
 CameraIState.DEADZONE_EDGE_Y = 50;
