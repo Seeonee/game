@@ -17,9 +17,26 @@ TestLevelIState.prototype.activated = function(prev) {
     this.avatar.htext.setText(text);
     this.avatar.htext.animate = true;
     this.avatar.htext.setEmptyText(text);
+
+    // Reset text.
+    this.level.textsSeen.clear();
+    for (var i = 0; i < this.level.tiers.length; i++) {
+        var t = this.level.tiers[i];
+        for (var j = 0; j < t.objects.length; j++) {
+            var o = t.objects[j];
+            if (o.textSeen) {
+                console.log(o);
+            }
+            o.textSeen = undefined;
+        }
+    }
+
     this.game.settings.edit = false;
+
     if (this.avatar.point) {
         this.avatar.point.notifyAttached(this.avatar);
+    } else if (this.avatar.path) {
+        this.avatar.path.notifyAttached(this.avatar);
     }
 };
 
