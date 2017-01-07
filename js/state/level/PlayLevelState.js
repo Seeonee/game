@@ -50,6 +50,8 @@ PlayLevelState.prototype.create = function() {
     if (!this.params.restart) {
         this.createStartBanner(this.name);
     }
+
+    Utils.prepFullscreen(this.game);
 };
 
 // Create the level.

@@ -121,6 +121,25 @@ Utils.resizeBitmap = function(bitmap, width, height) {
     bitmap.texture.height = height;
 };
 
+// Toggle fullscreen on double-click.
+Utils.prepFullscreen = function(game) {
+    game.input.onTap.add(Utils.toggleFullscreen);
+};
+
+// Toggle fullscreen on double-click.
+Utils.toggleFullscreen = function(pointer, isDoubleClick) {
+    if (isDoubleClick) {
+        var canvas = document.getElementsByTagName('canvas')[0];
+        if (game.scale.isFullScreen) {
+            game.scale.stopFullScreen();
+            canvas.style.cursor = 'inherit';
+        } else {
+            game.scale.startFullScreen(false);
+            canvas.style.cursor = 'none';
+        }
+    }
+};
+
 
 
 

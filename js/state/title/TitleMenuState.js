@@ -27,6 +27,8 @@ TitleMenuState.prototype.create = function() {
 
     this.cascader = new Cascader(this.game,
         this.z.fg, this.palette.c1.i);
+
+    Utils.prepFullscreen(this.game);
 };
 
 // Update loop.
