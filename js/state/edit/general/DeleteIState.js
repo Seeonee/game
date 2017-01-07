@@ -119,8 +119,10 @@ DeleteIState.prototype.updateForPoint = function() {
         var readyToMerge = this.charged;
         if (!this.deletePoint(this.point, readyToMerge)) {
             this.avatar.htext.setText('delete failed', true);
+            this.cancel();
+        } else {
+            this.proceed();
         }
-        this.proceed();
     }
 };
 
