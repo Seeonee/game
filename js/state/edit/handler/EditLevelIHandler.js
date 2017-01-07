@@ -49,17 +49,20 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     new CreateSentryIState(this, this.level);
     new CreateFireballIState(this, this.level);
 
+    // Text.
+    this.modes.push(new TextEditorIState(this, this.level));
+
     // Change level properties.
     this.modes.push(new LevelPropertiesIState(this, this.level));
+
+    // Display controls..
+    this.modes.push(new EditControlsIState(this, this.level));
 
     // Save the level.
     this.modes.push(new SaveLevelIState(this, this.level));
 
     // Reset the level.
     this.modes.push(new ResetLevelIState(this, this.level));
-
-    // Display controls..
-    this.modes.push(new EditControlsIState(this, this.level));
 
     // Test states.
     this.modes.push(new TestLevelIState(this, this.level));

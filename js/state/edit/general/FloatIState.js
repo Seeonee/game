@@ -15,7 +15,8 @@ FloatIState.FLOAT_SNAP_DISTANCE = 25;
 
 // Called when we become the active state.
 FloatIState.prototype.activated = function(prev) {
-    if (prev instanceof WireEditorIState) {
+    if (prev instanceof WireEditorIState ||
+        prev instanceof TextEditorIState) {
         this.prev = prev;
     } else {
         this.prev = this.handler.states[GeneralEditIState.NAME];
