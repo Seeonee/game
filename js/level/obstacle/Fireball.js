@@ -22,12 +22,11 @@ var Fireball = function(name, x, y,
     this.returnAnglePercentage = returnAnglePercentage;
     if (returnAnglePercentage != undefined) {
         this.returnAngle = 2 * Math.PI * returnAnglePercentage;
-        this.rotation = this.returnAngle;
+        this.rotation = this.clockwise ? this.returnAngle :
+            this.returnAngle - 2 * Math.PI;
     } else {
-        this.rotation = this.startAngle + 2 * Math.PI;
-    }
-    if (!this.clockwise) {
-        this.rotation = this.rotation - 2 * Math.PI;
+        this.rotation = this.startAngle +
+            (this.clockwise ? 1 : -1) * 2 * Math.PI;
     }
 
     this.percentage = Math.abs(
@@ -106,7 +105,21 @@ Fireball.prototype.getDetails = function() {
 // Write our JSON conversion.
 Fireball.prototype.toJSON = function() {
     var result = Obstacle.prototype.toJSON.call(this);
-
+    if (this.leash != undefined) {
+        result.leash = this.leash;
+    }
+    if (this.speedRatio != undefined) {
+        result.speedRatio = this.speedRatio;
+    }
+    if (this.clockwise != undefined) {
+        result.clockwise = this.clockwise;
+    }
+    if (this.startAnglePercentage != undefined) {
+        result.startAnglePercentage = this.startAnglePercentage;
+    }
+    if (this.returnAnglePercentage != undefined) {
+        result.returnAnglePercentage = this.returnAnglePercentage;
+    }
     return result;
 };
 
