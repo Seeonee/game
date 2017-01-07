@@ -1,9 +1,10 @@
 // Help text floating beside the avatar during editing.
-var HoverText = function(game, level, doNotAnimate) {
+var HoverText = function(game, level) {
     this.game = game;
     this.level = level;
     this.avatar = this.level.avatar;
-    this.doNotAnimate = doNotAnimate;
+    this.animate = true;
+    this.tweens = [];
 
     var font = this.game.settings.font;
     var style = {
@@ -36,7 +37,9 @@ var HoverText = function(game, level, doNotAnimate) {
     this.holding = false;
     this.queue = [];
     this.events.onHoldComplete = new Phaser.Signal();
-    this.setTier(this.level.tier);
+    if (this.level.tier) {
+        this.setTier(this.level.tier);
+    }
     this.level.events.onTierChange.add(this.setTier, this);
 };
 
@@ -118,7 +121,8 @@ HoverText.prototype._setText = function(text, hold) {
 
 // Called when a hold expires.
 HoverText.prototype.setCurtainDimensions = function(w, h) {
-    if (this.doNotAnimate) {
+    this.clearTweens();
+    if (!this.animate) {
         this.alpha = 1;
         this.curtain.scale.setTo(w / HoverText.CURTAIN_D,
             h / HoverText.CURTAIN_D);
@@ -129,11 +133,23 @@ HoverText.prototype.setCurtainDimensions = function(w, h) {
         HoverText.APPEAR_TIME,
         Phaser.Easing.Sinusoidal.InOut, true,
         HoverText.APPEAR_TIME / 2);
+    this.tweens.push(t);
 
     this.curtain.scale.setTo(0.1);
     var t = this.game.add.tween(this.curtain.scale);
     t.to({ x: w / HoverText.CURTAIN_D, y: h / HoverText.CURTAIN_D },
         HoverText.APPEAR_TIME, Phaser.Easing.Sinusoidal.InOut, true);
+    this.tweens.push(t);
+};
+
+// Tween clean.
+HoverText.prototype.clearTweens = function() {
+    if (this.tweens.length) {
+        for (var i = 0; i < this.tweens.length; i++) {
+            this.tweens[i].stop();
+        }
+        this.tweens = [];
+    }
 };
 
 // Called when a hold expires.

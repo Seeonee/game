@@ -18,6 +18,7 @@ var Avatar = function(game, graphics, level) {
     this.snapToStartingPoint();
     this.setColor(this.tier.palette);
     this.tierMeter = new TierMeter(this.game, this.level);
+    this.htext = new HoverText(this.game, this.level);
 
     this.colliding = false;
     this.velocity = { x: 0, y: 0 };
