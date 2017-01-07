@@ -6,9 +6,6 @@ var EndIState = function(handler, level) {
 
     this.root.text = level.name + ' complete';
     this.nextLevel = this.add('next level', this.selectNextLevel);
-    if (this.game.settings.edit) {
-        this.add('reset', this.selectReset);
-    }
     this.add('restart', this.selectRestart);
     this.add('exit', this.selectExit);
 };
@@ -119,22 +116,9 @@ EndIState.prototype.selectNextLevel = function(option) {
     }
 };
 
-// User opted to reset.
-EndIState.prototype.selectReset = function(option) {
-    var json = JSON.parse(JSON.stringify(this.level));
-    var params = this.game.state.getCurrentState().params;
-    params.json = json;
-    params.restart = true;
-    var state = this.game.state.getCurrentState().key;
-    this.game.state.start(state, true, false, params);
-};
-
 // User opted to restart.
 EndIState.prototype.selectRestart = function(option) {
-    var params = this.game.state.getCurrentState().params;
-    params.restart = true;
-    var state = this.game.state.getCurrentState().key;
-    this.game.state.start(state, true, false, params);
+    this.game.state.getCurrentState().restartLevel();
 };
 
 // User opted to exit.

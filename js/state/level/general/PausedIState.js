@@ -38,10 +38,7 @@ PausedIState.prototype.selectContinue = function(option) {
 // User opted to restart.
 PausedIState.prototype.selectRestart = function(option) {
     this.unpause();
-    var params = this.game.state.getCurrentState().params;
-    params.restart = true;
-    var state = this.game.state.getCurrentState().key;
-    this.game.state.start(state, true, false, params);
+    this.game.state.getCurrentState().restartLevel();
 };
 
 // User opted to exit.

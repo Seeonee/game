@@ -119,6 +119,12 @@ PlayLevelState.prototype.updateDeadzone = function() {
         x, y, w - 2 * x, h - 2 * y);
 };
 
+// Restart the level.
+PlayLevelState.prototype.restartLevel = function() {
+    this.params.restart = true;
+    this.game.state.start(this.key, true, false, this.params);
+};
+
 
 // Render loop.
 PlayLevelState.prototype.render = function() {

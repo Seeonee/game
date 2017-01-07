@@ -57,6 +57,12 @@ EditLevelState.prototype.createEditHandler = function(ihandler) {
     return new EditLevelIHandler(this.game, this.gpad, this.level, ihandler);
 };
 
+// Restart the level.
+EditLevelState.prototype.restartLevel = function() {
+    this.params.json = JSON.parse(JSON.stringify(this.level));
+    PlayLevelState.prototype.restartLevel.call(this);
+};
+
 // Called on shutdown. Turns editing back off.
 EditLevelState.prototype.shutdown = function() {
     this.game.settings.edit = false;

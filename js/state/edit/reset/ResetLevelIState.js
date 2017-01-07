@@ -14,7 +14,8 @@ ResetLevelIState.prototype.constructor = ResetLevelIState;
 // Called when we become the active state.
 ResetLevelIState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
-    this.avatar.help.setText(EditLevelIHandler.addArrows('reset'));
+    this.avatar.help.setText(EditLevelIHandler.addArrows(
+        'restart with changes'));
     this.chargedTime = -1;
 };
 
@@ -41,12 +42,7 @@ ResetLevelIState.prototype.update = function() {
         this.gpad.consumeButtonEvent();
         this.image.destroy();
         if (this.game.time.now > this.chargedTime) {
-            var json = JSON.parse(JSON.stringify(this.level));
-            var params = this.game.state.getCurrentState().params;
-            params.json = json;
-            params.restart = true;
-            var state = this.game.state.getCurrentState().key;
-            this.game.state.start(state, true, false, params);
+            this.game.state.getCurrentState().restartLevel();
         }
         this.chargedTime = -1;
     } else {
