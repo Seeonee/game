@@ -11,10 +11,10 @@ var FireballSprite = function(fireball, x, y, palette) {
         Phaser.Easing.Linear.None, true, 0,
         Number.POSITIVE_INFINITY, fireball.yoyo);
 
-    this.bitmap = this.game.bitmapCache.get(
+    var bitmap = this.game.bitmapCache.get(
         FireballSprite.painter);
     this.flame = this.spinner.addChild(this.game.add.sprite(
-        0, this.fireball.radius, this.bitmap));
+        0, this.fireball.radius, bitmap));
     this.flame.anchor.setTo(0.5);
     this.flame.scale.setTo(FireballSprite.LEAD_FLAME_SCALE);
 
@@ -39,6 +39,8 @@ var FireballSprite = function(fireball, x, y, palette) {
         this.fireball.speedRatio;
     this.sparklifespan = FireballSprite.SPARK_LIFESPAN /
         this.fireball.speedRatio;
+
+    this.sPool = new SpritePool(this.game, FireballSprite.Spark);
 };
 
 FireballSprite.prototype = Object.create(Phaser.Sprite.prototype);
@@ -85,7 +87,8 @@ FireballSprite.prototype.update = function() {
     Phaser.Sprite.prototype.update.call(this);
     var time = this.game.time.now;
     if (time > this.sparkTime) {
-        new FireballSprite.Spark(this);
+        var spark = this.sPool.make(this.game);
+        spark.fireAway(this);
         this.sparkTime = time + this.interval;
     }
 };
@@ -96,32 +99,51 @@ FireballSprite.prototype.update = function() {
 
 
 // Fireball trail.
-FireballSprite.Spark = function(fbsprite) {
-    this.game = fbsprite.game;
-    var p = fbsprite.getOrbCoords();
-    Phaser.Sprite.call(this, this.game, p.x, p.y,
-        fbsprite.bitmap);
+FireballSprite.Spark = function(game) {
+    this.game = game;
+    var bitmap = game.bitmapCache.get(
+        FireballSprite.painter);
+    Phaser.Sprite.call(this, game, 0, 0, bitmap);
     this.anchor.setTo(0.5);
+    this.visible = false;
+
+    this.tweens = [];
+};
+
+FireballSprite.Spark.prototype = Object.create(Phaser.Sprite.prototype);
+FireballSprite.Spark.prototype.constructor = FireballSprite.Spark;
+
+
+// Fireball trail.
+FireballSprite.Spark.prototype.fireAway = function(fbsprite) {
+    var p = fbsprite.getOrbCoords();
+    this.x = p.x;
+    this.y = p.y;
+    this.tint = this.game.settings.colors.WHITE.i;
+    this.visible = true;
     fbsprite.addChild(this);
     this.rotation = fbsprite.spinner.rotation;
 
     this.rgb = Color.rgb(this.game.settings.colors.WHITE.i);
     var rgb = Color.rgb(fbsprite.sparktint);
-    this.game.add.tween(this.rgb).to(rgb,
+    var t = this.game.add.tween(this.rgb).to(rgb,
         fbsprite.sparklifespan / 2,
         Phaser.Easing.Quadratic.Out, true,
         FireballSprite.SPARK_TINT_DELAY);
+    this.tweens.push(t);
 
     this.scale.setTo(FireballSprite.SPARK_STARTING_SCALE);
     var time = FireballSprite.SPARK_GROWTH_TIME;
     var scale = FireballSprite.SPARK_GROWTH_SCALE;
     var t = this.game.add.tween(this.scale).to({ x: scale, y: scale },
         time, Phaser.Easing.Linear.None, true);
+    this.tweens.push(t);
     var scale = 0.1 + Math.random() * 0.2;
     var t2 = this.game.add.tween(this.scale).to({ x: scale, y: scale },
         fbsprite.sparklifespan - time,
         Phaser.Easing.Linear.None);
     t.chain(t2);
+    this.tweens.push(t2);
 
     var v = FireballSprite.DRIFT_VARIANCE;
     var dx = Math.random() * v - v / 2;
@@ -138,13 +160,21 @@ FireballSprite.Spark = function(fbsprite) {
         fbsprite.sparklifespan,
         Phaser.Easing.Linear.None, true);
     t.onComplete.add(function() {
+        this.visible = false;
         this.kill();
     }, this);
+    this.tweens.push(t);
+
+    this.events.onKilled.add(this.stopTweens, this);
 };
 
-FireballSprite.Spark.prototype = Object.create(Phaser.Sprite.prototype);
-FireballSprite.Spark.prototype.constructor = FireballSprite.Spark;
-
+// Tween cleanup.
+FireballSprite.Spark.prototype.stopTweens = function() {
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    this.tweens = [];
+};
 
 // Update loop.
 FireballSprite.Spark.prototype.update = function() {
