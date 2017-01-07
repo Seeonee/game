@@ -1,8 +1,9 @@
 // Help text floating beside the avatar during editing.
-var EditHelp = function(game, level) {
+var EditHelp = function(game, level, doNotAnimate) {
     this.game = game;
     this.level = level;
     this.avatar = this.level.avatar;
+    this.doNotAnimate = doNotAnimate;
 
     var font = this.game.settings.font;
     var style = {
@@ -13,6 +14,7 @@ var EditHelp = function(game, level) {
         EditHelp.X_OFFSET, EditHelp.Y_OFFSET);
     this.avatar.addChild(this);
     this.avatar.help = this;
+    this.alpha = 0;
 
     var bitmap = this.game.bitmapCache.get(
         EditHelp.painter);
@@ -48,7 +50,8 @@ EditHelp.CURTAIN_D = 50;
 EditHelp.CURTAIN_PAD = 3;
 EditHelp.SUB_Y_OFFSET = 34;
 EditHelp.SUB_FONT_DELTA = -8;
-EditHelp.DEFAULT_HOLD = 1000;
+EditHelp.DEFAULT_HOLD = 1000; // ms
+EditHelp.APPEAR_TIME = 350; // ms
 
 
 // Paint our bitmap.
@@ -99,7 +102,11 @@ EditHelp.prototype._setText = function(text, hold) {
         var w = 2 * EditHelp.CURTAIN_PAD + this.main.width;
         var h = 0 * EditHelp.CURTAIN_PAD + this.main.height;
     }
-    this.setCurtainDimensions(w, h);
+    if (text.length) {
+        this.setCurtainDimensions(w, h);
+    } else {
+        this.alpha = 0;
+    }
 
     if (hold) {
         hold = hold == true ? EditHelp.DEFAULT_HOLD : hold;
@@ -111,8 +118,22 @@ EditHelp.prototype._setText = function(text, hold) {
 
 // Called when a hold expires.
 EditHelp.prototype.setCurtainDimensions = function(w, h) {
-    this.curtain.scale.setTo(w / EditHelp.CURTAIN_D,
-        h / EditHelp.CURTAIN_D);
+    if (this.doNotAnimate) {
+        this.alpha = 1;
+        this.curtain.scale.setTo(w / EditHelp.CURTAIN_D,
+            h / EditHelp.CURTAIN_D);
+        return;
+    }
+    this.alpha = 0;
+    var t = this.game.add.tween(this).to({ alpha: 1 },
+        EditHelp.APPEAR_TIME,
+        Phaser.Easing.Sinusoidal.InOut, true,
+        EditHelp.APPEAR_TIME / 2);
+
+    this.curtain.scale.setTo(0.1);
+    var t = this.game.add.tween(this.curtain.scale);
+    t.to({ x: w / EditHelp.CURTAIN_D, y: h / EditHelp.CURTAIN_D },
+        EditHelp.APPEAR_TIME, Phaser.Easing.Sinusoidal.InOut, true);
 };
 
 // Called when a hold expires.
