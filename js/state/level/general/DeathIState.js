@@ -14,11 +14,17 @@ DeathIState.FADE_TIME = 2000; // ms
 DeathIState.MASK_FLY_TIME = 2000; // ms
 DeathIState.MASK_FLY_DISTANCE = 250;
 DeathIState.MASK_SPIN = Math.PI;
+DeathIState.MASK_SPIN_TIME = 120000; // ms
 DeathIState.SPARKS = 30;
 DeathIState.SPARK_TIME = 1500; // ms
 DeathIState.SPARK_OFFSET = -6;
 DeathIState.SPARK_DISTANCE = 200;
 DeathIState.SPARK_SPREAD = Math.PI;
+DeathIState.SPARK_FADE_CHANCE = 0.5;
+DeathIState.SPARK_FADE_ALPHA = 0.1;
+DeathIState.SPARK_FADE_TIME = 1000; // ms
+DeathIState.SPARK_FADE_DELAY_BASE = 40000; // ms
+DeathIState.SPARK_FADE_DELAY_VARY = 5000; // ms
 
 
 // Activated.
@@ -40,15 +46,18 @@ DeathIState.prototype.activated = function(prev) {
     this.particle = 0;
     this.startTime = this.game.time.now;
     this.storeNextSparkTime();
-    this.game.add.tween(this.masq).to({
-            x: x,
-            y: y,
-            rotation: rotation
-        }, DeathIState.MASK_FLY_TIME,
-        Phaser.Easing.Quintic.Out, true).onComplete.add(
-        function() {
-            this.flying = false;
-        }, this);
+    var t = this.game.add.tween(this.masq)
+    t.to({ x: x, y: y, rotation: rotation },
+        DeathIState.MASK_FLY_TIME,
+        Phaser.Easing.Quintic.Out, true);
+    t.onComplete.add(function() {
+        this.flying = false;
+    }, this);
+    var t2 = this.game.add.tween(this.masq);
+    t2.to({ rotation: rotation + Math.sign(rotation) * 2 * Math.PI },
+        DeathIState.MASK_SPIN_TIME, Phaser.Easing.Linear.None,
+        false, 0, Number.POSITIVE_INFINITY);
+    t.chain(t2);
 
     this.game.add.tween(this.level.z).to({ alpha: 0 },
         DeathIState.FADE_TIME,
@@ -119,8 +128,27 @@ DeathIState.DeathSpark = function(parent, tint, a, progress) {
     var a2 = -a - spread / 2 + Math.random() * spread;
     var x = this.x + d * Math.sin(a2);
     var y = this.y - d * Math.cos(a2);
-    this.game.add.tween(this).to({ x: x, y: y, alpha: alpha },
+    var t = this.game.add.tween(this).to({ x: x, y: y, alpha: alpha },
         time, Phaser.Easing.Cubic.Out, true);
+
+    if (Math.random() > DeathIState.SPARK_FADE_CHANCE) {
+        var alpha = DeathIState.SPARK_FADE_ALPHA;
+        var time = DeathIState.SPARK_FADE_TIME + Math.random() *
+            DeathIState.SPARK_FADE_TIME;
+        var delay = 1000 + Math.random() * 5000;
+        var t2 = this.game.add.tween(this).to({ alpha: alpha },
+            time, Phaser.Easing.Sinusoidal.InOut, false, delay,
+            Number.POSITIVE_INFINITY, true);
+        t2.repeatDelay(delay);
+        t.chain(t2);
+    }
+
+    var time = DeathIState.SPARK_FADE_DELAY_BASE +
+        Math.random() * DeathIState.SPARK_FADE_DELAY_VARY;
+    rotation = this.rotation + (2 * Math.PI *
+        (Math.random() > 0.5 ? 1 : -1));
+    this.game.add.tween(this).to({ rotation: rotation },
+        time, Phaser.Easing.Linear.None, true, 0, Number.POSITIVE_INFINITY);
 };
 
 DeathIState.DeathSpark.prototype = Object.create(Phaser.Sprite.prototype);
