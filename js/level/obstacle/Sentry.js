@@ -17,6 +17,7 @@ Sentry.BODY_HITBOX = 40;
 Sentry.TRAP_RADIUS = 125;
 Sentry.CHARGE_TIME = 2000; // ms
 Sentry.KILL_TIME = 400; // ms
+Sentry.KILL_TIME_ACTUAL = 50; // ms
 Sentry.RECHARGE_TIME = 2000; // ms
 
 
@@ -74,7 +75,7 @@ Sentry.prototype.blast = function() {
     this.lethal = true;
     this.game.camera.flash();
     this.sentry.coolDown();
-    this.game.time.events.add(Sentry.KILL_TIME, function() {
+    this.game.time.events.add(Sentry.KILL_TIME_ACTUAL, function() {
         this.lethal = false;
     }, this);
 };
