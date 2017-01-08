@@ -67,6 +67,8 @@ AddText2IState.prototype.activated = function(prev) {
     this.gpad.consumeButtonEvent();
     if (prev.depth && prev.depth < this.depth) {
         this.obj = prev.obj;
+        this.root.buf = '';
+        this.root.setUppercase(true);
     }
 
     this.current = this.root;

@@ -132,7 +132,6 @@ AddTextNode.prototype.show = function(palette) {
     if (this.parent) {
         return;
     }
-    this.buf = '';
     this.backboard.visible = true;
     this.setPalette(palette);
     this.layOut();
