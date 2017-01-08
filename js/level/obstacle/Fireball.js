@@ -87,6 +87,13 @@ Fireball.prototype.obstruct = function(avatar, hitbox) {
     return false;
 };
 
+// Restore progress.
+Fireball.prototype.restoreProgress = function(p) {
+    if (this.fireball) {
+        this.fireball.startSpinning();
+    }
+};
+
 // Delete ourself.
 Fireball.prototype.delete = function() {
     if (this.hitbox) {

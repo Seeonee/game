@@ -5,11 +5,6 @@ var FireballSprite = function(fireball, x, y, palette) {
     this.anchor.setTo(0.5);
 
     this.spinner = this.addChild(this.game.add.sprite(0, 0));
-    this.spinner.rotation = this.fireball.startAngle;
-    this.tween = this.game.add.tween(this.spinner);
-    this.tween.to({ rotation: fireball.rotation }, fireball.time,
-        Phaser.Easing.Linear.None, true, 0,
-        Number.POSITIVE_INFINITY, fireball.yoyo);
 
     var bitmap = this.game.bitmapCache.get(
         FireballSprite.painter);
@@ -22,12 +17,6 @@ var FireballSprite = function(fireball, x, y, palette) {
         0, this.fireball.radius));
     this.orb.anchor.setTo(0.5);
     this.setPalette(palette);
-
-    this.orb.rotation = -this.fireball.startAngle;
-    this.tween2 = this.game.add.tween(this.orb);
-    this.tween2.to({ rotation: -fireball.rotation }, fireball.time,
-        Phaser.Easing.Linear.None, true, 0,
-        Number.POSITIVE_INFINITY, fireball.yoyo);
 
     this.hitbox = fireball.hitbox;
     this.hitbox.x = 0;
@@ -44,6 +33,7 @@ var FireballSprite = function(fireball, x, y, palette) {
         FireballSprite.SPARK_POOL = new SpritePool(
             this.game, FireballSprite.Spark, true);
     }
+    this.startSpinning();
 };
 
 FireballSprite.prototype = Object.create(Phaser.Sprite.prototype);
@@ -69,6 +59,33 @@ FireballSprite.painter = function(bitmap) {
     var c = bitmap.context;
     c.fillStyle = '#ffffff';
     c.fillRect(0, 0, d, d);
+};
+
+// Begin our rotation.
+FireballSprite.prototype.startSpinning = function() {
+    var sparks = FireballSprite.SPARK_POOL.all;
+    for (var i = 0; i < sparks.length; i++) {
+        sparks[i].kill();
+    }
+
+    if (this.tween) {
+        this.tween.stop();
+    }
+    if (this.tween2) {
+        this.tween2.stop();
+    }
+    var fireball = this.fireball;
+    this.spinner.rotation = this.fireball.startAngle;
+    this.tween = this.game.add.tween(this.spinner);
+    this.tween.to({ rotation: fireball.rotation }, fireball.time,
+        Phaser.Easing.Linear.None, true, 0,
+        Number.POSITIVE_INFINITY, fireball.yoyo);
+
+    this.orb.rotation = -this.fireball.startAngle;
+    this.tween2 = this.game.add.tween(this.orb);
+    this.tween2.to({ rotation: -fireball.rotation }, fireball.time,
+        Phaser.Easing.Linear.None, true, 0,
+        Number.POSITIVE_INFINITY, fireball.yoyo);
 };
 
 // Update colors.
