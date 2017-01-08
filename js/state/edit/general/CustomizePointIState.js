@@ -150,7 +150,8 @@ OptionGathererIState.prototype.cancel = function() {
 
 // Update loop.
 OptionGathererIState.prototype.update = function() {
-    if (this.gpad.justPressed(this.buttonMap.EDIT_CUSTOMIZE)) {
+    if (this.gpad.justPressed(this.buttonMap.EDIT_CUSTOMIZE) ||
+        this.gpad.justPressed(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
         this.pressed = true;
     } else if (this.gpad.justReleased(this.buttonMap.SELECT) ||
