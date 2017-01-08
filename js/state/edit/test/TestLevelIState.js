@@ -23,11 +23,7 @@ TestLevelIState.prototype.activated = function(prev) {
     for (var i = 0; i < this.level.tiers.length; i++) {
         var t = this.level.tiers[i];
         for (var j = 0; j < t.objects.length; j++) {
-            var o = t.objects[j];
-            if (o.textSeen) {
-                console.log(o);
-            }
-            o.textSeen = undefined;
+            t.objects[j].textSeen = undefined;
         }
     }
 
