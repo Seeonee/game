@@ -70,6 +70,10 @@ MaskItem.prototype.restoreProgress = function(p) {
     var avatar = this.tier.level.avatar;
     if (pickedUp && !fallenOff) {
         avatar.currentMaskObject = this;
+        this.citem.settle();
+        this.altar.settle();
+    } else if (fallenOff) {
+        this.altar.settle();
     }
     if (fallenOff == this.fallenOff && pickedUp == this.pickedUp) {
         return;

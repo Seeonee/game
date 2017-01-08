@@ -27,9 +27,6 @@ MaskItemSprite.prototype.setPalette = function(palette) {
 MaskItemSprite.prototype.pickUp = function(avatar) {
     this.avatar = avatar;
     if (this.avatar.masq) {
-        this.avatar.masq.events.onKilled.add(function() {
-            console.log('!!!');
-        }, this);
         this.oldMasq = this.avatar.masq;
         this.avatar.masq = this.masq.spriteC;
         var t = this.game.add.tween(
@@ -48,6 +45,10 @@ MaskItemSprite.prototype.pickUp = function(avatar) {
 
 // Called when the item is fully in place overhead.
 MaskItemSprite.prototype.pickedUp = function() {
+    if (this.settled) {
+        this.settled = undefined;
+        return;
+    }
     this.settleTweens = [];
     var time = 3000;
     var delay = 1500;
@@ -65,10 +66,23 @@ MaskItemSprite.prototype.pickedUp = function() {
     t.onComplete.add(function() {
         this.avatar.addChild(this.masq.spriteC);
         this.masq.spriteC.y = this.masq.yOffset;
-
-        // this.masq.spriteC.scale.setTo(this.masq.scale);
     }, this);
     this.settleTweens.push(t);
+};
+
+// Finish our pickup animation early.
+MaskItemSprite.prototype.settle = function() {
+    this.settled = true;
+    if (this.settleTweens) {
+        for (var i = 0; i < this.settleTweens.length; i++) {
+            this.settleTweens[i].stop();
+        }
+        this.settleTweens = undefined;
+    }
+    this.avatar.addChild(this.masq.spriteC);
+    this.gobetween.y = 0;
+    this.masq.spriteC.y = this.masq.yOffset;
+    this.y = this.masq.yOffset; // Do this anyway.
 };
 
 // If we're being carried, drop back to original coords.
@@ -142,6 +156,7 @@ MaskAltar.SHINE_TIME = 2200; // ms
 MaskAltar.MINUTE_SPINS = 5;
 MaskAltar.HOUR_SPINS = 3;
 MaskAltar.FADE_TIME = 5000; // ms
+MaskAltar.FADE_ALPHA = 0.1;
 
 
 // Update tint.
@@ -214,8 +229,30 @@ MaskAltar.prototype.shine = function(avatar) {
     }, this);
     this.shineTweens.push(t);
 
-    var t2 = this.game.add.tween(this).to({ alpha: 0.1 },
+    var t2 = this.game.add.tween(this);
+    t2.to({ alpha: MaskAltar.FADE_ALPHA },
         MaskAltar.FADE_TIME, Phaser.Easing.Sinusoidal.InOut);
     t.chain(t2);
     this.shineTweens.push(t2);
+};
+
+// Stop the shine early.
+MaskAltar.prototype.settle = function() {
+    if (this.tweens) {
+        for (var i = 0; i < this.tweens.length; i++) {
+            this.tweens[i].stop();
+        }
+        this.tweens = [];
+    }
+    if (this.shineTweens) {
+        for (var i = 0; i < this.shineTweens.length; i++) {
+            this.shineTweens[i].stop();
+        }
+        this.shineTweens = [];
+    }
+    this.hourHand.rotation = 0;
+    this.minuteHand.rotation = 0;
+    this.rgb = Color.rgb(this.game.settings.colors.WHITE.i);
+    this.tint = this.game.settings.colors.WHITE.i;
+    this.alpha = MaskAltar.FADE_ALPHA;
 };
