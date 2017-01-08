@@ -13,6 +13,10 @@ AddTextIState.NAME = BaseCustomizeIState.getName(AddTextIState, 1);
 AddTextIState.prototype = Object.create(BaseCustomizeIState.prototype);
 AddTextIState.prototype.constructor = AddTextIState;
 
+// And yep, constants.
+AddTextIState.THRESHOLD = 0.25;
+
+
 // Activate/deactivate.
 AddTextIState.prototype.activated = function(prev) {
     this.obj = this.avatar.point;
@@ -48,6 +52,11 @@ var AddText2IState = function(handler, level) {
     OptionGathererIState.call(this, handler, level, AddTextIState, 2,
         optionName);
     this.showArrows = false;
+
+    this.root = AddTextNode.create(this.game);
+    this.root.onTextChanged.add(function() {
+        this.updateHelp();
+    }, this);
 };
 
 AddText2IState.prototype = Object.create(OptionGathererIState.prototype);
@@ -59,12 +68,56 @@ AddText2IState.prototype.activated = function(prev) {
     if (prev.depth && prev.depth < this.depth) {
         this.obj = prev.obj;
     }
+
+    this.current = this.root;
+    this.root.show(this.level.tier.palette);
+
     OptionGathererIState.prototype.activated.call(this, prev);
+};
+
+// Clean up.
+AddText2IState.prototype.deactivated = function(next) {
+    this.root.hide();
+    OptionGathererIState.prototype.deactivated.call(this, next);
 };
 
 // Option methods.
 AddText2IState.prototype.getOptionValue = function() {
-    return 'Hello, world!';
+    return this.root.buf;
+};
+
+// Update loop.
+AddText2IState.prototype.update = function() {
+    var joystick = this.gpad.getAngleAndTilt();
+    if (joystick.tilt > AddTextIState.THRESHOLD) {
+        this.current.setInputAngle(joystick.angle);
+    } else {
+        this.current.setInputAngle(undefined);
+    }
+
+    if (this.gpad.justPressed(this.buttonMap.EDIT_CUSTOMIZE) ||
+        this.gpad.justPressed(this.buttonMap.SELECT)) {
+        this.gpad.consumeButtonEvent();
+        this.current.setPressed(true);
+    } else if (this.gpad.justReleased(this.buttonMap.SELECT) ||
+        this.gpad.justReleased(this.buttonMap.EDIT_CUSTOMIZE)) {
+        this.gpad.consumeButtonEvent();
+        this.current = this.current.setPressed(false);
+        if (this.current === this.root && !this.current.inputAngle &&
+            this.root.buf) {
+            this.advance();
+        }
+    } else if (this.gpad.justReleased(this.buttonMap.CANCEL)) {
+        this.gpad.consumeButtonEvent();
+        if (this.current === this.root) {
+            this.cancel();
+        } else {
+            this.current = this.current.cancel();
+        }
+    }
+    if (this.isActive()) {
+        this.current.update();
+    }
 };
 
 
