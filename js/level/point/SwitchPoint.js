@@ -5,7 +5,8 @@
 var SwitchPoint = function(name, x, y, enabled, textKeys,
     once, contact) {
     Point.call(this, name, x, y, enabled, textKeys);
-    this.once = once;
+    this.once = once == undefined ? false : once;
+    this._once = this.once;
     this.contact = contact;
     this.done = false;
     this.disableIStateWhileDisabled = false;
@@ -80,11 +81,14 @@ SwitchPoint.prototype.shouldHold = function() {
 
 // Save progress.
 SwitchPoint.prototype.saveProgress = function(p) {
-    if (this.enabled == this.startEnabled && !this.done) {
+    if (this.enabled == this.startEnabled &&
+        this.once == this._once &&
+        !this.done) {
         return;
     }
     p[this.name] = {
         enabled: this.enabled,
+        once: this.once,
         done: this.done
     };
 
@@ -94,13 +98,25 @@ SwitchPoint.prototype.saveProgress = function(p) {
 SwitchPoint.prototype.restoreProgress = function(p) {
     var myp = p[this.name];
     var enabled = myp && myp.enabled ? myp.enabled : this.startEnabled;
+    var once = myp && myp.once ? myp.once : false;
     var done = myp && myp.done ? myp.done : false;
-    if (enabled == this.enabled && done == this.done) {
+    if (enabled == this.enabled &&
+        once == this.once &&
+        done == this.done) {
         return;
     }
     this.done = done;
-    this.switch.flip();
-    Point.prototype.setEnabled.call(this, enabled);
+    // If we've become locked (e.g. from lightning),
+    // unlock ourself.
+    if (!once && this.once) {
+        this.switch.unlock();
+    }
+    this.once = once;
+
+    if (enabled != this.enabled) {
+        this.switch.flip();
+        Point.prototype.setEnabled.call(this, enabled);
+    }
 };
 
 // Delete our gfx.
@@ -119,7 +135,7 @@ SwitchPoint.prototype.getDetails = function() {
 SwitchPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
     result.type = SwitchPoint.TYPE;
-    if (this.once) {
+    if (this._once) {
         result.once = true;
     }
     if (this.contact) {

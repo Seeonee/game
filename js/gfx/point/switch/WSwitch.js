@@ -70,6 +70,17 @@ WSwitch.prototype.lock = function() {
     var t = this.game.add.tween(this.scale).to({ x: 0, y: 0 },
         WSwitch.LOCK_TIME, Phaser.Easing.Quadratic.In, true);
     t.onComplete.add(function() { this.visible = false; }, this);
+    this.lockTween = t;
+};
+
+// Just kidding! We can be pressed again.
+WSwitch.prototype.unlock = function() {
+    if (this.lockTween) {
+        this.lockTween.stop();
+        this.lockTween = undefined;
+    }
+    this.scale.setTo(1);
+    this.visible = true;
 };
 
 // Called on tier fade.

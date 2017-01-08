@@ -61,7 +61,8 @@
                     "x": 150,
                     "y": 350,
                     "enabled": false,
-                    "type": "switch"
+                    "type": "switch",
+                    "contact": true
                 },
                 "p11": {
                     "x": 50,
@@ -85,6 +86,11 @@
                 },
                 "p15": {
                     "x": -50,
+                    "y": 50,
+                    "enabled": true
+                },
+                "p16": {
+                    "x": -150,
                     "y": 50,
                     "enabled": true
                 }
@@ -141,6 +147,10 @@
                 "a12": {
                     "p1": "p15",
                     "p2": "p0"
+                },
+                "a13": {
+                    "p1": "p16",
+                    "p2": "p15"
                 }
             },
             "wires": {
@@ -159,6 +169,14 @@
                     "source": "p6",
                     "sink": "p2",
                     "weight2": 2
+                }
+            },
+            "obstacles": {
+                "item0": {
+                    "x": -150,
+                    "y": 50,
+                    "type": "item",
+                    "subtype": "lightning"
                 }
             }
         }
