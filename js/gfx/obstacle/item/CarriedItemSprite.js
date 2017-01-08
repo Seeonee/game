@@ -1,6 +1,8 @@
 // An item that can be picked up and carried.
 var CarriedItemSprite = function(game, x, y, name, palette, drift) {
     Phaser.Sprite.call(this, game, x, y);
+    this.x0 = x;
+    this.y0 = y;
     this.anchor.setTo(0.5);
     this.pickupTime = CarriedItemSprite.PICKUP_TIME;
     this.carryHeight = CarriedItemSprite.CARRY_HEIGHT;
@@ -13,15 +15,8 @@ var CarriedItemSprite = function(game, x, y, name, palette, drift) {
 
     this.setPalette(palette);
 
-    this.tweens = [];
-    if (drift || drift == undefined) {
-        var t = this.game.add.tween(this.gobetween);
-        t.to({ y: CarriedItemSprite.HOVER_DRIFT },
-            CarriedItemSprite.HOVER_TIME,
-            Phaser.Easing.Sinusoidal.InOut, true, 0,
-            Number.POSITIVE_INFINITY, true);
-        this.tweens.push(t);
-    }
+    this.drift = drift;
+    this.startDrift();
 };
 
 CarriedItemSprite.prototype = Object.create(Phaser.Sprite.prototype);
@@ -71,6 +66,21 @@ CarriedItemSprite.prototype.setPalette = function(palette) {
     // this.icon.tint = palette.c2.i;
 };
 
+// Begin bobbing up and down.
+CarriedItemSprite.prototype.startDrift = function() {
+    if (this.drift || this.drift == undefined) {
+        if (this.drifttween) {
+            return;
+        }
+        var t = this.game.add.tween(this.gobetween);
+        t.to({ y: CarriedItemSprite.HOVER_DRIFT },
+            CarriedItemSprite.HOVER_TIME,
+            Phaser.Easing.Sinusoidal.InOut, true, 0,
+            Number.POSITIVE_INFINITY, true);
+        this.drifttween = t;
+    }
+};
+
 // Call to transfer ownership.
 CarriedItemSprite.prototype.pickUp = function(avatar) {
     var x = this.parent.parent.x + this.x;
@@ -85,6 +95,7 @@ CarriedItemSprite.prototype.pickUp = function(avatar) {
     t.to({ x: 0, y: -this.carryHeight },
         this.pickupTime, Phaser.Easing.Back.InOut, true);
     t.onComplete.add(this.pickedUp, this);
+    this.pickupTween = t;
 };
 
 // Called when the item is fully in place overhead.
@@ -92,15 +103,52 @@ CarriedItemSprite.prototype.pickedUp = function() {
     // Noop; override if you want.
 };
 
+// If we're being carried, drop back to original coords.
+CarriedItemSprite.prototype.drop = function() {
+    if (this.pickupTween) {
+        this.pickupTween.stop();
+        this.pickupTween = undefined;
+    }
+    this.x = this.x0;
+    this.y = this.y0;
+};
+
 // Call to consume the item.
 CarriedItemSprite.prototype.useUp = function() {
+    if (this.pickupTween) {
+        this.pickupTween.stop();
+        this.pickupTween = undefined;
+    }
+    this.useupTweens = [];
+
     var t = this.game.add.tween(this.image.scale);
     t.to({ x: 0, y: 0 }, CarriedItemSprite.USE_TIME,
         Phaser.Easing.Back.In, true);
     t.onComplete.add(function() {
-        Utils.destroy(this);
+        this.drifttween.stop();
+        this.drifttween = undefined;
+        this.kill();
     }, this);
+    this.useupTweens.push(t);
+
     var t2 = this.game.add.tween(this);
     t2.to({ y: 0 }, CarriedItemSprite.USE_TIME,
         Phaser.Easing.Cubic.Out, true);
+    this.useupTweens.push(t2);
+};
+
+// If we're being carried, drop back to original coords.
+CarriedItemSprite.prototype.rehold = function() {
+    if (this.useupTweens) {
+        for (var i = 0; i < this.useupTweens.length; i++) {
+            this.useupTweens[i].stop();
+        }
+        this.useupTweens = undefined;
+    }
+
+    this.revive();
+    this.image.scale.setTo(1);
+    this.x = 0;
+    this.y = -this.carryHeight;
+    this.startDrift();
 };

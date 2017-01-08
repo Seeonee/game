@@ -2,6 +2,8 @@
 var CarriedItem = function(name, x, y, subtype) {
     Obstacle.call(this, name, x, y);
     this.subtype = subtype;
+    this.pickedUp = false;
+    this.usedUp = false;
 };
 
 CarriedItem.TYPE = 'item';
@@ -16,6 +18,7 @@ Obstacle.load.factory[CarriedItem.TYPE] = CarriedItem;
 // Draw loop.
 CarriedItem.prototype.draw = function(tier) {
     if (this.renderNeeded) {
+        this.tier = tier;
         this.game = tier.game;
         this.renderNeeded = false;
         this.hitbox = new Hitbox(this.game, tier, this,
@@ -43,10 +46,10 @@ CarriedItem.prototype.createSprite = function(tier, x, y) {
 // Collision check.
 CarriedItem.prototype.obstruct = function(avatar, hitbox) {
     if (!avatar.held) {
+        this.pickedUp = true;
         this.avatar = avatar;
         avatar.held = this;
         this.hitbox.removeCollision();
-        this.hitbox = undefined;
         this.citem.pickUp(avatar);
     }
     return false;
@@ -54,10 +57,77 @@ CarriedItem.prototype.obstruct = function(avatar, hitbox) {
 
 // Drop/use/extinguish the item.
 CarriedItem.prototype.useUp = function() {
+    this.usedUp = true;
     if (this.citem) {
         this.avatar.held = undefined;
         this.citem.useUp();
-        this.citem = undefined;
+    }
+};
+
+// Save progress.
+CarriedItem.prototype.saveProgress = function(p) {
+    // If we've never been picked up, don't save progress.
+    if (!this.pickedUp) {
+        return;
+    }
+    p[this.name] = { pickedUp: true };
+    // We'll never restore to a point before pickup,
+    // which means we're now totally done with our hitbox.
+    if (this.hitbox) {
+        Utils.destroy(this.hitbox);
+        this.hitbox = undefined;
+    }
+
+    // If we've already been used up, even restoring 
+    // to this point still won't change that fact.
+    // So, we get to remain fully and easily dead.
+    if (this.usedUp) {
+        if (this.citem) {
+            Utils.destroy(this.citem);
+            this.citem = undefined;
+        }
+        p[this.name].usedUp = true;
+        return;
+    }
+};
+
+// Restore progress.
+CarriedItem.prototype.restoreProgress = function(p) {
+    // If we still haven't been picked up,
+    // don't change anything.
+    if (!this.pickedUp) {
+        return;
+    }
+
+    var myp = p[this.name];
+    var pickedUp = myp ? myp.pickedUp : false;
+    var usedUp = myp ? myp.usedUp : false;
+    if (usedUp || pickedUp && !this.usedUp) {
+        return;
+    }
+
+    var avatar = this.tier.level.avatar;
+    // The only cases that matter are:
+    if (!pickedUp) {
+        // We're currently held, but we're restoring to 
+        // before we were picked up. That requires detaching from 
+        // the avatar and returning to our original coords.
+        this.citem.setPalette(this.tier.palette);
+        avatar.held = undefined;
+        var ip = this.tier.translateGamePointToInternalPoint(
+            this.x, this.y);
+        var ap = this.tier.translateInternalPointToAnchorPoint(
+            ip.x, ip.y);
+        this.citem.drop();
+        this.tier.image.addChild(this.citem);
+        this.hitbox.addCollision();
+    } else {
+        // We're currently used up, but we're restoring 
+        // to when we were held. That requires unhiding our 
+        // sprite and reattaching it to the avatar.
+        avatar.held = this;
+        this.citem.rehold();
+        avatar.addChild(this.citem);
     }
 };
 
