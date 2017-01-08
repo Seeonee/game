@@ -164,9 +164,15 @@ TierMeter.prototype.recreate = function() {
         this.bitmap.width, this.bitmap.height);
     this.bitmap.dirty = true;
     this.triangle.kill();
-    for (var i = 0; i < this.csquares.length; i++) {
-        this.csquares[i].kill();
+
+    var keys = Object.keys(this.csquares);
+    for (var i = 0; i < keys.length; i++) {
+        var csquares = this.csquares[keys[i]];
+        for (var j = 0; j < csquares.length; j++) {
+            csquares[j].kill();
+        }
     }
+
     while (this.children.length) {
         this.removeChild(this.children[0]);
     }
