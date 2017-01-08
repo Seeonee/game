@@ -25,6 +25,7 @@ AvatarGraphicsKey.prototype.createGraphics = function(avatar) {
         name = name ? name : 'hours';
         this.setMasq(avatar, new AvatarMasq(game, name));
     }
+    avatar.startingMasq = avatar.masq;
     // Enable physics.
     this.game.physics.enable(avatar, Phaser.Physics.ARCADE);
     // For fun, adjust bounding box to match keyplate,
@@ -62,6 +63,7 @@ AvatarGraphicsKey.prototype.setMasq = function(avatar, masq) {
     }
     var slide = 5;
     avatar.masq = avatar.addChild(masq.spriteC);
+    avatar.masq.yOffset = masq.yOffset;
     avatar.masq.y = masq.yOffset + slide;
     avatar.masq.scale.setTo(masq.scale);
     this.game.add.tween(avatar.masq).to({ y: masq.yOffset },

@@ -347,6 +347,9 @@ Avatar.prototype.saveProgress = function(p) {
     for (var i = 0; i < keys.length; i++) {
         p.avatar.shards[keys[i]] = shards[keys[i]];
     }
+    if (this.masq && this.masq === this.startingMasq) {
+        p.avatar.resetMask = true;
+    }
 };
 
 // Restore progress.
@@ -364,4 +367,11 @@ Avatar.prototype.restoreProgress = function(p) {
     }
     this.tierMeter.shards = p.avatar.shards;
     this.tierMeter.updateShardAlphas();
+    if (p.avatar.resetMask && this.startingMasq) {
+        this.masq = this.startingMasq;
+        this.masq.revive();
+        this.masq.alpha = 1;
+        this.masq.y = this.masq.yOffset;
+    }
+    this.currentMaskObject = undefined;
 };

@@ -7,12 +7,14 @@ var MaskItemSprite = function(game, x, y, name, palette) {
 MaskItemSprite.prototype = Object.create(CarriedItemSprite.prototype);
 MaskItemSprite.prototype.constructor = MaskItemSprite;
 
+// Constants.
+MaskItemSprite.FALL = 5;
+
 
 // Handle our custom image.
 MaskItemSprite.prototype.createImage = function(name) {
     this.masq = new AvatarMasq(game, name);
-    this.maskY = this.masq.yOffset;
-    this.masq.spriteC.y = this.maskY;
+    this.masq.spriteC.y = this.masq.yOffset;
     return this.masq.spriteC;
 };
 
@@ -25,34 +27,83 @@ MaskItemSprite.prototype.setPalette = function(palette) {
 MaskItemSprite.prototype.pickUp = function(avatar) {
     this.avatar = avatar;
     if (this.avatar.masq) {
+        this.avatar.masq.events.onKilled.add(function() {
+            console.log('!!!');
+        }, this);
+        this.oldMasq = this.avatar.masq;
+        this.avatar.masq = this.masq.spriteC;
         var t = this.game.add.tween(
-            this.avatar.masq).to({
+            this.oldMasq).to({
                 alpha: 0,
-                y: this.avatar.masq.y + 5
+                y: this.oldMasq.y + MaskItemSprite.FALL
             },
             300, Phaser.Easing.Cubic.In, true);
         t.onComplete.add(function() {
-            Utils.destroy(this.avatar.masq);
+            this.oldMasq.kill();
         }, this);
+        this.maskTween = t;
     }
     CarriedItemSprite.prototype.pickUp.call(this, avatar);
 };
 
 // Called when the item is fully in place overhead.
 MaskItemSprite.prototype.pickedUp = function() {
+    this.settleTweens = [];
     var time = 3000;
     var delay = 1500;
     var t = this.game.add.tween(this);
-    t.to({ y: this.maskY }, time, Phaser.Easing.Cubic.Out, true, delay);
+    t.to({ y: this.masq.yOffset }, time,
+        Phaser.Easing.Cubic.Out, true, delay);
+    this.settleTweens.push(t);
+
     var t = this.game.add.tween(this.masq.spriteC);
     t.to({ y: 0 }, time, Phaser.Easing.Cubic.Out, true, delay);
+    this.settleTweens.push(t);
+
     var t = this.game.add.tween(this.gobetween);
     t.to({ y: 0 }, time, Phaser.Easing.Cubic.Out, true, delay);
     t.onComplete.add(function() {
-        this.avatar.masq = this.avatar.addChild(this.masq.spriteC);
-        this.avatar.masq.y = this.masq.yOffset;
-        this.avatar.masq.scale.setTo(this.masq.scale);
+        this.avatar.addChild(this.masq.spriteC);
+        this.masq.spriteC.y = this.masq.yOffset;
+
+        // this.masq.spriteC.scale.setTo(this.masq.scale);
     }, this);
+    this.settleTweens.push(t);
+};
+
+// If we're being carried, drop back to original coords.
+MaskItemSprite.prototype.drop = function() {
+    if (this.maskTween) {
+        this.maskTween.stop();
+        this.maskTween = undefined;
+    }
+    if (this.settleTweens) {
+        for (var i = 0; i < this.settleTweens.length; i++) {
+            this.settleTweens[i].stop();
+        }
+        this.settleTweens = undefined;
+    }
+    this.masq.spriteC.revive();
+    this.masq.spriteC.alpha = 1;
+    CarriedItemSprite.prototype.drop.call(this);
+    this.masq.spriteC.y = this.masq.yOffset;
+};
+
+// Put the mask back on.
+MaskItemSprite.prototype.donAgain = function() {
+    if (this.maskTween) {
+        this.maskTween.stop();
+        this.maskTween = undefined;
+    }
+    if (this.settleTweens) {
+        for (var i = 0; i < this.settleTweens.length; i++) {
+            this.settleTweens[i].stop();
+        }
+        this.settleTweens = undefined;
+    }
+    this.masq.spriteC.revive();
+    this.masq.spriteC.alpha = 1;
+    this.masq.spriteC.y = this.masq.yOffset;
 };
 
 
@@ -64,7 +115,8 @@ MaskItemSprite.prototype.pickedUp = function() {
 
 // Altar for the mask.
 var MaskAltar = function(game, x, y, palette) {
-    this.rgb = Color.rgb(palette.c2.i);
+    this.rgbtint = palette.c2.i;
+    this.rgb = Color.rgb(this.rgbtint);
     var maskY = AvatarMasq.OFFSET.hours;
     Phaser.Sprite.call(this, game, x, y + maskY, 'altar_face');
     this.anchor.setTo(0.5);
@@ -77,17 +129,7 @@ var MaskAltar = function(game, x, y, palette) {
     this.hourHand.anchor.setTo(0.5);
     this.addChild(this.hourHand);
 
-    this.tweens = [];
-    var t = this.game.add.tween(this.minuteHand).to({
-            rotation: 2 * Math.PI
-        }, MaskAltar.MINUTE_TIME, Phaser.Easing.Linear.None,
-        true, 0, Number.POSITIVE_INFINITY);
-    this.tweens.push(t);
-    var t = this.game.add.tween(this.hourHand).to({
-            rotation: 2 * Math.PI
-        }, MaskAltar.HOUR_TIME, Phaser.Easing.Linear.None,
-        true, 0, Number.POSITIVE_INFINITY);
-    this.tweens.push(t);
+    this.startHands();
 };
 
 MaskAltar.prototype = Object.create(Phaser.Sprite.prototype);
@@ -112,6 +154,34 @@ MaskAltar.prototype.update = function() {
     this.hourHand.tint = tint;
 };
 
+// Start hands.
+MaskAltar.prototype.startHands = function(avatar) {
+    if (this.shineTweens) {
+        for (var i = 0; i < this.shineTweens.length; i++) {
+            this.shineTweens[i].stop();
+        }
+        this.shineTweens = undefined;
+    }
+    this.tweens = [];
+
+    this.alpha = 1;
+    this.rgb = Color.rgb(this.rgbtint);
+
+    this.minuteHand.rotation = 0;
+    var t = this.game.add.tween(this.minuteHand).to({
+            rotation: 2 * Math.PI
+        }, MaskAltar.MINUTE_TIME, Phaser.Easing.Linear.None,
+        true, 0, Number.POSITIVE_INFINITY);
+    this.tweens.push(t);
+
+    this.hourHand.rotation = 0;
+    var t = this.game.add.tween(this.hourHand).to({
+            rotation: 2 * Math.PI
+        }, MaskAltar.HOUR_TIME, Phaser.Easing.Linear.None,
+        true, 0, Number.POSITIVE_INFINITY);
+    this.tweens.push(t);
+};
+
 // Our mask's been picked up.
 MaskAltar.prototype.shine = function(avatar) {
     this.gamestate = game.state.getCurrentState();
@@ -121,15 +191,19 @@ MaskAltar.prototype.shine = function(avatar) {
         this.tweens[i].stop();
     }
 
+    this.shineTweens = [];
     var rotation = MaskAltar.HOUR_SPINS * 2 * Math.PI;
     var t = this.game.add.tween(this.hourHand).to({
         rotation: rotation
     }, MaskAltar.SHINE_TIME, Phaser.Easing.Cubic.In, true);
+    this.shineTweens.push(t);
 
     var rotation = MaskAltar.MINUTE_SPINS * 2 * Math.PI;
     var t = this.game.add.tween(this.minuteHand).to({
         rotation: rotation
     }, MaskAltar.SHINE_TIME, Phaser.Easing.Cubic.In, true);
+    this.shineTweens.push(t);
+
     var white = this.game.settings.colors.WHITE.i;
     var t = this.game.add.tween(this.rgb).to(
         Color.rgb(white), MaskAltar.SHINE_TIME,
@@ -138,7 +212,10 @@ MaskAltar.prototype.shine = function(avatar) {
         new HFlash(this.game).flash(this.gamestate.z.fg,
             this.avatar.x, this.avatar.y);
     }, this);
+    this.shineTweens.push(t);
+
     var t2 = this.game.add.tween(this).to({ alpha: 0.1 },
         MaskAltar.FADE_TIME, Phaser.Easing.Sinusoidal.InOut);
     t.chain(t2);
+    this.shineTweens.push(t2);
 };

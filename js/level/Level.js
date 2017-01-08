@@ -332,10 +332,10 @@ Level.prototype.getTextKeyForDisplay = function(textKey) {
 Level.prototype.saveProgress = function(p) {
     p = p ? p : {};
     p.level = { 'tier': this.tier.name };
+    this.avatar.saveProgress(p);
     for (var i = 0; i < this.tiers.length; i++) {
         this.tiers[i].saveProgress(p);
     }
-    this.avatar.saveProgress(p);
     return p;
 };
 
@@ -347,10 +347,10 @@ Level.prototype.restoreProgress = function(p) {
         this.setTier(this.tierMap[p.level.tier]);
         this.avatar = avatar;
     }
+    this.avatar.restoreProgress(p);
     for (var i = 0; i < this.tiers.length; i++) {
         this.tiers[i].restoreProgress(p);
     }
-    this.avatar.restoreProgress(p);
 };
 
 
