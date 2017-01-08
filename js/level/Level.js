@@ -246,15 +246,42 @@ Level.prototype.updateTierParallax = function() {
     }
 };
 
-// Add some text under a localization key.
-Level.prototype.addTextKey = function(textKey, text) {
-    if (!this.textLocalized) {
+// Make sure we've created the text map for 
+// the current language setting.
+Level.prototype.verifyTextCreation = function() {
+    if (this.textLocalized == undefined) {
         this.textLocalized = {};
     }
     var l = Settings.languageName(this.game.settings.language);
     if (!this.textLocalized[l]) {
         this.textLocalized[l] = {};
     }
+};
+
+// Derive a new unique key name.
+Level.prototype.getNewTextKeyName = function(obj) {
+    var base = 'text-';
+    if (obj) {
+        if (obj instanceof Point) {
+            base = 'point-text-';
+        } else if (obj instanceof Path) {
+            base = 'path-text';
+        } else if (obj instanceof Obstacle) {
+            base = 'object-text-';
+        }
+    }
+    this.verifyTextCreation();
+    var i = 0;
+    while (this.textLocalized[base + i]) {
+        i += 1;
+    }
+    return base + i;
+};
+
+// Add some text under a localization key.
+Level.prototype.addTextKey = function(textKey, text) {
+    this.verifyTextCreation();
+    var l = Settings.languageName(this.game.settings.language);
     this.textLocalized[l][textKey] = text;
 };
 

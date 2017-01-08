@@ -123,7 +123,7 @@ OptionGathererIState.prototype.getHelp = function() {
 
 // What option do we display?
 OptionGathererIState.prototype.getOptionText = function() {
-    return '?'; // Override me!
+    return this.getOptionValue(); // Override me!
 };
 
 // What option do we represent?
