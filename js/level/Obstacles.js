@@ -80,16 +80,11 @@ var Hitbox = function(game, tier, obstacle, x, y, side, circle) {
     this.obstacle = obstacle;
     this.obstacles = this.game.state.getCurrentState().obstacles;
     this.tier = tier;
-    this.obstacles.add(tier, this);
-    this.game.physics.enable(this, Phaser.Physics.ARCADE);
-    side = side != undefined ? side : Hitbox.D;
-    side = circle ? 2 * side : side;
-    var w = this.body.width;
-    var h = this.body.height;
-    this.body.setSize(side, side, w / 2 - side / 2, h / 2 - side / 2);
-    if (circle) {
-        this.body.setCircle(side / 2);
-    }
+
+    this.side = side;
+    this.iscircle = circle;
+    this.collidable = false;
+    this.addCollision();
 };
 
 Hitbox.prototype = Object.create(Phaser.Sprite.prototype);
@@ -105,12 +100,34 @@ Hitbox.prototype.update = function() {
     // this.game.debug.spriteCoords(this);
 };
 
-// Make us un-collidable. Also, annihilates us.
+// Make us collidable.
+Hitbox.prototype.addCollision = function() {
+    if (this.collidable) {
+        return;
+    }
+    this.collidable = true;
+    this.obstacles.add(this.tier, this);
+    this.game.physics.enable(this, Phaser.Physics.ARCADE);
+
+    var side = this.side != undefined ? this.side : Hitbox.D;
+    side = this.iscircle ? 2 * side : side;
+    var w = this.body.width;
+    var h = this.body.height;
+    this.body.setSize(side, side, w / 2 - side / 2, h / 2 - side / 2);
+    if (this.iscircle) {
+        this.body.setCircle(side / 2);
+    }
+};
+
+// Make us un-collidable.
 Hitbox.prototype.removeCollision = function() {
+    if (!this.collidable) {
+        return;
+    }
+    this.collidable = false;
     this.obstacles.remove(this.tier, this);
     this.body.enable = false;
     this.body = null;
-    Utils.destroy(this);
 };
 
 // Update our tier.
