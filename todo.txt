@@ -1,3 +1,4 @@
+restoring while on points is slightly glitchy; you can snap back
 add pre-scaled power icons; make a power icon spritesheet
 add gfx settings menu to disable blur and/or adj. layer view
 add "restore to state" for all elements

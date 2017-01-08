@@ -110,10 +110,19 @@ CarriedItem.prototype.restoreProgress = function(p) {
 
     var avatar = this.tier.level.avatar;
     // The only cases that matter are:
+    if (!usedUp) {
+        // We're currently used up, but we're restoring 
+        // to when we were held. That requires unhiding our 
+        // sprite and reattaching it to the avatar.
+        avatar.held = this;
+        this.citem.rehold();
+        avatar.addChild(this.citem);
+    }
     if (!pickedUp) {
-        // We're currently held, but we're restoring to 
-        // before we were picked up. That requires detaching from 
-        // the avatar and returning to our original coords.
+        // We're restoring to before we were picked up.
+        // That requires detaching from the avatar and 
+        // returning to our original coords, as well as 
+        // possibly resuscitating (which we've done already).
         this.citem.setPalette(this.tier.palette);
         avatar.held = undefined;
         var ip = this.tier.translateGamePointToInternalPoint(
@@ -123,13 +132,6 @@ CarriedItem.prototype.restoreProgress = function(p) {
         this.citem.drop();
         this.tier.image.addChild(this.citem);
         this.hitbox.addCollision();
-    } else {
-        // We're currently used up, but we're restoring 
-        // to when we were held. That requires unhiding our 
-        // sprite and reattaching it to the avatar.
-        avatar.held = this;
-        this.citem.rehold();
-        avatar.addChild(this.citem);
     }
 };
 
