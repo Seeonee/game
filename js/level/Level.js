@@ -265,14 +265,15 @@ Level.prototype.getNewTextKeyName = function(obj) {
         if (obj instanceof Point) {
             base = 'point-text-';
         } else if (obj instanceof Path) {
-            base = 'path-text';
+            base = 'path-text-';
         } else if (obj instanceof Obstacle) {
             base = 'object-text-';
         }
     }
     this.verifyTextCreation();
+    var l = Settings.languageName(this.game.settings.language);
     var i = 0;
-    while (this.textLocalized[base + i]) {
+    while (this.textLocalized[l][base + i]) {
         i += 1;
     }
     return base + i;
