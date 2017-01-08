@@ -351,7 +351,9 @@ Avatar.prototype.restoreProgress = function(p) {
     this.setColor(this.tier.palette);
     if (p.avatar.point) {
         this.point = this.tier.pointMap[p.avatar.point];
+        this.path = undefined;
     } else if (p.avatar.path) {
         this.path = this.tier.pathMap[p.avatar.path];
+        this.point = undefined;
     }
 };
