@@ -40,7 +40,9 @@ ResetLevelIState.prototype.update = function() {
         this.game.state.getCurrentState().z.mg.tier().add(this.image);
     } else if (this.gpad.justReleased(this.buttonMap.SELECT)) {
         this.gpad.consumeButtonEvent();
-        this.image.destroy();
+        if (this.image) {
+            this.image.destroy();
+        }
         if (this.game.time.now > this.chargedTime) {
             this.game.state.getCurrentState().restartLevel();
         }
