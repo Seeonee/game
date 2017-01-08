@@ -31,17 +31,10 @@ MaskItem.prototype.obstruct = function(avatar, hitbox) {
 
 // Delete ourself.
 MaskItem.prototype.delete = function() {
-    if (this.citem) {
-        Utils.destroy(this.citem);
-        this.citem = undefined;
-    }
+    CarriedItem.prototype.delete.call(this);
     if (this.altar) {
         Utils.destroy(this.altar);
         this.altar = undefined;
-    }
-    if (this.hitbox) {
-        this.hitbox.removeCollision();
-        this.hitbox = undefined;
     }
 };
 

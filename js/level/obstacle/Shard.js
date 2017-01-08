@@ -55,6 +55,7 @@ Shard.prototype.delete = function() {
     }
     if (this.hitbox) {
         this.hitbox.removeCollision();
+        Utils.destroy(this.hitbox);
         this.hitbox = undefined;
     }
 };

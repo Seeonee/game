@@ -88,10 +88,12 @@ Sentry.prototype.delete = function() {
     }
     if (this.bodyhitbox) {
         this.bodyhitbox.removeCollision();
+        Utils.destroy(this.bodyhitbox);
         this.bodyhitbox = undefined;
     }
     if (this.traphitbox) {
         this.traphitbox.removeCollision();
+        Utils.destroy(this.traphitbox);
         this.traphitbox = undefined;
     }
 };

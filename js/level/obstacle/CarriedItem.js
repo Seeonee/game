@@ -105,6 +105,8 @@ CarriedItem.prototype.restoreProgress = function(p) {
     if (usedUp || pickedUp && !this.usedUp) {
         return;
     }
+    this.pickedUp = pickedUp;
+    this.usedUp = usedUp;
 
     var avatar = this.tier.level.avatar;
     // The only cases that matter are:
@@ -142,6 +144,7 @@ CarriedItem.prototype.delete = function() {
     }
     if (this.hitbox) {
         this.hitbox.removeCollision();
+        Utils.destroy(this.hitbox);
         this.hitbox = undefined;
     }
 };

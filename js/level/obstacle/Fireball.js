@@ -91,6 +91,7 @@ Fireball.prototype.obstruct = function(avatar, hitbox) {
 Fireball.prototype.delete = function() {
     if (this.hitbox) {
         this.hitbox.removeCollision();
+        Utils.destroy(this.hitbox);
         this.hitbox = undefined;
     }
     if (this.fireball) {
