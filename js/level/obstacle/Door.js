@@ -51,7 +51,7 @@ Door.prototype.obstruct = function(avatar, hitbox) {
 
 // Save progress.
 Door.prototype.saveProgress = function(p) {
-    // If we've never been picked up, don't save progress.
+    // If we've never been unlocked, don't save progress.
     if (!this.unlocked) {
         return;
     }

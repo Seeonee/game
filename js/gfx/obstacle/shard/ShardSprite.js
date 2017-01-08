@@ -25,18 +25,7 @@ var ShardSprite = function(game, x, y, palette) {
     this.shard.tint = palette.c1.i;
     this.shard.scale.setTo(ShardSprite.SCALE);
 
-    this.tweens = [];
-    var t = this.game.add.tween(this.gobetween);
-    t.to({ y: ShardSprite.HOVER_DRIFT }, ShardSprite.HOVER_TIME,
-        Phaser.Easing.Sinusoidal.InOut, true, 0,
-        Number.POSITIVE_INFINITY, true);
-    this.tweens.push(t);
-    var scale = ShardSprite.GLOW_SCALE / ShardSprite.FIX;
-    t = this.game.add.tween(this.glow.scale);
-    t.to({ x: scale, y: scale }, ShardSprite.GLOW_TIME,
-        Phaser.Easing.Sinusoidal.InOut, true, 0,
-        Number.POSITIVE_INFINITY, true);
-
+    this.startDrift();
     this.pickedUp = false;
 };
 
@@ -74,6 +63,26 @@ ShardSprite.prototype.updatePalette = function(palette) {
     this.shard.tint = palette.c1.i;
 };
 
+// Begin floating.
+ShardSprite.prototype.startDrift = function() {
+    if (this.tweens != undefined) {
+        return;
+    }
+    this.tweens = [];
+    var t = this.game.add.tween(this.gobetween);
+    t.to({ y: ShardSprite.HOVER_DRIFT }, ShardSprite.HOVER_TIME,
+        Phaser.Easing.Sinusoidal.InOut, true, 0,
+        Number.POSITIVE_INFINITY, true);
+    this.tweens.push(t);
+
+    var scale = ShardSprite.GLOW_SCALE / ShardSprite.FIX;
+    t = this.game.add.tween(this.glow.scale);
+    t.to({ x: scale, y: scale }, ShardSprite.GLOW_TIME,
+        Phaser.Easing.Sinusoidal.InOut, true, 0,
+        Number.POSITIVE_INFINITY, true);
+    this.tweens.push(t);
+};
+
 // Pause or unpause the shard's hovering.
 ShardSprite.prototype.setPaused = function(paused) {
     if (this.pickedUp) {
@@ -91,13 +100,19 @@ ShardSprite.prototype.pickUp = function() {
         return;
     }
     this.pickedUp = true;
+
+    this.pickupTweens = [];
     var t = this.game.add.tween(this.shard);
     t.to({ alpha: 0 },
         ShardSprite.BURST_DURATION, Phaser.Easing.Quadratic.Out, true);
+    this.pickupTweens.push(t);
+
     var t2 = this.game.add.tween(this.glow.scale);
     var scale = ShardSprite.BURST_SCALE / ShardSprite.FIX;
     t2.to({ x: scale, y: scale },
         ShardSprite.BURST_DURATION, Phaser.Easing.Cubic.Out, true);
+    this.pickupTweens.push(t2);
+
     var t3 = this.game.add.tween(this.glow);
     t3.to({ alpha: 0 },
         ShardSprite.BURST_DURATION, Phaser.Easing.Cubic.Out, true);
@@ -106,5 +121,22 @@ ShardSprite.prototype.pickUp = function() {
         for (var i = 0; i < this.tweens; i++) {
             this.tweens[i].stop();
         }
+        this.tweens = undefined;
     }, this);
+    this.pickupTweens.push(t3);
+};
+
+// Restores the shard from its picked up state to 
+// its original floating state.
+ShardSprite.prototype.respawn = function() {
+    for (var i = 0; i < this.pickupTweens.length; i++) {
+        this.pickupTweens[i].stop();
+    }
+    this.pickupTweens = undefined;
+    this.revive();
+    this.pickedUp = false;
+    this.glow.scale.setTo(1 / ShardSprite.FIX);
+    this.shard.alpha = 1;
+    this.glow.alpha = 1;
+    this.startDrift();
 };

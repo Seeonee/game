@@ -1,6 +1,7 @@
 // A "skill point" shard that the avatar can pick up.
 var Shard = function(name, x, y) {
     Obstacle.call(this, name, x, y);
+    this.pickedUp = false;
 };
 
 Shard.TYPE = 'shard';
@@ -36,15 +37,45 @@ Shard.prototype.draw = function(tier) {
 
 // Collision check.
 Shard.prototype.obstruct = function(avatar, hitbox) {
+    this.pickedUp = true;
     var tiers = avatar.tier.level.tiers;
     var maxIndex = tiers[tiers.length - 1].index;
     if (avatar.tier.index < maxIndex) {
         this.hitbox.removeCollision();
-        this.hitbox = undefined;
         avatar.tierMeter.addShard();
         this.shard.pickUp();
     }
     return false;
+};
+
+// Save progress.
+Shard.prototype.saveProgress = function(p) {
+    // If we've never been picked up, don't save progress.
+    if (!this.pickedUp) {
+        return;
+    }
+    p[this.name] = { pickedUp: true };
+    // We'll never restore to a point before pickup,
+    // so clean up our sprites.
+    this.delete();
+};
+
+// Restore progress.
+Shard.prototype.restoreProgress = function(p) {
+    // If we still haven't been picked up,
+    // don't change anything.
+    if (!this.pickedUp) {
+        return;
+    }
+
+    var myp = p[this.name];
+    var pickedUp = myp ? myp.pickedUp : false;
+    if (pickedUp == this.pickedUp) {
+        return;
+    }
+    this.pickedUp = pickedUp;
+    this.shard.respawn();
+    this.hitbox.addCollision();
 };
 
 // Delete ourself.

@@ -341,6 +341,12 @@ Avatar.prototype.saveProgress = function(p) {
     } else if (this.path) {
         p.avatar.path = this.path.name;
     }
+    p.avatar.shards = {};
+    var shards = this.tierMeter.shards;
+    var keys = Object.keys(shards);
+    for (var i = 0; i < keys.length; i++) {
+        p.avatar.shards[keys[i]] = shards[keys[i]];
+    }
 };
 
 // Restore progress.
@@ -356,4 +362,6 @@ Avatar.prototype.restoreProgress = function(p) {
         this.path = this.tier.pathMap[p.avatar.path];
         this.point = undefined;
     }
+    this.tierMeter.shards = p.avatar.shards;
+    this.tierMeter.updateShardAlphas();
 };
