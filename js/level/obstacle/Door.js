@@ -2,6 +2,7 @@
 var Door = function(name, x, y, subtype) {
     Obstacle.call(this, name, x, y);
     this.subtype = subtype;
+    this.unlocked = false;
 };
 
 Door.TYPE = 'door';
@@ -39,13 +40,43 @@ Door.prototype.obstruct = function(avatar, hitbox) {
     // Cheat and look for keys for the next tier up.
     // I.e. keys we've picked up on this tier.
     if (avatar.held && avatar.held.subtype == this.subtype) {
+        this.unlocked = true;
         avatar.held.useUp();
         this.hitbox.removeCollision();
-        this.hitbox = undefined;
         this.door.unlock();
         return false;
     }
     return true;
+};
+
+// Save progress.
+Door.prototype.saveProgress = function(p) {
+    // If we've never been picked up, don't save progress.
+    if (!this.unlocked) {
+        return;
+    }
+    p[this.name] = { unlocked: true };
+    // We'll never restore to a point before unlocking,
+    // so clean up our sprites.
+    this.delete();
+};
+
+// Restore progress.
+Door.prototype.restoreProgress = function(p) {
+    // If we still haven't been unlocked,
+    // don't change anything.
+    if (!this.unlocked) {
+        return;
+    }
+
+    var myp = p[this.name];
+    var unlocked = myp ? myp.unlocked : false;
+    if (unlocked == this.unlocked) {
+        return;
+    }
+    this.unlocked = unlocked;
+    this.door.relock();
+    this.hitbox.addCollision();
 };
 
 // Delete ourself.

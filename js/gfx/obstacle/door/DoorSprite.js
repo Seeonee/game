@@ -61,13 +61,30 @@ DoorSprite.prototype.setPalette = function(palette) {
 
 // Call to destruct!
 DoorSprite.prototype.unlock = function() {
+    this.tweens = [];
     var t = this.game.add.tween(this);
     t.to({ alpha: 0 }, DoorSprite.UNLOCK_TIME, Phaser.Easing.Cubic.Out,
         true);
+    this.tweens.push(t);
+
     var t2 = this.game.add.tween(this.scale);
     t2.to({ x: DoorSprite.UNLOCK_SCALE, y: DoorSprite.UNLOCK_SCALE },
         DoorSprite.UNLOCK_TIME, Phaser.Easing.Cubic.Out, true);
     t2.onComplete.add(function() {
-        Utils.destroy(this);
+        this.kill();
     }, this);
+    this.tweens.push(t2);
+};
+
+// Undestruct!
+DoorSprite.prototype.relock = function() {
+    if (this.tweens) {
+        for (var i = 0; i < this.tweens.length; i++) {
+            this.tweens[i].stop();
+        }
+        this.tweens = undefined;
+    }
+    this.revive();
+    this.alpha = 1;
+    this.scale.setTo(1);
 };
