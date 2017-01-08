@@ -63,10 +63,7 @@ FireballSprite.painter = function(bitmap) {
 
 // Begin our rotation.
 FireballSprite.prototype.startSpinning = function() {
-    var sparks = FireballSprite.SPARK_POOL.all;
-    for (var i = 0; i < sparks.length; i++) {
-        sparks[i].kill();
-    }
+    FireballSprite.SPARK_POOL.killAll();
 
     if (this.tween) {
         this.tween.stop();

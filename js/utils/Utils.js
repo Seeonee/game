@@ -191,3 +191,10 @@ SpritePool.prototype.getFirstDead = function() {
     }
     return null;
 };
+
+// Kill EVERYTHING.
+SpritePool.prototype.killAll = function() {
+    for (var i = 0; i < this.all.length; i++) {
+        this.all[i].kill();
+    }
+};

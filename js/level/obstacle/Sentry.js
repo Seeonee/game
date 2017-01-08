@@ -1,7 +1,9 @@
 // Sentry foe.
 var Sentry = function(name, x, y) {
     Obstacle.call(this, name, x, y);
+    this.lethal = false;
     this.readyTime = -1;
+    this.slain = false;
 };
 
 Sentry.TYPE = 'foe-sentry';
@@ -75,9 +77,47 @@ Sentry.prototype.blast = function() {
     this.lethal = true;
     this.game.camera.flash();
     this.sentry.coolDown();
-    this.game.time.events.add(Sentry.KILL_TIME_ACTUAL, function() {
-        this.lethal = false;
-    }, this);
+    this.killEvent = this.game.time.events.add(
+        Sentry.KILL_TIME_ACTUAL,
+        function() {
+            this.lethal = false;
+        }, this);
+};
+
+// Save progress.
+Sentry.prototype.saveProgress = function(p) {
+    // If we're not dead, don't save progress.
+    if (!this.slain) {
+        return;
+    }
+    p[this.name] = { slain: true };
+    // We'll never restore to a point before unlocking,
+    // so clean up our sprites.
+    this.delete();
+};
+
+// Restore progress.
+Sentry.prototype.restoreProgress = function(p) {
+    // Clean up any blast that's midway through.
+    if (this.killEvent) {
+        this.game.time.events.remove(this.killEvent);
+    }
+    this.lethal = false;
+    this.readyTime = -1;
+    if (this.sentry) {
+        this.sentry.settle();
+    }
+
+    var myp = p[this.name];
+    var slain = myp && myp.slain ? myp.slain : false;
+    if (slain == this.slain) {
+        return;
+    }
+
+    // Bring it back to life.
+    this.bodyhitbox.addCollision();
+    this.traphitbox.addCollision();
+    this.sentry.revive();
 };
 
 // Delete ourself.

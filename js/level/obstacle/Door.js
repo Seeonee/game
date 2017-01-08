@@ -70,7 +70,7 @@ Door.prototype.restoreProgress = function(p) {
     }
 
     var myp = p[this.name];
-    var unlocked = myp ? myp.unlocked : false;
+    var unlocked = myp && myp.unlocked ? myp.unlocked : false;
     if (unlocked == this.unlocked) {
         return;
     }

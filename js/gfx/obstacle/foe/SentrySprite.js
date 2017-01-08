@@ -26,6 +26,9 @@ var SentrySprite = function(game, x, y, palette) {
     this.setPalette(palette);
     this.sPool = new SpritePool(this.game, SentrySpark);
     this.sparkTime = -1;
+
+    this.chargeTime = undefined;
+    this.tweens = [];
 };
 
 SentrySprite.prototype = Object.create(Phaser.Sprite.prototype);
@@ -74,6 +77,7 @@ SentrySprite.prototype.setPalette = function(palette) {
 
 // Charge up a burst.
 SentrySprite.prototype.chargeUp = function(callback, context) {
+    this.clearTweens();
     this.chargeTime = this.game.time.now;
     this.ring.alpha = 1;
 
@@ -81,12 +85,14 @@ SentrySprite.prototype.chargeUp = function(callback, context) {
     var t = this.game.add.tween(this.burst);
     t.to({ alpha: 1 }, Sentry.CHARGE_TIME,
         Phaser.Easing.Quadratic.In, true);
+    this.tweens.push(t);
+
     this.burst.scale.setTo(1);
     var t = this.game.add.tween(this.burst.scale);
     t.to({ x: 0.1, y: 0.1 }, Sentry.CHARGE_TIME,
         Phaser.Easing.Cubic.In, true);
-
     t.onComplete.add(callback, context);
+    this.tweens.push(t);
 };
 
 // Cool off after a burst.
@@ -113,20 +119,45 @@ SentrySprite.prototype.update = function() {
 
 // Cool off after a burst.
 SentrySprite.prototype.coolDown = function() {
+    this.clearTweens();
     this.chargeTime = undefined;
     var t = this.game.add.tween(this.ring);
     t.to({ alpha: SentrySprite.IDLE_ALPHA },
         Sentry.RECHARGE_TIME * 0.95,
         Phaser.Easing.Sinusoidal.InOut, true);
+    this.tweens.push(t);
 
     this.burst.alpha = 1;
     var t = this.game.add.tween(this.burst);
     t.to({ alpha: 0 }, Sentry.KILL_TIME,
         Phaser.Easing.Quartic.In, true);
+    this.tweens.push(t);
+
     var t = this.game.add.tween(this.burst.scale);
     t.to({ x: 1.05, y: 1.05 }, Sentry.KILL_TIME,
         Phaser.Easing.Quintic.Out, true);
+    this.tweens.push(t);
 };
+
+// Clean up any bursts in progress.
+SentrySprite.prototype.settle = function() {
+    this.chargeTime = undefined;
+    this.sparkTime = -1;
+    this.clearTweens();
+};
+
+// Tween cleaning.
+SentrySprite.prototype.clearTweens = function() {
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    this.tweens = [];
+    this.ring.alpha = SentrySprite.IDLE_ALPHA;
+    this.burst.alpha = 0;
+    this.sPool.killAll();
+};
+
+
 
 
 
