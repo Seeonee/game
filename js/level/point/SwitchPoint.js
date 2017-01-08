@@ -78,6 +78,31 @@ SwitchPoint.prototype.shouldHold = function() {
     return Point.prototype.shouldHold.call(this);
 };
 
+// Save progress.
+SwitchPoint.prototype.saveProgress = function(p) {
+    if (this.enabled == this.startEnabled && !this.done) {
+        return;
+    }
+    p[this.name] = {
+        enabled: this.enabled,
+        done: this.done
+    };
+
+};
+
+// Restore progress.
+SwitchPoint.prototype.restoreProgress = function(p) {
+    var myp = p[this.name];
+    var enabled = myp && myp.enabled ? myp.enabled : this.startEnabled;
+    var done = myp && myp.done ? myp.done : false;
+    if (enabled == this.enabled && done == this.done) {
+        return;
+    }
+    this.done = done;
+    this.switch.flip();
+    Point.prototype.setEnabled.call(this, enabled);
+};
+
 // Delete our gfx.
 SwitchPoint.prototype.delete = function() {
     Point.prototype.delete.call(this);
