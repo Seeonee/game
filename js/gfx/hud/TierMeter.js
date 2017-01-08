@@ -131,8 +131,6 @@ TierMeter.prototype.createSelf = function() {
             this.squarebase.addChild(square);
         }
     }
-    this.nowsquares = [];
-    this.cloudsquares = [];
 
     // This is for our active power.
     this.powers = {};
@@ -201,28 +199,10 @@ TierMeter.prototype.setTier = function(tier, old) {
     var t0 = this.level.tierMap['t' + (actualIndex - 1)];
     if (t0) {
         var shards = this.shards[tier.name];
-        for (var i = 0; i < this.nowsquares.length; i++) {
-            this.nowsquares[i].visible = true;
-            this.nowsquares[i].tint = tier.palette.c1.i;
-        }
-        // this.fillUpNow(shards ? shards : 0);
-    } else {
-        for (var i = 0; i < this.nowsquares.length; i++) {
-            this.nowsquares[i].visible = false;
-        }
     }
     var t2 = this.level.tierMap['t' + (actualIndex + 1)];
     if (t2) {
         var shards = this.shards[t2.name];
-        for (var i = 0; i < this.cloudsquares.length; i++) {
-            this.cloudsquares[i].visible = true;
-            this.cloudsquares[i].tint = t2.palette.c1.i;
-        }
-        // this.fillUpCloud(shards ? shards : 0);
-    } else {
-        for (var i = 0; i < this.cloudsquares.length; i++) {
-            this.cloudsquares[i].visible = false;
-        }
     }
     var keys = Object.keys(this.powers);
     for (var i = 0; i < keys.length; i++) {
@@ -231,24 +211,6 @@ TierMeter.prototype.setTier = function(tier, old) {
     this.pcircle.tint = tier.palette.c1.i;
 
     this.showBriefly();
-};
-
-// Update anytime the settings change.
-TierMeter.prototype.fillUpNow = function(shards) {
-    shards = Math.min(shards, TierMeter.CLOUD_MAX);
-    for (var i = 0; i < TierMeter.CLOUD_MAX; i++) {
-        var square = this.nowsquares[i];
-        square.alpha = i < shards ? 1 : TierMeter.BORDER_ALPHA;
-    }
-};
-
-// Update anytime the settings change.
-TierMeter.prototype.fillUpCloud = function(shards) {
-    shards = Math.min(shards, TierMeter.CLOUD_MAX);
-    for (var i = 0; i < TierMeter.CLOUD_MAX; i++) {
-        var square = this.cloudsquares[i];
-        square.alpha = i < shards ? 1 : TierMeter.BORDER_ALPHA;
-    }
 };
 
 // Update loop.
