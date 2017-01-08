@@ -365,8 +365,15 @@ Avatar.prototype.restoreProgress = function(p) {
         this.path = this.tier.pathMap[p.avatar.path];
         this.point = undefined;
     }
+
     this.tierMeter.shards = p.avatar.shards;
     this.tierMeter.updateShardAlphas();
+    for (var i = 0; i < this.level.tiers.length; i++) {
+        var t = this.level.tiers[i];
+        this.events.onShardChange.dispatch(
+            t, this.tierMeter.shards[t.name]);
+    }
+
     if (p.avatar.resetMask && this.startingMasq) {
         this.masq = this.startingMasq;
         this.masq.revive();
