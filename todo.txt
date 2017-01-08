@@ -2,10 +2,10 @@ add pre-scaled power icons; make a power icon spritesheet
 add gfx settings menu to disable blur and/or adj. layer view
 add "restore to state" for all elements
 add checkpoints
+make menu handle screen size changes better
 
 
 LONG-TERM FEATURES:
-add localized text popups on trigger
 add relays to carry current between tiers
 add ability to sync switches
 add gpad version that handles keyboard input

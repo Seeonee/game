@@ -332,3 +332,26 @@ Avatar.prototype.update = function() {
     // this.game.debug.body(this);
     // this.game.debug.spriteCoords(this);
 };
+
+// Save progress.
+Avatar.prototype.saveProgress = function(p) {
+    p.avatar = { x: this.x, y: this.y };
+    if (this.point) {
+        p.avatar.point = this.point.name;
+    } else if (this.path) {
+        p.avatar.path = this.path.name;
+    }
+};
+
+// Restore progress.
+Avatar.prototype.restoreProgress = function(p) {
+    this.x = p.avatar.x;
+    this.y = p.avatar.y;
+    this.tier = this.level.tier;
+    this.setColor(this.tier.palette);
+    if (p.avatar.point) {
+        this.point = this.tier.pointMap[p.avatar.point];
+    } else if (p.avatar.path) {
+        this.path = this.tier.pathMap[p.avatar.path];
+    }
+};

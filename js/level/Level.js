@@ -328,6 +328,31 @@ Level.prototype.getTextKeyForDisplay = function(textKey) {
     return this.getTextKey(textKey);
 };
 
+// Save progress.
+Level.prototype.saveProgress = function(p) {
+    p = p ? p : {};
+    p.level = { 'tier': this.tier.name };
+    for (var i = 0; i < this.tiers.length; i++) {
+        this.tiers[i].saveProgress(p);
+    }
+    this.avatar.saveProgress(p);
+    return p;
+};
+
+// Restore progress.
+Level.prototype.restoreProgress = function(p) {
+    if (!this.tier || this.tier.name != p.level.tier) {
+        var avatar = this.avatar;
+        this.avatar = undefined;
+        this.setTier(this.tierMap[p.level.tier]);
+        this.avatar = avatar;
+    }
+    for (var i = 0; i < this.tiers.length; i++) {
+        this.tiers[i].restoreProgress(p);
+    }
+    this.avatar.restoreProgress(p);
+};
+
 
 // Push out a JSON version of our tiers.
 Level.prototype.toJSON = function() {

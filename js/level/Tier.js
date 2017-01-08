@@ -964,6 +964,26 @@ Tier.prototype.hide = function(increasing) {
     this.fades.push(t2);
 };
 
+// Save progress.
+Tier.prototype.saveProgress = function(p) {
+    for (var i = 0; i < this.objects.length; i++) {
+        var obj = this.objects[i];
+        if (obj.saveProgress) {
+            obj.saveProgress(p);
+        }
+    }
+};
+
+// Restore progress.
+Tier.prototype.restoreProgress = function(p) {
+    for (var i = 0; i < this.objects.length; i++) {
+        var obj = this.objects[i];
+        if (obj.restoreProgress) {
+            obj.restoreProgress(p);
+        }
+    }
+};
+
 // Delete ourself and our stuff.
 Tier.prototype.delete = function() {
     for (var i = 0; i < this.paths.length; i++) {
