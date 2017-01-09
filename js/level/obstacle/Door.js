@@ -56,9 +56,6 @@ Door.prototype.saveProgress = function(p) {
         return;
     }
     p[this.name] = { unlocked: true };
-    // We'll never restore to a point before unlocking,
-    // so clean up our sprites.
-    this.delete();
 };
 
 // Restore progress.

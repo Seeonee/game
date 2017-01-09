@@ -4,6 +4,7 @@ picking up multiple items, then restoring, seems weird
 * use item
 * pick up new item
 * restart
+reset shard hover loops on progress restore
 add pre-scaled power icons; make a power icon spritesheet
 add gfx settings menu to disable blur and/or adj. layer view
 remove power point enabledness, calculate automatically only

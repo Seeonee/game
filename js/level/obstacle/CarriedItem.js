@@ -71,21 +71,11 @@ CarriedItem.prototype.saveProgress = function(p) {
         return;
     }
     p[this.name] = { pickedUp: true };
-    // We'll never restore to a point before pickup,
-    // which means we're now totally done with our hitbox.
-    if (this.hitbox) {
-        Utils.destroy(this.hitbox);
-        this.hitbox = undefined;
-    }
 
     // If we've already been used up, even restoring 
     // to this point still won't change that fact.
     // So, we get to remain fully and easily dead.
     if (this.usedUp) {
-        if (this.citem) {
-            Utils.destroy(this.citem);
-            this.citem = undefined;
-        }
         p[this.name].usedUp = true;
         return;
     }

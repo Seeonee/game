@@ -42,15 +42,7 @@ MaskItem.prototype.saveProgress = function(p) {
         return;
     }
     p[this.name] = { pickedUp: true };
-    // We'll never restore to a point before pickup,
-    // which means we're now totally done with our hitbox.
-    if (this.hitbox) {
-        Utils.destroy(this.hitbox);
-        this.hitbox = undefined;
-    }
     if (this.fallenOff) {
-        // Don't delete altar!
-        CarriedItem.prototype.delete.call(this);
         p[this.name].fallenOff = true;
     }
 };

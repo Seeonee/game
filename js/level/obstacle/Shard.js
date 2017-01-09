@@ -55,9 +55,6 @@ Shard.prototype.saveProgress = function(p) {
         return;
     }
     p[this.name] = { pickedUp: true };
-    // We'll never restore to a point before pickup,
-    // so clean up our sprites.
-    this.delete();
 };
 
 // Restore progress.
