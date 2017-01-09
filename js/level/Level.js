@@ -10,7 +10,8 @@ var Level = function(game, name) {
     this.hfPool = new SpritePool(this.game, HFlash);
     this.pfPool = new SpritePool(this.game, PortalFlash);
     this.events = {
-        onTierChange: new Phaser.Signal()
+        onTierChange: new Phaser.Signal(),
+        onShrineVisit: new Phaser.Signal()
     }
 
     // We're responsible for setting up our 
@@ -353,6 +354,19 @@ Level.prototype.restoreProgress = function(p) {
     }
 };
 
+// Checkpoint reached.
+Level.prototype.visitShrine = function(shrine) {
+    this.shrineProgress = this.saveProgress();
+    this.events.onShrineVisit.dispatch(shrine);
+};
+
+// Checkpoint returned to.
+Level.prototype.resetToShrine = function() {
+    var p = this.shrineProgress ?
+        this.shrineProgress : this.initialProgress;
+    this.restoreProgress(p);
+};
+
 
 // Push out a JSON version of our tiers.
 Level.prototype.toJSON = function() {
@@ -406,5 +420,6 @@ Level.load = function(game, name, json) {
     // Unset it so that setTier won't think nothing's changed.
     level.tier = undefined;
     level.setTier(tier);
+    level.initialProgress = level.saveProgress();
     return level;
 };

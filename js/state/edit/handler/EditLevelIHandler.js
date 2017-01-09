@@ -29,6 +29,7 @@ var EditLevelIHandler = function(game, gpad, level, ihandler) {
     new CustomizePortalPointIState(this, this.level);
     new CustomizePowerPointIState(this, this.level);
     new CustomizeJunctionPointIState(this, this.level);
+    new CustomizeShrinePointIState(this, this.level);
     new CustomizeNormalPointIState(this, this.level);
 
     // Wires.
