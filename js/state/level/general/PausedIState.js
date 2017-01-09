@@ -39,6 +39,7 @@ PausedIState.prototype.selectContinue = function(option) {
 PausedIState.prototype.selectRestart = function(option) {
     this.unpause();
     this.game.state.getCurrentState().restartLevel();
+    this.activate(UnpausedIState.NAME);
 };
 
 // User opted to exit.
