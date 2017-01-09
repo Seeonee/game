@@ -208,7 +208,6 @@ EndPoint.prototype.getDetails = function() {
 // JSON conversion of an end point.
 EndPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
-    result.type = EndPoint.TYPE;
     return result;
 };
 

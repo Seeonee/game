@@ -134,7 +134,6 @@ SwitchPoint.prototype.getDetails = function() {
 // JSON conversion of a switch.
 SwitchPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
-    result.type = SwitchPoint.TYPE;
     if (this._once) {
         result.once = true;
     }

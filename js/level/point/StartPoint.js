@@ -41,7 +41,6 @@ StartPoint.prototype.delete = function() {
 // JSON conversion of an end point.
 StartPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
-    result.type = 'start';
     delete result.enabled;
     return result;
 };

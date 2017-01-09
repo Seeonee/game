@@ -100,7 +100,6 @@ PowerPoint.prototype.getDetails = function() {
 PowerPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
     delete result.enabled;
-    result.type = PowerPoint.TYPE;
     result.subtype = this.powerType;
     result.direction = this.direction;
     if (this.rotation) {

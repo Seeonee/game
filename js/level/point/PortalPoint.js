@@ -177,7 +177,6 @@ PortalPoint.prototype.getDetails = function() {
 // JSON conversion of a portal.
 PortalPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
-    result.type = PortalPoint.TYPE;
     result.direction = this.direction;
     result.to = this.to;
     if (!this.synchronize) {

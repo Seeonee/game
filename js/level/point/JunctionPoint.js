@@ -175,7 +175,6 @@ JunctionPoint.prototype.delete = function() {
 JunctionPoint.prototype.toJSON = function() {
     var result = Point.prototype.toJSON.call(this);
     delete result.enabled;
-    result.type = JunctionPoint.TYPE;
     if (this.mode) {
         result.mode = this.mode;
     }
