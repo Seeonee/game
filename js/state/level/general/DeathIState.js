@@ -3,6 +3,8 @@ var DeathIState = function(handler, level) {
     IState.call(this, DeathIState.NAME, handler);
     this.level = level;
     this.avatar = level.avatar;
+    this.sparks = [];
+    this.tweens = [];
 };
 
 DeathIState.NAME = 'death';
@@ -31,12 +33,16 @@ DeathIState.SPARK_FADE_DELAY_VARY = 5000; // ms
 DeathIState.prototype.activated = function(prev) {
     this.a = this.avatar.deathAngle;
     this.masq = this.avatar.masq;
-    if (!this.masq) {
+    this.maskFound = this.masq;
+    if (!this.maskFound) {
         this.masq = this.avatar.keyplate;
         this.tint = this.level.tier.palette.c1.i;
     } else {
         this.tint = this.level.tier.palette.c2.i;
     }
+    this.maskX = this.masq.x;
+    this.maskY = this.masq.y;
+
     this.masq.x += this.masq.parent.x;
     this.masq.y += this.masq.parent.y;
     this.game.camera.follow(this.masq);
@@ -58,15 +64,18 @@ DeathIState.prototype.activated = function(prev) {
     t.onComplete.add(function() {
         this.flying = false;
     }, this);
+    this.tweens.push(t);
+
     var t2 = this.game.add.tween(this.masq);
     t2.to({ rotation: rotation + Math.sign(rotation) * 2 * Math.PI },
         DeathIState.MASK_SPIN_TIME, Phaser.Easing.Linear.None,
         false, 0, Number.POSITIVE_INFINITY);
     t.chain(t2);
+    this.tweens.push(t2);
 
-    this.game.add.tween(this.level.z).to({ alpha: 0 },
-        DeathIState.FADE_TIME,
-        Phaser.Easing.Cubic.Out, true);
+    var t = this.game.add.tween(this.level.z).to({ alpha: 0 },
+        DeathIState.FADE_TIME, Phaser.Easing.Cubic.Out, true);
+    this.tweens.push(t);
 };
 
 // Handle an update.
@@ -87,14 +96,40 @@ DeathIState.prototype.update = function() {
     this.avatar.velocity.y = 0;
 
     if (this.flying && this.sparkTime < this.game.time.now) {
+        // Use a SpritePool.
         var s = new DeathIState.DeathSpark(this.masq, this.tint,
             this.a, this.progress);
+        this.sparks.push(s);
         this.storeNextSparkTime();
     }
     if (this.gpad.justReleased(this.buttonMap.SELECT) ||
         this.gpad.justReleased(this.buttonMap.START)) {
+        this.fixEverything();
         this.game.state.getCurrentState().restoreLevel();
+        this.activate(UnpausedIState.NAME);
     }
+};
+
+// Undo all our gfx.
+DeathIState.prototype.fixEverything = function() {
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    this.tweens = [];
+    for (var i = 0; i < this.sparks.length; i++) {
+        this.sparks[i].kill();
+    }
+    this.sparks = [];
+
+    this.level.z.alpha = 1;
+
+    this.masq.rotation = 0;
+    this.masq.x = this.maskX;
+    this.masq.y = this.maskY;
+    this.avatar.addChild(this.masq);
+
+    this.game.camera.follow(this.avatar);
+    this.game.state.getCurrentState().updateDeadzone();
 };
 
 
