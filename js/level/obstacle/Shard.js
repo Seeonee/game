@@ -59,20 +59,13 @@ Shard.prototype.saveProgress = function(p) {
 
 // Restore progress.
 Shard.prototype.restoreProgress = function(p) {
-    // If we still haven't been picked up,
-    // don't change anything.
-    if (!this.pickedUp) {
-        return;
-    }
-
     var myp = p[this.name];
     var pickedUp = myp && myp.pickedUp ? myp.pickedUp : false;
-    if (pickedUp == this.pickedUp) {
-        return;
-    }
     this.pickedUp = pickedUp;
-    this.shard.respawn();
-    this.hitbox.addCollision();
+    if (!pickedUp) {
+        this.shard.respawn();
+        this.hitbox.addCollision();
+    }
 };
 
 // Delete ourself.

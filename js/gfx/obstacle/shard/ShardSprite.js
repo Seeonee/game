@@ -129,11 +129,20 @@ ShardSprite.prototype.pickUp = function() {
 // Restores the shard from its picked up state to 
 // its original floating state.
 ShardSprite.prototype.respawn = function() {
-    for (var i = 0; i < this.pickupTweens.length; i++) {
-        this.pickupTweens[i].stop();
+    if (this.pickupTweens) {
+        for (var i = 0; i < this.pickupTweens.length; i++) {
+            this.pickupTweens[i].stop();
+        }
+        this.pickupTweens = undefined;
     }
-    this.pickupTweens = undefined;
+    if (this.tweens) {
+        for (var i = 0; i < this.tweens.length; i++) {
+            this.tweens[i].stop();
+        }
+        this.tweens = undefined;
+    }
     this.revive();
+    this.gobetween.y = 0;
     this.pickedUp = false;
     this.glow.scale.setTo(1 / ShardSprite.FIX);
     this.shard.alpha = 1;

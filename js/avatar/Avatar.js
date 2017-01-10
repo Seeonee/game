@@ -381,4 +381,6 @@ Avatar.prototype.restoreProgress = function(p) {
         this.masq.y = this.masq.yOffset;
     }
     this.currentMaskObject = undefined;
+
+    this.held = undefined;
 };
