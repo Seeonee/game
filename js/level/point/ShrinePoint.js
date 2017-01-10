@@ -1,7 +1,8 @@
 // Checkpoint to save progress.
 var ShrinePoint = function(name, x, y) {
     Point.call(this, name, x, y);
-    this.active = false;
+    this.visited = false;
+    this.broken = false;
 };
 
 ShrinePoint.TYPE = 'shrine';
@@ -34,7 +35,7 @@ ShrinePoint.prototype.draw = function(tier) {
 // Called when the avatar visits.
 ShrinePoint.prototype.notifyAttached = function(avatar, prev) {
     Point.prototype.notifyAttached.call(this, avatar, prev);
-    if (!this.active) {
+    if (!this.visited) {
         this.level.visitShrine(this);
     }
 };
@@ -42,22 +43,57 @@ ShrinePoint.prototype.notifyAttached = function(avatar, prev) {
 // Called whenever any shrine is visited.
 ShrinePoint.prototype.notifyVisit = function(shrine) {
     if (shrine === this) {
-        this.active = true;
-        this.shrine.close();
+        if (!this.visited) {
+            this.visited = true;
+            this.shrine.close();
+        }
     } else {
-        this.active = false;
-        this.shrine.open();
+        if (this.visited) {
+            this.broken = true;
+            this.shrine.break();
+        }
     }
 };
 
 // Save progress.
 ShrinePoint.prototype.saveProgress = function(p) {
-    // TODO: !!!
+    if (this.visited) {
+        p[this.name] = {
+            visited: this.visited,
+            broken: this.broken
+        };
+    }
 };
 
 // Restore progress.
 ShrinePoint.prototype.restoreProgress = function(p) {
-    // TODO: !!!
+    if (!this.visited) {
+        if (this.shrine) {
+            this.shrine.startSpinner();
+        }
+        return;
+    }
+
+    var myp = p[this.name];
+    var visited = myp && myp.visited ? myp.visited : false;
+    var broken = myp && myp.broken ? myp.broken : false;
+    this.visited = visited;
+    this.broken = broken;
+    if (!broken) {
+        if (this.shrine) {
+            this.shrine.startSpinner();
+        }
+        if (this.visited) {
+            if (this.shrine) {
+                this.shrine.resetVisited();
+            }
+        }
+        if (!this.visited) {
+            if (this.shrine) {
+                this.shrine.resetUnvisited();
+            }
+        }
+    }
 };
 
 // Delete our gfx.

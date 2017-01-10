@@ -25,9 +25,13 @@ var ShrineRing = function(game, x, y, palette, startClosed) {
     var y = this.closed ? 0 : ShrineRing.Y;
     this.rotation = this.closed ? 0 : ShrineRing.ANGLE;
 
+    this.spinner = this.addChild(this.game.add.sprite(0, 0));
+    this.spinner.anchor.setTo(0.5);
+    this.startSpinner();
+
     this.arcs = [];
     for (var i = 0; i < 3; i++) {
-        var dummy = this.addChild(this.game.add.sprite(0, 0));
+        var dummy = this.spinner.addChild(this.game.add.sprite(0, 0));
         dummy.rotation = i * 2 * Math.PI / 3;
         var arc = dummy.addChild(new ShrineRingArc(this.game, 0, y));
         arc.alpha = ShrineRing.ALPHA;
@@ -35,6 +39,7 @@ var ShrineRing = function(game, x, y, palette, startClosed) {
     }
     this.arcs[0].alpha = this.closed ? 1 : ShrineRing.ALPHA;
     this.arcs[0].tint = this.closed ? this.color2 : this.color1;
+    this.tweens = [];
 };
 
 ShrineRing.prototype = Object.create(Phaser.Sprite.prototype);
@@ -45,11 +50,39 @@ ShrineRing.ALPHA = 0.25;
 ShrineRing.TIME = 350; // ms
 ShrineRing.Y = -10;
 ShrineRing.ANGLE = 1 * Math.PI;
+ShrineRing.SPIN_TIME = 20000; // ms
 
 
 // Set our colors.
 ShrineRing.prototype.updatePalette = function(palette) {
     this.color2 = palette.c2.i;
+};
+
+// (Re)start our ongoing spin.
+ShrineRing.prototype.startSpinner = function() {
+    this.stopSpinner();
+    this.spinner.rotation = 0;
+    var t = this.game.add.tween(this.spinner);
+    t.to({ rotation: -2 * Math.PI },
+        ShrineRing.SPIN_TIME, Phaser.Easing.Linear.None,
+        true, 0, Number.POSITIVE_INFINITY);
+    this.spinTween = t;
+};
+
+// End our ongoing spin.
+ShrineRing.prototype.stopSpinner = function() {
+    if (this.spinTween) {
+        this.spinTween.stop();
+        this.spinTween = undefined;
+    }
+};
+
+// Tween clean.
+ShrineRing.prototype.clearTweens = function() {
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    this.tweens = [];
 };
 
 // Expand/collapse.
@@ -77,9 +110,49 @@ ShrineRing.prototype._resize = function(closed) {
     this.arcs[0].alpha = closed ? 1 : ShrineRing.ALPHA;
     this.arcs[0].tint = closed ? this.color2 : this.color1;
     for (var i = 0; i < 3; i++) {
-        this.game.add.tween(this.arcs[i]).to({ y: y },
-            ShrineRing.TIME, easing, true);
+        var t = this.game.add.tween(this.arcs[i]);
+        t.to({ y: y }, ShrineRing.TIME, easing, true);
+        this.tweens.push(t);
     }
-    this.game.add.tween(this).to({ rotation: rotation },
-        ShrineRing.TIME, easing, true);
+    var t = this.game.add.tween(this);
+    t.to({ rotation: rotation }, ShrineRing.TIME, easing, true);
+    this.tweens.push(t);
+};
+
+// Shrine has crumbled.
+ShrineRing.prototype.break = function() {
+    var t = this.game.add.tween(this);
+    t.to({ alpha: 0 }, ShrineRing.TIME, Phaser.Easing.Linear.None, true);
+    t.onComplete.add(function() {
+        this.stopSpinner();
+    }, this);
+    this.tweens.push(t);
+};
+
+// Reset after a save/restore.
+ShrineRing.prototype.resetVisited = function() {
+    this.clearTweens();
+    this.rotation = 0;
+    this.alpha = 1;
+
+    this.arcs[0].alpha = 1;
+    this.arcs[0].tint = this.color2;
+    for (var i = 0; i < 3; i++) {
+        this.arcs[i].y = 0;
+    }
+    this.startSpinner();
+};
+
+// Reset after a save/restore.
+ShrineRing.prototype.resetUnvisited = function() {
+    this.clearTweens();
+    this.rotation = ShrineRing.ANGLE;
+    this.alpha = 1;
+
+    this.arcs[0].alpha = ShrineRing.ALPHA;
+    this.arcs[0].tint = this.color1;
+    for (var i = 0; i < 3; i++) {
+        this.arcs[i].y = 0;
+    }
+    this.startSpinner();
 };

@@ -1,7 +1,8 @@
+make menu options: restart from beginning/restart from checkpoint
+add power save/restore (including trace)
+
 add pre-scaled power icons; make a power icon spritesheet
 add gfx settings menu to disable blur and/or adj. layer view
-add "restore to state" for all elements
-add checkpoints
 make menu handle screen size changes better
 
 

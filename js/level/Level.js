@@ -356,8 +356,8 @@ Level.prototype.restoreProgress = function(p) {
 
 // Checkpoint reached.
 Level.prototype.visitShrine = function(shrine) {
-    this.shrineProgress = this.saveProgress();
     this.events.onShrineVisit.dispatch(shrine);
+    this.shrineProgress = this.saveProgress();
 };
 
 // Checkpoint returned to.
