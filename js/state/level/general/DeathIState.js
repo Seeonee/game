@@ -5,6 +5,7 @@ var DeathIState = function(handler, level) {
     this.avatar = level.avatar;
     this.sparks = [];
     this.tweens = [];
+    this.pool = new SpritePool(this.game, DeathIState.DeathSpark);
 };
 
 DeathIState.NAME = 'death';
@@ -97,9 +98,9 @@ DeathIState.prototype.update = function() {
 
     if (this.flying && this.sparkTime < this.game.time.now) {
         // Use a SpritePool.
-        var s = new DeathIState.DeathSpark(this.masq, this.tint,
+        var s = this.pool.make(this.game);
+        s.burn(this.masq, this.tint,
             this.a, this.progress);
-        this.sparks.push(s);
         this.storeNextSparkTime();
     }
     if (this.gpad.justReleased(this.buttonMap.SELECT) ||
@@ -116,10 +117,7 @@ DeathIState.prototype.fixEverything = function() {
         this.tweens[i].stop();
     }
     this.tweens = [];
-    for (var i = 0; i < this.sparks.length; i++) {
-        this.sparks[i].kill();
-    }
-    this.sparks = [];
+    this.pool.killAll();
 
     this.level.z.alpha = 1;
 
@@ -140,12 +138,32 @@ DeathIState.prototype.fixEverything = function() {
 
 
 // Smoke from the flying mask.
-DeathIState.DeathSpark = function(parent, tint, a, progress) {
+DeathIState.DeathSpark = function(game) {
     this.game = game;
     var bitmap = this.game.bitmapCache.get(
         DeathIState.DeathSpark.painter);
-    Phaser.Sprite.call(this, parent.game, parent.x, parent.y, bitmap);
+    Phaser.Sprite.call(this, this.game, 0, 0, bitmap);
     this.anchor.setTo(0.5);
+    this.tweens = [];
+};
+
+DeathIState.DeathSpark.prototype = Object.create(Phaser.Sprite.prototype);
+DeathIState.DeathSpark.prototype.constructor = DeathIState.DeathSpark;
+
+// Yup, constants.
+DeathIState.DeathSpark.R = 20;
+DeathIState.DeathSpark.SCALE = 4.1;
+
+
+// Set off the spark.
+DeathIState.DeathSpark.prototype.burn = function(parent, tint, a, progress) {
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    this.tweens = [];
+
+    this.x = parent.x;
+    this.y = parent.y;
     this.rotation = Math.random() * 2 * Math.PI;
     var progress2 = 1 - Math.pow(progress, 1 / 3);
     var scale = progress2 * 4;
@@ -167,6 +185,7 @@ DeathIState.DeathSpark = function(parent, tint, a, progress) {
     var y = this.y - d * Math.cos(a2);
     var t = this.game.add.tween(this).to({ x: x, y: y, alpha: alpha },
         time, Phaser.Easing.Cubic.Out, true);
+    this.tweens.push(t);
 
     if (Math.random() > DeathIState.SPARK_FADE_CHANCE) {
         var alpha = DeathIState.SPARK_FADE_ALPHA;
@@ -178,23 +197,17 @@ DeathIState.DeathSpark = function(parent, tint, a, progress) {
             Number.POSITIVE_INFINITY, true);
         t2.repeatDelay(delay);
         t.chain(t2);
+        this.tweens.push(t2);
     }
 
     var time = DeathIState.SPARK_FADE_DELAY_BASE +
         Math.random() * DeathIState.SPARK_FADE_DELAY_VARY;
     rotation = this.rotation + (2 * Math.PI *
         (Math.random() > 0.5 ? 1 : -1));
-    this.game.add.tween(this).to({ rotation: rotation },
+    var t = this.game.add.tween(this).to({ rotation: rotation },
         time, Phaser.Easing.Linear.None, true, 0, Number.POSITIVE_INFINITY);
+    this.tweens.push(t);
 };
-
-DeathIState.DeathSpark.prototype = Object.create(Phaser.Sprite.prototype);
-DeathIState.DeathSpark.prototype.constructor = DeathIState.DeathSpark;
-
-// Yup, constants.
-DeathIState.DeathSpark.R = 20;
-DeathIState.DeathSpark.SCALE = 4.1;
-
 
 // Paint our bitmap.
 DeathIState.DeathSpark.painter = function(bitmap) {
