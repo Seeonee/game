@@ -367,6 +367,11 @@ Level.prototype.resetToShrine = function() {
     this.restoreProgress(p);
 };
 
+// All the way back.
+Level.prototype.resetToBeginning = function() {
+    this.restoreProgress(this.initialProgress);
+};
+
 
 // Push out a JSON version of our tiers.
 Level.prototype.toJSON = function() {

@@ -8,7 +8,8 @@ var PausedIState = function(handler, level) {
     var settings = Settings.Menu.populateSubmenu(this.root);
     settings.events.onSettingsUpdate.add(
         this.handler.updateSettings, this.handler);
-    this.add('restart', this.selectRestart);
+    this.restoreOption = this.add('restart from shrine', this.selectRestore);
+    this.add('reset', this.selectRestart);
     this.add('exit', this.selectExit);
 };
 
@@ -20,6 +21,7 @@ PausedIState.prototype.constructor = PausedIState;
 PausedIState.prototype.activated = function(prev) {
     this.game.paused = true;
     this.color = this.level.tier.palette.c1;
+    this.restoreOption.enabled = this.level.shrineProgress;
     IMenuState.prototype.activated.call(this, prev);
 };
 
@@ -35,7 +37,14 @@ PausedIState.prototype.selectContinue = function(option) {
     this.activate(UnpausedIState.NAME);
 };
 
-// User opted to restart.
+// User opted to restart from latest checkpoint.
+PausedIState.prototype.selectRestore = function(option) {
+    this.unpause();
+    this.game.state.getCurrentState().restoreLevel();
+    this.activate(UnpausedIState.NAME);
+};
+
+// User opted to restart from beginning of level.
 PausedIState.prototype.selectRestart = function(option) {
     this.unpause();
     this.game.state.getCurrentState().restartLevel();

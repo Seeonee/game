@@ -93,7 +93,7 @@ DeathIState.prototype.update = function() {
     }
     if (this.gpad.justReleased(this.buttonMap.SELECT) ||
         this.gpad.justReleased(this.buttonMap.START)) {
-        this.game.state.getCurrentState().restartLevel();
+        this.game.state.getCurrentState().restoreLevel();
     }
 };
 

@@ -123,11 +123,17 @@ PlayLevelState.prototype.updateDeadzone = function() {
         x, y, w - 2 * x, h - 2 * y);
 };
 
+// Restore the level.
+PlayLevelState.prototype.restoreLevel = function() {
+    this.level.resetToShrine();
+};
+
 // Restart the level.
 PlayLevelState.prototype.restartLevel = function() {
-    this.params.restart = true;
-    this.params.textsSeen = this.level.textsSeen;
-    this.game.state.start(this.key, true, false, this.params);
+    this.level.resetToBeginning();
+    //     this.params.restart = true;
+    //     this.params.textsSeen = this.level.textsSeen;
+    //     this.game.state.start(this.key, true, false, this.params);
 };
 
 
