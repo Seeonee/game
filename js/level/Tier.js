@@ -966,20 +966,26 @@ Tier.prototype.hide = function(increasing) {
 
 // Save progress.
 Tier.prototype.saveProgress = function(p) {
+    var p2 = {};
     for (var i = 0; i < this.objects.length; i++) {
         var obj = this.objects[i];
         if (obj.saveProgress) {
-            obj.saveProgress(p);
+            obj.saveProgress(p2);
         }
     }
+    p[this.name] = p2;
 };
 
 // Restore progress.
 Tier.prototype.restoreProgress = function(p) {
+    var p2 = p[this.name];
+    if (!p2) {
+        return;
+    }
     for (var i = 0; i < this.objects.length; i++) {
         var obj = this.objects[i];
         if (obj.restoreProgress) {
-            obj.restoreProgress(p);
+            obj.restoreProgress(p2);
         }
     }
 };

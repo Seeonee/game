@@ -66,7 +66,7 @@ Shard.prototype.restoreProgress = function(p) {
     }
 
     var myp = p[this.name];
-    var pickedUp = myp ? myp.pickedUp : false;
+    var pickedUp = myp && myp.pickedUp ? myp.pickedUp : false;
     if (pickedUp == this.pickedUp) {
         return;
     }

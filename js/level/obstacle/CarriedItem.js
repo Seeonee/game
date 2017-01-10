@@ -90,9 +90,9 @@ CarriedItem.prototype.restoreProgress = function(p) {
     }
 
     var myp = p[this.name];
-    var pickedUp = myp ? myp.pickedUp : false;
-    var usedUp = myp ? myp.usedUp : false;
-    if (usedUp || pickedUp && !this.usedUp) {
+    var pickedUp = myp && myp.pickedUp ? myp.pickedUp : false;
+    var usedUp = myp && myp.usedUp ? myp.usedUp : false;
+    if (usedUp == this.usedUp && pickedUp == this.pickedUp) {
         return;
     }
     this.pickedUp = pickedUp;
@@ -100,7 +100,7 @@ CarriedItem.prototype.restoreProgress = function(p) {
 
     var avatar = this.tier.level.avatar;
     // The only cases that matter are:
-    if (!usedUp) {
+    if (!usedUp && pickedUp) {
         // We're currently used up, but we're restoring 
         // to when we were held. That requires unhiding our 
         // sprite and reattaching it to the avatar.
@@ -108,13 +108,12 @@ CarriedItem.prototype.restoreProgress = function(p) {
         this.citem.rehold();
         avatar.addChild(this.citem);
     }
-    if (!pickedUp) {
+    if (!usedUp && !pickedUp) {
         // We're restoring to before we were picked up.
         // That requires detaching from the avatar and 
         // returning to our original coords, as well as 
         // possibly resuscitating (which we've done already).
         this.citem.setPalette(this.tier.palette);
-        avatar.held = undefined;
         var ip = this.tier.translateGamePointToInternalPoint(
             this.x, this.y);
         var ap = this.tier.translateInternalPointToAnchorPoint(
