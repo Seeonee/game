@@ -152,7 +152,7 @@ ShrineRing.prototype.resetUnvisited = function() {
     this.arcs[0].alpha = ShrineRing.ALPHA;
     this.arcs[0].tint = this.color1;
     for (var i = 0; i < 3; i++) {
-        this.arcs[i].y = 0;
+        this.arcs[i].y = ShrineRing.Y;
     }
     this.startSpinner();
 };
