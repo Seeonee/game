@@ -9,6 +9,7 @@ var TraceIState = function(handler, level) {
     this.orb = this.game.add.sprite(0, 0, bitmap);
     this.orb.anchor.setTo(0.5);
     this.orb.visible = false;
+    this.tweens = [];
 };
 
 TraceIState.NAME = 'trace';
@@ -39,6 +40,9 @@ TraceIState.prototype.activated = function(prev) {
 // Called when lost.
 TraceIState.prototype.deactivated = function(next) {
     // Noop.
+    this.avatar.tierMeter.setPowerPressed(false);
+    this.tracing = false;
+    this.orb.visible = false;
 };
 
 // Handle an update.
@@ -60,7 +64,7 @@ TraceIState.prototype.update = function() {
         }
         if (!this.trace.alive) {
             this.avatar.tierMeter.usePower();
-            this.trace.reset(this.avatar, this.level.tier);
+            this.trace.layTrace(this.level.tier);
         } else if (this.trace.tier === this.level.tier) {
             this.avatar.tierMeter.usePower();
             this.tracing = true;
@@ -75,8 +79,17 @@ TraceIState.prototype.update = function() {
     }
 };
 
+// Tween clean.
+TraceIState.prototype.cleanTweens = function() {
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    this.tweens = [];
+};
+
 // Slide the avatar, and play a small orb effect.
 TraceIState.prototype.recallAvatar = function() {
+    this.cleanTweens();
     var time = TraceIState.RECALL_TIME;
     var t = this.game.add.tween(this.avatar);
     t.to({ x: this.trace.x, y: this.trace.y },
@@ -85,10 +98,13 @@ TraceIState.prototype.recallAvatar = function() {
         this.avatar.checkCollision();
         this.tracing = undefined;
     }, this);
+    this.tweens.push(t);
+
     var t = this.game.add.tween(this.avatar);
     t.to({ alpha: 0 }, time / 2,
         Phaser.Easing.Quintic.Out, true,
         0, 0, true);
+    this.tweens.push(t);
 
     var y = this.avatar.keyplate.y;
     this.orb.x = this.avatar.x;
@@ -98,6 +114,8 @@ TraceIState.prototype.recallAvatar = function() {
     var t = this.game.add.tween(this.orb);
     t.to({ x: this.trace.x, y: this.trace.y + y },
         time, Phaser.Easing.Quintic.Out, true);
+    this.tweens.push(t);
+
     var t = this.game.add.tween(this.orb.scale);
     t.to({ x: 1, y: 1 }, time / 2,
         Phaser.Easing.Sinusoidal.Out, true,
@@ -105,4 +123,14 @@ TraceIState.prototype.recallAvatar = function() {
     t.onComplete.add(function() {
         this.orb.visible = false;
     }, this);
+    this.tweens.push(t);
+};
+
+// Cancel everything that's underway.
+TraceIState.prototype.release = function() {
+    this.cleanTweens();
+    this.orb.visible = false;
+    this.avatar.x = this.trace.x;
+    this.avatar.y = this.trace.y;
+    this.avatar.alpha = 1;
 };

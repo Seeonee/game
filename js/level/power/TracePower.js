@@ -39,25 +39,28 @@ TracePower.REUSE_DELAY = 700; // ms
 
 
 // Prepare everything again.
-TracePower.prototype.reset = function(avatar, tier) {
-    this.avatar = avatar;
+TracePower.prototype.layTrace = function(tier) {
     this.avatar.trace = this;
 
     this.alive = true;
-    this.point = avatar.point;
-    this.path = avatar.path;
+    this.point = this.avatar.point;
+    this.path = this.avatar.path;
     this.tier = tier;
     this.palette = tier.palette;
-    this.x = avatar.x;
-    this.y = avatar.y;
+    this.x = this.avatar.x;
+    this.y = this.avatar.y;
     this.z = this.game.state.getCurrentState().z;
+    this._layTrace();
+};
 
-    var p = { x: this.x, y: this.y + avatar.keyplate.y };
-    var ip = tier.translateGamePointToInternalPoint(p.x, p.y);
-    var ap = tier.translateInternalPointToAnchorPoint(ip.x, ip.y);
+// Now that all values are written down, execute.
+TracePower.prototype._layTrace = function() {
+    var p = { x: this.x, y: this.y + this.avatar.keyplate.y };
+    var ip = this.tier.translateGamePointToInternalPoint(p.x, p.y);
+    var ap = this.tier.translateInternalPointToAnchorPoint(ip.x, ip.y);
     this.base.x = ap.x;
     this.base.y = ap.y;
-    tier.image.addChild(this.base);
+    this.tier.image.addChild(this.base);
     this.silhouette.scale.setTo(0.6);
 
     this.burst.reset(this);
@@ -74,5 +77,54 @@ TracePower.prototype.recall = function() {
     this.silhouette.recall(this);
     for (var i = 0; i < this.sparks.length; i++) {
         this.sparks[i].recall();
+    }
+};
+
+// Save progress.
+TracePower.prototype.saveProgress = function(p) {
+    if (!this.avatar) {
+        return;
+    }
+    if (this.alive) {
+        p[this.type] = {
+            alive: this.alive,
+            tier: this.tier,
+            point: this.point,
+            path: this.path,
+            x: this.x,
+            y: this.y
+        };
+    } else {
+        p[this.type] = { alive: this.alive };
+    }
+};
+
+// Restore progress.
+TracePower.prototype.restoreProgress = function(p) {
+    var myp = p[this.type];
+    if (!myp) {
+        return;
+    }
+    this.avatar.setPower(this.type);
+    this.alive = myp.alive;
+    if (myp.alive) {
+        this.tier = myp.tier;
+        this.point = myp.point;
+        this.path = myp.path;
+        this.x = myp.x;
+        this.y = myp.y;
+        this._layTrace();
+    }
+};
+
+// Called when access to this power is lost.
+TracePower.prototype.release = function() {
+    Power.prototype.release.call(this);
+    this.base.visible = false;
+    this.alive = false;
+    this.dying = false;
+    this.silhouette.release(this);
+    for (var i = 0; i < this.sparks.length; i++) {
+        this.sparks[i].release();
     }
 };

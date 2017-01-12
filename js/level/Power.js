@@ -27,6 +27,9 @@ Power.prototype.acquire = function(avatar) {
 
 // Called when access to this power is lost.
 Power.prototype.release = function() {
+    if (this.ihandler.state) {
+        this.ihandler.state.release();
+    }
     this.ihandler.activate(undefined);
 };
 

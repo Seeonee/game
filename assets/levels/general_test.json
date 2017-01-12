@@ -136,7 +136,7 @@
                     "type": "shard"
                 },
                 "item0": {
-                    "x": 600,
+                    "x": 0,
                     "y": 150,
                     "type": "item",
                     "subtype": "key"

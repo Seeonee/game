@@ -129,6 +129,15 @@ TraceSilhouette.prototype.recall = function(trace) {
     this.tweens.push(t2);
 };
 
+// Clean up.
+TraceSilhouette.prototype.release = function(trace) {
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    this.tweens = [];
+    this.kill();
+};
+
 
 
 
@@ -250,4 +259,13 @@ TraceSpark.prototype.recall = function() {
         this.kill();
     }, this);
     this.tweens.push(t);
+};
+
+// Clean up.
+TraceSpark.prototype.release = function(trace) {
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    this.tweens = [];
+    this.kill();
 };
