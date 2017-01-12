@@ -56,6 +56,7 @@ PowerPoint.prototype.setEnabled = function(enabled) {
 // Light up the power.
 PowerPoint.prototype.notifyAttached = function(avatar, prev) {
     Point.prototype.notifyAttached.call(this, avatar, prev);
+    avatar.tierMeter.fade(true);
     if (!this.purchased) {
         this.power.select();
     }
@@ -64,6 +65,7 @@ PowerPoint.prototype.notifyAttached = function(avatar, prev) {
 // Lights out for the power.
 PowerPoint.prototype.notifyDetached = function(avatar, next) {
     Point.prototype.notifyDetached.call(this, avatar, next);
+    avatar.tierMeter.fade(false);
     if (!this.purchased) {
         this.power.deselect();
     }
