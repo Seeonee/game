@@ -7,6 +7,18 @@ var SlashPower = function(game) {
     this.base.anchor.setTo(0.5);
     this.base.visible = false;
 
+    this.game.physics.enable(this.base, Phaser.Physics.ARCADE);
+    var side = SlashPower.RADIUS * 2;
+    var w = this.base.body.width;
+    var h = this.base.body.height;
+    this.base.body.setSize(side, side,
+        w / 2 - side / 2, h / 2 - side / 2);
+    this.base.body.setCircle(side / 2);
+    // this.base.update = function() {
+    //     this.game.debug.body(this);
+    //     this.game.debug.spriteCoords(this);
+    // };
+
     var bitmap = this.game.bitmapCache.get(
         SlashPower.painter);
     this.arc = this.game.add.sprite(0, 0, bitmap);
@@ -60,6 +72,11 @@ SlashPower.prototype.turnTo = function(joystick) {
 SlashPower.prototype.slash = function(callback, context) {
     this.slashing = true;
     this.armed = false;
+
+    var obstacles = this.game.state.getCurrentState().obstacles;
+    obstacles.strike(this.base);
+
+
     this.game.time.events.add(200, this.doneSlashing, this,
         callback, context);
 };

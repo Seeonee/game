@@ -1,6 +1,7 @@
 add pre-scaled power icons; make a power icon spritesheet
 add gfx settings menu to disable blur and/or adj. layer view
 make menu handle screen size changes better
+make sure edit mode resets shrine progress as needed
 
 
 LONG-TERM FEATURES:

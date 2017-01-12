@@ -84,6 +84,30 @@ Sentry.prototype.blast = function() {
         }, this);
 };
 
+// Go ahead and clean up any blast in progress.
+Sentry.prototype.clearBlast = function() {
+    if (this.killEvent) {
+        this.game.time.events.remove(this.killEvent);
+    }
+    this.lethal = false;
+    this.readyTime = -1;
+    if (this.sentry) {
+        this.sentry.settle();
+    }
+};
+
+// Called when we take damage.
+Sentry.prototype.damage = function(dHitbox) {
+    if (this.slain) {
+        return;
+    }
+    this.slain = true;
+    this.clearBlast();
+    this.bodyhitbox.removeCollision();
+    this.traphitbox.removeCollision();
+    this.sentry.kill();
+};
+
 // Save progress.
 Sentry.prototype.saveProgress = function(p) {
     // If we're not dead, don't save progress.
@@ -95,16 +119,7 @@ Sentry.prototype.saveProgress = function(p) {
 
 // Restore progress.
 Sentry.prototype.restoreProgress = function(p) {
-    // Clean up any blast that's midway through.
-    if (this.killEvent) {
-        this.game.time.events.remove(this.killEvent);
-    }
-    this.lethal = false;
-    this.readyTime = -1;
-    if (this.sentry) {
-        this.sentry.settle();
-    }
-
+    this.clearBlast();
     var myp = p[this.name];
     var slain = myp && myp.slain ? myp.slain : false;
     if (slain == this.slain) {

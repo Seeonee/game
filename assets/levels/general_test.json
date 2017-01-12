@@ -454,6 +454,11 @@
                     "y": 400,
                     "type": "item",
                     "subtype": "lightning"
+                },
+                "foe-sentry0": {
+                    "x": 400,
+                    "y": 150,
+                    "type": "foe-sentry"
                 }
             }
         },

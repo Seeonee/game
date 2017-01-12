@@ -65,6 +65,31 @@ Obstacles.prototype._overlap = function(avatar, hitbox) {
     }
 };
 
+// Perform a hit test between a damaging hitbox and 
+// all obstacles that can take damage.
+Obstacles.prototype.strike = function(dHitbox) {
+    if (!this.level) {
+        return false;
+    }
+    var t = this.level.tier.name;
+    return this.game.physics.arcade.overlap(dHitbox,
+        this.hitboxes[t], null, this._strike, this);
+};
+
+// Test damage hitbox's overlap with a destructable 
+// obstacle's hitbox. If the object has a .damage() 
+// method, it will be called. Otherwise, nothing happens.
+Obstacles.prototype._strike = function(dHitbox, hitbox) {
+    if (!hitbox.obstacle.damage) {
+        return false; // Can't be damaged.
+    }
+    if (dHitbox.verify && !dHitbox.verify(hitbox)) {
+        return false; // Damage zone decided not to strike.
+    }
+    hitbox.obstacle.damage(dHitbox); // Nailed it.
+    return false;
+};
+
 
 
 
