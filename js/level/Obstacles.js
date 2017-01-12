@@ -86,7 +86,7 @@ Obstacles.prototype._strike = function(dHitbox, hitbox) {
     if (dHitbox.verify && !dHitbox.verify(hitbox)) {
         return false; // Damage zone decided not to strike.
     }
-    hitbox.obstacle.damage(dHitbox); // Nailed it.
+    hitbox.obstacle.damage(dHitbox, hitbox); // Nailed it.
     return false;
 };
 

@@ -97,8 +97,8 @@ Sentry.prototype.clearBlast = function() {
 };
 
 // Called when we take damage.
-Sentry.prototype.damage = function(dHitbox) {
-    if (this.slain) {
+Sentry.prototype.damage = function(dHitbox, hitbox) {
+    if (this.slain || hitbox !== this.bodyhitbox) {
         return;
     }
     this.slain = true;
