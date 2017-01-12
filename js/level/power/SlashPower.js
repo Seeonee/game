@@ -5,7 +5,6 @@ var SlashPower = function(game) {
     // This one is for absolutely positioning.
     this.base = this.game.add.sprite(0, 0);
     this.base.anchor.setTo(0.5);
-    this.base.visible = false;
 
     this.game.physics.enable(this.base, Phaser.Physics.ARCADE);
     var side = SlashPower.RADIUS * 2;
@@ -23,14 +22,12 @@ var SlashPower = function(game) {
         return this.slash.verifySlash(hitbox);
     };
 
-    var bitmap = this.game.bitmapCache.get(
-        SlashPower.painter);
-    this.arc = this.game.add.sprite(0, 0, bitmap);
+    this.arc = new SlashEffects(this);
     this.base.addChild(this.arc);
-    this.arc.anchor.setTo(0, 0.5);
 
     this.armed = false;
-    this.slashing = false;
+    this.lockedOut = false;
+    this.coolingDown = false;
 };
 
 SlashPower.TYPE = 'sword';
@@ -42,20 +39,13 @@ Power.load.factory[SlashPower.TYPE] = SlashPower;
 // Constants.
 SlashPower.RADIUS = 50;
 SlashPower.CATCH = Math.PI / 6;
+SlashPower.LOCKOUT = 200; // ms
+SlashPower.COOLDOWN = 400; // ms
 
-
-// Paint our bitmap.
-SlashPower.painter = function(bitmap) {
-    var r = SlashPower.RADIUS;
-    Utils.resizeBitmap(bitmap, r, r);
-    var c = bitmap.context;
-    c.fillStyle = '#ffffff';
-    c.fillRect(0, 0, r, r);
-};
 
 // Prepare to slash.
 SlashPower.prototype.arm = function(joystick) {
-    if (this.armed && this.slashing) {
+    if (this.armed || this.lockedOut || this.coolingDown) {
         return;
     }
     this.armed = true;
@@ -63,7 +53,7 @@ SlashPower.prototype.arm = function(joystick) {
     this.base.y = this.avatar.y;
     this.avatar.level.z.fg.add(this.base);
     this.turnTo(joystick);
-    this.base.visible = true;
+    this.arc.arm();
 };
 
 // Change orientation.
@@ -74,16 +64,15 @@ SlashPower.prototype.turnTo = function(joystick) {
 };
 
 // Attack!
-SlashPower.prototype.slash = function(callback, context) {
-    this.slashing = true;
+SlashPower.prototype.slash = function() {
+    this.lockedOut = true;
     this.armed = false;
+    this.arc.slash();
 
     var obstacles = this.game.state.getCurrentState().obstacles;
     obstacles.strike(this.base);
-
-
-    this.game.time.events.add(200, this.doneSlashing, this,
-        callback, context);
+    this.game.time.events.add(SlashPower.LOCKOUT,
+        this.doneSlashing, this);
 };
 
 // Test a strike's angle.
@@ -96,20 +85,27 @@ SlashPower.prototype.verifySlash = function(hitbox) {
 };
 
 // And we're spent.
-SlashPower.prototype.doneSlashing = function(callback, context) {
-    this.slashing = false;
-    this.base.visible = false;
-    callback.call(context);
+SlashPower.prototype.doneSlashing = function() {
+    this.coolingDown = true;
+    this.lockedOut = false;
+    this.game.time.events.add(SlashPower.COOLDOWN,
+        this.doneCoolingDown, this);
+};
+
+// Ready to go.
+SlashPower.prototype.doneCoolingDown = function() {
+    this.coolingDown = false;
 };
 
 // ...or not.
 SlashPower.prototype.nevermind = function() {
-    if (!this.armed && !this.slashing) {
+    if (!this.armed && !this.lockedOut && !this.coolingDown) {
         return;
     }
     this.armed = false;
-    this.slashing = false;
-    this.base.visible = false;
+    this.lockedOut = false;
+    this.coolingDown = false;
+    this.arc.nevermind();
 };
 
 // Save progress.

@@ -26,8 +26,10 @@ SlashIState.prototype.deactivated = function(next) {
 
 // Handle an update.
 SlashIState.prototype.update = function() {
-    if (this.slashing) {
+    if (this.slash.lockedOut) {
         return;
+    } else if (this.slash.coolingDown) {
+        return false;
     }
     if (this.gpad.justPressed(this.buttonMap.POWER)) {
         this.gpad.consumeButtonEvent();
@@ -45,9 +47,7 @@ SlashIState.prototype.update = function() {
             this.avatar.tierMeter.usePower();
             this.avatar.tierMeter.setPowerPressed(false);
 
-            this.slash.slash(function() {
-                this.slashing = false;
-            }, this);
+            this.slash.slash();
         }
     } else {
         return false;
@@ -56,6 +56,5 @@ SlashIState.prototype.update = function() {
 
 // Cancel everything that's underway.
 SlashIState.prototype.release = function() {
-    this.slashing = false;
     this.slash.nevermind();
 };
