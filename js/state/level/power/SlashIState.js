@@ -35,6 +35,8 @@ SlashIState.prototype.update = function() {
         this.gpad.consumeButtonEvent();
         this.pressed = true;
         this.avatar.stopMovement();
+        this.avatar.setBobble(true);
+        this.avatar.setPressed(true);
 
         this.avatar.tierMeter.setPowerPressed(true);
         this.slash.arm(this.gpad.getAngleAndTilt());
@@ -46,6 +48,8 @@ SlashIState.prototype.update = function() {
             this.slashing = true;
             this.avatar.tierMeter.usePower();
             this.avatar.tierMeter.setPowerPressed(false);
+            this.avatar.setBobble(false);
+            this.avatar.setPressed(false);
 
             this.slash.slash();
         }
