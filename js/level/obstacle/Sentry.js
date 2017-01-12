@@ -33,7 +33,7 @@ Sentry.prototype.draw = function(tier) {
             this.x, this.y, Sentry.BODY_HITBOX);
         this.game.state.getCurrentState().z.mg.add(this.bodyhitbox);
         this.traphitbox = new Hitbox(this.game, tier, this,
-            this.x, y, Sentry.TRAP_RADIUS * 0.9, true);
+            this.x, y, Sentry.TRAP_RADIUS * 0.8, true);
         this.game.state.getCurrentState().z.mg.add(this.traphitbox);
 
         var ip = tier.translateGamePointToInternalPoint(
