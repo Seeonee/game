@@ -27,7 +27,7 @@ SlashIState.prototype.deactivated = function(next) {
 // Handle an update.
 SlashIState.prototype.update = function() {
     if (this.slashing) {
-        return false;
+        return;
     }
     if (this.gpad.justPressed(this.buttonMap.POWER)) {
         this.gpad.consumeButtonEvent();
@@ -42,6 +42,7 @@ SlashIState.prototype.update = function() {
             this.gpad.consumeButtonEvent();
             this.pressed = false;
             this.slashing = true;
+            this.avatar.tierMeter.usePower();
             this.avatar.tierMeter.setPowerPressed(false);
 
             this.slash.slash(function() {
