@@ -18,6 +18,10 @@ var SlashPower = function(game) {
     //     this.game.debug.body(this);
     //     this.game.debug.spriteCoords(this);
     // };
+    this.base.slash = this;
+    this.base.verify = function(hitbox) {
+        return this.slash.verifySlash(hitbox);
+    };
 
     var bitmap = this.game.bitmapCache.get(
         SlashPower.painter);
@@ -37,6 +41,7 @@ Power.load.factory[SlashPower.TYPE] = SlashPower;
 
 // Constants.
 SlashPower.RADIUS = 50;
+SlashPower.CATCH = Math.PI / 6;
 
 
 // Paint our bitmap.
@@ -79,6 +84,15 @@ SlashPower.prototype.slash = function(callback, context) {
 
     this.game.time.events.add(200, this.doneSlashing, this,
         callback, context);
+};
+
+// Test a strike's angle.
+SlashPower.prototype.verifySlash = function(hitbox) {
+    var a = Utils.angleBetweenPoints(
+        this.base.x, this.base.y, hitbox.x, hitbox.y);
+    var a2 = -this.base.rotation + Math.PI / 2;
+    var delta = Utils.getBoundedAngleDifference(a, a2);
+    return delta <= SlashPower.CATCH;
 };
 
 // And we're spent.

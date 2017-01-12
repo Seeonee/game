@@ -125,6 +125,7 @@ Sentry.prototype.restoreProgress = function(p) {
     if (slain == this.slain) {
         return;
     }
+    this.slain = slain;
 
     // Bring it back to life.
     this.bodyhitbox.addCollision();
