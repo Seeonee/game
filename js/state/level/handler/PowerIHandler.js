@@ -7,6 +7,7 @@ var PowerIHandler = function(game, gpad, level, ihandler) {
     this.wrap(ihandler);
 
     new TraceIState(this, level);
+    new SlashIState(this, level);
 };
 
 PowerIHandler.prototype = Object.create(IHandler.prototype);

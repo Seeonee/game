@@ -89,6 +89,12 @@ Avatar.prototype.move = function(angle, ratio) {
     this.updateAttachment();
 };
 
+// Stop moving completely.
+Avatar.prototype.stopMovement = function() {
+    this.setVelocity(0, 0);
+    this.graphics.move(this);
+};
+
 // Make sure there's enough tilt to justify movement.
 Avatar.prototype.adjustRatio = function(ratio) {
     var threshold = Avatar.TILT_THRESHOLD;
@@ -369,6 +375,7 @@ Avatar.prototype.restoreProgress = function(p) {
     if (this.power) {
         this.power.release();
         this.power = undefined;
+        this.tierMeter.setPower(undefined);
     }
 
     this.x = p.avatar.x;
