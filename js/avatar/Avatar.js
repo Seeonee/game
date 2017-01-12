@@ -28,7 +28,6 @@ var Avatar = function(game, graphics, level) {
     this.events.onDetach = new Phaser.Signal();
     this.events.onAttachEdit = new Phaser.Signal();
     this.events.onShardChange = new Phaser.Signal();
-    this.powers = new Set();
 };
 
 Avatar.prototype = Object.create(Phaser.Sprite.prototype);
@@ -308,7 +307,6 @@ Avatar.prototype.setPower = function(powerType) {
     this.power = Power.load(this.game, powerType);
     if (this.power) {
         this.power.avatar = this;
-        this.powers.add(this.power);
         this.power.acquire(this);
         this.tierMeter.setPower(this.power);
     } else {
@@ -359,14 +357,13 @@ Avatar.prototype.saveProgress = function(p) {
     if (this.masq && this.masq === this.startingMasq) {
         p.avatar.resetMask = true;
     }
-    var itr = this.powers.values();
-    while (true) {
-        var tuple = itr.next();
-        if (tuple.done) {
-            break;
+
+    if (this.level.powerCache) {
+        var keys = Object.keys(this.level.powerCache);
+        for (var i = 0; i < keys.length; i++) {
+            var power = this.level.powerCache[keys[i]];
+            power.saveProgress(p);
         }
-        var power = tuple.value;
-        power.saveProgress(p);
     }
 };
 
@@ -413,13 +410,11 @@ Avatar.prototype.restoreProgress = function(p) {
 
     this.held = undefined;
 
-    var itr = this.powers.values();
-    while (true) {
-        var tuple = itr.next();
-        if (tuple.done) {
-            break;
+    if (this.level.powerCache) {
+        var keys = Object.keys(this.level.powerCache);
+        for (var i = 0; i < keys.length; i++) {
+            var power = this.level.powerCache[keys[i]];
+            power.restoreProgress(p);
         }
-        var power = tuple.value;
-        power.restoreProgress(p);
     }
 };
