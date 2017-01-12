@@ -62,7 +62,28 @@ EditLevelState.prototype.createEditHandler = function(ihandler) {
 
 // Restart the level.
 EditLevelState.prototype.restartLevel = function() {
-    this.params.json = JSON.parse(JSON.stringify(this.level));
+    var p = { level: { tier: this.level.tier.name } };
+    for (var i = 0; i < this.level.tiers.length; i++) {
+        p[this.level.tiers[i].name] = {};
+    }
+    for (var i = 0; i < this.level.tiers.length; i++) {
+        var t = this.level.tiers[i];
+        for (var j = 0; j < t.points.length; j++) {
+            var point = t.points[j];
+            if (point instanceof StartPoint) {
+                p.avatar = {
+                    x: point.gx,
+                    y: point.gy,
+                    point: point.name,
+                    shards: {},
+                    resetMask: true
+                };
+                break;
+            }
+        }
+    }
+    this.level.initialProgress = p;
+    this.level.shrineProgress = undefined;
     PlayLevelState.prototype.restartLevel.call(this);
 };
 

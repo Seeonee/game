@@ -95,6 +95,18 @@ EditLevelIHandler.prototype.cycle = function() {
     return false;
 };
 
+// Cycle to a named mode.
+EditLevelIHandler.prototype.cycleTo = function(name) {
+    for (var i = 0; i < this.modes.length; i++) {
+        var mode = this.modes[i];
+        if (mode.name == name) {
+            this.mode = i;
+            this.activate(mode.name);
+            break;
+        }
+    }
+};
+
 // Add cycle arrows to a help text block.
 EditLevelIHandler.addArrows = function(s, line) {
     s = s.replace(' ◂▸', '');

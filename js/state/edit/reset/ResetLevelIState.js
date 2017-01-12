@@ -45,6 +45,8 @@ ResetLevelIState.prototype.update = function() {
         }
         if (this.game.time.now > this.chargedTime) {
             this.game.state.getCurrentState().restartLevel();
+            this.handler.cycleTo(GeneralEditIState.NAME);
+            return this.handler.state.update();
         }
         this.chargedTime = -1;
     } else {

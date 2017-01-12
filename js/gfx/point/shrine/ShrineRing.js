@@ -134,6 +134,7 @@ ShrineRing.prototype.resetVisited = function() {
     this.clearTweens();
     this.rotation = 0;
     this.alpha = 1;
+    this.closed = true;
 
     this.arcs[0].alpha = 1;
     this.arcs[0].tint = this.color2;
@@ -148,6 +149,7 @@ ShrineRing.prototype.resetUnvisited = function() {
     this.clearTweens();
     this.rotation = ShrineRing.ANGLE;
     this.alpha = 1;
+    this.closed = false;
 
     this.arcs[0].alpha = ShrineRing.ALPHA;
     this.arcs[0].tint = this.color1;
