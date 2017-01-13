@@ -26,12 +26,12 @@ SlashIState.prototype.deactivated = function(next) {
 
 // Handle an update.
 SlashIState.prototype.update = function() {
+    var result = false;
     if (this.slash.lockedOut) {
-        return;
+        result = true;
     } else if (this.slash.coolingDown) {
-        return false;
-    }
-    if (this.gpad.justPressed(this.buttonMap.POWER)) {
+        // Noop.
+    } else if (this.gpad.justPressed(this.buttonMap.POWER)) {
         this.gpad.consumeButtonEvent();
         this.pressed = true;
         this.avatar.stopMovement();
@@ -40,6 +40,7 @@ SlashIState.prototype.update = function() {
 
         this.avatar.tierMeter.setPowerPressed(true);
         this.slash.arm(this.gpad.getAngleAndTilt());
+        result = true;
     } else if (this.pressed) {
         this.slash.turnTo(this.gpad.getAngleAndTilt());
         if (this.gpad.justReleased(this.buttonMap.POWER)) {
@@ -53,9 +54,12 @@ SlashIState.prototype.update = function() {
 
             this.slash.slash();
         }
-    } else {
-        return false;
+        result = true;
     }
+    if (result) {
+        this.avatar.checkCollision();
+    }
+    return result;
 };
 
 // Cancel everything that's underway.

@@ -51,9 +51,9 @@ SlashPower.prototype.arm = function(joystick) {
     this.armed = true;
     this.base.x = this.avatar.x;
     this.base.y = this.avatar.y;
-    this.avatar.level.z.mg.add(this.base);
+    this.avatar.level.z.fg.add(this.base);
     this.turnTo(joystick);
-    this.arc.arm();
+    this.arc.arm(this.avatar.level.tier.palette);
 };
 
 // Change orientation.
