@@ -12,7 +12,7 @@ var SlashEffects = function(slash) {
 
     this.tweens = [];
     this.sparkTime = -1;
-    this.pool = new SpritePool(this.game, SlashEffects.Spark);
+    this.spool = new SpritePool(this.game, SlashEffects.Spark);
 };
 
 SlashEffects.prototype = Object.create(Phaser.Sprite.prototype);
@@ -25,6 +25,7 @@ SlashEffects.ARC_W = 7;
 SlashEffects.FADE_IN = 250; // ms
 SlashEffects.SPARK_INTERVAL = 200; // ms
 SlashEffects.SPARK_TIME = 500; // ms
+SlashEffects.GUST_TIME = 300; // ms
 
 
 // Make our bitmap.
@@ -37,6 +38,10 @@ SlashEffects.prototype.createBitmap = function() {
 SlashEffects.prototype.update = function() {
     Phaser.Sprite.prototype.update.call(this);
     if (this._r != this.r) {
+        var threshold = 0.9;
+        if (this._r < threshold && this.r > threshold) {
+            this.game.camera.flash();
+        }
         this._r = this.r;
         var r = SlashPower.RADIUS * this._r;
         var a = SlashPower.CATCH;
@@ -51,7 +56,7 @@ SlashEffects.prototype.update = function() {
     }
     if (this.sparkTime >= 0 && this.game.time.now > this.sparkTime) {
         this.sparkTime = this.game.time.now + SlashEffects.SPARK_INTERVAL;
-        this.pool.make(this.game).fire(this);
+        this.spool.make(this.game).fire(this);
     }
 };
 
@@ -86,7 +91,7 @@ SlashEffects.prototype.arm = function(palette) {
 // Take the shot.
 SlashEffects.prototype.slash = function() {
     this.clearTweens();
-    this.pool.killAll();
+    this.spool.killAll();
     this.sparkTime = -1;
 
     this.tint = this.game.settings.colors.WHITE.i;
@@ -165,5 +170,6 @@ SlashEffects.Spark.prototype.fire = function(parent) {
     var scale = 1;
     var t = this.game.add.tween(this.smoke.scale);
     t.to({ x: scale, y: scale }, SlashEffects.SPARK_TIME,
+        Phaser.Easing.Sinusoidal.Out, true);
     this.tweens.push(t);
 };
