@@ -37,10 +37,10 @@ SlashPower.prototype.constructor = SlashPower;
 Power.load.factory[SlashPower.TYPE] = SlashPower;
 
 // Constants.
-SlashPower.RADIUS = 50;
+SlashPower.RADIUS = 90;
 SlashPower.CATCH = Math.PI / 6;
 SlashPower.LOCKOUT = 200; // ms
-SlashPower.COOLDOWN = 400; // ms
+SlashPower.COOLDOWN = 3800; // ms
 
 
 // Prepare to slash.
@@ -94,6 +94,8 @@ SlashPower.prototype.doneSlashing = function() {
 
 // Ready to go.
 SlashPower.prototype.doneCoolingDown = function() {
+    this.avatar.tierMeter.showBriefly();
+    this.avatar.tierMeter.usePower();
     this.coolingDown = false;
 };
 

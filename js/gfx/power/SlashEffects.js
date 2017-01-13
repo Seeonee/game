@@ -13,19 +13,23 @@ var SlashEffects = function(slash) {
     this.tweens = [];
     this.sparkTime = -1;
     this.spool = new SpritePool(this.game, SlashEffects.Spark);
+    this.gpool = new SpritePool(this.game, SlashEffects.Gust);
 };
 
 SlashEffects.prototype = Object.create(Phaser.Sprite.prototype);
 SlashEffects.prototype.constructor = SlashEffects;
 
 // Constants.
-SlashEffects.R1 = 0.25;
+SlashEffects.R1 = 0.22;
 SlashEffects.ARC_ALPHA1 = 1; // 0.5;
-SlashEffects.ARC_W = 7;
+SlashEffects.ARC_W = 9;
 SlashEffects.FADE_IN = 250; // ms
 SlashEffects.SPARK_INTERVAL = 200; // ms
 SlashEffects.SPARK_TIME = 500; // ms
-SlashEffects.GUST_TIME = 300; // ms
+SlashEffects.GUST_TIME = 200; // ms
+SlashEffects.SMOKE_DRIFT = SlashPower.RADIUS;
+SlashEffects.GUST_Y = 30;
+SlashEffects.GUST_DRIFT = 60;
 
 
 // Make our bitmap.
@@ -71,6 +75,7 @@ SlashEffects.prototype.clearTweens = function() {
 // Begin targeting.
 SlashEffects.prototype.arm = function(palette) {
     this.clearTweens();
+    this.gpool.killAll();
 
     this.tint = palette.c2.i;
     this.sparkTime = 0;
@@ -106,6 +111,8 @@ SlashEffects.prototype.slash = function() {
     t.to({ r: 1 }, SlashPower.LOCKOUT,
         Phaser.Easing.Quintic.Out, true);
     this.tweens.push(t);
+
+    this.gpool.make(this.game).fire(this);
 };
 
 // End the charge, with zero gfx or animation.
@@ -156,7 +163,7 @@ SlashEffects.Spark.prototype.fire = function(parent) {
 
     this.smoke.tint = parent.tint;
     this.smoke.x = 0;
-    this.smoke.y = 50;
+    this.smoke.y = SlashEffects.SMOKE_DRIFT;
     this.smoke.alpha = 1;
     this.smoke.scale.setTo(0.1);
     var t = this.game.add.tween(this.smoke);
@@ -172,4 +179,52 @@ SlashEffects.Spark.prototype.fire = function(parent) {
     t.to({ x: scale, y: scale }, SlashEffects.SPARK_TIME,
         Phaser.Easing.Sinusoidal.Out, true);
     this.tweens.push(t);
+};
+
+
+
+
+
+
+
+
+// Gust during slash.
+SlashEffects.Gust = function(game) {
+    Phaser.Sprite.call(this, game, 0, 0);
+    this.anchor.setTo(0.5);
+    this.rotation = -Math.PI / 2;
+
+    this.smoke = this.addChild(this.game.add.sprite(0, 0, 'smoke'));
+    this.smoke.anchor.setTo(0.5);
+    this.smoke.rotation = Math.PI;
+
+    this.tweens = [];
+};
+
+SlashEffects.Gust.prototype = Object.create(Phaser.Sprite.prototype);
+SlashEffects.Gust.prototype.constructor = SlashEffects.Gust;
+
+
+// Cleanup.
+SlashEffects.Gust.prototype.cleanUp = function() {
+    for (var i = 0; i < this.tweens.length; i++) {
+        this.tweens[i].stop();
+    }
+    this.tweens = [];
+};
+
+// Fire!
+SlashEffects.Gust.prototype.fire = function(parent) {
+    this.cleanUp();
+    parent.addChild(this);
+
+    this.smoke.y = SlashEffects.GUST_Y;
+    var t = this.game.add.tween(this.smoke);
+    t.to({ y: this.y + SlashEffects.GUST_DRIFT },
+        SlashEffects.GUST_TIME,
+        Phaser.Easing.Cubic.Out, true);
+    this.tweens.push(t);
+    t.onComplete.add(function() {
+        this.kill();
+    }, this);
 };
