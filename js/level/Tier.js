@@ -615,6 +615,7 @@ Tier.prototype.recreateImageAsNeeded = function() {
     } else {
         var bitmap = this.game.add.bitmapData(
             this.width, this.height);
+        var oldBg = this._bgimage;
         this._bgimage = this.game.add.sprite(
             this.x + this.widthOver2, this.y + this.heightOver2, bitmap);
         this._bgimage.anchor.setTo(0.5, 0.5);
@@ -623,6 +624,7 @@ Tier.prototype.recreateImageAsNeeded = function() {
 
         this.bitmap = this.game.add.bitmapData(
             this.width, this.height);
+        var oldImage = this.image;
         this.image = this.game.add.sprite(0, 0, this.bitmap);
         this.image.anchor.setTo(0.5, 0.5);
 
@@ -658,6 +660,12 @@ Tier.prototype.recreateImageAsNeeded = function() {
             var idx = this.parent.children.length - 1;
             this.parent.addChildAt(child, idx);
         };
+
+        if (oldBg) {
+            oldBg.destroy();
+            oldImage.destroy();
+        }
+
         this.updateWorldBounds();
     }
 };
