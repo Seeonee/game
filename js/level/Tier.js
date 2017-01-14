@@ -592,22 +592,10 @@ Tier.prototype.recalculateDimensions = function() {
 Tier.prototype.recreateImageAsNeeded = function() {
     var w = (this.bitmap) ? this.bitmap.width : 0;
     var h = (this.bitmap) ? this.bitmap.height : 0;
-    var children = undefined;
-    var bgchildren = undefined;
+    resize = false;
     if (this.width != w || this.height != h) {
         if (this.bitmap) {
-            children = this.image.children.slice();
-            bgchildren = this._bgimage.children.slice();
-            var idx = bgchildren.indexOf(this.image);
-            if (idx >= 0) {
-                bgchildren.splice(idx, 1);
-            }
-            this.image.kill();
-            this._bgimage.kill();
-            this.bitmap.destroy();
-            this.image = undefined;
-            this._bgimage = undefined;
-            this.bitmap = undefined;
+            resize = true;
         }
     }
     if (this.bitmap) {
@@ -615,7 +603,6 @@ Tier.prototype.recreateImageAsNeeded = function() {
     } else {
         var bitmap = this.game.add.bitmapData(
             this.width, this.height);
-        var oldBg = this._bgimage;
         this._bgimage = this.game.add.sprite(
             this.x + this.widthOver2, this.y + this.heightOver2, bitmap);
         this._bgimage.anchor.setTo(0.5, 0.5);
@@ -624,50 +611,42 @@ Tier.prototype.recreateImageAsNeeded = function() {
 
         this.bitmap = this.game.add.bitmapData(
             this.width, this.height);
-        var oldImage = this.image;
         this.image = this.game.add.sprite(0, 0, this.bitmap);
         this.image.anchor.setTo(0.5, 0.5);
+        this.image.addBackgroundChild = function(child) {
+            var idx = this.parent.children.length - 1;
+            this.parent.addChildAt(child, idx);
+        };
+        this._bgimage.addChild(this.image);
 
         if (!this.spacer) {
             this.spacer = this.game.add.sprite(
                 this.x, this.y);
             this.game.state.getCurrentState().z.level.tier().add(this.spacer);
+            this.updateSpacer();
         }
-        var sw = this.spacer.width;
-        var sh = this.spacer.height;
-        var sw2 = 800 + this.width * Tier.HIDE_SCALE_UP * 4;
-        var sh2 = 600 + this.height * Tier.HIDE_SCALE_UP * 4;
-        this.spacer.x = this.x - (sw2 - this.width) / 2;
-        this.spacer.y = this.y - (sh2 - this.height) / 2;
-        this.spacer.scale.setTo(sw2 / sw, sh2 / sh);
-
-        if (bgchildren) {
-            for (var i = 0; i < bgchildren.length; i++) {
-                var child = bgchildren[i];
-                this._bgimage.addChild(child);
-                child.revive();
-            }
-        }
-        this._bgimage.addChild(this.image);
-        if (children) {
-            for (var i = 0; i < children.length; i++) {
-                var child = children[i];
-                this.image.addChild(child);
-                child.revive();
-            }
-        }
-        this.image.addBackgroundChild = function(child) {
-            var idx = this.parent.children.length - 1;
-            this.parent.addChildAt(child, idx);
-        };
-
-        if (oldBg) {
-            oldBg.destroy();
-            oldImage.destroy();
-        }
+    }
+    if (resize) {
+        this._bgimage.x = this.x + this.widthOver2;
+        this._bgimage.y = this.y + this.heightOver2;
+        var bitmap = this._bgimage.key;
+        Utils.resizeBitmap(bitmap, this.width, this.height);
+        Utils.resizeBitmap(this.bitmap, this.width, this.height);
+        this.updateSpacer();
 
         this.updateWorldBounds();
     }
+};
+
+// Resize the spacer.
+Tier.prototype.updateSpacer = function() {
+    var sw = this.spacer.width;
+    var sh = this.spacer.height;
+    var sw2 = this.game.width + this.width * Tier.HIDE_SCALE_UP * 4;
+    var sh2 = this.game.height + this.height * Tier.HIDE_SCALE_UP * 4;
+    this.spacer.x = this.x - (sw2 - this.width) / 2;
+    this.spacer.y = this.y - (sh2 - this.height) / 2;
+    this.spacer.scale.setTo(sw2 / sw, sh2 / sh);
 };
 
 // Draw all paths onto the bitmap.
