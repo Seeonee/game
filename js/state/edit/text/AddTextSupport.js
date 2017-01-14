@@ -14,7 +14,7 @@ AddTextNode.BUTTON_R = 65;
 AddTextNode.ORBIT_R = 215;
 AddTextNode.SLIDE_SCALE = 0.9;
 AddTextNode.SLIDE_TIME = 200; // ms
-AddTextNode.NORMAL_ALPHA = 0.6;
+AddTextNode.NORMAL_ALPHA = 1;
 AddTextNode.SELECTED_ALPHA = 1;
 AddTextNode.PRESSED_ALPHA = 1;
 AddTextNode.PRESSED_SCALE = 0.9;
@@ -124,7 +124,7 @@ AddTextNode.prototype.moveTo = function(x, y, animate) {
 
 // Color palette.
 AddTextNode.prototype.setPalette = function(palette) {
-    this.root.tint = palette.c2.i;
+    this.root.palette = palette;
 };
 
 // Prepare to be displayed!
@@ -202,7 +202,7 @@ AddTextNode.prototype.update = function() {
 AddTextNode.prototype.updateNode = function(c,
     highlighted, pressed) {
     if (highlighted) {
-        c.sprite.tint = this.root.tint;
+        c.sprite.tint = this.root.palette.c2.i;
         c.textfield.tint = this.game.settings.colors.WHITE.i;
         if (pressed) {
             c.sprite.alpha = AddTextNode.PRESSED_ALPHA;
@@ -212,8 +212,8 @@ AddTextNode.prototype.updateNode = function(c,
             c.base.scale.setTo(1);
         }
     } else {
-        c.sprite.tint = this.game.settings.colors.WHITE.i;
-        c.textfield.tint = this.root.tint;
+        c.sprite.tint = this.root.palette.c1.i;
+        c.textfield.tint = this.root.palette.c2.i;
         c.sprite.alpha = AddTextNode.NORMAL_ALPHA;
         c.base.scale.setTo(1);
     }
